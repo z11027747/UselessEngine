@@ -17,7 +17,7 @@ add_executable(${PROJ} core/main.cpp ${SRC_LIST})
 
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
-if(CMAKE_GENERATOR MATCHES "Visual Studio 17 2022")
+if (CMAKE_GENERATOR MATCHES "Visual Studio 17 2022")
 	target_link_libraries(${PROJ} 
 		${PROJECT_SOURCE_DIR}/lib/glfw-vc2022/glfw3.lib
 		${PROJECT_SOURCE_DIR}/lib/vulkan/vulkan-1.lib)
