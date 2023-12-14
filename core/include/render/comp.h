@@ -3,20 +3,20 @@
 #include "vulkan/vulkan.h"
 #include "base.h"
 
-namespace Render {
+enum RenderType
+{
+	eGlobalInfo = 10001,
+};
 
-	enum Type
-	{
-		eBaseInfo = 10001,
-	};
+class RenderGlobal : public EngineComp {
+public:
 
-	class BaseInfo final : public BaseComp {
-	public:
+	VkInstance instance;
 
-		//vulkan实例
-		VkInstance instance;
+	bool enableValidationLayer;
+	VkDebugUtilsMessengerEXT debugCallback;
 
+	VkPhysicalDevice physicalDevice;
+	int physicalDeviceGraphicsFamily;
 
-	};
-
-}
+};

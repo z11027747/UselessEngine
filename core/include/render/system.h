@@ -1,18 +1,27 @@
-#pragma once
+ï»¿#pragma once
 
 #include <vector>
 
-namespace Render {
+class Context;
+class VkDebugUtilsMessengerCreateInfoEXT;
 
-	class System final {
-	public:
+class RenderSystem final {
+public:
 
-		//1.´´½¨VkInstance
-		//	a)¸ºÔðÊÕ¼¯Ã¿¸öÓ¦ÓÃ³ÌÐòµÄ×´Ì¬ÐÅÏ¢
-		//	b)´´½¨¼¸ºõ¿ÉÖ´ÐÐËùÓÐ²Ù×÷µÄÂß¼­Éè±¸
+	static void CreateGlobal(Context*);
 
-		static void CreateBaseInfo(void*);
+	//instance
+	static void CreateVKInstance(Context*);
+	static void DestroyVKInstance(Context*);
+	static bool CheckInstanceExtension(const char*);
+	static bool CheckInstanceLayer(const char*);
 
-	};
+	//debugCallback
+	static void CreateDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
+	static void CreateDebugCallback(Context*);
 
-}
+	//physicsDevice
+	static void PickupPhysicalDevice(Context*);
+
+
+};

@@ -1,8 +1,11 @@
 #pragma once
 
+#include <iostream>
 #include <map>
+#include <memory>
+#include <stdexcept>
 
-class BaseComp {
+class EngineComp {
 public:
 	uint32_t type;
 };
@@ -10,21 +13,22 @@ public:
 class EngineObject final {
 public:
 
-	std::map<uint32_t, BaseComp> compMap;
+	std::map<uint32_t, std::unique_ptr<EngineComp>> compMap;
 
-	EngineObject() {
+	template <typename T>
+	T& GetComp(uint32_t type) {
+		auto it = compMap.find(type);
+		if (it != compMap.end()) {
+			return static_cast<T&>(*it->second);
+		}
 
+		throw std::runtime_error("Component not found.");
 	}
-	~EngineObject() {
 
-	}
-
-	BaseComp& GetComp(uint32_t type) {
-		return compMap[type];
-	}
-
-	void AddComp(const BaseComp& comp) {
-		compMap.insert({ comp.type, comp });
+	template <typename T>
+	void AddComp(T&& comp) {
+		auto compPtr = std::make_unique<T>(std::forward<T>(comp));
+		compMap.insert({ compPtr->type, std::move(compPtr) });
 	}
 
 	void RemoveComp(uint32_t type) {

@@ -7,15 +7,24 @@
 
 class Context final {
 public:
-	
+
 	//render
 	EngineObject renderEO;
 
+	void Create() {
+		//render
+		RenderSystem::CreateGlobal(this);
+		RenderSystem::CreateVKInstance(this);
+		//RenderSystem::CreateDebugCallback(this);
+		RenderSystem::PickupPhysicalDevice(this);
+	}
 
 	void Update() {
 
-		//render
-		Render::System::CreateBaseInfo(this);
+	}
+
+	void Destroy() {
+		//RenderSystem::DestroyVKInstance(this);
 	}
 
 };

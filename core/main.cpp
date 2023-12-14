@@ -1,7 +1,11 @@
-#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "context.h"
+#include <cstdlib>
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+
+std::unique_ptr<Context> contextPtr;
 
 int main() {
 
@@ -11,15 +15,27 @@ int main() {
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "UselessEngine", nullptr, nullptr);
 
-	Context context;
+	glfwSetKeyCallback(window, key_callback);
+
+	contextPtr.reset(new Context());
+	contextPtr->Create();
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
-		context.Update();
+		contextPtr->Update();
 	}
+
+	contextPtr->Destroy();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	return 0;
+
+	return EXIT_SUCCESS;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }
