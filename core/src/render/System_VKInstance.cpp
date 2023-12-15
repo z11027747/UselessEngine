@@ -7,15 +7,21 @@
 void RenderSystem::CreateVKInstance(Context* context) {
 
 	auto& renderEO = context->renderEO;
-	auto& globalInfo = renderEO.GetComp<RenderGlobal>(RenderType::eGlobalInfo);
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+
+	uint32_t apiVersion;
+	auto versionRet = vkEnumerateInstanceVersion(&apiVersion);
+	if (versionRet != VK_SUCCESS) {
+		apiVersion = VK_API_VERSION_1_3;
+	}
 
 	VkApplicationInfo applicationInfo = {};
-	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO; //最后会转成void*存，需要定义类型
 	applicationInfo.pApplicationName = "UselessEngine";
 	applicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	applicationInfo.pEngineName = "No Engine";
 	applicationInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	applicationInfo.apiVersion = VK_API_VERSION_1_3;
+	applicationInfo.apiVersion = apiVersion;
 
 	VkInstanceCreateInfo instanceCreateInfo = {};
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -44,7 +50,7 @@ void RenderSystem::CreateVKInstance(Context* context) {
 		instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(enabledLayers.size());
 		instanceCreateInfo.ppEnabledLayerNames = enabledLayers.data();
 
-		//告诉 Vulkan 实例在创建时使用这个调试回调的配置
+		//创建实例的同事，扩展debugcallback，把配置传过去
 		CreateDebugCreateInfo(debugCreateInfo);
 		instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 	}
@@ -62,7 +68,7 @@ void RenderSystem::CreateVKInstance(Context* context) {
 void RenderSystem::DestroyVKInstance(Context* context) {
 
 	auto& renderEO = context->renderEO;
-	auto& globalInfo = renderEO.GetComp<RenderGlobal>(RenderType::eGlobalInfo);
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
 
 	vkDestroyInstance(globalInfo.instance, nullptr);
 	globalInfo.instance = nullptr;

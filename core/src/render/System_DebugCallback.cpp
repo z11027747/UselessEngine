@@ -16,7 +16,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	//	pMessage：一个以null结尾的包含调试信息的字符串
 	//	pObjects：存储有和消息相关的Vulkan对象句柄的数组
 	//	objectCount：数组中的对象个数
-	std::cerr << "====> validation layer: " << pCallbackData->pMessage << std::endl;
+	std::cerr << "custom debugCallback ===> " << pCallbackData->pMessage << std::endl;
 
 	return VK_FALSE;
 }
@@ -39,7 +39,7 @@ void RenderSystem::CreateDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& deb
 void RenderSystem::CreateDebugCallback(Context* context) {
 
 	auto& renderEO = context->renderEO;
-	auto& globalInfo = renderEO.GetComp<RenderGlobal>(RenderType::eGlobalInfo);
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
 
 	if (!globalInfo.enableValidationLayer) {
 		return;

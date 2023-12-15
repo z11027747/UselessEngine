@@ -1,23 +1,28 @@
 #pragma once
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <memory>
+#include <typeindex>
 #include <stdexcept>
 
-class EngineComp {
-public:
-	uint32_t type;
+struct EngineComp {
 };
 
 class EngineObject final {
 public:
 
-	std::map<uint32_t, std::unique_ptr<EngineComp>> compMap;
+	std::unordered_map<std::type_index, std::unique_ptr<EngineComp>> compMap;
 
 	template <typename T>
-	T& GetComp(uint32_t type) {
-		auto it = compMap.find(type);
+	void AddComponent(T&& comp) {
+		auto compPtr = std::make_unique<T>(std::forward<T>(comp));
+		compMap[typeid(T)] = std::move(compPtr);
+	}
+
+	template <typename T>
+	T& GetComponent() const {
+		auto it = compMap.find(typeid(T));
 		if (it != compMap.end()) {
 			return static_cast<T&>(*it->second);
 		}
@@ -26,19 +31,14 @@ public:
 	}
 
 	template <typename T>
-	void AddComp(T&& comp) {
-		auto compPtr = std::make_unique<T>(std::forward<T>(comp));
-		compMap.insert({ compPtr->type, std::move(compPtr) });
-	}
-
-	void RemoveComp(uint32_t type) {
-		auto it = compMap.find(type);
+	void RemoveComponent() {
+		auto it = compMap.find(typeid(T));
 		if (it != compMap.end()) {
 			compMap.erase(it);
 		}
 	}
 
-	void RemoveAllComps() {
+	void RemoveAllComponents() {
 		compMap.clear();
 	}
 };

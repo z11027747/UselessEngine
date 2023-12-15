@@ -23,5 +23,8 @@ public:
 	//physicsDevice
 	static void PickupPhysicalDevice(Context*);
 
+	//logicDevice
+	static void CreateLogicDevice(Context*);
+
 
 };

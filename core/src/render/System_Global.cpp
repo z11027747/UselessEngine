@@ -8,11 +8,10 @@ void RenderSystem::CreateGlobal(Context* context) {
 	auto& renderEO = context->renderEO;
 
 	RenderGlobal renderGlobal = {};
-	renderGlobal.type = RenderType::eGlobalInfo;
 #ifndef NDEBUG
 	renderGlobal.enableValidationLayer = true;
 #else
 	renderGlobal.enableValidationLayer = false;
 #endif
-	renderEO.AddComp<RenderGlobal>(std::move(renderGlobal));
+	renderEO.AddComponent<RenderGlobal>(std::move(renderGlobal));
 }

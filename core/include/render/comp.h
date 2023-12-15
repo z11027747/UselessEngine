@@ -3,13 +3,11 @@
 #include "vulkan/vulkan.h"
 #include "base.h"
 
-enum RenderType
-{
-	eGlobalInfo = 10001,
-};
+struct RenderGlobal final : public EngineComp {
 
-class RenderGlobal : public EngineComp {
-public:
+	//VkInstance 底层就是个指针
+	//#define VK_DEFINE_HANDLE(object)
+	//	typedef struct object##_T* object;
 
 	VkInstance instance;
 

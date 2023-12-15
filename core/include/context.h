@@ -15,7 +15,7 @@ public:
 		//render
 		RenderSystem::CreateGlobal(this);
 		RenderSystem::CreateVKInstance(this);
-		//RenderSystem::CreateDebugCallback(this);
+		RenderSystem::CreateDebugCallback(this);
 		RenderSystem::PickupPhysicalDevice(this);
 	}
 
@@ -24,7 +24,7 @@ public:
 	}
 
 	void Destroy() {
-		//RenderSystem::DestroyVKInstance(this);
+		RenderSystem::DestroyVKInstance(this);
 	}
 
 };
