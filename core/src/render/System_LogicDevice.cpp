@@ -10,7 +10,8 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 	auto& renderEO = context->renderEO;
 
 	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& instance = globalInfo.instance;
+	auto& physicalDevice = globalInfo.physicalDevice;
+	auto physicalDeviceGraphicsFamily = globalInfo.physicalDeviceGraphicsFamily;
 
 	VkDeviceCreateInfo deviceCreateInfo = {};
 	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -18,8 +19,29 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 	//指定创建的设备队列信息
 	VkDeviceQueueCreateInfo queueCreateInfo = {};
 	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	queueCreateInfo.queueCount = 1;
+	queueCreateInfo.queueFamilyIndex = globalInfo.physicalDeviceGraphicsFamily;
+	float queuePrioprity = 1.0f;
+	queueCreateInfo.pQueuePriorities = &queuePrioprity;
 
+	deviceCreateInfo.queueCreateInfoCount = 1;
+	deviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
+	deviceCreateInfo.enabledLayerCount = 0;
 
+	auto ret = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &globalInfo.logicDevice);
+	if (ret != VK_SUCCESS) {
+		throw std::runtime_error("create device error");
+	}
 }
 
+//获取创建的设备队列
+void RenderSystem::GetLogicDeviceQueue(Context* context) {
 
+	auto& renderEO = context->renderEO;
+
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo.logicDevice;
+	auto physicalDeviceGraphicsFamily = globalInfo.physicalDeviceGraphicsFamily;
+
+	vkGetDeviceQueue(logicDevice, physicalDeviceGraphicsFamily, 0, &globalInfo.logicQueue);
+}

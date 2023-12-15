@@ -4,7 +4,7 @@
 #include "render/system.h"
 #include "context.h"
 
-void RenderSystem::CreateVKInstance(Context* context) {
+void RenderSystem::CreateInstance(Context* context) {
 
 	auto& renderEO = context->renderEO;
 	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
@@ -65,7 +65,7 @@ void RenderSystem::CreateVKInstance(Context* context) {
 	}
 }
 
-void RenderSystem::DestroyVKInstance(Context* context) {
+void RenderSystem::DestroyInstance(Context* context) {
 
 	auto& renderEO = context->renderEO;
 	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();

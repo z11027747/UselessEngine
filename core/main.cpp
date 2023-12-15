@@ -17,7 +17,7 @@ int main() {
 
 	glfwSetKeyCallback(window, key_callback);
 
-	contextPtr.reset(new Context());
+	contextPtr = std::make_unique<Context>(window);
 	contextPtr->Create();
 
 	while (!glfwWindowShouldClose(window)) {

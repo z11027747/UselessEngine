@@ -37,9 +37,10 @@ void RenderSystem::CreateDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& deb
 }
 
 void RenderSystem::CreateDebugCallback(Context* context) {
-
 	auto& renderEO = context->renderEO;
+
 	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto& instance = globalInfo.instance;
 
 	if (!globalInfo.enableValidationLayer) {
 		return;
@@ -49,16 +50,33 @@ void RenderSystem::CreateDebugCallback(Context* context) {
 	CreateDebugCreateInfo(debugCreateInfo);
 
 	//EXT函数不会自动加载
-	//vkCreateDebugUtilsMessengerEXT(globalInfo.instance, &createInfo, nullptr, &callback);
+	//vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &callback);
 
-	auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(globalInfo.instance, "vkCreateDebugUtilsMessengerEXT");
+	auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 	if (func == nullptr) {
 		throw std::runtime_error("func error");
 	}
 
-	auto ret = func(globalInfo.instance, &debugCreateInfo, nullptr, &globalInfo.debugCallback);
+	auto ret = func(instance, &debugCreateInfo, nullptr, &globalInfo.debugCallback);
 	if (ret != VK_SUCCESS) {
 		throw std::runtime_error("callback error");
 	}
 
+}
+
+void RenderSystem::DestroyDebugCallback(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto& instance = globalInfo.instance;
+
+	if (!globalInfo.enableValidationLayer) {
+		return;
+	}
+	auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+	if (func == nullptr) {
+		throw std::runtime_error("func error");
+	}
+
+	func(instance, globalInfo.debugCallback, nullptr);
 }

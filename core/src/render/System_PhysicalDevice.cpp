@@ -11,6 +11,7 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 
 	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
 	auto& instance = globalInfo.instance;
+	auto& surface = globalInfo.surface;
 
 	globalInfo.physicalDevice = nullptr;
 	globalInfo.physicalDeviceGraphicsFamily = -1;
@@ -45,7 +46,7 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 		std::vector<VkQueueFamilyProperties> queueFamilyPropeties(queueFamilyPropetyCount);
 		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyPropetyCount, queueFamilyPropeties.data());
 
-		for (int i = 0; i < queueFamilyPropetyCount; i++) {
+		for (uint32_t i = 0; i < queueFamilyPropetyCount; i++) {
 			auto& queueFamilyPropety = queueFamilyPropeties[i];
 
 			//每个队列族支持1个-多个类型
@@ -58,19 +59,25 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 			//VK_QUEUE_COMPUTE_BIT 主要用于执行并行计算（计算着色器），执行各种计算指令
 			//VK_QUEUE_TRANSFER_BIT 主要用于执行资源的布局转移并支持在不同队列中进行转移，执行各种转移指令
 
+			//优先找支持图形功能的队列族
+			//	大部分设备队列族如果支持图形功能的话，其他的计算、转移和稀疏绑定功能也会同时支持
 			if (queueFamilyPropety.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-				//优先找支持图形功能的队列族
-				//	大部分设备队列族如果支持图形功能的话，其他的计算、转移和稀疏绑定功能也会同时支持
+
+				//支持呈现图像到窗口表面能力的队列族
+				VkBool32 support;
+				vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &support);
+				if (!support) {
+					continue;
+				}
+
 				globalInfo.physicalDevice = physicalDevice;
 				globalInfo.physicalDeviceGraphicsFamily = i;
-				break;
+				return;
 			}
 		}
-
-		if (globalInfo.physicalDeviceGraphicsFamily != -1) {
-			break;
-		}
 	}
+
+	throw std::runtime_error("find queueFamilyIndex error");
 }
 
 

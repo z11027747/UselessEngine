@@ -17,4 +17,8 @@ struct RenderGlobal final : public EngineComp {
 	VkPhysicalDevice physicalDevice;
 	int physicalDeviceGraphicsFamily;
 
+	VkDevice logicDevice;
+	VkQueue logicQueue;
+
+	VkSurfaceKHR surface;
 };

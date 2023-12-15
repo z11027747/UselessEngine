@@ -3,7 +3,7 @@
 #include <vector>
 
 class Context;
-class VkDebugUtilsMessengerCreateInfoEXT;
+struct VkDebugUtilsMessengerCreateInfoEXT;
 
 class RenderSystem final {
 public:
@@ -11,20 +11,27 @@ public:
 	static void CreateGlobal(Context*);
 
 	//instance
-	static void CreateVKInstance(Context*);
-	static void DestroyVKInstance(Context*);
+	static void CreateInstance(Context*);
+	static void DestroyInstance(Context*);
 	static bool CheckInstanceExtension(const char*);
 	static bool CheckInstanceLayer(const char*);
 
 	//debugCallback
 	static void CreateDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
 	static void CreateDebugCallback(Context*);
+	static void DestroyDebugCallback(Context*);
 
 	//physicsDevice
 	static void PickupPhysicalDevice(Context*);
 
 	//logicDevice
 	static void CreateLogicDevice(Context*);
+	static void GetLogicDeviceQueue(Context*);
+	
+	//surface
+	static void CreateSurface(Context*);
+	static void DestroySurface(Context*);
 
-
+	//memory
+	static void CheckPhysicalDeviceMemory(Context*);
 };

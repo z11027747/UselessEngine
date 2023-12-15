@@ -5,8 +5,15 @@
 #include "base.h"
 #include "render/system.h"
 
+class GLFWwindow;
+
 class Context final {
 public:
+	GLFWwindow* window;
+
+	Context(GLFWwindow* w) {
+		window = w;
+	}
 
 	//render
 	EngineObject renderEO;
@@ -14,9 +21,11 @@ public:
 	void Create() {
 		//render
 		RenderSystem::CreateGlobal(this);
-		RenderSystem::CreateVKInstance(this);
-		RenderSystem::CreateDebugCallback(this);
+		RenderSystem::CreateInstance(this);
+		//RenderSystem::CreateDebugCallback(this);
+		RenderSystem::CreateSurface(this);
 		RenderSystem::PickupPhysicalDevice(this);
+		//RenderSystem::CheckPhysicalDeviceMemory(this);
 	}
 
 	void Update() {
@@ -24,7 +33,9 @@ public:
 	}
 
 	void Destroy() {
-		RenderSystem::DestroyVKInstance(this);
+		RenderSystem::DestroySurface(this);
+		//RenderSystem::DestroyDebugCallback(this);
+		RenderSystem::DestroyInstance(this);
 	}
 
 };
