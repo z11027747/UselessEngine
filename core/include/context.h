@@ -1,11 +1,10 @@
 
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
 #include <map>
 #include "base.h"
 #include "render/system.h"
-
-class GLFWwindow;
 
 class Context final {
 public:
@@ -26,6 +25,7 @@ public:
 		RenderSystem::CreateSurface(this);
 		RenderSystem::PickupPhysicalDevice(this);
 		//RenderSystem::CheckPhysicalDeviceMemory(this);
+		RenderSystem::CreateSwapchian(this);
 	}
 
 	void Update() {

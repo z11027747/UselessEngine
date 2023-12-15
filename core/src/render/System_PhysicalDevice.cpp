@@ -64,9 +64,7 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 			if (queueFamilyPropety.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 
 				//支持呈现图像到窗口表面能力的队列族
-				VkBool32 support;
-				vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &support);
-				if (!support) {
+				if (!CheckSwapchainSupport(context, physicalDevice, i)) {
 					continue;
 				}
 

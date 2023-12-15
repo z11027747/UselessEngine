@@ -1,9 +1,9 @@
 ﻿#pragma once
 
+#include <vulkan/vulkan.h>
 #include <vector>
 
 class Context;
-struct VkDebugUtilsMessengerCreateInfoEXT;
 
 class RenderSystem final {
 public:
@@ -27,10 +27,15 @@ public:
 	//logicDevice
 	static void CreateLogicDevice(Context*);
 	static void GetLogicDeviceQueue(Context*);
-	
+
 	//surface
 	static void CreateSurface(Context*);
 	static void DestroySurface(Context*);
+
+	//swapchain
+	static bool CheckSwapchainSupport(Context*, const VkPhysicalDevice&, int);
+	static VkSurfaceFormatKHR GetSwapchainSurfaceFormat(Context*);
+	static void CreateSwapchian(Context*);
 
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);

@@ -26,6 +26,13 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 
 	deviceCreateInfo.queueCreateInfoCount = 1;
 	deviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
+
+	std::vector<const char*> deviceExtensions = {
+		"VK_KHR_swapchain"
+	};
+	deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+	deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
+
 	deviceCreateInfo.enabledLayerCount = 0;
 
 	auto ret = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &globalInfo.logicDevice);
