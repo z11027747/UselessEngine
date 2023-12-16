@@ -7,8 +7,8 @@
 void RenderSystem::CreateSurface(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& instance = globalInfo.instance;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& instance = globalInfo->instance;
 
 	//glfwCreateWindowSurface 本质上就做了这件事
 	// VkWin32SurfaceCreateInfoKHR createInfo = {};
@@ -16,7 +16,7 @@ void RenderSystem::CreateSurface(Context* context) {
 	// createInfo.hwnd = glfwGetWin32Window(window);
 	// createInfo.hinstance = GetModuleHandle(nullptr);
 
-	auto ret = glfwCreateWindowSurface(instance, context->window, nullptr, &globalInfo.surface);
+	auto ret = glfwCreateWindowSurface(instance, context->window, nullptr, &globalInfo->surface);
 	if (ret != VK_SUCCESS) {
 		throw std::runtime_error("create surface error");
 	}
@@ -25,9 +25,9 @@ void RenderSystem::CreateSurface(Context* context) {
 void RenderSystem::DestroySurface(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& instance = globalInfo.instance;
-	auto& surfaceKHR = globalInfo.surface;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& instance = globalInfo->instance;
+	auto& surfaceKHR = globalInfo->surface;
 
 	vkDestroySurfaceKHR(instance, surfaceKHR, nullptr);
 }

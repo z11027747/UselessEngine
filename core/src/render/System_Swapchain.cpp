@@ -8,8 +8,8 @@ bool RenderSystem::CheckSwapchainSupport(Context* context,
 {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& surface = globalInfo.surface;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& surface = globalInfo->surface;
 
 	VkBool32 support;
 	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &support);
@@ -23,9 +23,9 @@ bool RenderSystem::CheckSwapchainSupport(Context* context,
 VkSurfaceFormatKHR RenderSystem::GetSwapchainSurfaceFormat(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& physicalDevice = globalInfo.physicalDevice;
-	auto& surface = globalInfo.surface;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& physicalDevice = globalInfo->physicalDevice;
+	auto& surface = globalInfo->surface;
 
 	//表面格式
 	uint32_t surfaceFormatCount;
@@ -56,9 +56,9 @@ VkSurfaceFormatKHR RenderSystem::GetSwapchainSurfaceFormat(Context* context) {
 VkPresentModeKHR RenderSystem::GetSwapchainPresentMode(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& physicalDevice = globalInfo.physicalDevice;
-	auto& surface = globalInfo.surface;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& physicalDevice = globalInfo->physicalDevice;
+	auto& surface = globalInfo->surface;
 
 	//可用的呈现模式
 	uint32_t presentModeCount;
@@ -80,9 +80,9 @@ VkPresentModeKHR RenderSystem::GetSwapchainPresentMode(Context* context) {
 VkSurfaceCapabilitiesKHR RenderSystem::GetSwapchainCapbilities(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& physicalDevice = globalInfo.physicalDevice;
-	auto& surface = globalInfo.surface;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& physicalDevice = globalInfo->physicalDevice;
+	auto& surface = globalInfo->surface;
 
 	VkSurfaceCapabilitiesKHR surfaceCapabilities;
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities);
@@ -93,9 +93,9 @@ VkSurfaceCapabilitiesKHR RenderSystem::GetSwapchainCapbilities(Context* context)
 void RenderSystem::CreateSwapchian(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& logicDevice = globalInfo.logicDevice;
-	auto& surface = globalInfo.surface;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo->logicDevice;
+	auto& surface = globalInfo->surface;
 
 	auto surfaceFormat = GetSwapchainSurfaceFormat(context);
 	auto presentMode = GetSwapchainPresentMode(context);
@@ -128,21 +128,21 @@ void RenderSystem::CreateSwapchian(Context* context) {
 	swapchainCreateInfo.clipped = true;
 	swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
-	auto ret = vkCreateSwapchainKHR(logicDevice, &swapchainCreateInfo, nullptr, &globalInfo.swapchain);
+	auto ret = vkCreateSwapchainKHR(logicDevice, &swapchainCreateInfo, nullptr, &globalInfo->swapchain);
 	if (ret != VK_SUCCESS) {
 		throw std::runtime_error("create swapchain error");
 	}
 
-	globalInfo.swapChainImageFormat = surfaceFormat.format;
-	globalInfo.swapChainExtent = surfaceCapabilities.currentExtent;
+	globalInfo->swapChainImageFormat = surfaceFormat.format;
+	globalInfo->swapChainExtent = surfaceCapabilities.currentExtent;
 }
 
 void RenderSystem::DestroySwapchian(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& logicDevice = globalInfo.logicDevice;
-	auto& swapchain = globalInfo.swapchain;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo->logicDevice;
+	auto& swapchain = globalInfo->swapchain;
 
 	vkDestroySwapchainKHR(logicDevice, swapchain, nullptr);
 }
@@ -151,14 +151,14 @@ void RenderSystem::DestroySwapchian(Context* context) {
 void RenderSystem::GetSwapchianImages(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& logicDevice = globalInfo.logicDevice;
-	auto& swapchain = globalInfo.swapchain;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo->logicDevice;
+	auto& swapchain = globalInfo->swapchain;
 
 	uint32_t swapchainImageCount;
 	vkGetSwapchainImagesKHR(logicDevice, swapchain, &swapchainImageCount, nullptr);
 
-	auto& swapchainImages = globalInfo.swapchainImages;
+	auto& swapchainImages = globalInfo->swapchainImages;
 	swapchainImages.resize(swapchainImageCount);
 	vkGetSwapchainImagesKHR(logicDevice, swapchain, &swapchainImageCount, swapchainImages.data());
 }
@@ -167,16 +167,16 @@ void RenderSystem::GetSwapchianImages(Context* context) {
 void RenderSystem::CreateSwapchianImageViews(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& logicDevice = globalInfo.logicDevice;
-	auto& swapchain = globalInfo.swapchain;
-	auto swapChainImageFormat = globalInfo.swapChainImageFormat;
-	auto& swapChainExtent = globalInfo.swapChainExtent;
-	auto& swapchainImages = globalInfo.swapchainImages;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo->logicDevice;
+	auto& swapchain = globalInfo->swapchain;
+	auto swapChainImageFormat = globalInfo->swapChainImageFormat;
+	auto& swapChainExtent = globalInfo->swapChainExtent;
+	auto& swapchainImages = globalInfo->swapchainImages;
 
 	auto swapchainImageCount = swapchainImages.size();
 
-	auto& swapchainImageViews = globalInfo.swapchainImageViews;
+	auto& swapchainImageViews = globalInfo->swapchainImageViews;
 	swapchainImageViews.resize(swapchainImageCount);
 
 	for (uint32_t i = 0; i < swapchainImageCount; i++) {
@@ -216,9 +216,9 @@ void RenderSystem::CreateSwapchianImageViews(Context* context) {
 void RenderSystem::DestroySwapchianImageViews(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& logicDevice = globalInfo.logicDevice;
-	auto& swapchainImageViews = globalInfo.swapchainImageViews;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo->logicDevice;
+	auto& swapchainImageViews = globalInfo->swapchainImageViews;
 
 	for (auto& swapchainImageView : swapchainImageViews) {
 		vkDestroyImageView(logicDevice, swapchainImageView, nullptr);

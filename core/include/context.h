@@ -4,8 +4,11 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <unordered_map>
+#include <memory>
 #include "base.h"
 #include "render/system.h"
+#include "tool/system.h"
 
 class Context final {
 public:
@@ -16,7 +19,8 @@ public:
 	}
 
 	//render
-	EngineObject renderEO;
+	std::shared_ptr<EngineObject> renderEO;
+	std::unordered_map<std::string, std::shared_ptr<EngineObject>> shaderEOMap;
 
 	void Create() {
 		//render
@@ -31,6 +35,7 @@ public:
 		RenderSystem::CreateSwapchian(this);
 		RenderSystem::GetSwapchianImages(this);
 		RenderSystem::CreateSwapchianImageViews(this);
+		RenderSystem::CreateShader(this, "test");
 	}
 
 	void Update() {
@@ -38,6 +43,7 @@ public:
 	}
 
 	void Destroy() {
+		RenderSystem::DestroyAllShaders(this);
 		RenderSystem::DestroySwapchianImageViews(this);
 		RenderSystem::DestroySwapchian(this);
 		RenderSystem::DestroyLogicDevice(this);

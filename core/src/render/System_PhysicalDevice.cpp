@@ -7,12 +7,12 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 
 	auto& renderEO = context->renderEO;
 
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
-	auto& instance = globalInfo.instance;
-	auto& surface = globalInfo.surface;
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
+	auto& instance = globalInfo->instance;
+	auto& surface = globalInfo->surface;
 
-	globalInfo.physicalDevice = nullptr;
-	globalInfo.physicalDeviceGraphicsFamily = -1;
+	globalInfo->physicalDevice = nullptr;
+	globalInfo->physicalDeviceGraphicsFamily = -1;
 
 	uint32_t physicalDeviceCount;
 	vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
@@ -66,8 +66,8 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 					continue;
 				}
 
-				globalInfo.physicalDevice = physicalDevice;
-				globalInfo.physicalDeviceGraphicsFamily = i;
+				globalInfo->physicalDevice = physicalDevice;
+				globalInfo->physicalDeviceGraphicsFamily = i;
 				return;
 			}
 		}

@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vector>
+#include <string>
 
 class Context;
 
@@ -46,6 +47,9 @@ public:
 
 	//graphicsPipeline
 
+	//shader
+	static void CreateShader(Context*, const std::string&);
+	static void DestroyAllShaders(Context*);
 
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);

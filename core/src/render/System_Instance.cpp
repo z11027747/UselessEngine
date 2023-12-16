@@ -5,7 +5,7 @@
 void RenderSystem::CreateInstance(Context* context) {
 
 	auto& renderEO = context->renderEO;
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
 
 	uint32_t apiVersion;
 	auto versionRet = vkEnumerateInstanceVersion(&apiVersion);
@@ -32,7 +32,7 @@ void RenderSystem::CreateInstance(Context* context) {
 
 	std::vector<const char*> enabledExtensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
-	if (globalInfo.enableValidationLayer) {
+	if (globalInfo->enableValidationLayer) {
 		enabledExtensions.push_back("VK_EXT_debug_utils");
 	}
 
@@ -42,7 +42,7 @@ void RenderSystem::CreateInstance(Context* context) {
 	std::vector<const char*> enabledLayers;
 	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo = {};
 
-	if (globalInfo.enableValidationLayer) {
+	if (globalInfo->enableValidationLayer) {
 		enabledLayers.push_back("VK_LAYER_KHRONOS_validation");
 
 		instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(enabledLayers.size());
@@ -57,7 +57,7 @@ void RenderSystem::CreateInstance(Context* context) {
 		instanceCreateInfo.pNext = nullptr;
 	}
 
-	auto ret = vkCreateInstance(&instanceCreateInfo, nullptr, &globalInfo.instance);
+	auto ret = vkCreateInstance(&instanceCreateInfo, nullptr, &globalInfo->instance);
 	if (ret != VK_SUCCESS) {
 		throw std::runtime_error("create instance error");
 	}
@@ -66,10 +66,10 @@ void RenderSystem::CreateInstance(Context* context) {
 void RenderSystem::DestroyInstance(Context* context) {
 
 	auto& renderEO = context->renderEO;
-	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
 
-	vkDestroyInstance(globalInfo.instance, nullptr);
-	globalInfo.instance = nullptr;
+	vkDestroyInstance(globalInfo->instance, nullptr);
+	globalInfo->instance = nullptr;
 }
 
 bool RenderSystem::CheckInstanceExtension(const char* extensionName) {

@@ -7,24 +7,26 @@
 #include <stdexcept>
 
 struct EngineComp {
+	virtual ~EngineComp() {};
 };
 
 class EngineObject final {
 public:
 
-	std::unordered_map<std::type_index, std::unique_ptr<EngineComp>> compMap;
+	std::unordered_map<std::type_index, std::shared_ptr<EngineComp>> compMap;
+
+	EngineObject() = default;
 
 	template <typename T>
-	void AddComponent(T&& comp) {
-		auto compPtr = std::make_unique<T>(std::forward<T>(comp));
-		compMap[typeid(T)] = std::move(compPtr);
+	void AddComponent(std::shared_ptr<T>& comp) {
+		compMap.emplace(typeid(T), comp);
 	}
 
 	template <typename T>
-	T& GetComponent() const {
+	std::shared_ptr<T> GetComponent() const {
 		auto it = compMap.find(typeid(T));
 		if (it != compMap.end()) {
-			return static_cast<T&>(*it->second);
+			return std::static_pointer_cast<T>(it->second);
 		}
 
 		throw std::runtime_error("Component not found.");

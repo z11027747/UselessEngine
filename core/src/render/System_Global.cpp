@@ -6,11 +6,13 @@ void RenderSystem::CreateGlobal(Context* context) {
 
 	auto& renderEO = context->renderEO;
 
-	RenderGlobal renderGlobal = {};
+	renderEO = std::make_shared<EngineObject>();
+
+	auto renderGlobal = std::make_shared<RenderGlobal>();
 #ifndef NDEBUG
-	renderGlobal.enableValidationLayer = true;
+	renderGlobal->enableValidationLayer = true;
 #else
-	renderGlobal.enableValidationLayer = false;
+	renderGlobal->enableValidationLayer = false;
 #endif
-	renderEO.AddComponent<RenderGlobal>(std::move(renderGlobal));
+	renderEO->AddComponent<RenderGlobal>(renderGlobal);
 }

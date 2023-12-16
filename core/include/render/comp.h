@@ -30,3 +30,10 @@ struct RenderGlobal final : public EngineComp {
 	std::vector<VkImageView> swapchainImageViews;
 	
 };
+
+struct RenderShader final : public EngineComp {
+
+	VkShaderModule vertModule;
+	VkShaderModule fragModule;
+
+};
