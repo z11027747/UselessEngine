@@ -28,6 +28,8 @@ public:
 		RenderSystem::CreateLogicDevice(this);
 		RenderSystem::GetLogicDeviceQueue(this);
 		RenderSystem::CreateSwapchian(this);
+		RenderSystem::GetSwapchianImages(this);
+		RenderSystem::CreateSwapchianImageViews(this);
 	}
 
 	void Update() {
@@ -35,6 +37,7 @@ public:
 	}
 
 	void Destroy() {
+		RenderSystem::DestroySwapchianImageViews(this);
 		RenderSystem::DestroySwapchian(this);
 		RenderSystem::DestroyLogicDevice(this);
 		RenderSystem::DestroySurface(this);

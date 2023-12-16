@@ -121,20 +121,22 @@ void RenderSystem::CreateSwapchian(Context* context) {
 	//	VK_SHARING_MODE_CONCURRENT：图像可以在多个队列族间使用，不需要显式地改变图像所有权。
 	swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-
 	swapchainCreateInfo.preTransform = surfaceCapabilities.currentTransform; //图形变换操作，可以反转之类的
 	swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; //忽略alpha通道
 	swapchainCreateInfo.presentMode = presentMode;
 
 	//clipped为VK_TRUE表示我们不关心被窗口系统中的其它窗口遮挡的像素的颜色
 	//	但如果我们回读窗口的像素值就可能出现问题。
-	swapchainCreateInfo.clipped = VK_TRUE;
+	swapchainCreateInfo.clipped = true;
 	swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
 	auto ret = vkCreateSwapchainKHR(logicDevice, &swapchainCreateInfo, nullptr, &globalInfo.swapchain);
 	if (ret != VK_SUCCESS) {
 		throw std::runtime_error("create swapchain error");
 	}
+
+	globalInfo.swapChainImageFormat = surfaceFormat.format;
+	globalInfo.swapChainExtent = surfaceCapabilities.currentExtent;
 }
 
 void RenderSystem::DestroySwapchian(Context* context) {
@@ -145,4 +147,83 @@ void RenderSystem::DestroySwapchian(Context* context) {
 	auto& swapchain = globalInfo.swapchain;
 
 	vkDestroySwapchainKHR(logicDevice, swapchain, nullptr);
+}
+
+//获取交换链图像的图像句柄，之后使用这些图像句柄进行渲染操作
+void RenderSystem::GetSwapchianImages(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo.logicDevice;
+	auto& swapchain = globalInfo.swapchain;
+
+	uint32_t swapchainImageCount;
+	vkGetSwapchainImagesKHR(logicDevice, swapchain, &swapchainImageCount, nullptr);
+
+	auto& swapchainImages = globalInfo.swapchainImages;
+	swapchainImages.resize(swapchainImageCount);
+	vkGetSwapchainImagesKHR(logicDevice, swapchain, &swapchainImageCount, swapchainImages.data());
+}
+
+//任何VkImage对象，都需要创建一个VkImageView对象来绑定访问它
+void RenderSystem::CreateSwapchianImageViews(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo.logicDevice;
+	auto& swapchain = globalInfo.swapchain;
+	auto swapChainImageFormat = globalInfo.swapChainImageFormat;
+	auto& swapChainExtent = globalInfo.swapChainExtent;
+	auto& swapchainImages = globalInfo.swapchainImages;
+
+	auto swapchainImageCount = swapchainImages.size();
+
+	auto& swapchainImageViews = globalInfo.swapchainImageViews;
+	swapchainImageViews.resize(swapchainImageCount);
+
+	for (uint32_t i = 0; i < swapchainImageCount; i++) {
+
+		auto& swapchainImage = swapchainImages[i];
+
+		VkImageViewCreateInfo imageViewCreateInfo = {};
+		imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		imageViewCreateInfo.image = swapchainImage;
+		imageViewCreateInfo.format = swapChainImageFormat;
+		imageViewCreateInfo.viewType = VkImageViewType::VK_IMAGE_VIEW_TYPE_2D; //二维纹理
+
+		//进行图像颜色通道的映射
+		VkComponentMapping mapping = {};
+		mapping.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+		mapping.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+		mapping.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+		mapping.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+		imageViewCreateInfo.components = mapping;
+
+		//指定图像的用途和图像的哪一部分可以被访问
+		VkImageSubresourceRange subresourceRange = {};
+		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		subresourceRange.baseArrayLayer = 0;
+		subresourceRange.layerCount = 1;
+		subresourceRange.baseMipLevel = 0;
+		subresourceRange.levelCount = 1;
+		imageViewCreateInfo.subresourceRange = subresourceRange;
+
+		auto ret = vkCreateImageView(logicDevice, &imageViewCreateInfo, nullptr, &swapchainImageViews[i]);
+		if (ret != VK_SUCCESS) {
+			throw std::runtime_error("create imageView error");
+		}
+	}
+}
+
+void RenderSystem::DestroySwapchianImageViews(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo.logicDevice;
+	auto& swapchainImageViews = globalInfo.swapchainImageViews;
+
+	for (auto& swapchainImageView : swapchainImageViews) {
+		vkDestroyImageView(logicDevice, swapchainImageView, nullptr);
+	}
+
 }

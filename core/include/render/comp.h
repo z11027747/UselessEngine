@@ -24,5 +24,9 @@ struct RenderGlobal final : public EngineComp {
 	VkSurfaceKHR surface;
 
 	VkSwapchainKHR swapchain;
+	VkFormat swapChainImageFormat;
+	VkExtent2D swapChainExtent;
+	std::vector<VkImage> swapchainImages;
+	std::vector<VkImageView> swapchainImageViews;
 	
 };

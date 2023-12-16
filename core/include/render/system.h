@@ -40,6 +40,9 @@ public:
 	static VkSurfaceCapabilitiesKHR GetSwapchainCapbilities(Context*);
 	static void CreateSwapchian(Context*);
 	static void DestroySwapchian(Context*);
+	static void GetSwapchianImages(Context*);
+	static void CreateSwapchianImageViews(Context*);
+	static void DestroySwapchianImageViews(Context*);
 
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);
