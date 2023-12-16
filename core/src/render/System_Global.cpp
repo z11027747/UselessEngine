@@ -1,6 +1,5 @@
-﻿#include <vulkan/vulkan.h>
+﻿
 #include "render/comp.h"
-#include "render/system.h"
 #include "context.h"
 
 void RenderSystem::CreateGlobal(Context* context) {

@@ -44,6 +44,9 @@ public:
 	static void CreateSwapchianImageViews(Context*);
 	static void DestroySwapchianImageViews(Context*);
 
+	//graphicsPipeline
+
+
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);
 };

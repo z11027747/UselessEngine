@@ -1,7 +1,5 @@
-﻿#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+﻿
 #include "render/comp.h"
-#include "render/system.h"
 #include "context.h"
 
 //创建instance之后，可以按照需要选择任意的物理设备

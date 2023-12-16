@@ -1,6 +1,5 @@
-﻿#include <GLFW/glfw3.h>
+﻿
 #include "render/comp.h"
-#include "render/system.h"
 #include "context.h"
 
 //支持呈现图像到窗口表面能力的队列族
@@ -16,7 +15,6 @@ bool RenderSystem::CheckSwapchainSupport(Context* context,
 	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &support);
 	return support == VK_TRUE;
 }
-
 
 //VkSurfaceFormatKHR 表面格式
 //	format     指定颜色通道和存储类型
@@ -225,5 +223,4 @@ void RenderSystem::DestroySwapchianImageViews(Context* context) {
 	for (auto& swapchainImageView : swapchainImageViews) {
 		vkDestroyImageView(logicDevice, swapchainImageView, nullptr);
 	}
-
 }

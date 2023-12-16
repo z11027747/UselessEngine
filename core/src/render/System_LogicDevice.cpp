@@ -1,7 +1,5 @@
-﻿#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+﻿
 #include "render/comp.h"
-#include "render/system.h"
 #include "context.h"
 
 //选取physicalDevice后，需要创建逻辑设备，之后的操作都是基于逻辑设备的

@@ -1,7 +1,5 @@
-﻿#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+﻿
 #include "render/comp.h"
-#include "render/system.h"
 #include "context.h"
 
 //VkSurfaceKHR对象是平台无关的，是个扩展，指的就是窗口

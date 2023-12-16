@@ -1,7 +1,5 @@
-﻿#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+﻿
 #include "render/comp.h"
-#include "render/system.h"
 #include "context.h"
 
 //内存
