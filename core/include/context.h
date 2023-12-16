@@ -25,6 +25,8 @@ public:
 		RenderSystem::CreateSurface(this);
 		RenderSystem::PickupPhysicalDevice(this);
 		//RenderSystem::CheckPhysicalDeviceMemory(this);
+		RenderSystem::CreateLogicDevice(this);
+		RenderSystem::GetLogicDeviceQueue(this);
 		RenderSystem::CreateSwapchian(this);
 	}
 
@@ -33,6 +35,8 @@ public:
 	}
 
 	void Destroy() {
+		RenderSystem::DestroySwapchian(this);
+		RenderSystem::DestroyLogicDevice(this);
 		RenderSystem::DestroySurface(this);
 		//RenderSystem::DestroyDebugCallback(this);
 		RenderSystem::DestroyInstance(this);

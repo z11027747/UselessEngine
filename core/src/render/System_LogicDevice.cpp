@@ -43,7 +43,6 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 
 //获取创建的设备队列
 void RenderSystem::GetLogicDeviceQueue(Context* context) {
-
 	auto& renderEO = context->renderEO;
 
 	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
@@ -51,4 +50,13 @@ void RenderSystem::GetLogicDeviceQueue(Context* context) {
 	auto physicalDeviceGraphicsFamily = globalInfo.physicalDeviceGraphicsFamily;
 
 	vkGetDeviceQueue(logicDevice, physicalDeviceGraphicsFamily, 0, &globalInfo.logicQueue);
+}
+
+void RenderSystem::DestroyLogicDevice(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto& globalInfo = renderEO.GetComponent<RenderGlobal>();
+	auto& logicDevice = globalInfo.logicDevice;
+
+	vkDestroyDevice(logicDevice, nullptr);
 }

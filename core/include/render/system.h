@@ -27,6 +27,7 @@ public:
 	//logicDevice
 	static void CreateLogicDevice(Context*);
 	static void GetLogicDeviceQueue(Context*);
+	static void DestroyLogicDevice(Context*);
 
 	//surface
 	static void CreateSurface(Context*);
@@ -35,7 +36,10 @@ public:
 	//swapchain
 	static bool CheckSwapchainSupport(Context*, const VkPhysicalDevice&, int);
 	static VkSurfaceFormatKHR GetSwapchainSurfaceFormat(Context*);
+	static VkPresentModeKHR GetSwapchainPresentMode(Context*);
+	static VkSurfaceCapabilitiesKHR GetSwapchainCapbilities(Context*);
 	static void CreateSwapchian(Context*);
+	static void DestroySwapchian(Context*);
 
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);

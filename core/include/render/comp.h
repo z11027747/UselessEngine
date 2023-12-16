@@ -22,7 +22,7 @@ struct RenderGlobal final : public EngineComp {
 	VkQueue logicQueue;
 
 	VkSurfaceKHR surface;
-	VkSurfaceCapabilitiesKHR surfaceCapabilities;
-	std::vector<VkSurfaceFormatKHR> surfaceFormats;
-	std::vector<VkPresentModeKHR> presentModes;
+
+	VkSwapchainKHR swapchain;
+	
 };
