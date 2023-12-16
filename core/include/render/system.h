@@ -45,11 +45,14 @@ public:
 	static void CreateSwapchianImageViews(Context*);
 	static void DestroySwapchianImageViews(Context*);
 
-	//graphicsPipeline
-
 	//shader
 	static void CreateShader(Context*, const std::string&);
 	static void DestroyAllShaders(Context*);
+
+	//graphicsPipeline
+	static void CreateGraphicsPipeline(Context*);
+	static void CreateGraphicsPipelineLayout(Context*);
+	static void DestroyGraphicsPipelineLayout(Context*);
 
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);

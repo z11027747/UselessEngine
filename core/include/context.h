@@ -3,7 +3,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
-#include <map>
 #include <unordered_map>
 #include <memory>
 #include "base.h"
@@ -20,7 +19,6 @@ public:
 
 	//render
 	std::shared_ptr<EngineObject> renderEO;
-	std::unordered_map<std::string, std::shared_ptr<EngineObject>> shaderEOMap;
 
 	void Create() {
 		//render
@@ -36,6 +34,7 @@ public:
 		RenderSystem::GetSwapchianImages(this);
 		RenderSystem::CreateSwapchianImageViews(this);
 		RenderSystem::CreateShader(this, "test");
+		RenderSystem::CreateGraphicsPipelineLayout(this);
 	}
 
 	void Update() {
@@ -43,6 +42,7 @@ public:
 	}
 
 	void Destroy() {
+		RenderSystem::DestroyGraphicsPipelineLayout(this);
 		RenderSystem::DestroyAllShaders(this);
 		RenderSystem::DestroySwapchianImageViews(this);
 		RenderSystem::DestroySwapchian(this);

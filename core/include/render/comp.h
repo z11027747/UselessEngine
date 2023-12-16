@@ -2,9 +2,12 @@
 
 #include <vulkan/vulkan.h>
 #include <vector>
+#include <unordered_map>
 #include "base.h"
 
-struct RenderGlobal final : public EngineComp {
+struct RenderShader;
+
+struct RenderGlobalComp final : public EngineComp {
 
 	//VkInstance 底层就是个指针
 	//#define VK_DEFINE_HANDLE(object)
@@ -12,7 +15,7 @@ struct RenderGlobal final : public EngineComp {
 
 	VkInstance instance;
 
-	bool enableValidationLayer;
+	bool enabledDebug;
 	VkDebugUtilsMessengerEXT debugCallback;
 
 	VkPhysicalDevice physicalDevice;
@@ -28,12 +31,16 @@ struct RenderGlobal final : public EngineComp {
 	VkExtent2D swapChainExtent;
 	std::vector<VkImage> swapchainImages;
 	std::vector<VkImageView> swapchainImageViews;
-	
+
+	std::unordered_map<std::string, std::shared_ptr<RenderShader>> shaderMap;
+
+	VkPipeline graphicsPipeline;
+	VkPipelineLayout graphicsPipelineLayout;
 };
 
-struct RenderShader final : public EngineComp {
+struct RenderShader final {
 
-	VkShaderModule vertModule;
-	VkShaderModule fragModule;
+	std::vector<VkShaderModule> modules;
+	std::vector<VkPipelineShaderStageCreateInfo> stageCreateInfos;
 
 };

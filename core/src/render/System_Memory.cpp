@@ -43,8 +43,8 @@ void RenderSystem::CheckPhysicalDeviceMemory(Context* context) {
 
 	auto& renderEO = context->renderEO;
 
-	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
-	auto& physicalDevice = globalInfo->physicalDevice;
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& physicalDevice = globalInfoComp->physicalDevice;
 
 	VkPhysicalDeviceMemoryProperties memoryProerties;
 	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProerties);

@@ -7,9 +7,9 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 
 	auto& renderEO = context->renderEO;
 
-	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
-	auto& physicalDevice = globalInfo->physicalDevice;
-	auto physicalDeviceGraphicsFamily = globalInfo->physicalDeviceGraphicsFamily;
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& physicalDevice = globalInfoComp->physicalDevice;
+	auto physicalDeviceGraphicsFamily = globalInfoComp->physicalDeviceGraphicsFamily;
 
 	VkDeviceCreateInfo deviceCreateInfo = {};
 	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -18,7 +18,7 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 	VkDeviceQueueCreateInfo queueCreateInfo = {};
 	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	queueCreateInfo.queueCount = 1;
-	queueCreateInfo.queueFamilyIndex = globalInfo->physicalDeviceGraphicsFamily;
+	queueCreateInfo.queueFamilyIndex = globalInfoComp->physicalDeviceGraphicsFamily;
 	float queuePrioprity = 1.0f;
 	queueCreateInfo.pQueuePriorities = &queuePrioprity;
 
@@ -33,7 +33,7 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 
 	deviceCreateInfo.enabledLayerCount = 0;
 
-	auto ret = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &globalInfo->logicDevice);
+	auto ret = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &globalInfoComp->logicDevice);
 	if (ret != VK_SUCCESS) {
 		throw std::runtime_error("create device error");
 	}
@@ -43,18 +43,18 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 void RenderSystem::GetLogicDeviceQueue(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
-	auto& logicDevice = globalInfo->logicDevice;
-	auto physicalDeviceGraphicsFamily = globalInfo->physicalDeviceGraphicsFamily;
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+	auto physicalDeviceGraphicsFamily = globalInfoComp->physicalDeviceGraphicsFamily;
 
-	vkGetDeviceQueue(logicDevice, physicalDeviceGraphicsFamily, 0, &globalInfo->logicQueue);
+	vkGetDeviceQueue(logicDevice, physicalDeviceGraphicsFamily, 0, &globalInfoComp->logicQueue);
 }
 
 void RenderSystem::DestroyLogicDevice(Context* context) {
 	auto& renderEO = context->renderEO;
 
-	auto globalInfo = renderEO->GetComponent<RenderGlobal>();
-	auto& logicDevice = globalInfo->logicDevice;
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
 
 	vkDestroyDevice(logicDevice, nullptr);
 }

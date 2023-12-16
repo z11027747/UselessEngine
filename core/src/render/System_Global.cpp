@@ -8,11 +8,11 @@ void RenderSystem::CreateGlobal(Context* context) {
 
 	renderEO = std::make_shared<EngineObject>();
 
-	auto renderGlobal = std::make_shared<RenderGlobal>();
+	auto renderGlobal = std::make_shared<RenderGlobalComp>();
 #ifndef NDEBUG
-	renderGlobal->enableValidationLayer = true;
+	renderGlobal->enabledDebug = true;
 #else
 	renderGlobal->enableValidationLayer = false;
 #endif
-	renderEO->AddComponent<RenderGlobal>(renderGlobal);
+	renderEO->AddComponent<RenderGlobalComp>(renderGlobal);
 }
