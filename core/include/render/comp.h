@@ -36,6 +36,7 @@ struct RenderGlobalComp final : public EngineComp {
 
 	VkPipeline graphicsPipeline;
 	VkPipelineLayout graphicsPipelineLayout;
+	VkRenderPass renderPass;
 };
 
 struct RenderShader final {

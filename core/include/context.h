@@ -24,7 +24,7 @@ public:
 		//render
 		RenderSystem::CreateGlobal(this);
 		RenderSystem::CreateInstance(this);
-		//RenderSystem::CreateDebugCallback(this);
+		RenderSystem::CreateDebugCallback(this);
 		RenderSystem::CreateSurface(this);
 		RenderSystem::PickupPhysicalDevice(this);
 		//RenderSystem::CheckPhysicalDeviceMemory(this);
@@ -35,6 +35,8 @@ public:
 		RenderSystem::CreateSwapchianImageViews(this);
 		RenderSystem::CreateShader(this, "test");
 		RenderSystem::CreateGraphicsPipelineLayout(this);
+		RenderSystem::CreateRenderPass(this);
+		RenderSystem::CreateGraphicsPipeline(this);
 	}
 
 	void Update() {
@@ -42,13 +44,15 @@ public:
 	}
 
 	void Destroy() {
+		RenderSystem::DestroyGraphicsPipeline(this);
+		RenderSystem::DestroyRenderPass(this);
 		RenderSystem::DestroyGraphicsPipelineLayout(this);
 		RenderSystem::DestroyAllShaders(this);
 		RenderSystem::DestroySwapchianImageViews(this);
 		RenderSystem::DestroySwapchian(this);
 		RenderSystem::DestroyLogicDevice(this);
 		RenderSystem::DestroySurface(this);
-		//RenderSystem::DestroyDebugCallback(this);
+		RenderSystem::DestroyDebugCallback(this);
 		RenderSystem::DestroyInstance(this);
 	}
 

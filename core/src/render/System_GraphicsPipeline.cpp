@@ -12,7 +12,19 @@ void RenderSystem::CreateGraphicsPipeline(Context* context) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& swapChainExtent = globalInfoComp->swapChainExtent;
+	auto& logicDevice = globalInfoComp->logicDevice;
+
+	VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
+	pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+
+	//着色器阶段
+	auto& shader = globalInfoComp->shaderMap["test"];
+	auto& shaderStageCreateInfos = shader->stageCreateInfos;
+
+	pipelineCreateInfo.stageCount = 2;
+	pipelineCreateInfo.pStages = shaderStageCreateInfos.data();
+
+	//固定功能阶段
 
 	//顶点输入：描述传递给顶点着色器的顶点数据格式
 	//	绑定：数据之间的间距和数据是按逐顶点的方式还是按逐实例的方式进行组织
@@ -40,6 +52,8 @@ void RenderSystem::CreateGraphicsPipeline(Context* context) {
 	viewportStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 
 	//视口
+	auto& swapChainExtent = globalInfoComp->swapChainExtent;
+
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
@@ -101,7 +115,44 @@ void RenderSystem::CreateGraphicsPipeline(Context* context) {
 		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachmentState.blendEnable = false;
 
+	VkPipelineColorBlendStateCreateInfo colorBlendingStateCreateInfo = {};
+	colorBlendingStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlendingStateCreateInfo.logicOpEnable = false;
+	colorBlendingStateCreateInfo.attachmentCount = 1;
+	colorBlendingStateCreateInfo.pAttachments = &colorBlendAttachmentState;
 
+	pipelineCreateInfo.pVertexInputState = &vertexInputStateCreateInfo;
+	pipelineCreateInfo.pInputAssemblyState = &inputAssemblyStateCreateInfo;
+	pipelineCreateInfo.pViewportState = &viewportStateCreateInfo;
+	pipelineCreateInfo.pRasterizationState = &rasterizationStateCreateInfo;
+	pipelineCreateInfo.pMultisampleState = &multisampleStateCreateInfo;
+	//pipelineCreateInfo.pDepthStencilState = 
+	pipelineCreateInfo.pColorBlendState = &colorBlendingStateCreateInfo;
+
+	//管线布局
+	auto& graphicsPipelineLayout = globalInfoComp->graphicsPipelineLayout;
+	pipelineCreateInfo.layout = graphicsPipelineLayout;
+
+	//渲染流程
+	auto& renderPass = globalInfoComp->renderPass;
+	pipelineCreateInfo.renderPass = renderPass;
+	pipelineCreateInfo.subpass = 0; //index
+
+	auto ret = vkCreateGraphicsPipelines(logicDevice, nullptr, 1, &pipelineCreateInfo, nullptr, &globalInfoComp->graphicsPipeline);
+	if (ret != VK_SUCCESS) {
+		throw std::runtime_error("create graphicsPipeline error!");
+	}
+
+}
+
+void RenderSystem::DestroyGraphicsPipeline(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+	auto& graphicsPipeline = globalInfoComp->graphicsPipeline;
+
+	vkDestroyPipeline(logicDevice, graphicsPipeline, nullptr);
 }
 
 //管线布局

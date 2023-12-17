@@ -51,8 +51,13 @@ public:
 
 	//graphicsPipeline
 	static void CreateGraphicsPipeline(Context*);
+	static void DestroyGraphicsPipeline(Context*);
 	static void CreateGraphicsPipelineLayout(Context*);
 	static void DestroyGraphicsPipelineLayout(Context*);
+
+	//renderPass
+	static void CreateRenderPass(Context*);
+	static void DestroyRenderPass(Context*);
 
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);
