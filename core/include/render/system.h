@@ -18,7 +18,7 @@ public:
 	static bool CheckInstanceLayer(const char*);
 
 	//debugCallback
-	static void GetDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
+	static void MakeDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
 	static void CreateDebugCallback(Context*);
 	static void DestroyDebugCallback(Context*);
 
@@ -48,10 +48,15 @@ public:
 	//shader
 	static void CreateShader(Context*, const std::string&);
 	static void DestroyAllShaders(Context*);
-	static std::vector<VkPipelineShaderStageCreateInfo> GetShaderModuleCreateInfos(std::vector<VkShaderModule>&);
+	static void MakeShaderModuleCreateInfos(std::vector<VkShaderModule>&, std::vector<VkPipelineShaderStageCreateInfo>&);
 
 	//fixed
-	static VkPipelineVertexInputStateCreateInfo GetVertexInputCreateInfo();
+	static void MakeVertexInputCreateInfo(VkPipelineVertexInputStateCreateInfo&);
+	static void MakeInputAssemblyCreateInfo(VkPipelineInputAssemblyStateCreateInfo&);
+	static void MakeViewportCreateInfo(VkViewport&, VkRect2D&, VkPipelineViewportStateCreateInfo&, VkExtent2D&);
+	static void MakeRasterizationCreateInfo(VkPipelineRasterizationStateCreateInfo&);
+	static void MakeMultisampleCreateInfo(VkPipelineMultisampleStateCreateInfo&);
+	static void MakeColorBlendCreateInfo(VkPipelineColorBlendAttachmentState&, VkPipelineColorBlendStateCreateInfo&);
 
 	//layout
 	static void CreatePipelineLayout(Context*);

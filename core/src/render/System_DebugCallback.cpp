@@ -19,7 +19,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	return VK_FALSE;
 }
 
-void RenderSystem::GetDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debugCreateInfo) {
+void RenderSystem::MakeDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debugCreateInfo) {
 
 	debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 	debugCreateInfo.messageSeverity =
@@ -45,7 +45,7 @@ void RenderSystem::CreateDebugCallback(Context* context) {
 	}
 
 	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo = {};
-	GetDebugCreateInfo(debugCreateInfo);
+	MakeDebugCreateInfo(debugCreateInfo);
 
 	//EXT函数不会自动加载
 	//vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &callback);

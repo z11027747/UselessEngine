@@ -34,7 +34,7 @@ public:
 		RenderSystem::GetSwapchianImages(this);
 		RenderSystem::CreateSwapchianImageViews(this);
 		RenderSystem::CreateShader(this, "test");
-		RenderSystem::CreateGraphicsPipelineLayout(this);
+		RenderSystem::CreatePipelineLayout(this);
 		RenderSystem::CreateRenderPass(this);
 		RenderSystem::CreateGraphicsPipeline(this);
 	}
@@ -46,7 +46,7 @@ public:
 	void Destroy() {
 		RenderSystem::DestroyGraphicsPipeline(this);
 		RenderSystem::DestroyRenderPass(this);
-		RenderSystem::DestroyGraphicsPipelineLayout(this);
+		RenderSystem::DestroyPipelineLayout(this);
 		RenderSystem::DestroyAllShaders(this);
 		RenderSystem::DestroySwapchianImageViews(this);
 		RenderSystem::DestroySwapchian(this);

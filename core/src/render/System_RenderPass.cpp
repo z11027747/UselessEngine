@@ -6,8 +6,6 @@
 //	我们需要指定使用的颜色和深度缓冲，以及采样数，渲染操作如何处理缓冲的内容
 
 //RenderPass 渲染流程
-
-
 void RenderSystem::CreateRenderPass(Context* context) {
 	auto& renderEO = context->renderEO;
 

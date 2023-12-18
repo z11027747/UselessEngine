@@ -49,7 +49,7 @@ void RenderSystem::CreateInstance(Context* context) {
 		instanceCreateInfo.ppEnabledLayerNames = enabledLayers.data();
 
 		//创建实例的同事，扩展debugcallback，把配置传过去
-		GetDebugCreateInfo(debugCreateInfo);
+		MakeDebugCreateInfo(debugCreateInfo);
 		instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 	}
 	else {

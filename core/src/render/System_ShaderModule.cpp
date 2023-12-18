@@ -45,8 +45,9 @@ void RenderSystem::DestroyAllShaders(Context* context) {
 	}
 }
 
-std::vector<VkPipelineShaderStageCreateInfo> RenderSystem::GetShaderModuleCreateInfos(std::vector<VkShaderModule>& shaderModules) {
-
+void RenderSystem::MakeShaderModuleCreateInfos(
+	std::vector<VkShaderModule>& shaderModules, std::vector<VkPipelineShaderStageCreateInfo>& stageCreateInfos)
+{
 	std::vector<VkShaderStageFlagBits> shaderStages = {
 		VK_SHADER_STAGE_VERTEX_BIT,
 		VK_SHADER_STAGE_FRAGMENT_BIT
@@ -54,17 +55,13 @@ std::vector<VkPipelineShaderStageCreateInfo> RenderSystem::GetShaderModuleCreate
 
 	int size = shaderModules.size();
 
-	std::vector<VkPipelineShaderStageCreateInfo> stageCreateInfos(size);
-
 	for (auto i = 0; i < size; i++) {
 		VkPipelineShaderStageCreateInfo stageCreateInfo = {};
 		stageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		stageCreateInfo.stage = &shaderStages[i];
-		stageCreateInfo.module = &shaderMoudles[i];
+		stageCreateInfo.stage = shaderStages[i];
+		stageCreateInfo.module = shaderModules[i];
 		stageCreateInfo.pName = "main";
 
 		stageCreateInfos.push_back(stageCreateInfo);
 	}
-
-	return stageCreateInfos;
 }
