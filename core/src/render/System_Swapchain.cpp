@@ -155,7 +155,7 @@ void RenderSystem::GetSwapchianImages(Context* context) {
 	auto& logicDevice = globalInfoComp->logicDevice;
 	auto& swapchain = globalInfoComp->swapchain;
 
-	uint32_t swapchainImageCount;
+	uint32_t swapchainImageCount = 0;
 	vkGetSwapchainImagesKHR(logicDevice, swapchain, &swapchainImageCount, nullptr);
 
 	auto& swapchainImages = globalInfoComp->swapchainImages;

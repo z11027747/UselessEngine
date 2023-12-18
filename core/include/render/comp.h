@@ -35,4 +35,15 @@ struct RenderGlobalComp final : public EngineComp {
 	VkPipelineLayout graphicsPipelineLayout;
 	VkRenderPass renderPass;
 
+	std::vector<VkFramebuffer> swapchainFrameBuffers;
+
+	VkCommandPool commandPool;
+	std::vector<VkCommandBuffer> commandBuffers;
+
+	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector<VkSemaphore> renderFinishedSemaphores;
+	uint32_t maxFrameInFlight;
+	uint32_t currFrame;
+	std::vector<VkFence> inFlightFences;
+
 };

@@ -14,8 +14,6 @@ void RenderSystem::CreateRenderPass(Context* context) {
 	auto& swapChainExtent = globalInfoComp->swapChainExtent;
 	auto swapChainImageFormat = globalInfoComp->swapChainImageFormat;
 
-	auto useCount = globalInfoComp.use_count();
-
 	//交换链图像的颜色缓冲附着
 	VkAttachmentDescription colorAttachmentDescription = {};
 	colorAttachmentDescription.format = swapChainImageFormat;
@@ -70,6 +68,21 @@ void RenderSystem::CreateRenderPass(Context* context) {
 	createInfo.pAttachments = &colorAttachmentDescription;
 	createInfo.subpassCount = 1;
 	createInfo.pSubpasses = &subpassDescription;
+
+	//子流程依赖：描述每一步的subpass什么时候可以进行下一步的subpass
+
+	VkSubpassDependency dependency = {};
+	dependency.srcSubpass = VK_SUBPASS_EXTERNAL; //开始前的子流程，代表隐含的子流程
+	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT; //等待交换链结束对图像的读取
+	dependency.srcAccessMask = 0;
+
+	dependency.dstSubpass = 0; //结束后的子流程，是之前创建的subass的索引0
+	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT
+		| VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT; //目标子pass需要读取和写入颜色附件
+
+	createInfo.dependencyCount = 1;
+	createInfo.pDependencies = &dependency;
 
 	auto ret = vkCreateRenderPass(logicDevice, &createInfo, nullptr, &globalInfoComp->renderPass);
 	if (ret != VK_SUCCESS) {

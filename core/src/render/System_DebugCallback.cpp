@@ -14,7 +14,15 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	//	pMessage：一个以null结尾的包含调试信息的字符串
 	//	pObjects：存储有和消息相关的Vulkan对象句柄的数组
 	//	objectCount：数组中的对象个数
-	std::cerr << "[Custom debugCallback] ===> " << pCallbackData->pMessage << "\n" << std::endl;
+	std::cerr << "[Custom debugCallback] ===> " << pCallbackData->pMessage << "\n";
+	//for (uint32_t i = 0; i < pCallbackData->objectCount; ++i) {
+	//	std::cerr << "[Custom debugCallback] ===> Vulkan Object[" << i << "]:\n";
+	//	std::cerr << "\tObject Type: " << static_cast<uint32_t>(pCallbackData->pObjects[i].objectType) << "\n";
+	//	std::cerr << "\tObject Handle: " << pCallbackData->pObjects[i].objectHandle << "\n";
+	//	if (pCallbackData->pObjects[i].pObjectName != nullptr)
+	//		std::cerr << "\tObject Name: " << pCallbackData->pObjects[i].pObjectName << "\n";
+	//}
+	std::cerr << std::endl;
 
 	return VK_FALSE;
 }

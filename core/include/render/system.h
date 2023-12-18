@@ -70,6 +70,28 @@ public:
 	static void CreateGraphicsPipeline(Context*);
 	static void DestroyGraphicsPipeline(Context*);
 
+	//frameBuffer
+	static void CreateFrameBuffers(Context*);
+	static void DestroyFrameBuffers(Context*);
+
+	//command
+	static void CreateCommandPool(Context*);
+	static void DestroyCommandPool(Context*);
+	static void CreateCommandBuffers(Context*);
+	static void RecordCommandBuffer(Context*, uint32_t);
+
+	//draw
+	static void DrawFrame(Context*);
+	static void DrawWaitIdle(Context*);
+
+	//semaphore
+	static void CreateSemaphores(Context*);
+	static void DestroySemaphores(Context*);
+
+	//fence
+	static void CreateFences(Context*);
+	static void DestroyFences(Context*);
+
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);
 };

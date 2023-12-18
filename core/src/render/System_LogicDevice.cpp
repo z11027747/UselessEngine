@@ -18,7 +18,7 @@ void RenderSystem::CreateLogicDevice(Context* context) {
 	VkDeviceQueueCreateInfo queueCreateInfo = {};
 	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	queueCreateInfo.queueCount = 1;
-	queueCreateInfo.queueFamilyIndex = globalInfoComp->physicalDeviceGraphicsFamily;
+	queueCreateInfo.queueFamilyIndex = physicalDeviceGraphicsFamily;
 	float queuePrioprity = 1.0f;
 	queueCreateInfo.pQueuePriorities = &queuePrioprity;
 

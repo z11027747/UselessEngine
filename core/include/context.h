@@ -37,13 +37,24 @@ public:
 		RenderSystem::CreatePipelineLayout(this);
 		RenderSystem::CreateRenderPass(this);
 		RenderSystem::CreateGraphicsPipeline(this);
+		RenderSystem::CreateFrameBuffers(this);
+		RenderSystem::CreateCommandPool(this);
+		RenderSystem::CreateCommandBuffers(this);
+		RenderSystem::CreateSemaphores(this);
+		RenderSystem::CreateFences(this);
 	}
 
 	void Update() {
-
+		RenderSystem::DrawFrame(this);
 	}
 
 	void Destroy() {
+		RenderSystem::DrawWaitIdle(this);
+
+		RenderSystem::DestroyFences(this);
+		RenderSystem::DestroySemaphores(this);
+		RenderSystem::DestroyCommandPool(this);
+		RenderSystem::DestroyFrameBuffers(this);
 		RenderSystem::DestroyGraphicsPipeline(this);
 		RenderSystem::DestroyRenderPass(this);
 		RenderSystem::DestroyPipelineLayout(this);

@@ -14,7 +14,7 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 	globalInfoComp->physicalDevice = nullptr;
 	globalInfoComp->physicalDeviceGraphicsFamily = -1;
 
-	uint32_t physicalDeviceCount;
+	uint32_t physicalDeviceCount = 0;
 	vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
 
 	std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
@@ -38,7 +38,7 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 			continue;
 		}
 
-		uint32_t queueFamilyPropetyCount;
+		uint32_t queueFamilyPropetyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyPropetyCount, nullptr);
 
 		std::vector<VkQueueFamilyProperties> queueFamilyPropeties(queueFamilyPropetyCount);

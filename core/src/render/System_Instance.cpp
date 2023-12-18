@@ -73,7 +73,7 @@ void RenderSystem::DestroyInstance(Context* context) {
 }
 
 bool RenderSystem::CheckInstanceExtension(const char* extensionName) {
-	uint32_t extensionCount;
+	uint32_t extensionCount = 0;
 	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 	std::vector<VkExtensionProperties> extensions;
 
@@ -90,7 +90,7 @@ bool RenderSystem::CheckInstanceExtension(const char* extensionName) {
 }
 
 bool RenderSystem::CheckInstanceLayer(const char* layerName) {
-	uint32_t layerCount;
+	uint32_t layerCount = 0;
 	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
 	std::vector<VkLayerProperties> layers;
