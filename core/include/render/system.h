@@ -18,7 +18,7 @@ public:
 	static bool CheckInstanceLayer(const char*);
 
 	//debugCallback
-	static void CreateDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
+	static void GetDebugCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
 	static void CreateDebugCallback(Context*);
 	static void DestroyDebugCallback(Context*);
 
@@ -48,16 +48,22 @@ public:
 	//shader
 	static void CreateShader(Context*, const std::string&);
 	static void DestroyAllShaders(Context*);
+	static std::vector<VkPipelineShaderStageCreateInfo> GetShaderModuleCreateInfos(std::vector<VkShaderModule>&);
 
-	//graphicsPipeline
-	static void CreateGraphicsPipeline(Context*);
-	static void DestroyGraphicsPipeline(Context*);
-	static void CreateGraphicsPipelineLayout(Context*);
-	static void DestroyGraphicsPipelineLayout(Context*);
+	//fixed
+	static VkPipelineVertexInputStateCreateInfo GetVertexInputCreateInfo();
+
+	//layout
+	static void CreatePipelineLayout(Context*);
+	static void DestroyPipelineLayout(Context*);
 
 	//renderPass
 	static void CreateRenderPass(Context*);
 	static void DestroyRenderPass(Context*);
+
+	//graphicsPipeline
+	static void CreateGraphicsPipeline(Context*);
+	static void DestroyGraphicsPipeline(Context*);
 
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);

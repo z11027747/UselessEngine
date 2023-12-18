@@ -5,8 +5,6 @@
 #include <unordered_map>
 #include "base.h"
 
-struct RenderShader;
-
 struct RenderGlobalComp final : public EngineComp {
 
 	//VkInstance 底层就是个指针
@@ -32,16 +30,9 @@ struct RenderGlobalComp final : public EngineComp {
 	std::vector<VkImage> swapchainImages;
 	std::vector<VkImageView> swapchainImageViews;
 
-	std::unordered_map<std::string, std::shared_ptr<RenderShader>> shaderMap;
-
 	VkPipeline graphicsPipeline;
+	std::vector<VkShaderModule> shaderModules;
 	VkPipelineLayout graphicsPipelineLayout;
 	VkRenderPass renderPass;
-};
-
-struct RenderShader final {
-
-	std::vector<VkShaderModule> modules;
-	std::vector<VkPipelineShaderStageCreateInfo> stageCreateInfos;
 
 };

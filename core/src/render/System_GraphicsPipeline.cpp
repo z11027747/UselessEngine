@@ -5,6 +5,8 @@
 //图形管线
 //	将提交的顶点和纹理转换为渲染目标上的像素的操作
 
+
+
 //之前的许多图形API会为管线提供一些默认的状态
 //	在Vulkan不存在默认状态，所有状态必须被显式地设置，
 //	无论是视口大小，还是使用的颜色混合函数都需要显式地指定
@@ -18,21 +20,15 @@ void RenderSystem::CreateGraphicsPipeline(Context* context) {
 	pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 
 	//着色器阶段
-	auto& shader = globalInfoComp->shaderMap["test"];
-	auto& shaderStageCreateInfos = shader->stageCreateInfos;
-
-	pipelineCreateInfo.stageCount = 2;
+	auto& shaderModules = globalInfoComp->shaderModules;
+	auto shaderStageCreateInfos = GetShaderModuleCreateInfos(shaderModules);
+	pipelineCreateInfo.stageCount = static_cast<uint32_t>(shaderStageCreateInfos.size());
 	pipelineCreateInfo.pStages = shaderStageCreateInfos.data();
 
 	//固定功能阶段
-
-	//顶点输入：描述传递给顶点着色器的顶点数据格式
-	//	绑定：数据之间的间距和数据是按逐顶点的方式还是按逐实例的方式进行组织
-	//	属性描述：传递给顶点着色器的属性类型，用于将属性绑定到顶点着色器中的变量
-	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {};
-	vertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertexInputStateCreateInfo.vertexBindingDescriptionCount = 0;
-	vertexInputStateCreateInfo.vertexAttributeDescriptionCount = 0;
+	//顶点输入
+	auto vertexInputStateCreateInfo = GetVertexInputCreateInfo();
+	pipelineCreateInfo.pVertexInputState = &vertexInputStateCreateInfo;
 
 	//输入装配
 	//	顶点数据定义了哪种类型的几何图元，以及是否启用几何图元重启
@@ -121,7 +117,6 @@ void RenderSystem::CreateGraphicsPipeline(Context* context) {
 	colorBlendingStateCreateInfo.attachmentCount = 1;
 	colorBlendingStateCreateInfo.pAttachments = &colorBlendAttachmentState;
 
-	pipelineCreateInfo.pVertexInputState = &vertexInputStateCreateInfo;
 	pipelineCreateInfo.pInputAssemblyState = &inputAssemblyStateCreateInfo;
 	pipelineCreateInfo.pViewportState = &viewportStateCreateInfo;
 	pipelineCreateInfo.pRasterizationState = &rasterizationStateCreateInfo;
@@ -142,7 +137,6 @@ void RenderSystem::CreateGraphicsPipeline(Context* context) {
 	if (ret != VK_SUCCESS) {
 		throw std::runtime_error("create graphicsPipeline error!");
 	}
-
 }
 
 void RenderSystem::DestroyGraphicsPipeline(Context* context) {
@@ -155,31 +149,17 @@ void RenderSystem::DestroyGraphicsPipeline(Context* context) {
 	vkDestroyPipeline(logicDevice, graphicsPipeline, nullptr);
 }
 
-//管线布局
-//	在着色器中使用uniform变量，实现对着色器进行一定程度的动态配置
-//	在着色器中使用的uniform变量需要在管线创建时使用VkPipelineLayout对象定义
-void RenderSystem::CreateGraphicsPipelineLayout(Context* context) {
-	auto& renderEO = context->renderEO;
 
-	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& logicDevice = globalInfoComp->logicDevice;
-	auto& pipelineLayout = globalInfoComp->graphicsPipelineLayout;
 
-	VkPipelineLayoutCreateInfo layoutCreateInfo = {};
-	layoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+//顶点输入：描述传递给顶点着色器的顶点数据格式
+//	绑定：数据之间的间距和数据是按逐顶点的方式还是按逐实例的方式进行组织
+//	属性描述：传递给顶点着色器的属性类型，用于将属性绑定到顶点着色器中的变量
+VkPipelineVertexInputStateCreateInfo RenderSystem::GetVertexInputCreateInfo() {
 
-	auto ret = vkCreatePipelineLayout(logicDevice, &layoutCreateInfo, nullptr, &pipelineLayout);
-	if (ret != VK_SUCCESS) {
-		throw std::runtime_error("create pipelineLayout error!");
-	}
-}
+	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {};
+	vertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertexInputStateCreateInfo.vertexBindingDescriptionCount = 0;
+	vertexInputStateCreateInfo.vertexAttributeDescriptionCount = 0;
 
-void RenderSystem::DestroyGraphicsPipelineLayout(Context* context) {
-	auto& renderEO = context->renderEO;
-
-	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& logicDevice = globalInfoComp->logicDevice;
-	auto& pipelineLayout = globalInfoComp->graphicsPipelineLayout;
-
-	vkDestroyPipelineLayout(logicDevice, pipelineLayout, nullptr);
+	return vertexInputStateCreateInfo;
 }
