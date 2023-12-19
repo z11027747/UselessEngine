@@ -112,7 +112,12 @@ public:
 	static void CopyBuffer(Context*, VkBuffer&, VkBuffer&, VkDeviceSize);
 
 	//vertexBuffer
+	static void CreateVertexTriangle(Context*);
 	static void CreateVertexBufferHost(Context*);
 	static void CreateVertexBufferStageing(Context*);
 	static void DestroyVertexBuffer(Context*);
+
+	static void CreateVertexRectangle(Context*);
+	static void CreateIndexBufferHost(Context*);
+	static void DestroyIndexBuffer(Context*);
 };

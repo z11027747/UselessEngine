@@ -157,7 +157,7 @@ void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
 	renderPassBeginInfo.clearValueCount = 1;
 
 	//清除值
-	VkClearValue clearValue = { 0.0f,0.0f,0.0f,1.0f };
+	VkClearValue clearValue = { 0.0f, 0.0f, 0.0f, 1.0f };
 	renderPassBeginInfo.pClearValues = &clearValue;
 
 	//VkSubpassContents 指定渲染流程如何提供绘制指令的标记
@@ -171,19 +171,26 @@ void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
 	//绑定顶点缓冲
 	auto& vertices = globalInfoComp->vertices;
 	auto& vertexBuffer = globalInfoComp->vertexBuffer;
-
 	//	firstBinding 偏移
 	//	bindingCount 数量
 	VkBuffer vertexBuffers[] = { vertexBuffer };
 	VkDeviceSize offsets[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
+	//绑定索引缓冲
+	auto& indices = globalInfoComp->indices;
+	auto& indexBuffer = globalInfoComp->indexBuffer;
+	vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
 	//绘制对象
 	//	vertexCount：指定x个顶点用于三角形的绘制
 	//	instanceCount：用于实例渲染，为1时表示不进行实例渲染
 	//	firstVertex：用于定义着色器变量gl_VertexIndex的值
 	//	firstInstance：用于定义着色器变量gl_InstanceIndex的值
-	vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+	//vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+
+	//用索引绘制对象
+	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
 	vkCmdEndRenderPass(commandBuffer);
 
@@ -191,5 +198,4 @@ void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
 	if (endRet != VK_SUCCESS) {
 		throw std::runtime_error("end commandBuffer error!");
 	}
-
 }

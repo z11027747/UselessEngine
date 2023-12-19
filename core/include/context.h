@@ -42,8 +42,11 @@ public:
 		RenderSystem::CreateSemaphores(this);
 		RenderSystem::CreateFences(this);
 		//RenderSystem::CheckPhysicalDeviceMemory(this);
+		//RenderSystem::CreateVertexTriangle(this);
+		RenderSystem::CreateVertexRectangle(this);
 		//RenderSystem::CreateVertexBufferHost(this);
 		RenderSystem::CreateVertexBufferStageing(this);
+		RenderSystem::CreateIndexBufferHost(this);
 	}
 
 	void Update() {
@@ -54,6 +57,7 @@ public:
 	void Destroy() {
 		RenderSystem::WaitIdle(this);
 
+		RenderSystem::DestroyIndexBuffer(this);
 		RenderSystem::DestroyVertexBuffer(this);
 		RenderSystem::DestroyFences(this);
 		RenderSystem::DestroySemaphores(this);

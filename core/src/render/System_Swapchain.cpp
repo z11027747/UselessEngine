@@ -284,7 +284,7 @@ void RenderSystem::AllocateSwapchainCommandBuffers(Context* context) {
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
 
 	auto& swapchainFrameBuffers = globalInfoComp->swapchainFrameBuffers;
-	int size = swapchainFrameBuffers.size();
+	auto size = swapchainFrameBuffers.size();
 
 	auto& swapchainCommandBuffers = globalInfoComp->swapchainCommandBuffers;
 	swapchainCommandBuffers.resize(size);
