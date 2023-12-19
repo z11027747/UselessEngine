@@ -15,6 +15,7 @@ int main() {
 	//glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "UselessEngine", nullptr, nullptr);
+	glfwSetWindowPos(window, -1500, 200);
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetFramebufferSizeCallback(window, size_callback);

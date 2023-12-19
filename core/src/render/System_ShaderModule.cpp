@@ -53,7 +53,7 @@ void RenderSystem::MakeShaderModuleCreateInfos(
 		VK_SHADER_STAGE_FRAGMENT_BIT
 	};
 
-	int size = shaderModules.size();
+	auto size = shaderModules.size();
 
 	for (auto i = 0; i < size; i++) {
 		VkPipelineShaderStageCreateInfo stageCreateInfo = {};

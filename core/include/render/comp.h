@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <unordered_map>
+#include <functional>
 #include "base.h"
 
 struct RenderVertex final {
@@ -82,7 +83,8 @@ struct RenderGlobalComp final : public EngineComp {
 	std::vector<VkFramebuffer> swapchainFrameBuffers;
 
 	VkCommandPool commandPool;
-	std::vector<VkCommandBuffer> commandBuffers;
+
+	std::vector<VkCommandBuffer> swapchainCommandBuffers;
 
 	std::vector<VkSemaphore> imageAvailableSemaphores;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
@@ -93,5 +95,4 @@ struct RenderGlobalComp final : public EngineComp {
 	std::vector<RenderVertex> vertices;
 	VkBuffer vertexBuffer;
 	VkDeviceMemory vertexBufferMemory;
-
 };

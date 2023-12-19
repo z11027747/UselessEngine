@@ -53,7 +53,7 @@ public:
 	static void MakeShaderModuleCreateInfos(std::vector<VkShaderModule>&, std::vector<VkPipelineShaderStageCreateInfo>&);
 
 	//fixed
-	static void MakeVertexInputCreateInfo(VkPipelineVertexInputStateCreateInfo&, 
+	static void MakeVertexInputCreateInfo(VkPipelineVertexInputStateCreateInfo&,
 		VkVertexInputBindingDescription&, std::vector<VkVertexInputAttributeDescription>&);
 	static void MakeInputAssemblyCreateInfo(VkPipelineInputAssemblyStateCreateInfo&);
 	static void MakeViewportCreateInfo(VkViewport&, VkRect2D&, VkPipelineViewportStateCreateInfo&, VkExtent2D&);
@@ -80,12 +80,16 @@ public:
 	//command
 	static void CreateCommandPool(Context*);
 	static void DestroyCommandPool(Context*);
-	static void CreateCommandBuffers(Context*);
-	static void FreeCommandBuffers(Context*);
-	static void RecordCommandBuffer(Context*, uint32_t);
+	static void AllocateCommandBuffer(Context*, std::vector<VkCommandBuffer>&);
+	static void FreeCommandBuffer(Context*, std::vector<VkCommandBuffer>&);
+
+	static void AllocateSwapchainCommandBuffers(Context*);
+	static void FreeSwapchainCommandBuffers(Context*);
 
 	//draw
 	static void DrawFrame(Context*);
+	static void RecordDrawCommandBuffer(Context*, uint32_t);
+
 	static void WaitIdle(Context*);
 
 	//semaphore
@@ -96,13 +100,19 @@ public:
 	static void CreateFences(Context*);
 	static void DestroyFences(Context*);
 
-	//vertexBuffer
-	static void CreateVertexBuffer(Context*);
-	static void DestroyVertexBuffer(Context*);
-
-	//memory
+	//buffer
 	static void CheckPhysicalDeviceMemory(Context*);
 	static uint32_t FindMemoryType(Context*, uint32_t, VkMemoryPropertyFlags);
-	static void AllocateBufferMemoryType(Context*, VkBuffer&, VkDeviceMemory&, VkMemoryPropertyFlags);
-	static void FreeBufferMemoryType(Context*, VkDeviceMemory&);
+	static void CreateBuffer(Context*,
+		VkDeviceSize, VkBufferUsageFlags,
+		VkMemoryPropertyFlags,
+		VkBuffer&, VkDeviceMemory&);
+	static void DestroyBuffer(Context*,
+		VkBuffer&, VkDeviceMemory&);
+	static void CopyBuffer(Context*, VkBuffer&, VkBuffer&, VkDeviceSize);
+
+	//vertexBuffer
+	static void CreateVertexBufferHost(Context*);
+	static void CreateVertexBufferStageing(Context*);
+	static void DestroyVertexBuffer(Context*);
 };

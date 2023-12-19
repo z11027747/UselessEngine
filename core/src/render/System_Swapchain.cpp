@@ -252,7 +252,8 @@ void RenderSystem::TryRecreateSwapchain(Context* context) {
 	WaitIdle(context);
 
 	//清空老数据
-	FreeCommandBuffers(context);
+	FreeSwapchainCommandBuffers(context);
+	DestroyFrameBuffers(context);
 	DestroyGraphicsPipeline(context);
 	DestroyRenderPass(context);
 	DestroySwapchianImageViews(context);
@@ -274,5 +275,28 @@ void RenderSystem::TryRecreateSwapchain(Context* context) {
 
 	//帧缓冲和指令缓冲直接依赖于交换链图像，也需要重建
 	CreateFrameBuffers(context);
-	CreateCommandBuffers(context);
+	AllocateSwapchainCommandBuffers(context);
+}
+
+void RenderSystem::AllocateSwapchainCommandBuffers(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+
+	auto& swapchainFrameBuffers = globalInfoComp->swapchainFrameBuffers;
+	int size = swapchainFrameBuffers.size();
+
+	auto& swapchainCommandBuffers = globalInfoComp->swapchainCommandBuffers;
+	swapchainCommandBuffers.resize(size);
+
+	AllocateCommandBuffer(context, swapchainCommandBuffers);
+}
+
+void RenderSystem::FreeSwapchainCommandBuffers(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+
+	auto& swapchainCommandBuffers = globalInfoComp->swapchainCommandBuffers;
+	FreeCommandBuffer(context, swapchainCommandBuffers);
 }

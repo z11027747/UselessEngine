@@ -2,9 +2,8 @@
 #include "render/comp.h"
 #include "context.h"
 
-
-
-void RenderSystem::CreateVertexBuffer(Context* context) {
+//host内存 （对CPU友好，对GPU不友好）
+void RenderSystem::CreateVertexBufferHost(Context* context) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
@@ -22,31 +21,15 @@ void RenderSystem::CreateVertexBuffer(Context* context) {
 
 	VkDeviceSize vertexSize = sizeof(vertices[0]) * vertices.size();
 
-	VkBufferCreateInfo createInfo = {};
-	createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-
-	//用于配置缓冲的内存稀疏程度
-	//createInfo.flags = 
-
-	createInfo.size = vertexSize; //指定要创建的缓冲所占字节大小
-	createInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT; //缓冲中的数据的使用目的
-	createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	auto ret = vkCreateBuffer(logicDevice, &createInfo, nullptr, &vertexBuffer);
-	if (ret != VK_SUCCESS) {
-		throw std::runtime_error("create vertexBuffer error!");
-	}
-
 	//分配内存
-	AllocateBufferMemoryType(context, vertexBuffer, vertexBufferMemory,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT		//GPU内存
-		| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT); //具有一致性，CPU设置完GPU就知道
-
-	//绑定内存
-	auto bindRet = vkBindBufferMemory(logicDevice, vertexBuffer, vertexBufferMemory, 0);
-	if (bindRet != VK_SUCCESS) {
-		throw std::runtime_error("bind vertexMemory error!");
-	}
+	CreateBuffer(context,
+		//buffer
+		vertexSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+		//memory
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT	//GPU内存
+		| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,//具有一致性，CPU设置完GPU就知道
+		//ret
+		vertexBuffer, vertexBufferMemory);
 
 	//填充内存
 	void* data;
@@ -62,17 +45,70 @@ void RenderSystem::CreateVertexBuffer(Context* context) {
 	//	否则需要手动
 }
 
-void RenderSystem::DestroyVertexBuffer(Context* context) {
+//device内存
+//使用CPU可见的缓冲作为临时缓冲，使用显卡读取较快的缓冲作为真正的顶点缓冲
+void RenderSystem::CreateVertexBufferStageing(Context* context) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
 	auto& logicDevice = globalInfoComp->logicDevice;
+
+	//交叉顶点属性(interleaving vertex attributes)
+	auto& vertices = globalInfoComp->vertices;
+
+	vertices.push_back({ {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} });
+	vertices.push_back({ {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} });
+	vertices.push_back({ {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} });
+
+	VkBuffer vertexStagingBuffer;
+	VkDeviceMemory vertexStagingBufferMemory;
+
+	VkDeviceSize vertexSize = sizeof(vertices[0]) * vertices.size();
+
+	//分配暂存缓冲内存
+	CreateBuffer(context,
+		//buffer
+		vertexSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, //可以被用作内存传输操作的数据来源
+		//memory
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		//return
+		vertexStagingBuffer, vertexStagingBufferMemory);
+
+	void* data;
+	vkMapMemory(logicDevice, vertexStagingBufferMemory, 0, vertexSize, 0, &data);
+	memcpy(data, vertices.data(), (size_t)vertexSize);
+	vkUnmapMemory(logicDevice, vertexStagingBufferMemory);
+
 	auto& vertexBuffer = globalInfoComp->vertexBuffer;
 	auto& vertexBufferMemory = globalInfoComp->vertexBufferMemory;
 
-	vkDestroyBuffer(logicDevice, vertexBuffer, nullptr);
+	//分配GPULocal缓冲内存
+	CreateBuffer(context,
+		//buffer
+		vertexSize,
+		VK_BUFFER_USAGE_TRANSFER_DST_BIT // 可以被用作内存传输操作的目的
+		| VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+		//memory
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT //最适合显卡读取的内存类型
+		| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		//return
+		vertexBuffer, vertexBufferMemory);
 
-	FreeBufferMemoryType(context,
-		vertexBufferMemory);
+	CopyBuffer(context,
+		vertexStagingBuffer, vertexBuffer, vertexSize);
+
+	DestroyBuffer(context,
+		vertexStagingBuffer, vertexStagingBufferMemory);
+}
+
+void RenderSystem::DestroyVertexBuffer(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& vertexBuffer = globalInfoComp->vertexBuffer;
+	auto& vertexBufferMemory = globalInfoComp->vertexBufferMemory;
+
+	DestroyBuffer(context,
+		vertexBuffer, vertexBufferMemory);
 }
 

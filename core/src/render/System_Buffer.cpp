@@ -95,9 +95,12 @@ uint32_t RenderSystem::FindMemoryType(Context* context,
 	throw std::runtime_error("failed find memory type!");
 }
 
-//缓冲（Buffer）创建后需要给它分配任何内存
-void RenderSystem::AllocateBufferMemoryType(Context* context,
-	VkBuffer& buffer, VkDeviceMemory& deviceMemory, VkMemoryPropertyFlags propertiesFlags)
+void RenderSystem::CreateBuffer(Context* context,
+	//buffer 
+	VkDeviceSize size, VkBufferUsageFlags usageFlags,
+	//memory
+	VkMemoryPropertyFlags propertiesFlags,
+	VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 {
 	auto& renderEO = context->renderEO;
 
@@ -105,7 +108,20 @@ void RenderSystem::AllocateBufferMemoryType(Context* context,
 	auto& logicDevice = globalInfoComp->logicDevice;
 	auto& physicalDevice = globalInfoComp->physicalDevice;
 
-	//vkGetBufferMemoryRequirements函数获取缓冲的内存需求。
+	VkBufferCreateInfo createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	//createInfo.flags = 0; //用于配置缓冲的内存稀疏程度
+	createInfo.size = size; //指定要创建的缓冲所占字节大小
+	createInfo.usage = usageFlags; //缓冲中的数据的使用目的
+	createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	auto bufferRet = vkCreateBuffer(logicDevice, &createInfo, nullptr, &buffer);
+	if (bufferRet != VK_SUCCESS) {
+		throw std::runtime_error("create vertexBuffer error!");
+	}
+
+	//缓冲（Buffer）创建后需要给它分配任何内存
+	//	vkGetBufferMemoryRequirements函数获取缓冲的内存需求
 	VkMemoryRequirements memRequirements;
 	vkGetBufferMemoryRequirements(logicDevice, buffer, &memRequirements);
 
@@ -117,17 +133,75 @@ void RenderSystem::AllocateBufferMemoryType(Context* context,
 	allocateInfo.allocationSize = memRequirements.size;
 	allocateInfo.memoryTypeIndex = memoryTypeIndex;
 
-	auto ret = vkAllocateMemory(logicDevice, &allocateInfo, nullptr, &deviceMemory);
+	auto ret = vkAllocateMemory(logicDevice, &allocateInfo, nullptr, &bufferMemory);
 	if (ret != VK_SUCCESS) {
-		throw std::runtime_error("allocate buffer deviceMemory error!");
+		throw std::runtime_error("allocate bufferMemory error!");
+	}
+
+	//绑定内存
+	auto bindRet = vkBindBufferMemory(logicDevice, buffer, bufferMemory, 0);
+	if (bindRet != VK_SUCCESS) {
+		throw std::runtime_error("bind vertexMemory error!");
 	}
 }
 
-void RenderSystem::FreeBufferMemoryType(Context* context, VkDeviceMemory& deviceMemory) {
+void RenderSystem::DestroyBuffer(Context* context,
+	VkBuffer& buffer, VkDeviceMemory& deviceMemory) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
 	auto& logicDevice = globalInfoComp->logicDevice;
 
+	vkDestroyBuffer(logicDevice, buffer, nullptr);
 	vkFreeMemory(logicDevice, deviceMemory, nullptr);
+}
+
+void RenderSystem::CopyBuffer(Context* context,
+	VkBuffer& srcBuffer, VkBuffer& dstBuffer, VkDeviceSize size)
+{
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+	auto& logicQueue = globalInfoComp->logicQueue;
+
+	std::vector<VkCommandBuffer> commandBuffers(1);
+	AllocateCommandBuffer(context, commandBuffers);
+
+	auto& commandBuffer = commandBuffers[0];
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	auto beginRet = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	if (beginRet != VK_SUCCESS) {
+		throw std::runtime_error("begin commandBuffer error!");
+	}
+
+	VkBufferCopy copy = {};
+	copy.srcOffset = 0;
+	copy.dstOffset = 0;
+	copy.size = size;
+	vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copy);
+
+	auto endRet = vkEndCommandBuffer(commandBuffer);
+	if (endRet != VK_SUCCESS) {
+		throw std::runtime_error("end commandBuffer error!");
+	}
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	auto submitRet = vkQueueSubmit(logicQueue, 1, &submitInfo, nullptr);
+	if (submitRet != VK_SUCCESS) {
+		throw std::runtime_error("submit error!");
+	}
+
+	//直接等待传输操作完成
+	vkQueueWaitIdle(logicQueue);
+
+	FreeCommandBuffer(context, commandBuffers);
 }

@@ -38,11 +38,12 @@ public:
 		RenderSystem::CreateGraphicsPipeline(this);
 		RenderSystem::CreateFrameBuffers(this);
 		RenderSystem::CreateCommandPool(this);
-		RenderSystem::CreateCommandBuffers(this);
+		RenderSystem::AllocateSwapchainCommandBuffers(this);
 		RenderSystem::CreateSemaphores(this);
 		RenderSystem::CreateFences(this);
 		//RenderSystem::CheckPhysicalDeviceMemory(this);
-		RenderSystem::CreateVertexBuffer(this);
+		//RenderSystem::CreateVertexBufferHost(this);
+		RenderSystem::CreateVertexBufferStageing(this);
 	}
 
 	void Update() {
