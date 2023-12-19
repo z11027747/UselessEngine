@@ -33,6 +33,7 @@ public:
 		RenderSystem::GetSwapchianImages(this);
 		RenderSystem::CreateSwapchianImageViews(this);
 		RenderSystem::CreateShader(this, "test");
+		RenderSystem::CreateDescriptorSetLayout(this);
 		RenderSystem::CreatePipelineLayout(this);
 		RenderSystem::CreateRenderPass(this);
 		RenderSystem::CreateGraphicsPipeline(this);
@@ -47,6 +48,9 @@ public:
 		//RenderSystem::CreateVertexBufferHost(this);
 		RenderSystem::CreateVertexBufferStageing(this);
 		RenderSystem::CreateIndexBufferHost(this);
+		RenderSystem::CreateUniformBuffersHost(this);
+		RenderSystem::CreateDescriptorPool(this);
+		RenderSystem::AllocateDescriptorSets(this);
 	}
 
 	void Update() {
@@ -57,6 +61,8 @@ public:
 	void Destroy() {
 		RenderSystem::WaitIdle(this);
 
+		RenderSystem::DestroyDescriptorPool(this);
+		RenderSystem::DestroyUniformBuffers(this);
 		RenderSystem::DestroyIndexBuffer(this);
 		RenderSystem::DestroyVertexBuffer(this);
 		RenderSystem::DestroyFences(this);
@@ -66,6 +72,7 @@ public:
 		RenderSystem::DestroyGraphicsPipeline(this);
 		RenderSystem::DestroyRenderPass(this);
 		RenderSystem::DestroyPipelineLayout(this);
+		RenderSystem::DestroyDescriptorSetLayout(this);
 		RenderSystem::DestroyAllShaders(this);
 		RenderSystem::DestroySwapchianImageViews(this);
 		RenderSystem::DestroySwapchian(this);

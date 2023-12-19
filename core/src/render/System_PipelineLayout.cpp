@@ -15,14 +15,16 @@ void RenderSystem::CreatePipelineLayout(Context* context) {
 	VkPipelineLayoutCreateInfo layoutCreateInfo = {};
 	layoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
-	//TODO
+	//描述符
+	auto& descriptorSetLayout = globalInfoComp->descriptorSetLayout;
+	layoutCreateInfo.setLayoutCount = 1;
+	layoutCreateInfo.pSetLayouts = &descriptorSetLayout;
 
 	auto ret = vkCreatePipelineLayout(logicDevice, &layoutCreateInfo, nullptr, &pipelineLayout);
 	if (ret != VK_SUCCESS) {
 		throw std::runtime_error("create pipelineLayout error!");
 	}
 }
-
 
 void RenderSystem::DestroyPipelineLayout(Context* context) {
 	auto& renderEO = context->renderEO;

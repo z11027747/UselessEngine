@@ -53,6 +53,9 @@ void RenderSystem::DrawFrame(Context* context) {
 
 	RecordDrawCommandBuffer(context, imageIndex);
 
+	//更新uniform数据
+	UpdateUniformBuffer(context, imageIndex);
+
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -124,6 +127,7 @@ void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
 	auto& logicDevice = globalInfoComp->logicDevice;
 	auto& renderPass = globalInfoComp->renderPass;
 	auto& graphicsPipeline = globalInfoComp->graphicsPipeline;
+	auto& graphicsPipelineLayout = globalInfoComp->graphicsPipelineLayout;
 	auto& swapChainExtent = globalInfoComp->swapChainExtent;
 	auto& swapchainFrameBuffers = globalInfoComp->swapchainFrameBuffers;
 	auto& swapchainCommandBuffers = globalInfoComp->swapchainCommandBuffers;
@@ -181,6 +185,11 @@ void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
 	auto& indices = globalInfoComp->indices;
 	auto& indexBuffer = globalInfoComp->indexBuffer;
 	vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+	//绑定描述符集
+	auto& descriptorSets = globalInfoComp->descriptorSets;
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+		graphicsPipelineLayout, 0, 1, &descriptorSets[index], 0, nullptr);
 
 	//绘制对象
 	//	vertexCount：指定x个顶点用于三角形的绘制

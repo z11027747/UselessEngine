@@ -5,6 +5,9 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <chrono>
 #include "base.h"
 
 struct RenderVertex final {
@@ -15,6 +18,11 @@ struct RenderVertex final {
 	static std::vector<VkVertexInputAttributeDescription> CreateAttributeDescriptions();
 };
 
+struct UniformBufferObject {
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
+};
 
 struct RenderGlobalComp final : public EngineComp {
 
@@ -66,4 +74,11 @@ struct RenderGlobalComp final : public EngineComp {
 	std::vector<uint16_t> indices;
 	VkBuffer indexBuffer;
 	VkDeviceMemory indexBufferMemory;
+
+	VkDescriptorSetLayout descriptorSetLayout;
+	std::vector<VkBuffer> uniformBuffers;
+	std::vector<VkDeviceMemory> uniformBufferMemorys;
+
+	VkDescriptorPool descriptorPool;
+	std::vector<VkDescriptorSet> descriptorSets;
 };

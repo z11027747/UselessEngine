@@ -120,4 +120,14 @@ public:
 	static void CreateVertexRectangle(Context*);
 	static void CreateIndexBufferHost(Context*);
 	static void DestroyIndexBuffer(Context*);
+
+	//uniform
+	static void CreateDescriptorSetLayout(Context*);
+	static void DestroyDescriptorSetLayout(Context*);
+	static void CreateUniformBuffersHost(Context*);
+	static void DestroyUniformBuffers(Context*);
+	static void UpdateUniformBuffer(Context*, uint32_t);
+	static void CreateDescriptorPool(Context*);
+	static void DestroyDescriptorPool(Context*);
+	static void AllocateDescriptorSets(Context*);
 };
