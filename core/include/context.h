@@ -27,7 +27,6 @@ public:
 		RenderSystem::CreateDebugCallback(this);
 		RenderSystem::CreateSurface(this);
 		RenderSystem::PickupPhysicalDevice(this);
-		//RenderSystem::CheckPhysicalDeviceMemory(this);
 		RenderSystem::CreateLogicDevice(this);
 		RenderSystem::GetLogicDeviceQueue(this);
 		RenderSystem::CreateSwapchian(this);
@@ -42,6 +41,8 @@ public:
 		RenderSystem::CreateCommandBuffers(this);
 		RenderSystem::CreateSemaphores(this);
 		RenderSystem::CreateFences(this);
+		//RenderSystem::CheckPhysicalDeviceMemory(this);
+		RenderSystem::CreateVertexBuffer(this);
 	}
 
 	void Update() {
@@ -50,8 +51,9 @@ public:
 	}
 
 	void Destroy() {
-		RenderSystem::DrawWait(this);
+		RenderSystem::WaitIdle(this);
 
+		RenderSystem::DestroyVertexBuffer(this);
 		RenderSystem::DestroyFences(this);
 		RenderSystem::DestroySemaphores(this);
 		RenderSystem::DestroyCommandPool(this);

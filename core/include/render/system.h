@@ -53,7 +53,8 @@ public:
 	static void MakeShaderModuleCreateInfos(std::vector<VkShaderModule>&, std::vector<VkPipelineShaderStageCreateInfo>&);
 
 	//fixed
-	static void MakeVertexInputCreateInfo(VkPipelineVertexInputStateCreateInfo&);
+	static void MakeVertexInputCreateInfo(VkPipelineVertexInputStateCreateInfo&, 
+		VkVertexInputBindingDescription&, std::vector<VkVertexInputAttributeDescription>&);
 	static void MakeInputAssemblyCreateInfo(VkPipelineInputAssemblyStateCreateInfo&);
 	static void MakeViewportCreateInfo(VkViewport&, VkRect2D&, VkPipelineViewportStateCreateInfo&, VkExtent2D&);
 	static void MakeRasterizationCreateInfo(VkPipelineRasterizationStateCreateInfo&);
@@ -85,7 +86,7 @@ public:
 
 	//draw
 	static void DrawFrame(Context*);
-	static void DrawWait(Context*);
+	static void WaitIdle(Context*);
 
 	//semaphore
 	static void CreateSemaphores(Context*);
@@ -95,6 +96,13 @@ public:
 	static void CreateFences(Context*);
 	static void DestroyFences(Context*);
 
+	//vertexBuffer
+	static void CreateVertexBuffer(Context*);
+	static void DestroyVertexBuffer(Context*);
+
 	//memory
 	static void CheckPhysicalDeviceMemory(Context*);
+	static uint32_t FindMemoryType(Context*, uint32_t, VkMemoryPropertyFlags);
+	static void AllocateBufferMemoryType(Context*, VkBuffer&, VkDeviceMemory&, VkMemoryPropertyFlags);
+	static void FreeBufferMemoryType(Context*, VkDeviceMemory&);
 };

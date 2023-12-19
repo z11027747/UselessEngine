@@ -235,7 +235,7 @@ void RenderSystem::SetNeedRecreateSwapchain(Context* context) {
 	}
 
 	globalInfoComp->needRecreateSwapchain = true;
-	DrawWait(context);
+	WaitIdle(context);
 }
 
 //重建交换链
@@ -249,7 +249,7 @@ void RenderSystem::TryRecreateSwapchain(Context* context) {
 	globalInfoComp->needRecreateSwapchain = false;
 
 	//等待设备处于空闲状态，避免在对象的使用过程中将其清除重建
-	DrawWait(context);
+	WaitIdle(context);
 
 	//清空老数据
 	FreeCommandBuffers(context);

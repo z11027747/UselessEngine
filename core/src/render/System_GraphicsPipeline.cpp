@@ -25,8 +25,10 @@ void RenderSystem::CreateGraphicsPipeline(Context* context) {
 
 	//固定功能阶段
 	//顶点输入
+	auto bindingDescription = RenderVertex::CreateBindingDescription();
+	auto attributeDescriptions = RenderVertex::CreateAttributeDescriptions();
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {};
-	MakeVertexInputCreateInfo(vertexInputStateCreateInfo);
+	MakeVertexInputCreateInfo(vertexInputStateCreateInfo, bindingDescription, attributeDescriptions);
 	pipelineCreateInfo.pVertexInputState = &vertexInputStateCreateInfo;
 
 	//输入装配
@@ -92,11 +94,17 @@ void RenderSystem::DestroyGraphicsPipeline(Context* context) {
 //	绑定：数据之间的间距和数据是按逐顶点的方式还是按逐实例的方式进行组织
 //	属性描述：传递给顶点着色器的属性类型，用于将属性绑定到顶点着色器中的变量
 void RenderSystem::MakeVertexInputCreateInfo(
-	VkPipelineVertexInputStateCreateInfo& vertexInputStateCreateInfo)
+	VkPipelineVertexInputStateCreateInfo& vertexInputStateCreateInfo,
+	VkVertexInputBindingDescription& bindingDescription,
+	std::vector<VkVertexInputAttributeDescription>& attributeDescriptions)
 {
 	vertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertexInputStateCreateInfo.vertexBindingDescriptionCount = 0;
-	vertexInputStateCreateInfo.vertexAttributeDescriptionCount = 0;
+
+	vertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
+	vertexInputStateCreateInfo.pVertexBindingDescriptions = &bindingDescription;
+
+	vertexInputStateCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+	vertexInputStateCreateInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 }
 
 //输入装配

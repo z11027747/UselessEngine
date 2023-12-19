@@ -125,12 +125,22 @@ void RenderSystem::RecordCommandBuffer(Context* context, uint32_t index) {
 	//绑定图形管线
 	vkCmdBindPipeline(currBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
+	//绑定顶点缓冲
+	auto& vertices = globalInfoComp->vertices;
+	auto& vertexBuffer = globalInfoComp->vertexBuffer;
+
+	//	firstBinding 偏移
+	//	bindingCount 数量
+	VkBuffer vertexBuffers[] = { vertexBuffer };
+	VkDeviceSize offsets[] = { 0 };
+	vkCmdBindVertexBuffers(currBuffer, 0, 1, vertexBuffers, offsets);
+
 	//绘制对象
-	//	vertexCount：指定三个顶点用于三角形的绘制
+	//	vertexCount：指定x个顶点用于三角形的绘制
 	//	instanceCount：用于实例渲染，为1时表示不进行实例渲染
 	//	firstVertex：用于定义着色器变量gl_VertexIndex的值
 	//	firstInstance：用于定义着色器变量gl_InstanceIndex的值
-	vkCmdDraw(currBuffer, 3, 1, 0, 0);
+	vkCmdDraw(currBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
 
 	vkCmdEndRenderPass(currBuffer);
 

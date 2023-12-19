@@ -108,7 +108,7 @@ void RenderSystem::DrawFrame(Context* context) {
 	currFrame = (currFrame + 1) % maxFrameInFlight;
 }
 
-void RenderSystem::DrawWait(Context* context) {
+void RenderSystem::WaitIdle(Context* context) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();

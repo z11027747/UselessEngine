@@ -30,7 +30,6 @@
 //	VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT 表示这部分内存为可以滞后分配内存，等要使用时再分配内存。
 //	VK_MEMORY_PROPERTY_PROTECTED_BIT 表示这部分内存为受保护内存，并且只允许 GPU 硬件设备和受保护的队列（ VK_QUEUE_PROTECTED_BIT ）可以访问该内存。
 
-
 //VkMemoryHeap	内存堆
 //	size 表示该内存堆的大小。单位为字节
 //	flags 表示该堆的属性标志位
@@ -40,7 +39,6 @@
 //	VK_MEMORY_HEAP_MULTI_INSTANCE_BIT 由于逻辑设备可以包含多个物理设备，此标志位表示该堆对应多个物理设备上的内存堆，对该堆的操作将会在每个物理设备的内存堆上进行相同的操作。
 
 void RenderSystem::CheckPhysicalDeviceMemory(Context* context) {
-
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
@@ -49,7 +47,7 @@ void RenderSystem::CheckPhysicalDeviceMemory(Context* context) {
 	VkPhysicalDeviceMemoryProperties memoryProerties;
 	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProerties);
 
-	for (uint32_t i = 0; i < memoryProerties.memoryTypeCount; i++) {
+	for (auto i = 0; i < memoryProerties.memoryTypeCount; i++) {
 		auto memoryType = memoryProerties.memoryTypes[i];
 
 		std::cout << "=== >index: " << i << std::endl;
@@ -73,6 +71,63 @@ void RenderSystem::CheckPhysicalDeviceMemory(Context* context) {
 	}
 }
 
+//显卡可以分配不同类型的内存作为缓冲使用。
+//	不同类型的内存所允许进行的操作以及操作的效率有所不同
+//	我们需要结合自己的需求选择最合适的内存类型使用。
+uint32_t RenderSystem::FindMemoryType(Context* context,
+	uint32_t typeFilter, VkMemoryPropertyFlags propertiesFlags)
+{
+	auto& renderEO = context->renderEO;
 
-//分配内存使用 vkAllocateMemory
-//回收内存使用 vkFreeMemory 
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& physicalDevice = globalInfoComp->physicalDevice;
+
+	VkPhysicalDeviceMemoryProperties memProperties;
+	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+
+	for (auto i = 0; i < memProperties.memoryTypeCount; i++) {
+		if ((typeFilter & (1 << i))
+			&& (memProperties.memoryTypes[i].propertyFlags & propertiesFlags) == propertiesFlags) {
+			return i;
+		}
+	}
+
+	throw std::runtime_error("failed find memory type!");
+}
+
+//缓冲（Buffer）创建后需要给它分配任何内存
+void RenderSystem::AllocateBufferMemoryType(Context* context,
+	VkBuffer& buffer, VkDeviceMemory& deviceMemory, VkMemoryPropertyFlags propertiesFlags)
+{
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+	auto& physicalDevice = globalInfoComp->physicalDevice;
+
+	//vkGetBufferMemoryRequirements函数获取缓冲的内存需求。
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(logicDevice, buffer, &memRequirements);
+
+	auto memoryTypeIndex = FindMemoryType(context,
+		memRequirements.memoryTypeBits, propertiesFlags);
+
+	VkMemoryAllocateInfo allocateInfo = {};
+	allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocateInfo.allocationSize = memRequirements.size;
+	allocateInfo.memoryTypeIndex = memoryTypeIndex;
+
+	auto ret = vkAllocateMemory(logicDevice, &allocateInfo, nullptr, &deviceMemory);
+	if (ret != VK_SUCCESS) {
+		throw std::runtime_error("allocate buffer deviceMemory error!");
+	}
+}
+
+void RenderSystem::FreeBufferMemoryType(Context* context, VkDeviceMemory& deviceMemory) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+
+	vkFreeMemory(logicDevice, deviceMemory, nullptr);
+}
