@@ -4,7 +4,7 @@
 
 //支持呈现图像到窗口表面能力的队列族
 bool RenderSystem::CheckSwapchainSupport(Context* context,
-	const VkPhysicalDevice& physicalDevice, int i)
+	const VkPhysicalDevice& physicalDevice, int index)
 {
 	auto& renderEO = context->renderEO;
 
@@ -12,8 +12,66 @@ bool RenderSystem::CheckSwapchainSupport(Context* context,
 	auto& surface = globalInfoComp->surface;
 
 	VkBool32 support;
-	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &support);
+	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, surface, &support);
 	return support == VK_TRUE;
+}
+
+void RenderSystem::CreateSwapchian(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+	auto& surface = globalInfoComp->surface;
+
+	auto surfaceFormat = GetSwapchainSurfaceFormat(context);
+	auto presentMode = GetSwapchainPresentMode(context);
+	auto surfaceCapabilities = GetSwapchainCapbilities(context);
+
+	//需要交换链至少支持一种图像格式 和 一种支持窗口表面的呈现模式
+
+	VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+	swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	swapchainCreateInfo.surface = surface;
+	swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + 1; //3缓冲
+	swapchainCreateInfo.imageFormat = surfaceFormat.format;
+	swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+	swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
+	swapchainCreateInfo.imageArrayLayers = 1; //imageArrayLayers成员变量用于指定每个图像所包含的层次 一般是1 除非VR
+	swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; //作为传输的目的图像
+
+	//VkSharingMode 描述图像共享模式
+	//	VK_SHARING_MODE_EXCLUSIVE：一张图像同一时间只能被一个队列族所拥有
+	//		在另一队列族使用它之前，必须显式地改变图像所有权。这一模式下性能表现最佳。
+	//	VK_SHARING_MODE_CONCURRENT：图像可以在多个队列族间使用，不需要显式地改变图像所有权。
+	swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	swapchainCreateInfo.preTransform = surfaceCapabilities.currentTransform; //图形变换操作，可以反转之类的
+	swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; //忽略alpha通道
+	swapchainCreateInfo.presentMode = presentMode;
+
+	//clipped为VK_TRUE表示我们不关心被窗口系统中的其它窗口遮挡的像素的颜色
+	//	但如果我们回读窗口的像素值就可能出现问题。
+	swapchainCreateInfo.clipped = true;
+	swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
+
+	auto ret = vkCreateSwapchainKHR(logicDevice, &swapchainCreateInfo, nullptr, &globalInfoComp->swapchain);
+	if (ret != VK_SUCCESS) {
+		throw std::runtime_error("create swapchain error");
+	}
+
+	globalInfoComp->swapChainImageFormat = surfaceFormat.format;
+	globalInfoComp->swapChainExtent = surfaceCapabilities.currentExtent;
+}
+
+
+void RenderSystem::DestroySwapchian(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+	auto& swapchain = globalInfoComp->swapchain;
+
+	vkDestroySwapchainKHR(logicDevice, swapchain, nullptr);
 }
 
 //VkSurfaceFormatKHR 表面格式
@@ -88,63 +146,6 @@ VkSurfaceCapabilitiesKHR RenderSystem::GetSwapchainCapbilities(Context* context)
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities);
 
 	return surfaceCapabilities;
-}
-
-void RenderSystem::CreateSwapchian(Context* context) {
-	auto& renderEO = context->renderEO;
-
-	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& logicDevice = globalInfoComp->logicDevice;
-	auto& surface = globalInfoComp->surface;
-
-	auto surfaceFormat = GetSwapchainSurfaceFormat(context);
-	auto presentMode = GetSwapchainPresentMode(context);
-	auto surfaceCapabilities = GetSwapchainCapbilities(context);
-
-	//需要交换链至少支持一种图像格式 和 一种支持窗口表面的呈现模式
-
-	VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
-	swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	swapchainCreateInfo.surface = surface;
-	swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + 1; //3缓冲
-	swapchainCreateInfo.imageFormat = surfaceFormat.format;
-	swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
-	swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
-	swapchainCreateInfo.imageArrayLayers = 1; //imageArrayLayers成员变量用于指定每个图像所包含的层次 一般是1 除非VR
-	swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; //作为传输的目的图像
-
-	//VkSharingMode 描述图像共享模式
-	//	VK_SHARING_MODE_EXCLUSIVE：一张图像同一时间只能被一个队列族所拥有
-	//		在另一队列族使用它之前，必须显式地改变图像所有权。这一模式下性能表现最佳。
-	//	VK_SHARING_MODE_CONCURRENT：图像可以在多个队列族间使用，不需要显式地改变图像所有权。
-	swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	swapchainCreateInfo.preTransform = surfaceCapabilities.currentTransform; //图形变换操作，可以反转之类的
-	swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; //忽略alpha通道
-	swapchainCreateInfo.presentMode = presentMode;
-
-	//clipped为VK_TRUE表示我们不关心被窗口系统中的其它窗口遮挡的像素的颜色
-	//	但如果我们回读窗口的像素值就可能出现问题。
-	swapchainCreateInfo.clipped = true;
-	swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
-
-	auto ret = vkCreateSwapchainKHR(logicDevice, &swapchainCreateInfo, nullptr, &globalInfoComp->swapchain);
-	if (ret != VK_SUCCESS) {
-		throw std::runtime_error("create swapchain error");
-	}
-
-	globalInfoComp->swapChainImageFormat = surfaceFormat.format;
-	globalInfoComp->swapChainExtent = surfaceCapabilities.currentExtent;
-}
-
-void RenderSystem::DestroySwapchian(Context* context) {
-	auto& renderEO = context->renderEO;
-
-	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& logicDevice = globalInfoComp->logicDevice;
-	auto& swapchain = globalInfoComp->swapchain;
-
-	vkDestroySwapchainKHR(logicDevice, swapchain, nullptr);
 }
 
 //获取交换链图像的图像句柄，之后使用这些图像句柄进行渲染操作
@@ -223,4 +224,36 @@ void RenderSystem::DestroySwapchianImageViews(Context* context) {
 	for (auto& swapchainImageView : swapchainImageViews) {
 		vkDestroyImageView(logicDevice, swapchainImageView, nullptr);
 	}
+}
+
+//重建交换链
+void RenderSystem::RecreateSwapchain(Context* context) {
+
+	//等待设备处于空闲状态，避免在对象的使用过程中将其清除重建
+	DrawWait(context);
+
+	//清空老数据
+	FreeCommandBuffers(context);
+	DestroyGraphicsPipeline(context);
+	DestroyRenderPass(context);
+	DestroySwapchianImageViews(context);
+	DestroySwapchian(context);
+
+	//重新创建交换链
+	CreateSwapchian(context);
+
+	//图形视图是直接依赖于交换链图像的，所以也需要被重建图像视图
+	GetSwapchianImages(context);
+	CreateSwapchianImageViews(context);
+
+	//渲染流程依赖于交换链图像的格式
+	//	虽然像窗口大小改变不会引起使用的交换链图像格式改变，但我们还是应该对它进行处理。
+	CreateRenderPass(context);
+
+	//视口和裁剪矩形在管线创建时被指定，窗口大小改变，也需要重建管线
+	CreateGraphicsPipeline(context);
+
+	//帧缓冲和指令缓冲直接依赖于交换链图像，也需要重建
+	CreateFrameBuffers(context);
+	CreateCommandBuffers(context);
 }

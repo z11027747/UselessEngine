@@ -53,5 +53,17 @@ void RenderSystem::DestroyFrameBuffers(Context* context) {
 	for (auto& swapchainFrameBuffer : swapchainFrameBuffers) {
 		vkDestroyFramebuffer(logicDevice, swapchainFrameBuffer, nullptr);
 	}
+}
 
+
+void RenderSystem::FreeCommandBuffers(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+	auto& commandPool = globalInfoComp->commandPool;
+	auto& commandBuffers = globalInfoComp->commandBuffers;
+
+	vkFreeCommandBuffers(logicDevice, commandPool, 
+		static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 }

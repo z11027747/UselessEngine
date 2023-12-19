@@ -33,7 +33,16 @@ void RenderSystem::DrawFrame(Context* context) {
 	uint32_t imageIndex;
 	auto acquireNextRet = vkAcquireNextImageKHR(logicDevice, swapchain, UINT64_MAX,
 		imageAvailableSemaphore, nullptr, &imageIndex);
-	if (acquireNextRet != VK_SUCCESS) {
+
+	//需要在交换链必须被重建时调用recreateSwapChain函数重建交换链
+	//	VK_ERROR_OUT_OF_DATE_KHR：交换链不能继续使用。通常发生在窗口大小改变后。
+	//	VK_SUBOPTIMAL_KHR：交换链仍然可以使用，但表面属性已经不能准确匹配。
+	if (acquireNextRet == VK_ERROR_OUT_OF_DATE_KHR
+		|| acquireNextRet == VK_SUBOPTIMAL_KHR) {
+		RecreateSwapchain(context);
+		return;
+	}
+	else if (acquireNextRet != VK_SUCCESS) {
 		throw std::runtime_error("acquire NextImage error!");
 	}
 
@@ -87,14 +96,19 @@ void RenderSystem::DrawFrame(Context* context) {
 	presentInfo.pImageIndices = &imageIndex;
 
 	auto presentRet = vkQueuePresentKHR(logicQueue, &presentInfo);
-	if (presentRet != VK_SUCCESS) {
+	if (presentRet == VK_ERROR_OUT_OF_DATE_KHR
+		|| acquireNextRet == VK_SUBOPTIMAL_KHR) {
+		RecreateSwapchain(context);
+		return;
+	}
+	else if (presentRet != VK_SUCCESS) {
 		throw std::runtime_error("present error!");
 	}
 
 	currFrame = (currFrame + 1) % maxFrameInFlight;
 }
 
-void RenderSystem::DrawWaitIdle(Context* context) {
+void RenderSystem::DrawWait(Context* context) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();

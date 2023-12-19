@@ -44,6 +44,7 @@ public:
 	static void GetSwapchianImages(Context*);
 	static void CreateSwapchianImageViews(Context*);
 	static void DestroySwapchianImageViews(Context*);
+	static void RecreateSwapchain(Context*);
 
 	//shader
 	static void CreateShader(Context*, const std::string&);
@@ -78,11 +79,12 @@ public:
 	static void CreateCommandPool(Context*);
 	static void DestroyCommandPool(Context*);
 	static void CreateCommandBuffers(Context*);
+	static void FreeCommandBuffers(Context*);
 	static void RecordCommandBuffer(Context*, uint32_t);
 
 	//draw
 	static void DrawFrame(Context*);
-	static void DrawWaitIdle(Context*);
+	static void DrawWait(Context*);
 
 	//semaphore
 	static void CreateSemaphores(Context*);

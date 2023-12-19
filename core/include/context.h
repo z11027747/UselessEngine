@@ -49,7 +49,7 @@ public:
 	}
 
 	void Destroy() {
-		RenderSystem::DrawWaitIdle(this);
+		RenderSystem::DrawWait(this);
 
 		RenderSystem::DestroyFences(this);
 		RenderSystem::DestroySemaphores(this);
