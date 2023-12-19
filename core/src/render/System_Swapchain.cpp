@@ -226,8 +226,27 @@ void RenderSystem::DestroySwapchianImageViews(Context* context) {
 	}
 }
 
+void RenderSystem::SetNeedRecreateSwapchain(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	if (globalInfoComp->needRecreateSwapchain) {
+		return;
+	}
+
+	globalInfoComp->needRecreateSwapchain = true;
+	DrawWait(context);
+}
+
 //重建交换链
-void RenderSystem::RecreateSwapchain(Context* context) {
+void RenderSystem::TryRecreateSwapchain(Context* context) {
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	if (!globalInfoComp->needRecreateSwapchain) {
+		return;
+	}
+	globalInfoComp->needRecreateSwapchain = false;
 
 	//等待设备处于空闲状态，避免在对象的使用过程中将其清除重建
 	DrawWait(context);

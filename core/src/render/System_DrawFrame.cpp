@@ -39,7 +39,7 @@ void RenderSystem::DrawFrame(Context* context) {
 	//	VK_SUBOPTIMAL_KHR：交换链仍然可以使用，但表面属性已经不能准确匹配。
 	if (acquireNextRet == VK_ERROR_OUT_OF_DATE_KHR
 		|| acquireNextRet == VK_SUBOPTIMAL_KHR) {
-		RecreateSwapchain(context);
+		SetNeedRecreateSwapchain(context);
 		return;
 	}
 	else if (acquireNextRet != VK_SUCCESS) {
@@ -98,7 +98,7 @@ void RenderSystem::DrawFrame(Context* context) {
 	auto presentRet = vkQueuePresentKHR(logicQueue, &presentInfo);
 	if (presentRet == VK_ERROR_OUT_OF_DATE_KHR
 		|| acquireNextRet == VK_SUBOPTIMAL_KHR) {
-		RecreateSwapchain(context);
+		SetNeedRecreateSwapchain(context);
 		return;
 	}
 	else if (presentRet != VK_SUCCESS) {

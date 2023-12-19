@@ -46,6 +46,7 @@ public:
 
 	void Update() {
 		RenderSystem::DrawFrame(this);
+		RenderSystem::TryRecreateSwapchain(this);
 	}
 
 	void Destroy() {
@@ -65,6 +66,10 @@ public:
 		RenderSystem::DestroySurface(this);
 		RenderSystem::DestroyDebugCallback(this);
 		RenderSystem::DestroyInstance(this);
+	}
+
+	void OnSizeCallback() {
+		RenderSystem::SetNeedRecreateSwapchain(this);
 	}
 
 };

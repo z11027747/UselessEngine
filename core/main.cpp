@@ -3,9 +3,10 @@
 #include "context.h"
 #include <cstdlib>
 
+void size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-std::unique_ptr<Context> contextPtr;
+std::unique_ptr<Context> context;
 
 int main() {
 
@@ -16,17 +17,25 @@ int main() {
 	GLFWwindow* window = glfwCreateWindow(800, 600, "UselessEngine", nullptr, nullptr);
 
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetFramebufferSizeCallback(window, size_callback);
 
-	contextPtr = std::make_unique<Context>(window);
-	contextPtr->Create();
+	context = std::make_unique<Context>(window);
+	context->Create();
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
-		contextPtr->Update();
+		int width = 0, height = 0;
+		glfwGetFramebufferSize(context->window, &width, &height);
+		if (width == 0 || height == 0) {
+			glfwWaitEvents();
+			continue;
+		}
+
+		context->Update();
 	}
 
-	contextPtr->Destroy();
+	context->Destroy();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
@@ -38,4 +47,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+}
+
+void size_callback(GLFWwindow* window, int width, int height)
+{
+	context->OnSizeCallback();
 }

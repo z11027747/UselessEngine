@@ -44,7 +44,8 @@ public:
 	static void GetSwapchianImages(Context*);
 	static void CreateSwapchianImageViews(Context*);
 	static void DestroySwapchianImageViews(Context*);
-	static void RecreateSwapchain(Context*);
+	static void SetNeedRecreateSwapchain(Context*);
+	static void TryRecreateSwapchain(Context*);
 
 	//shader
 	static void CreateShader(Context*, const std::string&);

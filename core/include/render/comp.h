@@ -29,6 +29,7 @@ struct RenderGlobalComp final : public EngineComp {
 	VkExtent2D swapChainExtent;
 	std::vector<VkImage> swapchainImages;
 	std::vector<VkImageView> swapchainImageViews;
+	bool needRecreateSwapchain;
 
 	VkPipeline graphicsPipeline;
 	std::vector<VkShaderModule> shaderModules;
