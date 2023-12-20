@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include <array>
 #include <unordered_map>
 #include <functional>
 #include <glm/glm.hpp>
@@ -12,9 +13,16 @@
 struct RenderVertex final {
 	glm::vec2 pos;
 	glm::vec3 color;
+	glm::vec2 texcoord;
 
 	static VkVertexInputBindingDescription CreateBindingDescription();
 	static std::vector<VkVertexInputAttributeDescription> CreateAttributeDescriptions();
+};
+
+struct RenderTextrue final {
+	int width;
+	int height;
+	unsigned char* data;
 };
 
 struct UniformBufferObject final {
@@ -80,4 +88,9 @@ struct RenderGlobalComp final : public EngineComp {
 
 	VkDescriptorPool descriptorPool;
 	std::vector<VkDescriptorSet> descriptorSets;
+
+	VkImage textureImage;
+	VkDeviceMemory textureImageMemory;
+	VkImageView textureImageView;
+	VkSampler textureSampler;
 };

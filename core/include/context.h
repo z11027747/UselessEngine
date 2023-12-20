@@ -54,6 +54,9 @@ public:
 		RenderSystem::CreateIndexBufferHost(this);
 		RenderSystem::CreateUniformBuffersHost(this);
 		RenderSystem::CreateDescriptorPool(this);
+		RenderSystem::CreateTextureImage(this);
+		RenderSystem::CreateTextureImageView(this);
+		RenderSystem::CreateTextureSampler(this);
 		RenderSystem::AllocateDescriptorSets(this);
 	}
 
@@ -65,6 +68,9 @@ public:
 	void Destroy() {
 		RenderSystem::WaitIdle(this);
 
+		RenderSystem::DestroyTextureSampler(this);
+		RenderSystem::DestroyTextureImageView(this);
+		RenderSystem::DestroyTextureImage(this);
 		RenderSystem::DestroyDescriptorPool(this);
 		RenderSystem::DestroyUniformBuffers(this);
 		RenderSystem::DestroyIndexBuffer(this);

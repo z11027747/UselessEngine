@@ -18,7 +18,7 @@ VkVertexInputBindingDescription RenderVertex::CreateBindingDescription() {
 
 //顶点属性的格式和位置
 std::vector<VkVertexInputAttributeDescription> RenderVertex::CreateAttributeDescriptions() {
-	std::vector<VkVertexInputAttributeDescription> attributeDescriptions(2);
+	std::vector<VkVertexInputAttributeDescription> attributeDescriptions(3);
 
 	//location index
 	attributeDescriptions[0].location = 0;
@@ -33,6 +33,11 @@ std::vector<VkVertexInputAttributeDescription> RenderVertex::CreateAttributeDesc
 	attributeDescriptions[1].binding = 0;
 	attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 	attributeDescriptions[1].offset = offsetof(RenderVertex, color);
+
+	attributeDescriptions[2].location = 2;
+	attributeDescriptions[2].binding = 0;
+	attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+	attributeDescriptions[2].offset = offsetof(RenderVertex, texcoord);
 
 	return attributeDescriptions;
 }
@@ -158,10 +163,10 @@ void RenderSystem::CreateVertexRectangle(Context* context) {
 	auto& logicDevice = globalInfoComp->logicDevice;
 
 	globalInfoComp->vertices = {
-		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
 	};
 
 	//对于不重复的顶点数据小于65535的情况

@@ -48,13 +48,29 @@ void RenderSystem::DrawFrame(Context* context) {
 
 	//	2.对帧缓冲附着执行指令缓冲中的渲染指令
 
+	//更新uniform数据
+	UpdateUniformBuffer(context, imageIndex);
+
 	auto& commandBuffer = globalInfoComp->swapchainCommandBuffers[imageIndex];
 	vkResetCommandBuffer(commandBuffer, 0);
 
-	RecordDrawCommandBuffer(context, imageIndex);
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-	//更新uniform数据
-	UpdateUniformBuffer(context, imageIndex);
+	//开始记录指令到缓冲
+	auto beginRet = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	if (beginRet != VK_SUCCESS) {
+		throw std::runtime_error("begin commandBuffer error!");
+	}
+
+	DrawRecord(context, imageIndex);
+
+	//结束记录指令
+	auto endRet = vkEndCommandBuffer(commandBuffer);
+	if (endRet != VK_SUCCESS) {
+		throw std::runtime_error("end commandBuffer error!");
+	}
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -120,11 +136,10 @@ void RenderSystem::WaitIdle(Context* context) {
 	vkDeviceWaitIdle(logicDevice);
 }
 
-void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
+void RenderSystem::DrawRecord(Context* context, uint32_t index) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& logicDevice = globalInfoComp->logicDevice;
 	auto& renderPass = globalInfoComp->renderPass;
 	auto& graphicsPipeline = globalInfoComp->graphicsPipeline;
 	auto& graphicsPipelineLayout = globalInfoComp->graphicsPipelineLayout;
@@ -133,21 +148,6 @@ void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
 	auto& swapchainCommandBuffers = globalInfoComp->swapchainCommandBuffers;
 
 	auto& commandBuffer = globalInfoComp->swapchainCommandBuffers[index];
-
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-	//VkCommandBufferUsageFlags 使用方式
-	//	VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT：指令缓冲在执行一次后，就被用来记录新的指令。
-	//	VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT：这是一个只在一个渲染流程内使用的辅助指令缓冲。
-	//	VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT：在指令缓冲等待执行时，仍然可以提交这一指令缓冲。
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-	//开始记录指令到缓冲
-	auto beginRet = vkBeginCommandBuffer(commandBuffer, &beginInfo);
-	if (beginRet != VK_SUCCESS) {
-		throw std::runtime_error("begin commandBuffer error!");
-	}
 
 	//开始渲染流程
 	VkRenderPassBeginInfo renderPassBeginInfo = {};
@@ -161,7 +161,7 @@ void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
 	renderPassBeginInfo.clearValueCount = 1;
 
 	//清除值
-	VkClearValue clearValue = { 0.0f, 0.0f, 0.0f, 1.0f };
+	VkClearValue clearValue = { 0.1f, 0.1f, 0.1f, 1.0f };
 	renderPassBeginInfo.pClearValues = &clearValue;
 
 	//VkSubpassContents 指定渲染流程如何提供绘制指令的标记
@@ -202,9 +202,4 @@ void RenderSystem::RecordDrawCommandBuffer(Context* context, uint32_t index) {
 	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
 	vkCmdEndRenderPass(commandBuffer);
-
-	auto endRet = vkEndCommandBuffer(commandBuffer);
-	if (endRet != VK_SUCCESS) {
-		throw std::runtime_error("end commandBuffer error!");
-	}
 }

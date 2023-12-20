@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <string>
+#include <functional>
 
 class Context;
 
@@ -82,13 +83,14 @@ public:
 	static void DestroyCommandPool(Context*);
 	static void AllocateCommandBuffer(Context*, std::vector<VkCommandBuffer>&);
 	static void FreeCommandBuffer(Context*, std::vector<VkCommandBuffer>&);
+	static void RecordCommandBufferSingleTime(Context*, std::function<void(VkCommandBuffer&)>);
 
 	static void AllocateSwapchainCommandBuffers(Context*);
 	static void FreeSwapchainCommandBuffers(Context*);
 
 	//draw
 	static void DrawFrame(Context*);
-	static void RecordDrawCommandBuffer(Context*, uint32_t);
+	static void DrawRecord(Context*, uint32_t);
 
 	static void WaitIdle(Context*);
 
@@ -130,4 +132,23 @@ public:
 	static void CreateDescriptorPool(Context*);
 	static void DestroyDescriptorPool(Context*);
 	static void AllocateDescriptorSets(Context*);
+
+	//texture
+	static void CreateImage(Context*,
+		uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags,
+		VkMemoryPropertyFlags,
+		VkImage&, VkDeviceMemory&);
+	static void DestroyImage(Context*, VkImage&, VkDeviceMemory&);
+	static void TransitionImageLayout(Context*, VkImage&, VkImageLayout, VkImageLayout);
+	static void CopyBufferToImage(Context*, VkBuffer&, VkImage&, uint32_t, uint32_t);
+
+	static void CreateImageView(Context*, VkFormat, VkImage&, VkImageView&);
+	static void DestroyImageView(Context*, VkImageView&);
+
+	static void CreateTextureImage(Context*);
+	static void DestroyTextureImage(Context*);
+	static void CreateTextureImageView(Context*);
+	static void DestroyTextureImageView(Context*);
+	static void CreateTextureSampler(Context*);
+	static void DestroyTextureSampler(Context*);
 };

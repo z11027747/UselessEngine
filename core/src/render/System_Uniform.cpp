@@ -27,17 +27,23 @@ void RenderSystem::CreateDescriptorSetLayout(Context* context) {
 	createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 
 	//VkDescriptorSetLayoutBinding 描述每个binding
-	VkDescriptorSetLayoutBinding binding = {};
-	binding.binding = 0; //index
+	std::array<VkDescriptorSetLayoutBinding, 2> bindings = {};
 
+	bindings[0].binding = 0; //index
 	//描述符类型和数量
 	//	意义是：1个uniform的Buffer
-	binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	binding.descriptorCount = 1;
+	bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	bindings[0].descriptorCount = 1;
 	//哪个着色器阶段用
-	binding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-	createInfo.bindingCount = 1;
-	createInfo.pBindings = &binding;
+	bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+	bindings[1].binding = 1;
+	bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; //一个包含图像和采样器的组合对象
+	bindings[1].descriptorCount = 1;
+	bindings[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	createInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	createInfo.pBindings = bindings.data();
 
 	auto ret = vkCreateDescriptorSetLayout(logicDevice, &createInfo, nullptr, &descriptorSetLayout);
 	if (ret != VK_SUCCESS) {
@@ -131,7 +137,6 @@ void RenderSystem::UpdateUniformBuffer(Context* context, uint32_t index) {
 	vkUnmapMemory(logicDevice, uniformBufferMemory);
 }
 
-
 //描述符集不能被直接创建，需要通过描述符池来分配
 void RenderSystem::CreateDescriptorPool(Context* context) {
 	auto& renderEO = context->renderEO;
@@ -150,11 +155,16 @@ void RenderSystem::CreateDescriptorPool(Context* context) {
 	createInfo.maxSets = swapchainImageSize;
 
 	//定义描述符池可以分配的描述符集
-	VkDescriptorPoolSize size = {};
-	size.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	size.descriptorCount = swapchainImageSize;
-	createInfo.poolSizeCount = 1;
-	createInfo.pPoolSizes = &size;
+	std::array<VkDescriptorPoolSize, 2> sizes = {};
+
+	sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	sizes[0].descriptorCount = swapchainImageSize;
+
+	sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	sizes[1].descriptorCount = swapchainImageSize;
+
+	createInfo.poolSizeCount = static_cast<uint32_t>(sizes.size());
+	createInfo.pPoolSizes = sizes.data();
 
 	auto ret = vkCreateDescriptorPool(logicDevice, &createInfo, nullptr, &descriptorPool);
 	if (ret != VK_SUCCESS) {
@@ -203,20 +213,23 @@ void RenderSystem::AllocateDescriptorSets(Context* context) {
 	}
 
 	auto& uniformBuffers = globalInfoComp->uniformBuffers;
+	auto& textureSampler = globalInfoComp->textureSampler;
+	auto& textureImageView = globalInfoComp->textureImageView;
 
 	//配置描述符集对象创建
 	for (auto i = 0; i < swapchainImageSize; i++) {
 
 		//vkUpdateDescriptorSets 更新描述符的配置
-		VkWriteDescriptorSet write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.dstSet = descriptorSets[i]; //指定要更新的描述符集对象
-		write.dstBinding = 0;
-		write.dstArrayElement = 0; //index
+		std::array<VkWriteDescriptorSet, 2> writes = {};
+
+		writes[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		writes[0].dstSet = descriptorSets[i]; //指定要更新的描述符集对象
+		writes[0].dstBinding = 0;
+		writes[0].dstArrayElement = 0; //index
 
 		//指定描述符的类型
-		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		write.descriptorCount = 1;
+		writes[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		writes[0].descriptorCount = 1;
 
 		//指定缓冲数据
 		//	VkDescriptorBufferInfo 配置描述符引用的缓冲对象
@@ -224,8 +237,22 @@ void RenderSystem::AllocateDescriptorSets(Context* context) {
 		bufferInfo.buffer = uniformBuffers[i];
 		bufferInfo.offset = 0;
 		bufferInfo.range = sizeof(UniformBufferObject); //可以访问的数据范围
-		write.pBufferInfo = &bufferInfo;
+		writes[0].pBufferInfo = &bufferInfo;
 
-		vkUpdateDescriptorSets(logicDevice, 1, &write, 0, nullptr);
+		writes[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		writes[1].dstSet = descriptorSets[i];
+		writes[1].dstBinding = 1;
+		writes[1].dstArrayElement = 0;
+		writes[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		writes[1].descriptorCount = 1;
+
+		//指定图像数据
+		VkDescriptorImageInfo imageInfo = {};
+		imageInfo.sampler = textureSampler;
+		imageInfo.imageView = textureImageView;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		writes[1].pImageInfo = &imageInfo;
+
+		vkUpdateDescriptorSets(logicDevice, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
 	}
 }

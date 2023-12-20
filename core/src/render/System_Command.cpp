@@ -79,3 +79,53 @@ void RenderSystem::FreeCommandBuffer(Context* context, std::vector<VkCommandBuff
 	vkFreeCommandBuffers(logicDevice, commandPool,
 		static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 }
+
+void RenderSystem::RecordCommandBufferSingleTime(Context* context, std::function<void(VkCommandBuffer&)> doSomethings) {
+
+	auto& renderEO = context->renderEO;
+
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& logicDevice = globalInfoComp->logicDevice;
+	auto& logicQueue = globalInfoComp->logicQueue;
+
+	std::vector<VkCommandBuffer> commandBuffers(1);
+	AllocateCommandBuffer(context, commandBuffers);
+
+	auto& commandBuffer = commandBuffers[0];
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+	//VkCommandBufferUsageFlags 使用方式
+	//	VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT：指令缓冲在执行一次后，就被用来记录新的指令。
+	//	VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT：这是一个只在一个渲染流程内使用的辅助指令缓冲。
+	//	VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT：在指令缓冲等待执行时，仍然可以提交这一指令缓冲。
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	auto beginRet = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	if (beginRet != VK_SUCCESS) {
+		throw std::runtime_error("begin commandBuffer error!");
+	}
+
+	doSomethings(commandBuffer);
+
+	auto endRet = vkEndCommandBuffer(commandBuffer);
+	if (endRet != VK_SUCCESS) {
+		throw std::runtime_error("end commandBuffer error!");
+	}
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	auto submitRet = vkQueueSubmit(logicQueue, 1, &submitInfo, nullptr);
+	if (submitRet != VK_SUCCESS) {
+		throw std::runtime_error("submit error!");
+	}
+
+	//直接等待传输操作完成
+	vkQueueWaitIdle(logicQueue);
+
+	FreeCommandBuffer(context, commandBuffers);
+}

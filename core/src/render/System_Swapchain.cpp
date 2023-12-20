@@ -110,7 +110,7 @@ VkSurfaceFormatKHR RenderSystem::GetSwapchainSurfaceFormat(Context* context) {
 //	VK_PRESENT_MODE_FIFO_RELAXED_KHR：这一模式和上一模式的唯一区别是，如果应用程序延迟，导致交换链的队列在上一次垂直回扫时为空，
 //			那么，如果应用程序在下一次垂直回扫前提交图像，图像会立即被显示。这一模式可能会导致撕裂现象。
 //	VK_PRESENT_MODE_MAILBOX_KHR：这一模式是第二种模式的另一个变种。它不会在交换链的队列满时阻塞应用程序，队列中的图像会被直接替换为应用程序新提交的图像。
-//			这一模式可以用来实现三倍缓冲，避免撕裂现象的同时减小了延迟问题。
+//			这一模式可以用来 实现三倍缓冲，避免撕裂现象的同时减小了延迟问题。
 VkPresentModeKHR RenderSystem::GetSwapchainPresentMode(Context* context) {
 	auto& renderEO = context->renderEO;
 
@@ -183,34 +183,10 @@ void RenderSystem::CreateSwapchianImageViews(Context* context) {
 	for (uint32_t i = 0; i < swapchainImageCount; i++) {
 
 		auto& swapchainImage = swapchainImages[i];
+		auto& swapchainImageView = swapchainImageViews[i];
 
-		VkImageViewCreateInfo imageViewCreateInfo = {};
-		imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		imageViewCreateInfo.image = swapchainImage;
-		imageViewCreateInfo.format = swapChainImageFormat;
-		imageViewCreateInfo.viewType = VkImageViewType::VK_IMAGE_VIEW_TYPE_2D; //二维纹理
-
-		//进行图像颜色通道的映射
-		VkComponentMapping mapping = {};
-		mapping.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-		mapping.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-		mapping.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-		mapping.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-		imageViewCreateInfo.components = mapping;
-
-		//指定图像的用途和图像的哪一部分可以被访问
-		VkImageSubresourceRange subresourceRange = {};
-		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		subresourceRange.baseArrayLayer = 0;
-		subresourceRange.layerCount = 1;
-		subresourceRange.baseMipLevel = 0;
-		subresourceRange.levelCount = 1;
-		imageViewCreateInfo.subresourceRange = subresourceRange;
-
-		auto ret = vkCreateImageView(logicDevice, &imageViewCreateInfo, nullptr, &swapchainImageViews[i]);
-		if (ret != VK_SUCCESS) {
-			throw std::runtime_error("create imageView error");
-		}
+		CreateImageView(context,
+			swapChainImageFormat, swapchainImage, swapchainImageView);
 	}
 }
 
@@ -218,11 +194,10 @@ void RenderSystem::DestroySwapchianImageViews(Context* context) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& logicDevice = globalInfoComp->logicDevice;
 	auto& swapchainImageViews = globalInfoComp->swapchainImageViews;
 
 	for (auto& swapchainImageView : swapchainImageViews) {
-		vkDestroyImageView(logicDevice, swapchainImageView, nullptr);
+		DestroyImageView(context, swapchainImageView);
 	}
 }
 

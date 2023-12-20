@@ -100,6 +100,7 @@ void RenderSystem::CreateBuffer(Context* context,
 	VkDeviceSize size, VkBufferUsageFlags usageFlags,
 	//memory
 	VkMemoryPropertyFlags propertiesFlags,
+	//return
 	VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 {
 	auto& renderEO = context->renderEO;
@@ -159,49 +160,13 @@ void RenderSystem::DestroyBuffer(Context* context,
 void RenderSystem::CopyBuffer(Context* context,
 	VkBuffer& srcBuffer, VkBuffer& dstBuffer, VkDeviceSize size)
 {
-	auto& renderEO = context->renderEO;
+	RecordCommandBufferSingleTime(context,
+		[&size, &srcBuffer, &dstBuffer](VkCommandBuffer& commandBuffer) {
 
-	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& logicDevice = globalInfoComp->logicDevice;
-	auto& logicQueue = globalInfoComp->logicQueue;
-
-	std::vector<VkCommandBuffer> commandBuffers(1);
-	AllocateCommandBuffer(context, commandBuffers);
-
-	auto& commandBuffer = commandBuffers[0];
-
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-	auto beginRet = vkBeginCommandBuffer(commandBuffer, &beginInfo);
-	if (beginRet != VK_SUCCESS) {
-		throw std::runtime_error("begin commandBuffer error!");
-	}
-
-	VkBufferCopy copy = {};
-	copy.srcOffset = 0;
-	copy.dstOffset = 0;
-	copy.size = size;
-	vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copy);
-
-	auto endRet = vkEndCommandBuffer(commandBuffer);
-	if (endRet != VK_SUCCESS) {
-		throw std::runtime_error("end commandBuffer error!");
-	}
-
-	VkSubmitInfo submitInfo = {};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffer;
-
-	auto submitRet = vkQueueSubmit(logicQueue, 1, &submitInfo, nullptr);
-	if (submitRet != VK_SUCCESS) {
-		throw std::runtime_error("submit error!");
-	}
-
-	//直接等待传输操作完成
-	vkQueueWaitIdle(logicQueue);
-
-	FreeCommandBuffer(context, commandBuffers);
+			VkBufferCopy copy = {};
+			copy.srcOffset = 0;
+			copy.dstOffset = 0;
+			copy.size = size;
+			vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copy);
+		});
 }
