@@ -17,6 +17,10 @@ public:
 		window = w;
 	}
 
+	//time
+	float currTime;
+	float deltaTime;
+
 	//render
 	std::shared_ptr<EngineObject> renderEO;
 

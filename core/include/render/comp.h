@@ -7,7 +7,6 @@
 #include <functional>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <chrono>
 #include "base.h"
 
 struct RenderVertex final {
@@ -18,7 +17,7 @@ struct RenderVertex final {
 	static std::vector<VkVertexInputAttributeDescription> CreateAttributeDescriptions();
 };
 
-struct UniformBufferObject {
+struct UniformBufferObject final {
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 proj;

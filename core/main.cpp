@@ -8,6 +8,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 std::unique_ptr<Context> context;
 
+
+
 int main() {
 
 	glfwInit();
@@ -15,13 +17,16 @@ int main() {
 	//glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "UselessEngine", nullptr, nullptr);
-	glfwSetWindowPos(window, -1500, 200);
+	//glfwSetWindowPos(window, -1500, 200);
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetFramebufferSizeCallback(window, size_callback);
 
 	context = std::make_unique<Context>(window);
 	context->Create();
+
+	float deltaTime = 0.0f;
+	float lastTime = 0.0f;
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -33,6 +38,12 @@ int main() {
 			continue;
 		}
 
+		float currTime = static_cast<float>(glfwGetTime());
+		deltaTime = currTime - lastTime;
+		lastTime = currTime;
+
+		context->currTime = currTime;
+		context->deltaTime = deltaTime;
 		context->Update();
 	}
 

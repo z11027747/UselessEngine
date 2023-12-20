@@ -164,7 +164,7 @@ void RenderSystem::MakeRasterizationCreateInfo(
 	rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
 	rasterizationStateCreateInfo.lineWidth = 1.0f;
 
-	rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;// VK_CULL_MODE_BACK_BIT; //剔除
+	rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT; //剔除
 	rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;; //顶点序
 
 	//深度相关设置
