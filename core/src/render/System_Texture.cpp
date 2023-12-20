@@ -104,12 +104,17 @@ void RenderSystem::TransitionImageLayout(Context* context,
 
 			memoryBarrier.image = image;
 
-			//影响的图像范围
-			memoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; //只涉及图像的颜色方面（深度、模板等）
-			memoryBarrier.subresourceRange.levelCount = 1;
+			//subresourceRange 影响的图像范围
+			if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+				memoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+			}
+			else {
+				memoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; //只涉及图像的颜色方面（深度、模板等）
+			}
 			memoryBarrier.subresourceRange.baseMipLevel = 0;
-			memoryBarrier.subresourceRange.layerCount = 1;
+			memoryBarrier.subresourceRange.levelCount = 1;
 			memoryBarrier.subresourceRange.baseArrayLayer = 0;
+			memoryBarrier.subresourceRange.layerCount = 1;
 
 			//指定在屏障之前必须发生的资源操作类型，以及必须等待屏障的资源操作类型。
 			memoryBarrier.srcAccessMask = 0; // TODO
@@ -136,6 +141,14 @@ void RenderSystem::TransitionImageLayout(Context* context,
 
 				memoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 				memoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			}
+			//未定义->深度测试: 不用等
+			else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+				sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+				destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT; //用来检测片段是否可以覆盖之前的片段
+
+				memoryBarrier.srcAccessMask = 0;
+				memoryBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
 			}
 			else {
 				throw std::invalid_argument("unsupported layout transition!");
@@ -182,7 +195,8 @@ void RenderSystem::CopyBufferToImage(Context* context,
 }
 
 void RenderSystem::CreateImageView(Context* context,
-	VkFormat format, VkImage& image, VkImageView& imageView) {
+	VkFormat format, VkImageAspectFlags aspectMask,
+	VkImage& image, VkImageView& imageView) {
 	auto& renderEO = context->renderEO;
 
 	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
@@ -202,7 +216,7 @@ void RenderSystem::CreateImageView(Context* context,
 		VK_COMPONENT_SWIZZLE_IDENTITY };
 
 	//指定图像的用途和图像的哪一部分可以被访问
-	createInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT,0,1,0,1 };
+	createInfo.subresourceRange = { aspectMask,0,1,0,1 };
 
 	auto ret = vkCreateImageView(logicDevice, &createInfo, nullptr, &imageView);
 	if (ret != VK_SUCCESS) {
@@ -305,7 +319,8 @@ void RenderSystem::CreateTextureImageView(Context* context) {
 	auto& textureImage = globalInfoComp->textureImage;
 	auto& textureImageView = globalInfoComp->textureImageView;
 	CreateImageView(context,
-		VK_FORMAT_R8G8B8A8_SRGB, textureImage, textureImageView);
+		VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT,
+		textureImage, textureImageView);
 }
 
 void RenderSystem::DestroyTextureImageView(Context* context) {

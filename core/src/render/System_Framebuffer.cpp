@@ -15,6 +15,7 @@ void RenderSystem::CreateFrameBuffers(Context* context) {
 	auto& swapchainImageViews = globalInfoComp->swapchainImageViews;
 	auto& swapChainExtent = globalInfoComp->swapChainExtent;
 	auto& renderPass = globalInfoComp->renderPass;
+	auto& depthImageView = globalInfoComp->depthImageView;
 
 	int imageSize = swapchainImages.size();
 
@@ -23,14 +24,17 @@ void RenderSystem::CreateFrameBuffers(Context* context) {
 
 	for (auto i = 0; i < imageSize; i++) {
 
-		VkImageView attachments[] = {
-			swapchainImageViews[i]
+		std::array<VkImageView, 2> attachments = {
+			swapchainImageViews[i],
+
+			//绑定深度图像作为帧缓冲的深度附着
+			depthImageView
 		};
 
 		VkFramebufferCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		createInfo.attachmentCount = 1;
-		createInfo.pAttachments = attachments;
+		createInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+		createInfo.pAttachments = attachments.data();
 		createInfo.width = swapChainExtent.width;
 		createInfo.height = swapChainExtent.height;
 		createInfo.renderPass = renderPass;

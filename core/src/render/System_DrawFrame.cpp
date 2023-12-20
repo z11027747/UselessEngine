@@ -158,11 +158,14 @@ void RenderSystem::DrawRecord(Context* context, uint32_t index) {
 	//渲染区域
 	renderPassBeginInfo.renderArea.offset = { 0, 0 };
 	renderPassBeginInfo.renderArea.extent = swapChainExtent;
-	renderPassBeginInfo.clearValueCount = 1;
 
 	//清除值
-	VkClearValue clearValue = { 0.1f, 0.1f, 0.1f, 1.0f };
-	renderPassBeginInfo.pClearValues = &clearValue;
+	std::array<VkClearValue, 2> clearValues = {};
+	clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
+	clearValues[1].depthStencil = { 1.0f, 0 }; //vk深度范围0-1, 1是远平面
+
+	renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+	renderPassBeginInfo.pClearValues = clearValues.data();
 
 	//VkSubpassContents 指定渲染流程如何提供绘制指令的标记
 	//	VK_SUBPASS_CONTENTS_INLINE：所有要执行的指令都在主要指令缓冲中，没有辅助指令缓冲需要执行。

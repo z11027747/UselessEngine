@@ -186,7 +186,8 @@ void RenderSystem::CreateSwapchianImageViews(Context* context) {
 		auto& swapchainImageView = swapchainImageViews[i];
 
 		CreateImageView(context,
-			swapChainImageFormat, swapchainImage, swapchainImageView);
+			swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT,
+			swapchainImage, swapchainImageView);
 	}
 }
 
@@ -230,6 +231,7 @@ void RenderSystem::TryRecreateSwapchain(Context* context) {
 	FreeSwapchainCommandBuffers(context);
 	DestroyFrameBuffers(context);
 	DestroyGraphicsPipeline(context);
+	DestroyDepth(context);
 	DestroyRenderPass(context);
 	DestroySwapchianImageViews(context);
 	DestroySwapchian(context);
@@ -240,6 +242,9 @@ void RenderSystem::TryRecreateSwapchain(Context* context) {
 	//图形视图是直接依赖于交换链图像的，所以也需要被重建图像视图
 	GetSwapchianImages(context);
 	CreateSwapchianImageViews(context);
+
+	//深度
+	CreateDepth(context);
 
 	//渲染流程依赖于交换链图像的格式
 	//	虽然像窗口大小改变不会引起使用的交换链图像格式改变，但我们还是应该对它进行处理。

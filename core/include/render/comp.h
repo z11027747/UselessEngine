@@ -11,7 +11,7 @@
 #include "base.h"
 
 struct RenderVertex final {
-	glm::vec2 pos;
+	glm::vec3 pos;
 	glm::vec3 color;
 	glm::vec2 texcoord;
 
@@ -93,4 +93,9 @@ struct RenderGlobalComp final : public EngineComp {
 	VkDeviceMemory textureImageMemory;
 	VkImageView textureImageView;
 	VkSampler textureSampler;
+
+	VkFormat depthFormat;
+	VkImage depthImage;
+	VkDeviceMemory depthImageMemory;
+	VkImageView depthImageView;
 };

@@ -76,4 +76,27 @@ void RenderSystem::PickupPhysicalDevice(Context* context) {
 	throw std::runtime_error("find queueFamilyIndex error");
 }
 
+VkFormat RenderSystem::FindSupportedFormat(Context* context,
+	const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+{
+	auto& renderEO = context->renderEO;
 
+	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
+	auto& physicalDevice = globalInfoComp->physicalDevice;
+
+	for (VkFormat format : candidates) {
+		VkFormatProperties props;
+		vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
+
+		//linearTilingFeatures：数据格式支持线性tiling模式
+		if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
+			return format;
+		}
+		//optimalTilingFeatures：数据格式支持优化tiling模式
+		else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+			return format;
+		}
+	}
+
+	throw std::runtime_error("failed to find supported format!");
+}

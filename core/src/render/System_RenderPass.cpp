@@ -44,6 +44,29 @@ void RenderSystem::CreateRenderPass(Context* context) {
 	//指定渲染流程结束后的图像布局方式
 	colorAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+	//颜色附着引用
+	VkAttachmentReference colorAttachmentReference = {};
+	colorAttachmentReference.attachment = 0; //index
+	colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	auto& depthFormat = globalInfoComp->depthFormat;
+
+	//深度缓冲附着
+	VkAttachmentDescription depthAttachmentDescription = {};
+	depthAttachmentDescription.format = depthFormat;
+	depthAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
+	depthAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	depthAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	depthAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL;
+
+	//深度缓冲附着引用
+	VkAttachmentReference depthAttachmentRef = {};
+	depthAttachmentRef.attachment = 1;
+	depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
 	//子流程
 	//	一个渲染流程可以包含多个子流程，子流程依赖于上一流程处理后的帧缓冲内容
 	VkSubpassDescription subpassDescription = {};
@@ -52,20 +75,20 @@ void RenderSystem::CreateRenderPass(Context* context) {
 	//	VK_PIPELINE_BIND_POINT_GRAPHICS：图形管线
 	subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-	//颜色附着引用
-	VkAttachmentReference colorAttachmentReference = {};
-	colorAttachmentReference.attachment = 0; //index
-	colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
 	//这里设置的颜色附着在数组中的索引会被片段着色器使用
 	//	对应我们在片段着色器中使用的 layout(location = 0) out vec4 outColor语句
 	subpassDescription.colorAttachmentCount = 1;
 	subpassDescription.pColorAttachments = &colorAttachmentReference;
 
+	//深度缓冲一般就一个
+	subpassDescription.pDepthStencilAttachment = &depthAttachmentRef;
+
+	std::array<VkAttachmentDescription, 2> attachments = { colorAttachmentDescription, depthAttachmentDescription };
+
 	VkRenderPassCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	createInfo.attachmentCount = 1;
-	createInfo.pAttachments = &colorAttachmentDescription;
+	createInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+	createInfo.pAttachments = attachments.data();
 	createInfo.subpassCount = 1;
 	createInfo.pSubpasses = &subpassDescription;
 

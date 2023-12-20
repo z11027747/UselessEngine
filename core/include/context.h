@@ -39,10 +39,11 @@ public:
 		RenderSystem::CreateShader(this, "test");
 		RenderSystem::CreateDescriptorSetLayout(this);
 		RenderSystem::CreatePipelineLayout(this);
+		RenderSystem::CreateCommandPool(this);
+		RenderSystem::CreateDepth(this);
 		RenderSystem::CreateRenderPass(this);
 		RenderSystem::CreateGraphicsPipeline(this);
 		RenderSystem::CreateFrameBuffers(this);
-		RenderSystem::CreateCommandPool(this);
 		RenderSystem::AllocateSwapchainCommandBuffers(this);
 		RenderSystem::CreateSemaphores(this);
 		RenderSystem::CreateFences(this);
@@ -77,10 +78,10 @@ public:
 		RenderSystem::DestroyVertexBuffer(this);
 		RenderSystem::DestroyFences(this);
 		RenderSystem::DestroySemaphores(this);
-		RenderSystem::DestroyCommandPool(this);
 		RenderSystem::DestroyFrameBuffers(this);
 		RenderSystem::DestroyGraphicsPipeline(this);
 		RenderSystem::DestroyRenderPass(this);
+		RenderSystem::DestroyCommandPool(this);
 		RenderSystem::DestroyPipelineLayout(this);
 		RenderSystem::DestroyDescriptorSetLayout(this);
 		RenderSystem::DestroyAllShaders(this);

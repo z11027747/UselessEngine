@@ -55,8 +55,9 @@ void RenderSystem::CreateGraphicsPipeline(Context* context) {
 	pipelineCreateInfo.pMultisampleState = &multisampleStateCreateInfo;
 
 	//深度测试、模板测试
-	//VkPipelineDepthStencilStateCreateInfo 
-	//pipelineCreateInfo.pDepthStencilState = 
+	VkPipelineDepthStencilStateCreateInfo depthStencilStateCreateInfo = {};
+	MakeDepthStencilCreateInfo(depthStencilStateCreateInfo);
+	pipelineCreateInfo.pDepthStencilState = &depthStencilStateCreateInfo;
 
 	//颜色混合
 	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = {};
@@ -170,6 +171,21 @@ void RenderSystem::MakeRasterizationCreateInfo(
 	//深度相关设置
 	rasterizationStateCreateInfo.depthClampEnable = false;
 	rasterizationStateCreateInfo.depthBiasEnable = false;
+}
+
+void RenderSystem::MakeDepthStencilCreateInfo(
+	VkPipelineDepthStencilStateCreateInfo& depthStencilStateCreateInfo) {
+	depthStencilStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+
+	depthStencilStateCreateInfo.depthTestEnable = true;
+	depthStencilStateCreateInfo.depthWriteEnable = true;
+	depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+
+	//指定可选的深度范围测试
+	depthStencilStateCreateInfo.depthBoundsTestEnable = false;
+
+	//蒙版测试
+	depthStencilStateCreateInfo.stencilTestEnable = false;
 }
 
 //多重采样

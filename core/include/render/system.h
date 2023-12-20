@@ -25,6 +25,8 @@ public:
 
 	//physicsDevice
 	static void PickupPhysicalDevice(Context*);
+	static VkFormat FindSupportedFormat(Context*,
+		const std::vector<VkFormat>&, VkImageTiling, VkFormatFeatureFlags);
 
 	//logicDevice
 	static void CreateLogicDevice(Context*);
@@ -59,6 +61,7 @@ public:
 	static void MakeInputAssemblyCreateInfo(VkPipelineInputAssemblyStateCreateInfo&);
 	static void MakeViewportCreateInfo(VkViewport&, VkRect2D&, VkPipelineViewportStateCreateInfo&, VkExtent2D&);
 	static void MakeRasterizationCreateInfo(VkPipelineRasterizationStateCreateInfo&);
+	static void MakeDepthStencilCreateInfo(VkPipelineDepthStencilStateCreateInfo&);
 	static void MakeMultisampleCreateInfo(VkPipelineMultisampleStateCreateInfo&);
 	static void MakeColorBlendCreateInfo(VkPipelineColorBlendAttachmentState&, VkPipelineColorBlendStateCreateInfo&);
 
@@ -142,7 +145,7 @@ public:
 	static void TransitionImageLayout(Context*, VkImage&, VkImageLayout, VkImageLayout);
 	static void CopyBufferToImage(Context*, VkBuffer&, VkImage&, uint32_t, uint32_t);
 
-	static void CreateImageView(Context*, VkFormat, VkImage&, VkImageView&);
+	static void CreateImageView(Context*, VkFormat, VkImageAspectFlags, VkImage&, VkImageView&);
 	static void DestroyImageView(Context*, VkImageView&);
 
 	static void CreateTextureImage(Context*);
@@ -151,4 +154,8 @@ public:
 	static void DestroyTextureImageView(Context*);
 	static void CreateTextureSampler(Context*);
 	static void DestroyTextureSampler(Context*);
+
+	//depth
+	static void CreateDepth(Context*);
+	static void DestroyDepth(Context*);
 };

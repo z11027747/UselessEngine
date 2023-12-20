@@ -25,7 +25,7 @@ std::vector<VkVertexInputAttributeDescription> RenderVertex::CreateAttributeDesc
 	//binding index
 	attributeDescriptions[0].binding = 0;
 	//数据格式, float float
-	attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+	attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 	//属性在每个顶点数据中的偏移量。
 	attributeDescriptions[0].offset = offsetof(RenderVertex, pos);
 
@@ -52,9 +52,9 @@ void RenderSystem::CreateVertexTriangle(Context* context) {
 	//交叉顶点属性(interleaving vertex attributes)
 	auto& vertices = globalInfoComp->vertices;
 
-	vertices.push_back({ {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} });
-	vertices.push_back({ {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} });
-	vertices.push_back({ {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} });
+	//vertices.push_back({ {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} });
+	//vertices.push_back({ {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} });
+	//vertices.push_back({ {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} });
 }
 
 //host内存 （对CPU友好，对GPU不友好）
@@ -163,16 +163,22 @@ void RenderSystem::CreateVertexRectangle(Context* context) {
 	auto& logicDevice = globalInfoComp->logicDevice;
 
 	globalInfoComp->vertices = {
-		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
+		{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+		{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+		{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+		{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+
+		{ {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+		{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+		{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+		{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
 	};
 
 	//对于不重复的顶点数据小于65535的情况
 	//	使用uint16_t变量类型作为索引类型可以节约一半的内存空间
 	globalInfoComp->indices = {
-		0, 1, 2, 2, 3, 0
+		0, 1, 2, 2, 3, 0,
+		4, 5, 6, 6, 7, 4
 	};
 }
 
