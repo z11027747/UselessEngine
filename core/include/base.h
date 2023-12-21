@@ -7,7 +7,17 @@
 
 class EngineObject final {
 public:
+	inline static uint32_t beginId = 0;
 
+	EngineObject() {
+		id = beginId++;
+		std::cout << "EngineObject id:" << id << " create." << std::endl;
+	}
+	~EngineObject() {
+		std::cout << "EngineObject id:" << id << " destroy." << std::endl;
+	}
+
+	uint32_t id;
 	std::unordered_map<std::type_index, std::shared_ptr<void>> compMap;
 
 	template <typename T>

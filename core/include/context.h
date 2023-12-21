@@ -1,3 +1,4 @@
+#pragma once
 
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
@@ -29,7 +30,7 @@ public:
 
 	//renderNew
 	std::shared_ptr<EngineObject> renderGlobalEO;
-	std::vector<std::shared_ptr<EngineObject>> renderCmdEOs;
+	std::vector<std::shared_ptr<EngineObject>> renderCmdSubmitEOs;
 
 	void Create() {
 		//render

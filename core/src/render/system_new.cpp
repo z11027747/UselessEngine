@@ -3,6 +3,7 @@
 #include "render/system_new.h"
 #include "render/instance/instance_system.h"
 #include "render/device/logical_device_system.h"
+#include "render/cmd/cmd_pool_system.h"
 #include "context.h"
 
 namespace Render {
@@ -14,6 +15,7 @@ namespace Render {
 		auto windowExtensions = GetWindowExtensions();
 		InstanceSystem::Create(context, windowExtensions, true);
 		LogicalDeviceSystem::Create(context);
+		CmdPoolSystem::Create(context);
 	}
 
 	void System::OnUpdate(Context* context) {
@@ -22,6 +24,7 @@ namespace Render {
 
 	void System::OnDestroy(Context* context) {
 
+		CmdPoolSystem::Destroy(context);
 		LogicalDeviceSystem::Destroy(context);
 		InstanceSystem::Destroy(context);
 	}
