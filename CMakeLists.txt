@@ -7,10 +7,12 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(${PROJECT_SOURCE_DIR}/3rd)
 include_directories(${PROJECT_SOURCE_DIR}/core/include)
+include_directories(${PROJECT_SOURCE_DIR}/editor/include)
 
 file(GLOB_RECURSE SRC_LIST
 	"${PROJECT_SOURCE_DIR}/core/src/*.c" 
-	"${PROJECT_SOURCE_DIR}/core/src/*.cpp")
+	"${PROJECT_SOURCE_DIR}/core/src/*.cpp"
+	"${PROJECT_SOURCE_DIR}/editor/src/*.cpp")
 	
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/out)
 add_executable(${PROJ} ${SRC_LIST} core/main.cpp)

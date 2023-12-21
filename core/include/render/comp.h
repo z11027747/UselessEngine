@@ -31,7 +31,7 @@ struct UniformBufferObject final {
 	glm::mat4 proj;
 };
 
-struct RenderGlobalComp final : public EngineComp {
+struct RenderGlobalComp final {
 
 	//VkInstance 底层就是个指针
 	//#define VK_DEFINE_HANDLE(object)

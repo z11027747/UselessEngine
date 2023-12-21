@@ -24,7 +24,7 @@ void RenderSystem::CreateInstance(Context* context) {
 	VkInstanceCreateInfo instanceCreateInfo = {};
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceCreateInfo.pApplicationInfo = &applicationInfo;
-
+	 
 	//Vulkan不关心平台，用glfw获取和窗口系统交互的扩展
 	uint32_t glfwExtensionCount;
 	const char** glfwExtensions;
@@ -48,7 +48,7 @@ void RenderSystem::CreateInstance(Context* context) {
 		instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(enabledLayers.size());
 		instanceCreateInfo.ppEnabledLayerNames = enabledLayers.data();
 
-		//创建实例的同事，扩展debugcallback，把配置传过去
+		//创建实例的同时，扩展debugcallback，把配置传过去
 		MakeDebugCreateInfo(debugCreateInfo);
 		instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 	}

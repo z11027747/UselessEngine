@@ -4,22 +4,15 @@
 #include <unordered_map>
 #include <memory>
 #include <typeindex>
-#include <stdexcept>
-
-struct EngineComp {
-	virtual ~EngineComp() {};
-};
 
 class EngineObject final {
 public:
 
-	std::unordered_map<std::type_index, std::shared_ptr<EngineComp>> compMap;
-
-	EngineObject() = default;
+	std::unordered_map<std::type_index, std::shared_ptr<void>> compMap;
 
 	template <typename T>
-	void AddComponent(std::shared_ptr<T>& comp) {
-		compMap.emplace(typeid(T), comp);
+	void AddComponent(std::shared_ptr<T> comp) {
+		compMap[typeid(T)] = comp;
 	}
 
 	template <typename T>
@@ -29,7 +22,7 @@ public:
 			return std::static_pointer_cast<T>(it->second);
 		}
 
-		throw std::runtime_error("Component not found.");
+		return nullptr;
 	}
 
 	template <typename T>

@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include "base.h"
+#include "render/system_new.h"
 #include "render/system.h"
 #include "tool/system.h"
 
@@ -15,6 +16,8 @@ public:
 
 	Context(GLFWwindow* w) {
 		window = w;
+		currTime = 0.0f;
+		deltaTime = 0.0f;
 	}
 
 	//time
@@ -24,11 +27,15 @@ public:
 	//render
 	std::shared_ptr<EngineObject> renderEO;
 
+	//renderNew
+	std::shared_ptr<EngineObject> renderGlobalEO;
+	std::vector<std::shared_ptr<EngineObject>> renderCmdEOs;
+
 	void Create() {
 		//render
 		RenderSystem::CreateGlobal(this);
 		RenderSystem::CreateInstance(this);
-		RenderSystem::CreateDebugCallback(this);
+		//RenderSystem::CreateDebugCallback(this);
 		RenderSystem::CreateSurface(this);
 		RenderSystem::PickupPhysicalDevice(this);
 		RenderSystem::CreateLogicDevice(this);
@@ -89,7 +96,7 @@ public:
 		RenderSystem::DestroySwapchian(this);
 		RenderSystem::DestroyLogicDevice(this);
 		RenderSystem::DestroySurface(this);
-		RenderSystem::DestroyDebugCallback(this);
+		//RenderSystem::DestroyDebugCallback(this);
 		RenderSystem::DestroyInstance(this);
 	}
 

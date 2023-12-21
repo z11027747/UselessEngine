@@ -8,8 +8,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 std::unique_ptr<Context> context;
 
-
-
 int main() {
 
 	glfwInit();
