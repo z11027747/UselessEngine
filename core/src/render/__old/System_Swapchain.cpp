@@ -2,20 +2,6 @@
 #include "render/comp.h"
 #include "context.h"
 
-//支持呈现图像到窗口表面能力的队列族
-bool RenderSystem::CheckSwapchainSupport(Context* context,
-	const VkPhysicalDevice& physicalDevice, int index)
-{
-	auto& renderEO = context->renderEO;
-
-	auto globalInfoComp = renderEO->GetComponent<RenderGlobalComp>();
-	auto& surface = globalInfoComp->surface;
-
-	VkBool32 support;
-	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, surface, &support);
-	return support == VK_TRUE;
-}
-
 void RenderSystem::CreateSwapchian(Context* context) {
 	auto& renderEO = context->renderEO;
 

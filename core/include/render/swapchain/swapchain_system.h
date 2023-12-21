@@ -11,7 +11,12 @@ namespace Render {
 	class SwapchainSystem final {
 	public:
 
+		static void Create(Context*);
 
+		//´´½¨½»»»Á´
+		static void CreateVKSwapchain(Context*,
+			std::shared_ptr<Swapchain> swapchain
+		);
 
 	};
 

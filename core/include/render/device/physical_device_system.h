@@ -20,7 +20,7 @@ namespace Render {
 			VkPhysicalDeviceType deviceType);
 
 		//检查物理显卡队列族
-		static bool CheckQueueFamily(
+		static bool CheckQueueFamily(Context*,
 			const VkPhysicalDevice& physicalDevice,
 			VkQueueFlags queueFlags,
 			uint32_t& queueFamily);

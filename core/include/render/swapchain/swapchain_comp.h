@@ -8,6 +8,11 @@ namespace Render {
 
 	struct Swapchain final {
 
+		VkSurfaceKHR surface;
+		VkSurfaceFormatKHR surfaceFormat;
+		VkPresentModeKHR surfacePresentMode;
+		VkSurfaceCapabilitiesKHR surfaceCapabilities;
+
 		VkSwapchainKHR vkSwapchain;
 
 		VkFormat format;

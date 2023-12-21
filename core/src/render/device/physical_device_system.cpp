@@ -4,6 +4,7 @@
 #include "render/device/physical_device_system.h"
 #include "render/instance/instance_comp.h"
 #include "render/instance/instance_system.h"
+#include "render/swapchain/swapchain_surface_system.h"
 #include "context.h"
 
 namespace Render {
@@ -33,8 +34,8 @@ namespace Render {
 			}
 
 			//需要图形&传输队列族
-			if (!CheckQueueFamily(tempPhysicalDevice,
-				VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT, queueFamily)) {
+			if (!CheckQueueFamily(context,
+				tempPhysicalDevice, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT, queueFamily)) {
 				continue;
 			}
 
@@ -64,7 +65,7 @@ namespace Render {
 	//队列族
 	//vulkan的几乎所有操作都需要将操作指令提交给一个队列，然后执行
 	//Vulkan有多种不同类型的队列，它们属于不同的队列族，每个队列族的队列只允许执行特定的一部分指令
-	bool PhysicalDeviceSystem::CheckQueueFamily(
+	bool PhysicalDeviceSystem::CheckQueueFamily(Context* context,
 		const VkPhysicalDevice& physicalDevice,
 		VkQueueFlags queueFlags,
 		uint32_t& queueFamily
@@ -75,7 +76,7 @@ namespace Render {
 		std::vector<VkQueueFamilyProperties> queueFamilyPropeties(queueFamilyPropetyCount);
 		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyPropetyCount, queueFamilyPropeties.data());
 
-		for (uint32_t i = 0; i < queueFamilyPropetyCount; i++) {
+		for (auto i = 0; i < queueFamilyPropetyCount; i++) {
 			auto& queueFamilyPropety = queueFamilyPropeties[i];
 
 			//每个队列族支持1个-多个类型
@@ -90,7 +91,9 @@ namespace Render {
 			if ((queueFamilyPropety.queueFlags & queueFlags) != 0) {
 
 				//支持呈现图像到窗口表面能力的队列族
-				//TODO
+				if (!SwapchainSurfaceSystem::CheckSupport(context,
+					physicalDevice, i))
+					continue;
 
 				queueFamily = i;
 				return true;
