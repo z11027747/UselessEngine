@@ -99,4 +99,29 @@ namespace Render {
 
 		return false;
 	}
+
+
+	//显卡可以分配不同类型的内存作为缓冲使用。
+	//	不同类型的内存所允许进行的操作以及操作的效率有所不同
+	//	我们需要结合自己的需求选择最合适的内存类型使用。
+	bool PhysicalDeviceSystem::FindMemoryType(Context* context,
+		uint32_t typeFilter, VkMemoryPropertyFlags propertiesFlags
+	) {
+		auto& renderEO = context->renderEO;
+
+		auto device = renderEO->GetComponent<Device>();
+		auto& physicalDevice = device->physicalDevice;
+
+		VkPhysicalDeviceMemoryProperties memProperties;
+		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+
+		for (auto i = 0; i < memProperties.memoryTypeCount; i++) {
+			if ((typeFilter & (1 << i))
+				&& (memProperties.memoryTypes[i].propertyFlags & propertiesFlags) == propertiesFlags) {
+				return i;
+			}
+		}
+
+		throw std::runtime_error("failed find memory type!");
+	}
 }

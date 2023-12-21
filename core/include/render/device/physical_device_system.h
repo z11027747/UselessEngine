@@ -25,6 +25,11 @@ namespace Render {
 			VkQueueFlags queueFlags,
 			uint32_t& queueFamily);
 
+		//选择内存类型
+		static bool FindMemoryType(Context*,
+			uint32_t typeFilter,
+			VkMemoryPropertyFlags propertiesFlags);
+
 	};
 
 }

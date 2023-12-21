@@ -8,11 +8,56 @@
 
 namespace Render {
 
-
 	void CmdSubmitSystem::Create(Context* context,
 		std::function<void(VkCommandBuffer&)> doCmds
 	) {
-		auto buffer = CmdPoolSystem::AllocateBuffer(context,
+		auto cmdBuffer = RecordCmd(context, doCmds);
+
+		auto& cmdSubmitEO = context->renderCmdSubmitEO;
+
+		if (cmdSubmitEO == nullptr) {
+			cmdSubmitEO = std::make_shared<EngineObject>();
+
+			auto cmdSubmit = std::make_shared<CmdSubmit>();
+			cmdSubmitEO->AddComponent(cmdSubmit);
+		}
+
+		auto cmdSubmit = cmdSubmitEO->GetComponent<CmdSubmit>();
+		cmdSubmit->vkCmdBuffers.push_back(cmdBuffer);
+	}
+
+	void CmdSubmitSystem::CreateAsync(Context* context,
+		std::function<void(VkCommandBuffer&)> doCmds,
+		VkSemaphore& waitSemaphore, VkSemaphore& signalSemaphore
+	) {
+		auto cmdBuffer = RecordCmd(context, doCmds);
+
+		auto& cmdSubmitSemaphoreEOs = context->renderCmdSubmitSemaphoreEOs;
+		for (const auto& cmdSubmitSemaphoreEO : cmdSubmitSemaphoreEOs) {
+			auto cmdSubmitSemaphore = cmdSubmitSemaphoreEO->GetComponent<CmdSubmitSemaphore>();
+			if (waitSemaphore == cmdSubmitSemaphore->waitSemaphore
+				&& signalSemaphore == cmdSubmitSemaphore->signalSemaphore) {
+
+				cmdSubmitSemaphore->vkCmdBuffers.push_back(cmdBuffer);
+				return;
+
+			}
+		}
+		auto newCmdSubmitSemaphore = std::make_shared<CmdSubmitSemaphore>();
+		newCmdSubmitSemaphore->vkCmdBuffers.push_back(cmdBuffer);
+		newCmdSubmitSemaphore->waitSemaphore = waitSemaphore;
+		newCmdSubmitSemaphore->signalSemaphore = signalSemaphore;
+
+		auto newCmdSubmitSeaphoreEO = std::make_shared<EngineObject>();
+		newCmdSubmitSeaphoreEO->AddComponent(newCmdSubmitSemaphore);
+
+		cmdSubmitSemaphoreEOs.push_back(newCmdSubmitSeaphoreEO);
+	}
+
+	VkCommandBuffer CmdSubmitSystem::RecordCmd(Context* context
+		, std::function<void(VkCommandBuffer&)> doCmds
+	) {
+		auto cmdBuffer = CmdPoolSystem::AllocateBuffer(context,
 			VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 		VkCommandBufferBeginInfo beginInfo = {};
@@ -24,59 +69,71 @@ namespace Render {
 		//	VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT：在指令缓冲等待执行时，仍然可以提交这一指令缓冲。
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-		auto beginRet = vkBeginCommandBuffer(buffer, &beginInfo);
+		auto beginRet = vkBeginCommandBuffer(cmdBuffer, &beginInfo);
 		CheckRet(beginRet, "vkBeginCommandBuffer");
 
-		doCmds(buffer);
+		doCmds(cmdBuffer);
 
-		auto endRet = vkEndCommandBuffer(buffer);
+		auto endRet = vkEndCommandBuffer(cmdBuffer);
 		CheckRet(endRet, "vkEndCommandBuffer");
 
-		auto cmdSubmit = std::make_shared<CmdSubmit>();
-		cmdSubmit->vkBuffer = buffer;
-
-		auto cmdSubmitEO = std::make_shared<EngineObject>();
-		cmdSubmitEO->AddComponent(cmdSubmit);
-
-		context->renderCmdSubmitEOs.push_back(cmdSubmitEO);
+		return cmdBuffer;
 	}
 
 	void CmdSubmitSystem::Update(Context* context) {
-
-		auto& cmdSubmitEOs = context->renderCmdSubmitEOs;
-
-		auto vkBufferCount = static_cast<uint32_t>(cmdSubmitEOs.size());
-		std::vector<VkCommandBuffer> vkBuffers(vkBufferCount);
-
-		for (auto i = 0; i < cmdSubmitEOs.size(); i++) {
-			auto& cmdSubmitEO = cmdSubmitEOs[i];
-
-			auto cmdSubmit = cmdSubmitEO->GetComponent<CmdSubmit>();
-
-			auto& vkBuffer = cmdSubmit->vkBuffer;
-			vkBuffers[i] = vkBuffer;
-
-			cmdSubmitEO->RemoveComponent<CmdSubmit>();
-			cmdSubmitEOs.erase(cmdSubmitEOs.begin() + i);
-			i--;
-		}
-
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = vkBufferCount;
-		submitInfo.pCommandBuffers = vkBuffers.data();
-
 		auto& renderGlobalEO = context->renderGlobalEO;
+
 		auto deivce = renderGlobalEO->GetComponent<Device>();
 		auto& logicalQueue = deivce->logicalQueue;
 
+		auto& cmdSubmitEO = context->renderCmdSubmitEO;
+		auto cmdSubmit = cmdSubmitEO->GetComponent<CmdSubmit>();
+		auto& vkCmdBuffers = cmdSubmit->vkCmdBuffers;
+
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount = static_cast<uint32_t>(vkCmdBuffers.size());
+		submitInfo.pCommandBuffers = vkCmdBuffers.data();
+
 		auto submitRet = vkQueueSubmit(logicalQueue, 1, &submitInfo, nullptr);
-		if (submitRet != VK_SUCCESS) {
-			throw std::runtime_error("submit error!");
-		}
+		CheckRet(submitRet, "vkQueueSubmit");
 
 		//直接等待传输操作完成
 		vkQueueWaitIdle(logicalQueue);
+	}
+
+	void CmdSubmitSystem::UpdateSemaphore(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto deivce = renderGlobalEO->GetComponent<Device>();
+		auto& logicalQueue = deivce->logicalQueue;
+
+		auto& cmdSubmitSemaphoreEOs = context->renderCmdSubmitSemaphoreEOs;
+		auto submitCount = static_cast<uint32_t>(cmdSubmitSemaphoreEOs.size());
+		std::vector<VkSubmitInfo> submitInfos(submitCount);
+
+		for (auto i = 0; i < submitCount; i++) {
+
+			auto& cmdSubmitSemaphoreEO = cmdSubmitSemaphoreEOs[i];
+			auto cmdSubmitSemaphore = cmdSubmitSemaphoreEO->GetComponent<CmdSubmitSemaphore>();
+
+			auto& vkCmdBuffers = cmdSubmitSemaphore->vkCmdBuffers;
+			auto& waitSemaphore = cmdSubmitSemaphore->waitSemaphore;
+			auto& signalSemaphore = cmdSubmitSemaphore->signalSemaphore;
+
+			VkSubmitInfo submitInfo = {};
+			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			submitInfo.commandBufferCount = static_cast<uint32_t>(vkCmdBuffers.size());
+			submitInfo.pCommandBuffers = vkCmdBuffers.data();
+			submitInfo.waitSemaphoreCount = 1;
+			submitInfo.pWaitSemaphores = &waitSemaphore;
+			submitInfo.signalSemaphoreCount = 1;
+			submitInfo.pSignalSemaphores = &signalSemaphore;
+			submitInfos.push_back(submitInfo);
+		}
+
+		auto submitRet = vkQueueSubmit(logicalQueue, submitCount, submitInfos.data(), nullptr);
+		CheckRet(submitRet, "vkQueueSubmit");
 
 	}
 }

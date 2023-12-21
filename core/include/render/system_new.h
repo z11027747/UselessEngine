@@ -17,8 +17,6 @@ namespace Render {
 		static void OnUpdate(Context*);
 		static void OnDestroy(Context*);
 
-		static void CreateEO(Context* context);
-		static std::vector<const char*> GetWindowExtensions();
 	};
 
 }

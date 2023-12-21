@@ -28,9 +28,10 @@ public:
 	//render
 	std::shared_ptr<EngineObject> renderEO;
 
-	//renderNew
+	//render_new
 	std::shared_ptr<EngineObject> renderGlobalEO;
-	std::vector<std::shared_ptr<EngineObject>> renderCmdSubmitEOs;
+	std::shared_ptr<EngineObject> renderCmdSubmitEO;
+	std::vector<std::shared_ptr<EngineObject>> renderCmdSubmitSemaphoreEOs;
 
 	void Create() {
 		//render

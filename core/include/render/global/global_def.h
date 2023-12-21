@@ -1,14 +1,28 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <GLFW/glfw3.h>
+#include <vector>
 #include "log/log_def.h"
 
 namespace Render {
 
 	inline static void CheckRet(VkResult ret, const std::string& info) {
 		if (ret != VK_SUCCESS) {
+			Log::System::Error(info);
 			throw std::runtime_error(info);
 		}
+	}
+
+	//获取和glfw窗口系统交互的扩展
+	inline static std::vector<const char*> GetWindowExtensions()
+	{
+		uint32_t glfwExtensionCount;
+		const char** glfwExtensions;
+		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+		std::vector<const char*> windowExtensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
+		return windowExtensions;
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL userCallback(
