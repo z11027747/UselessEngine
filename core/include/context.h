@@ -6,6 +6,8 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <string>
+
 #include "base.h"
 #include "render/system_new.h"
 #include "render/system.h"
@@ -32,6 +34,7 @@ public:
 	std::shared_ptr<EngineObject> renderGlobalEO;
 	std::shared_ptr<EngineObject> renderCmdSubmitEO;
 	std::vector<std::shared_ptr<EngineObject>> renderCmdSubmitSemaphoreEOs;
+	std::unordered_map<std::string, std::shared_ptr<EngineObject>> renderPipelineEOs;
 	std::vector<std::shared_ptr<EngineObject>> renderUpdateEOs;
 
 	void Create() {

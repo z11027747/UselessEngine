@@ -4,7 +4,7 @@
 #include "render/global/device/logical_device_system.h"
 #include "render/global/device/physical_device_system.h"
 #include "render/global/swapchain/swapchain_system.h"
-#include "render/base/image/image2d_system.h"
+#include "render/image/image2d_system.h"
 #include "context.h"
 
 namespace Render {

@@ -5,7 +5,7 @@
 #include "render/global/device/logical_device_system.h"
 #include "render/global/pass/pass_system.h"
 #include "render/global/framebuffer/framebuffer_system.h"
-#include "render/base/image/image_comp.h"
+#include "render/image/image_comp.h"
 #include "context.h"
 
 namespace Render {

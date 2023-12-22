@@ -2,7 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include <memory>
-#include "render/base/image/image_comp.h"
+#include "render/image/image_comp.h"
 
 class Context;
 

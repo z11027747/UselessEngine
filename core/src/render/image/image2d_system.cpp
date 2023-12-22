@@ -4,9 +4,9 @@
 #include "render/global/global_system.h"
 #include "render/global/device/logical_device_system.h"
 #include "render/global/device/physical_device_system.h"
-#include "render/base/image/image_comp.h"
-#include "render/base/image/image2d_system.h"
-#include "render/base/cmd/cmd_submit_system.h"
+#include "render/image/image_comp.h"
+#include "render/image/image2d_system.h"
+#include "render/cmd/cmd_submit_system.h"
 #include "context.h"
 
 namespace Render {

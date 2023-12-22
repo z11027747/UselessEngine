@@ -3,8 +3,8 @@
 #include "render/global/global_system.h"
 #include "render/global/device/logical_device_system.h"
 #include "render/global/device/physical_device_system.h"
-#include "render/base/buffer/buffer_comp.h"
-#include "render/base/buffer/buffer_system.h"
+#include "render/buffer/buffer_comp.h"
+#include "render/buffer/buffer_system.h"
 #include "context.h"
 
 namespace Render {

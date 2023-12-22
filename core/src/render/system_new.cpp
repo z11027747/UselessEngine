@@ -6,8 +6,8 @@
 #include "render/global/device/logical_device_system.h"
 #include "render/global/pass/pass_system.h"
 #include "render/global/framebuffer/framebuffer_system.h"
-#include "render/base/cmd/cmd_pool_system.h"
-#include "render/base/cmd/cmd_submit_system.h"
+#include "render/cmd/cmd_pool_system.h"
+#include "render/cmd/cmd_submit_system.h"
 #include "context.h"
 
 namespace Render {
