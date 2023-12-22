@@ -16,7 +16,7 @@ void RenderSystem::CreateFences(Context* context) {
 
 	inFlightFences.resize(maxFrameInFlight);
 
-	for (auto i = 0; i < maxFrameInFlight; i++) {
+	for (auto i = 0u; i < maxFrameInFlight; i++) {
 
 		VkFenceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -39,7 +39,7 @@ void RenderSystem::DestroyFences(Context* context) {
 	auto& logicDevice = globalInfoComp->logicDevice;
 	auto& inFlightFences = globalInfoComp->inFlightFences;
 
-	for (auto i = 0; i < globalInfoComp->maxFrameInFlight; i++) {
+	for (auto i = 0u; i < globalInfoComp->maxFrameInFlight; i++) {
 		auto& inFlightFence = inFlightFences[i];
 
 		vkDestroyFence(logicDevice, inFlightFence, nullptr);

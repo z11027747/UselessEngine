@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
+#include <stdexcept>
 
 namespace Log {
 
@@ -39,6 +40,11 @@ namespace Log {
 			std::cerr << " " << "\033[1;31m" << message << "\033[0m";
 			std::cout << "\n";
 			std::cout << std::endl;
+		}
+
+		static void Exception(const std::string& message) {
+			Error(message);
+			throw std::runtime_error(message);
 		}
 
 	};

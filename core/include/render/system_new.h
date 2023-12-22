@@ -3,7 +3,6 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <string>
-#include <stdexcept>
 #include "base.h"
 
 class Context;

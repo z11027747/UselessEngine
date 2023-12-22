@@ -17,12 +17,12 @@ void RenderSystem::CreateFrameBuffers(Context* context) {
 	auto& renderPass = globalInfoComp->renderPass;
 	auto& depthImageView = globalInfoComp->depthImageView;
 
-	int imageSize = swapchainImages.size();
+	auto imageSize = static_cast<uint32_t>(swapchainImages.size());
 
 	auto& swapchainFramebuffers = globalInfoComp->swapchainFrameBuffers;
 	swapchainFramebuffers.resize(imageSize);
 
-	for (auto i = 0; i < imageSize; i++) {
+	for (auto i = 0u; i < imageSize; i++) {
 
 		std::array<VkImageView, 2> attachments = {
 			swapchainImageViews[i],

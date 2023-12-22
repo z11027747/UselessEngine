@@ -116,10 +116,6 @@ void RenderSystem::TransitionImageLayout(Context* context,
 			memoryBarrier.subresourceRange.baseArrayLayer = 0;
 			memoryBarrier.subresourceRange.layerCount = 1;
 
-			//指定在屏障之前必须发生的资源操作类型，以及必须等待屏障的资源操作类型。
-			memoryBarrier.srcAccessMask = 0; // TODO
-			memoryBarrier.dstAccessMask = 0; // TODO
-
 			//vkCmdPipelineBarrier 提交管线屏障对象
 			//	srcStageMask 指定发生在屏障之前的管线阶段
 			//	dstStageMask 指定发生在屏障之后的管线阶段
@@ -131,6 +127,7 @@ void RenderSystem::TransitionImageLayout(Context* context,
 				sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT; //最早出现的管线阶段
 				destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT; //传输操作阶段，例如缓冲区和图像的复制
 
+				//指定在屏障之前必须发生的资源操作类型，以及必须等待屏障的资源操作类型。
 				memoryBarrier.srcAccessMask = VK_ACCESS_NONE;
 				memoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 			}
