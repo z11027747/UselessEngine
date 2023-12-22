@@ -31,7 +31,8 @@ namespace Render {
 		VkFormat depthImageFormat;
 
 		std::vector<VkFramebuffer> frameBuffers;
-		std::vector<VkCommandBuffer> drawCmdBuffers;
+		std::vector<VkCommandBuffer> cmdBuffers;
+		std::vector<VkDescriptorSet> descriptorSets;
 
 		uint32_t currFrame;
 		uint32_t maxFrameInFlight;

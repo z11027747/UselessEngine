@@ -3,13 +3,13 @@
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 #include <vector>
-#include "log/log_def.h"
+#include "common/log_system.h"
 
 namespace Render {
 
 	inline static void CheckRet(VkResult ret, const std::string& info) {
 		if (ret != VK_SUCCESS) {
-			Log::System::Error(info);
+			Common::LogSystem::Error(info);
 			throw std::runtime_error(info);
 		}
 	}
@@ -37,10 +37,10 @@ namespace Render {
 		//	pObjects：存储有和消息相关的Vulkan对象句柄的数组
 		//	objectCount：数组中的对象个数
 		if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-			Log::System::Error("Vk userCallback: " + std::string(pCallbackData->pMessage));
+			Common::LogSystem::Error("Vk userCallback: " + std::string(pCallbackData->pMessage));
 		}
 		else {
-			Log::System::Debug("Vk userCallback: " + std::string(pCallbackData->pMessage));
+			Common::LogSystem::Debug("Vk userCallback: " + std::string(pCallbackData->pMessage));
 		}
 
 		//for (uint32_t i = 0; i < pCallbackData->objectCount; ++i) {

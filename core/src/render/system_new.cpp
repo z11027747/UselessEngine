@@ -6,6 +6,7 @@
 #include "render/global/device/logical_device_system.h"
 #include "render/global/pass/pass_system.h"
 #include "render/global/framebuffer/framebuffer_system.h"
+#include "render/pipeline/pipeline_system.h"
 #include "render/cmd/cmd_pool_system.h"
 #include "render/cmd/cmd_submit_system.h"
 #include "context.h"
@@ -13,7 +14,6 @@
 namespace Render {
 
 	void System::OnCreate(Context* context) {
-
 		auto& renderGlobalEO = context->renderGlobalEO;
 		renderGlobalEO = std::make_shared<EngineObject>();
 
@@ -25,12 +25,15 @@ namespace Render {
 		PassSystem::Create(context);
 		FramebufferSystem::Create(context);
 
+		PipelineSystem::Create(context, "test");
+
 	}
 
 	void System::OnUpdate(Context* context) {
 
 		CmdSubmitSystem::Update(context);
 		CmdSubmitSystem::UpdateSemaphore(context);
+
 
 
 	}

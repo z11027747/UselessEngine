@@ -79,7 +79,7 @@ namespace Render {
 		uint32_t minor = VK_VERSION_MINOR(apiVersion);
 		uint32_t patch = VK_VERSION_PATCH(apiVersion);
 
-		Log::System::Info("VkInstance ApiVersion: "
+		Common::LogSystem::Info("VkInstance ApiVersion: "
 			+ std::to_string(major) + "." + std::to_string(minor) + "." + std::to_string(patch));
 
 		return apiVersion;

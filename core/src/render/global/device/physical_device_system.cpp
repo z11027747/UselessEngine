@@ -102,7 +102,7 @@ namespace Render {
 			}
 		}
 
-		Log::System::Exception("failed find memory type!");
+		Common::LogSystem::Exception("failed find memory type!");
 		return -1;
 	}
 
@@ -130,7 +130,7 @@ namespace Render {
 			}
 		}
 
-		Log::System::Exception("failed to find supported format!");
+		Common::LogSystem::Exception("failed to find supported format!");
 		return VK_FORMAT_UNDEFINED;
 	}
 }

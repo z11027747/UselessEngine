@@ -5,9 +5,9 @@
 #include <ctime>
 #include <stdexcept>
 
-namespace Log {
+namespace Common {
 
-	class System {
+	class LogSystem {
 	public:
 
 		static void Debug(const std::string& message) {
