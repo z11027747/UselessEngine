@@ -10,9 +10,52 @@
 namespace Render {
 
 	void SwapchainSystem::Create(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
 
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+		auto& surface = global->surface;
+		auto& surfaceCapabilities = global->surfaceCapabilities;
+		auto& surfaceFormat = global->surfaceFormat;
+		auto& surfacePresentMode = global->surfacePresentMode;
 
+		VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+		swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		swapchainCreateInfo.surface = surface;
+		swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + 1;
+		swapchainCreateInfo.imageFormat = surfaceFormat.format;
+		swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+		swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
+		swapchainCreateInfo.imageArrayLayers = 1;
+		swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		swapchainCreateInfo.preTransform = surfaceCapabilities.currentTransform; //图形变换操作，可以反转之类的
+		swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; //忽略alpha通道
+		swapchainCreateInfo.presentMode = surfacePresentMode;
+		swapchainCreateInfo.clipped = true;
+		swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
+		VkSwapchainKHR vkwapchain;
+		auto ret = vkCreateSwapchainKHR(logicalDevice, &swapchainCreateInfo, nullptr, &vkwapchain);
+		CheckRet(ret, "vkCreateSwapchainKHR");
+
+		global->swapchain = vkwapchain;
+
+		CreateColorImageViews(context);
+		CreateDepthImageViews(context);
+	}
+
+	void SwapchainSystem::Destroy(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+		auto& swapchain = global->swapchain;
+
+		vkDestroySwapchainKHR(logicalDevice, swapchain, nullptr);
+
+		DestroyColorImageViews(context);
+		DestroyDepthImageViews(context);
 	}
 
 	void SwapchainSystem::CreateColorImageViews(Context* context) {
@@ -37,11 +80,24 @@ namespace Render {
 			colorImage2D->extent = global->surfaceCapabilities.currentExtent;
 			colorImage2D->vkImage = swapchainImageViews[i];
 
-			Image2DSystem::CreateImageView(context,
+			Image2DSystem::CreateView(context,
 				colorImage2D, VK_IMAGE_ASPECT_COLOR_BIT);
 
 			swapchainColorImage2Ds[i] = std::move(colorImage2D);
 		}
+	}
+
+	void SwapchainSystem::DestroyColorImageViews(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& swapchainColorImage2Ds = global->swapchainColorImage2Ds;
+
+		for (auto& swapchainColorImage2D : swapchainColorImage2Ds) {
+			Image2DSystem::DestroyView(context,
+				swapchainColorImage2D);
+		}
+		swapchainColorImage2Ds.clear();
 	}
 
 	void SwapchainSystem::CreateDepthImageViews(Context* context) {
@@ -52,10 +108,13 @@ namespace Render {
 		auto& surfaceCapabilities = global->surfaceCapabilities;
 		auto& swapchain = global->swapchain;
 
-		global->depthImageFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
+		global->depthImageFormat = VK_FORMAT_D32_SFLOAT;
 
 		auto& swapchainColorImage2Ds = global->swapchainColorImage2Ds;
 		auto swapchainImageCount = static_cast<uint32_t>(swapchainColorImage2Ds.size());
+
+		auto& swapchainDepthImage2Ds = global->swapchainDepthImage2Ds;
+		swapchainDepthImage2Ds.resize(swapchainImageCount);
 
 		for (auto i = 0u; i < swapchainImageCount; i++) {
 
@@ -64,7 +123,7 @@ namespace Render {
 				VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-			Image2DSystem::CreateImageView(context,
+			Image2DSystem::CreateView(context,
 				depthImage2D, VK_IMAGE_ASPECT_DEPTH_BIT);
 
 			Image2DSystem::TransitionLayout(context,
@@ -75,25 +134,21 @@ namespace Render {
 				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT
 			);
 
-			swapchainColorImage2Ds[i] = std::move(depthImage2D);
+			swapchainDepthImage2Ds[i] = std::move(depthImage2D);
 		}
 	}
 
-	void SwapchainSystem::Destroy(Context* context) {
+	void SwapchainSystem::DestroyDepthImageViews(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& swapchain = global->swapchain;
+		auto& swapchainDepthImage2Ds = global->swapchainDepthImage2Ds;
 
-		auto& swapchainColorImage2Ds = global->swapchainColorImage2Ds;
-		for (auto& swapchainColorImage2D : swapchainColorImage2Ds) {
-
+		for (auto& swapchainDepthImage2D : swapchainDepthImage2Ds) {
 			Image2DSystem::Destroy(context,
-				swapchainColorImage2D);
+				swapchainDepthImage2D);
 		}
-
-		vkDestroySwapchainKHR(logicalDevice, swapchain, nullptr);
+		swapchainDepthImage2Ds.clear();
 	}
 
 }

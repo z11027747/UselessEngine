@@ -56,8 +56,8 @@ namespace Render {
 		cmdSubmitSemaphoreEOs.push_back(newCmdSubmitSeaphoreEO);
 	}
 
-	VkCommandBuffer CmdSubmitSystem::RecordCmd(Context* context
-		, std::function<void(VkCommandBuffer&)> doCmds
+	VkCommandBuffer CmdSubmitSystem::RecordCmd(Context* context,
+		std::function<void(VkCommandBuffer&)> doCmds
 	) {
 		auto cmdBuffer = CmdPoolSystem::AllocateBuffer(context,
 			VK_COMMAND_BUFFER_LEVEL_PRIMARY);
@@ -92,6 +92,11 @@ namespace Render {
 		auto cmdSubmit = cmdSubmitEO->GetComponent<CmdSubmit>();
 		auto& vkCmdBuffers = cmdSubmit->vkCmdBuffers;
 
+		auto vkCmdBufferSize = static_cast<uint32_t>(vkCmdBuffers.size());;
+		if (vkCmdBufferSize == 0u) {
+			return;
+		}
+
 		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.commandBufferCount = static_cast<uint32_t>(vkCmdBuffers.size());
@@ -102,6 +107,11 @@ namespace Render {
 
 		//直接等待传输操作完成
 		vkQueueWaitIdle(logicalQueue);
+
+		for (const auto& vkCmdBuffer : vkCmdBuffers) {
+			vkResetCommandBuffer(vkCmdBuffer, 0);
+		}
+		vkCmdBuffers.clear();
 	}
 
 	void CmdSubmitSystem::UpdateSemaphore(Context* context) {
@@ -136,6 +146,5 @@ namespace Render {
 
 		auto submitRet = vkQueueSubmit(logicalQueue, submitCount, submitInfos.data(), nullptr);
 		CheckRet(submitRet, "vkQueueSubmit");
-
 	}
 }

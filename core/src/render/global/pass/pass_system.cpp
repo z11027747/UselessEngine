@@ -64,13 +64,14 @@ namespace Render {
 	}
 
 	void PassSystem::Destroy(Context* context) {
-		auto& renderEO = context->renderEO;
+		auto& renderGlobalEO = context->renderGlobalEO;
 
-		auto global = renderEO->GetComponent<Global>();
+		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalDevice = global->logicalDevice;
 		auto& renderPass = global->renderPass;
 
 		vkDestroyRenderPass(logicalDevice, renderPass, nullptr);
+		renderPass = nullptr;
 	}
 
 	void PassSystem::MakeColorAttachment(Context* context,

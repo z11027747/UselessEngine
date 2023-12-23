@@ -11,11 +11,14 @@ namespace Render {
 	public:
 
 		static void Create(Context*);
+		static void Destroy(Context*);
 
 		static void CreateColorImageViews(Context*);
-		static void CreateDepthImageViews(Context*);
+		static void DestroyColorImageViews(Context*);
 
-		static void Destroy(Context*);
+		static void CreateDepthImageViews(Context*);
+		static void DestroyDepthImageViews(Context*);
+
 	};
 
 

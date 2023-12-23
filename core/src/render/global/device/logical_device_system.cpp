@@ -8,13 +8,11 @@
 namespace Render {
 
 	void LogicalDeviceSystem::Create(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
 
-		VkPhysicalDevice physicalDevice;
-		uint32_t physicalQueueFamilyIndex;
-
-		PhysicalDeviceSystem::Find(context,
-			physicalDevice,
-			physicalQueueFamilyIndex);
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& physicalDevice = global->physicalDevice;
+		auto physicalQueueFamilyIndex = global->physicalQueueFamilyIndex;
 
 		VkDeviceCreateInfo deviceCreateInfo = {};
 		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -44,24 +42,24 @@ namespace Render {
 		VkQueue logicalQueue;
 		vkGetDeviceQueue(logicalDevice, physicalQueueFamilyIndex, 0, &logicalQueue);
 
-		auto global = std::make_shared<Global>();
-		global->physicalDevice = physicalDevice;
-		global->physicalQueueFamilyIndex = physicalQueueFamilyIndex;
 		global->logicalDevice = logicalDevice;
 		global->logicalQueue = logicalQueue;
-
-		auto& renderGlobalEO = context->renderGlobalEO;
-		renderGlobalEO->AddComponent<Global>(global);
 	}
 
 	void LogicalDeviceSystem::Destroy(Context* context) {
-
 		auto& renderGlobalEO = context->renderGlobalEO;
+
 		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+		vkDestroyDevice(logicalDevice, nullptr);
+	}
 
-		vkDestroyDevice(global->logicalDevice, nullptr);
+	void LogicalDeviceSystem::WaitIdle(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
 
-		renderGlobalEO->RemoveComponent<Global>();
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+		vkDeviceWaitIdle(logicalDevice);
 	}
 
 }

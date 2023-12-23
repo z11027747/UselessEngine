@@ -32,7 +32,6 @@ namespace Render {
 
 		std::vector<VkFramebuffer> frameBuffers;
 		std::vector<VkCommandBuffer> cmdBuffers;
-		std::vector<VkDescriptorSet> descriptorSets;
 
 		uint32_t currFrame;
 		uint32_t maxFrameInFlight;

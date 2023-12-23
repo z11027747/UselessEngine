@@ -12,9 +12,9 @@ int main() {
 
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	//glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "UselessEngine", nullptr, nullptr);
+	auto window = glfwCreateWindow(800, 600, "UselessEngine", nullptr, nullptr);
 	//glfwSetWindowPos(window, -1500, 200);
 
 	glfwSetKeyCallback(window, key_callback);
@@ -23,20 +23,20 @@ int main() {
 	context = std::make_unique<Context>(window);
 	context->Create();
 
-	float deltaTime = 0.0f;
-	float lastTime = 0.0f;
+	auto deltaTime = 0.0f;
+	auto lastTime = 0.0f;
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
-		int width = 0, height = 0;
+		auto width = 0, height = 0;
 		glfwGetFramebufferSize(context->window, &width, &height);
 		if (width == 0 || height == 0) {
 			glfwWaitEvents();
 			continue;
 		}
 
-		float currTime = static_cast<float>(glfwGetTime());
+		auto currTime = static_cast<float>(glfwGetTime());
 		deltaTime = currTime - lastTime;
 		lastTime = currTime;
 

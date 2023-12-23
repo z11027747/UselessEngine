@@ -38,6 +38,9 @@ public:
 	std::vector<std::shared_ptr<EngineObject>> renderUpdateEOs;
 
 	void Create() {
+		Render::System::OnCreate(this);
+		return;
+
 		//render
 		RenderSystem::CreateGlobal(this);
 		RenderSystem::CreateInstance(this);
@@ -75,11 +78,17 @@ public:
 	}
 
 	void Update() {
+		Render::System::OnUpdate(this);
+		return;
+
 		RenderSystem::DrawFrame(this);
 		RenderSystem::TryRecreateSwapchain(this);
 	}
 
 	void Destroy() {
+		Render::System::OnDestroy(this);
+		return;
+
 		RenderSystem::WaitIdle(this);
 
 		RenderSystem::DestroyTextureSampler(this);

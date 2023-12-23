@@ -65,7 +65,7 @@ namespace Render {
 		auto bindRet = vkBindImageMemory(logicalDevice, vkImage, vkDeviceMemory, 0);
 		CheckRet(bindRet, "vkBindImageMemory");
 
-		auto image2d = std::shared_ptr<Image2D>();
+		auto image2d = std::make_shared<Image2D>();
 		image2d->fomat = format;
 		image2d->extent = extent;
 		image2d->vkImage = vkImage;
@@ -85,12 +85,12 @@ namespace Render {
 		vkFreeMemory(logicalDevice, image2d->vkDeviceMemory, nullptr);
 
 		if (image2d->vkImageView != nullptr) {
-			vkDestroyImageView(logicalDevice, image2d->vkImageView, nullptr);
+			DestroyView(context, image2d);
 		}
 	}
 
 	//任何VkImage对象，都需要创建一个VkImageView对象来绑定访问它
-	void Image2DSystem::CreateImageView(Context* context,
+	void Image2DSystem::CreateView(Context* context,
 		std::shared_ptr<Image2D> image2d,
 		VkImageAspectFlags aspectMask
 	) {
@@ -107,12 +107,12 @@ namespace Render {
 		createInfo.image = vkImage;
 		createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 		createInfo.format = format;
-
-		//进行图像颜色通道的映射
-		auto identity = VK_COMPONENT_SWIZZLE_IDENTITY;
-		createInfo.components = { identity,identity,identity,identity };
-
-		//指定图像的用途和图像的哪一部分可以被访问
+		createInfo.components = {
+			VK_COMPONENT_SWIZZLE_IDENTITY,
+			 VK_COMPONENT_SWIZZLE_IDENTITY,
+			 VK_COMPONENT_SWIZZLE_IDENTITY,
+			 VK_COMPONENT_SWIZZLE_IDENTITY
+		};
 		createInfo.subresourceRange = { aspectMask,0,1,0,1 };
 
 		VkImageView vkImageView;
@@ -120,6 +120,17 @@ namespace Render {
 		CheckRet(ret, "vkCreateImageView");
 
 		image2d->vkImageView = vkImageView;
+	}
+
+	void Image2DSystem::DestroyView(Context* context,
+		std::shared_ptr<Image2D> image2d
+	) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+
+		vkDestroyImageView(logicalDevice, image2d->vkImageView, nullptr);
 	}
 
 	void Image2DSystem::TransitionLayout(Context* context,

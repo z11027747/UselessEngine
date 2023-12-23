@@ -8,10 +8,19 @@
 
 namespace Render {
 
-	bool PhysicalDeviceSystem::Find(Context* context,
-		VkPhysicalDevice& physicalDevice,
-		uint32_t& queueFamily
-	) {
+	void PhysicalDeviceSystem::Create(Context* context) {
+
+		Find(context);
+
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		global->surfaceFormat = GetFormat(context);
+		global->surfacePresentMode = GetPresentMode(context);
+		global->surfaceCapabilities = GetCapbilities(context);
+	}
+
+	bool PhysicalDeviceSystem::Find(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
@@ -23,19 +32,21 @@ namespace Render {
 		std::vector<VkPhysicalDevice> tempPhysicalDevices(tempPhysicalDeviceCount);
 		vkEnumeratePhysicalDevices(instance, &tempPhysicalDeviceCount, tempPhysicalDevices.data());
 
-		for (const auto& tempPhysicalDevice : tempPhysicalDevices) {
+		for (const auto& physicalDevice : tempPhysicalDevices) {
 
-			if (!CheckType(tempPhysicalDevice,
+			if (!CheckType(physicalDevice,
 				VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)) {
 				continue;
 			}
 
+			uint32_t queueFamilyIndex;
 			if (!CheckQueueFamily(context,
-				tempPhysicalDevice, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT, queueFamily)) {
+				physicalDevice, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT, queueFamilyIndex)) {
 				continue;
 			}
 
-			physicalDevice = tempPhysicalDevice;
+			global->physicalDevice = physicalDevice;
+			global->physicalQueueFamilyIndex = queueFamilyIndex;
 			return true;
 		}
 
@@ -55,7 +66,7 @@ namespace Render {
 	bool PhysicalDeviceSystem::CheckQueueFamily(Context* context,
 		const VkPhysicalDevice& physicalDevice,
 		VkQueueFlags queueFlags,
-		uint32_t& queueFamily
+		uint32_t& queueFamilyIndex
 	) {
 		uint32_t queueFamilyPropetyCount;
 		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyPropetyCount, nullptr);
@@ -76,7 +87,7 @@ namespace Render {
 					physicalDevice, i))
 					continue;
 
-				queueFamily = i;
+				queueFamilyIndex = i;
 				return true;
 			}
 		}
@@ -87,9 +98,9 @@ namespace Render {
 	uint32_t PhysicalDeviceSystem::FindMemoryType(Context* context,
 		uint32_t typeFilter, VkMemoryPropertyFlags propertiesFlags
 	) {
-		auto& renderEO = context->renderEO;
+		auto& renderGlobalEO = context->renderGlobalEO;
 
-		auto global = renderEO->GetComponent<Global>();
+		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& physicalDevice = global->physicalDevice;
 
 		VkPhysicalDeviceMemoryProperties memProperties;
@@ -110,9 +121,9 @@ namespace Render {
 		const std::vector<VkFormat>& candidates,
 		VkImageTiling tiling, VkFormatFeatureFlags features
 	) {
-		auto& renderEO = context->renderEO;
+		auto& renderGlobalEO = context->renderGlobalEO;
 
-		auto global = renderEO->GetComponent<Global>();
+		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& physicalDevice = global->physicalDevice;
 
 		for (auto format : candidates) {
@@ -132,5 +143,64 @@ namespace Render {
 
 		Common::LogSystem::Exception("failed to find supported format!");
 		return VK_FORMAT_UNDEFINED;
+	}
+
+
+	VkSurfaceFormatKHR PhysicalDeviceSystem::GetFormat(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& physicalDevice = global->physicalDevice;
+		auto& surface = global->surface;
+
+		uint32_t surfaceFormatCount;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, nullptr);
+
+		std::vector<VkSurfaceFormatKHR> surfaceFormats(surfaceFormatCount);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, surfaceFormats.data());
+
+		for (const auto& surfaceFormat : surfaceFormats) {
+			if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM
+				&& surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+				return surfaceFormat;
+			}
+		}
+
+		return surfaceFormats[0];
+	}
+
+	VkSurfaceCapabilitiesKHR PhysicalDeviceSystem::GetCapbilities(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& physicalDevice = global->physicalDevice;
+		auto& surface = global->surface;
+
+		VkSurfaceCapabilitiesKHR surfaceCapabilities;
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities);
+
+		return surfaceCapabilities;
+	}
+
+	VkPresentModeKHR PhysicalDeviceSystem::GetPresentMode(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& physicalDevice = global->physicalDevice;
+		auto& surface = global->surface;
+
+		uint32_t presentModeCount;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
+
+		std::vector<VkPresentModeKHR> presentModes(presentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.data());
+
+		for (auto& presentMode : presentModes) {
+			if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+				return presentMode;
+			}
+		}
+
+		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 }

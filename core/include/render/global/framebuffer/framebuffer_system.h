@@ -12,6 +12,12 @@ namespace Render {
 		static void Create(Context*);
 		static void Destroy(Context*);
 
+		static void CreateFences(Context*);
+		static void DestroyFences(Context*);
+
+		static void CreateSemaphores(Context*);
+		static void DestroySemaphores(Context*);
+
 	};
 
 

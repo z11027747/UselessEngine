@@ -65,8 +65,6 @@ namespace Render {
 		auto& global = renderGlobalEO->GetComponent<Global>();
 
 		vkDestroyInstance(global->instance, nullptr);
-
-		renderGlobalEO->RemoveComponent<Global>();
 	}
 
 	uint32_t InstanceSystem::GetApiVersion()

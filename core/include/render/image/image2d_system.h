@@ -17,12 +17,16 @@ namespace Render {
 			VkMemoryPropertyFlags propertiesFlags
 		);
 
-		static void CreateImageView(Context* context,
+		static void Destroy(Context*,
+			std::shared_ptr<Image2D> image2d
+		);
+
+		static void CreateView(Context* context,
 			std::shared_ptr<Image2D> image2d,
 			VkImageAspectFlags aspectMask
 		);
 
-		static void Destroy(Context*,
+		static void DestroyView(Context* context,
 			std::shared_ptr<Image2D> image2d
 		);
 
