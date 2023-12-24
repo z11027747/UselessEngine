@@ -11,7 +11,7 @@ namespace Render {
 		VkCommandPool vkPool;
 	};
 
-	struct CmdSubmit final {
+	struct CmdSimple final {
 		std::vector<VkCommandBuffer> vkCmdBuffers;
 	};
 

@@ -8,6 +8,7 @@
 #include "render/image/image_comp.h"
 #include "render/cmd/cmd_comp.h"
 #include "render/cmd/cmd_pool_system.h"
+#include "render/cmd/cmd_submit_system.h"
 #include "context.h"
 
 namespace Render {
@@ -51,6 +52,7 @@ namespace Render {
 
 		CreateFences(context);
 		CreateSemaphores(context);
+		AllocateCmdBuffers(context);
 	}
 
 	void FramebufferSystem::Destroy(Context* context) {
@@ -151,6 +153,148 @@ namespace Render {
 
 		imageAvailableSemaphores.clear();
 		renderFinishedSemaphores.clear();
+	}
+
+	void FramebufferSystem::AllocateCmdBuffers(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+		auto maxFrameInFlight = global->maxFrameInFlight;
+
+		global->cmdBuffers = CmdPoolSystem::AllocateBuffers(context,
+			maxFrameInFlight, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+	}
+
+	void FramebufferSystem::Update(Context* context) {
+		UpdateWaitFence(context);
+
+		uint32_t imageIndex;
+		UpdateAcquireNext(context, imageIndex);
+		UpdateSubmitCmds(context, imageIndex);
+		UpdatePresent(context, imageIndex);
+	}
+
+	bool FramebufferSystem::UpdateWaitFence(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+
+		auto currFrame = global->currFrame;
+		auto& inFlightFence = global->inFlightFences[currFrame];;
+
+		auto waitFenceRet = vkWaitForFences(logicalDevice, 1, &inFlightFence, true, UINT64_MAX);
+		CheckRet(waitFenceRet, "vkWaitForFences");
+
+		vkResetFences(logicalDevice, 1, &inFlightFence);
+		return true;
+	}
+
+	bool FramebufferSystem::UpdateAcquireNext(Context* context, uint32_t& imageIndex) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+		auto& swapchain = global->swapchain;
+
+		auto& frameBuffers = global->frameBuffers;
+		auto& cmdBuffers = global->cmdBuffers;
+
+		auto& currFrame = global->currFrame;
+		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
+
+		auto acquireNextRet = vkAcquireNextImageKHR(logicalDevice, swapchain, UINT64_MAX,
+			imageAvailableSemaphore, nullptr, &imageIndex);
+		CheckRet(acquireNextRet, "vkAcquireNextImageKHR");
+
+		return true;
+	}
+
+	bool FramebufferSystem::UpdateSubmitCmds(Context* context, uint32_t imageIndex) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalQueue = global->logicalQueue;
+		auto& swapchain = global->swapchain;
+		auto& renderPass = global->renderPass;
+		auto& surfaceCapabilities = global->surfaceCapabilities;
+
+		auto& frameBuffer = global->frameBuffers[imageIndex];
+		auto& cmdBuffer = global->cmdBuffers[imageIndex];
+
+		auto& currFrame = global->currFrame;
+		auto& inFlightFence = global->inFlightFences[currFrame];
+		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
+		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
+
+		CmdPoolSystem::ResetBuffer(cmdBuffer, 0);
+		CmdSubmitSystem::RecordCmd(cmdBuffer,
+			[&](VkCommandBuffer& cmdBufferRef) {
+
+				VkRenderPassBeginInfo renderPassBeginInfo = {};
+				renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+				renderPassBeginInfo.renderPass = renderPass;
+				renderPassBeginInfo.framebuffer = frameBuffer;
+				renderPassBeginInfo.renderArea.offset = { 0, 0 };
+				renderPassBeginInfo.renderArea.extent = surfaceCapabilities.currentExtent;
+
+				std::array<VkClearValue, 2> clearValues = {};
+				clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
+				clearValues[1].depthStencil = { 1.0f, 0 };
+				renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+				renderPassBeginInfo.pClearValues = clearValues.data();
+
+				vkCmdBeginRenderPass(cmdBufferRef, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+				//TODO
+				//renderEOs
+
+				vkCmdEndRenderPass(cmdBufferRef);
+			});
+
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
+		VkPipelineStageFlags waitStages[] = {
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+		};
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &cmdBuffer;
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores = &renderFinishedSemaphore;
+
+		auto submitRet = vkQueueSubmit(logicalQueue, 1, &submitInfo, inFlightFence);
+		CheckRet(submitRet, "vkQueueSubmit");
+
+		return false;
+	}
+
+	void FramebufferSystem::UpdatePresent(Context* context, uint32_t imageIndex) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalQueue = global->logicalQueue;
+		auto& swapchain = global->swapchain;
+
+		auto& currFrame = global->currFrame;
+		auto maxFrameInFlight = global->maxFrameInFlight;
+		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
+
+		VkPresentInfoKHR presentInfo = {};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = &swapchain;
+		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = &renderFinishedSemaphore;
+
+		auto presentRet = vkQueuePresentKHR(logicalQueue, &presentInfo);
+		CheckRet(presentRet, "vkQueuePresentKHR");
+
+		currFrame = (currFrame + 1) % maxFrameInFlight;
 	}
 
 }

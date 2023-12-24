@@ -32,8 +32,7 @@ public:
 
 	//render_new
 	std::shared_ptr<EngineObject> renderGlobalEO;
-	std::shared_ptr<EngineObject> renderCmdSubmitEO;
-	std::vector<std::shared_ptr<EngineObject>> renderCmdSubmitSemaphoreEOs;
+	std::shared_ptr<EngineObject> renderCmdSimpleEO;
 	std::unordered_map<std::string, std::shared_ptr<EngineObject>> renderPipelineEOs;
 	std::vector<std::shared_ptr<EngineObject>> renderUpdateEOs;
 

@@ -141,7 +141,7 @@ namespace Render {
 		VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage
 	) {
 
-		CmdSubmitSystem::Create(context,
+		CmdSubmitSystem::CreateSimple(context,
 			[=](VkCommandBuffer& cmdBuffer)
 			{
 				VkImageMemoryBarrier imageMemoryBarrier = {};

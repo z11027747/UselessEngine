@@ -39,12 +39,11 @@ namespace Render {
 	void System::OnUpdate(Context* context) {
 
 		CmdSubmitSystem::Update(context);
-		CmdSubmitSystem::UpdateSemaphore(context);
+		FramebufferSystem::Update(context);
 
 	}
 
 	void System::OnDestroy(Context* context) {
-
 		LogicalDeviceSystem::WaitIdle(context);
 
 		PipelineSystem::DestroyAll(context);
