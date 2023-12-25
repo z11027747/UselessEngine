@@ -8,10 +8,10 @@
 #include <memory>
 #include <string>
 
-#include "base.h"
 #include "render/system_new.h"
 #include "render/system.h"
 #include "tool/system.h"
+#include "base.h"
 
 class Context final {
 public:
@@ -27,91 +27,34 @@ public:
 	float currTime;
 	float deltaTime;
 
-	//render
+	//render_old
 	std::shared_ptr<EngineObject> renderEO;
 
-	//render_new
+	//render
 	std::shared_ptr<EngineObject> renderGlobalEO;
 	std::shared_ptr<EngineObject> renderCmdSimpleEO;
 	std::unordered_map<std::string, std::shared_ptr<EngineObject>> renderPipelineEOs;
 	std::vector<std::shared_ptr<EngineObject>> renderUpdateEOs;
 
-	void Create() {
-		Render::System::OnCreate(this);
-		return;
+	//camera
+	std::shared_ptr<EngineObject> cameraEO;
 
-		//render
-		RenderSystem::CreateGlobal(this);
-		RenderSystem::CreateInstance(this);
-		//RenderSystem::CreateDebugCallback(this);
-		RenderSystem::CreateSurface(this);
-		RenderSystem::PickupPhysicalDevice(this);
-		RenderSystem::CreateLogicDevice(this);
-		RenderSystem::GetLogicDeviceQueue(this);
-		RenderSystem::CreateSwapchian(this);
-		RenderSystem::GetSwapchianImages(this);
-		RenderSystem::CreateSwapchianImageViews(this);
-		RenderSystem::CreateShader(this, "test");
-		RenderSystem::CreateDescriptorSetLayout(this);
-		RenderSystem::CreatePipelineLayout(this);
-		RenderSystem::CreateCommandPool(this);
-		RenderSystem::CreateDepth(this);
-		RenderSystem::CreateRenderPass(this);
-		RenderSystem::CreateGraphicsPipeline(this);
-		RenderSystem::CreateFrameBuffers(this);
-		RenderSystem::AllocateSwapchainCommandBuffers(this);
-		RenderSystem::CreateSemaphores(this);
-		RenderSystem::CreateFences(this);
-		//RenderSystem::CheckPhysicalDeviceMemory(this);
-		//RenderSystem::CreateVertexTriangle(this);
-		RenderSystem::CreateVertexRectangle(this);
-		//RenderSystem::CreateVertexBufferHost(this);
-		RenderSystem::CreateVertexBufferStageing(this);
-		RenderSystem::CreateIndexBufferHost(this);
-		RenderSystem::CreateUniformBuffersHost(this);
-		RenderSystem::CreateDescriptorPool(this);
-		RenderSystem::CreateTextureImage(this);
-		RenderSystem::CreateTextureImageView(this);
-		RenderSystem::CreateTextureSampler(this);
-		RenderSystem::AllocateDescriptorSets(this);
+	void Create() {
+
+		Render::System::OnCreate(this);
+
 	}
 
 	void Update() {
-		Render::System::OnUpdate(this);
-		return;
 
-		RenderSystem::DrawFrame(this);
-		RenderSystem::TryRecreateSwapchain(this);
+		Render::System::OnUpdate(this);
+
 	}
 
 	void Destroy() {
+
 		Render::System::OnDestroy(this);
-		return;
 
-		RenderSystem::WaitIdle(this);
-
-		RenderSystem::DestroyTextureSampler(this);
-		RenderSystem::DestroyTextureImageView(this);
-		RenderSystem::DestroyTextureImage(this);
-		RenderSystem::DestroyDescriptorPool(this);
-		RenderSystem::DestroyUniformBuffers(this);
-		RenderSystem::DestroyIndexBuffer(this);
-		RenderSystem::DestroyVertexBuffer(this);
-		RenderSystem::DestroyFences(this);
-		RenderSystem::DestroySemaphores(this);
-		RenderSystem::DestroyFrameBuffers(this);
-		RenderSystem::DestroyGraphicsPipeline(this);
-		RenderSystem::DestroyRenderPass(this);
-		RenderSystem::DestroyCommandPool(this);
-		RenderSystem::DestroyPipelineLayout(this);
-		RenderSystem::DestroyDescriptorSetLayout(this);
-		RenderSystem::DestroyAllShaders(this);
-		RenderSystem::DestroySwapchianImageViews(this);
-		RenderSystem::DestroySwapchian(this);
-		RenderSystem::DestroyLogicDevice(this);
-		RenderSystem::DestroySurface(this);
-		//RenderSystem::DestroyDebugCallback(this);
-		RenderSystem::DestroyInstance(this);
 	}
 
 	void OnSizeCallback() {

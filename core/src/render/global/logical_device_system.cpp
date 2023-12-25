@@ -1,8 +1,8 @@
 ﻿
 #include "render/global/global_comp.h"
 #include "render/global/global_system.h"
-#include "render/global/device/logical_device_system.h"
-#include "render/global/device/physical_device_system.h"
+#include "render/global/logical_device_system.h"
+#include "render/global/physical_device_system.h"
 #include "context.h"
 
 namespace Render {

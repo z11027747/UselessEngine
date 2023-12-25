@@ -1,7 +1,7 @@
 ﻿
 #include "render/global/global_comp.h"
 #include "render/global/global_system.h"
-#include "render/global/instance/instance_system.h"
+#include "render/global/instance_system.h"
 #include "context.h"
 
 namespace Render {

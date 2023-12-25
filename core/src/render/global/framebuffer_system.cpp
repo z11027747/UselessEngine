@@ -2,9 +2,9 @@
 #include <array>
 #include "render/global/global_comp.h"
 #include "render/global/global_system.h"
-#include "render/global/device/logical_device_system.h"
-#include "render/global/pass/pass_system.h"
-#include "render/global/framebuffer/framebuffer_system.h"
+#include "render/global/logical_device_system.h"
+#include "render/global/pass_system.h"
+#include "render/global/framebuffer_system.h"
 #include "render/image/image_comp.h"
 #include "render/cmd/cmd_comp.h"
 #include "render/cmd/cmd_pool_system.h"

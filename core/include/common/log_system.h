@@ -16,7 +16,7 @@ namespace Common {
 			localtime_s(&local_time, &now);
 			std::cout << "[" << std::put_time(&local_time, "%Y-%m-%d %H:%M:%S") << "]";
 			std::cout << "[Debug]";
-			std::cout << " " << message;
+			std::cout << message;
 			std::cout << std::endl;
 		}
 
@@ -26,7 +26,7 @@ namespace Common {
 			localtime_s(&local_time, &now);
 			std::cout << "[" << std::put_time(&local_time, "%Y-%m-%d %H:%M:%S") << "]";
 			std::cout << "[Info]";
-			std::cout << " " << "\033[1;32m" << message << "\033[0m";
+			std::cout << "\033[1;32m" << message << "\033[0m";
 			std::cout << "\n";
 			std::cout << std::endl;
 		}
@@ -37,7 +37,7 @@ namespace Common {
 			localtime_s(&local_time, &now);
 			std::cout << "[" << std::put_time(&local_time, "%Y-%m-%d %H:%M:%S") << "]";
 			std::cout << "[Error]";
-			std::cerr << " " << "\033[1;31m" << message << "\033[0m";
+			std::cerr << "\033[1;31m" << message << "\033[0m";
 			std::cout << "\n";
 			std::cout << std::endl;
 		}
