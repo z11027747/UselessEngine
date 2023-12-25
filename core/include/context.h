@@ -34,7 +34,7 @@ public:
 	std::shared_ptr<EngineObject> renderGlobalEO;
 	std::shared_ptr<EngineObject> renderCmdSimpleEO;
 	std::unordered_map<std::string, std::shared_ptr<EngineObject>> renderPipelineEOs;
-	std::vector<std::shared_ptr<EngineObject>> renderUpdateEOs;
+	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 
 	//camera
 	std::shared_ptr<EngineObject> cameraEO;

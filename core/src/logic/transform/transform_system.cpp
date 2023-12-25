@@ -14,7 +14,7 @@ namespace Logic {
 
 		auto transform = std::make_shared<Transform>();
 		transform->position = p;
-		transform->eularAngle = ea;
+		transform->eulerAngles = ea;
 		transform->scale = s;
 
 		eo->AddComponent<Transform>(transform);

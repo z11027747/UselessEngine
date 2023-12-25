@@ -1,7 +1,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "context.h"
 #include <cstdlib>
+#include "context.h"
+#include "editor_test.h"
 
 void size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -22,6 +23,9 @@ int main() {
 
 	context = std::make_unique<Context>(window);
 	context->Create();
+
+	//TODO
+	Editor::Test::Create(context.get());
 
 	auto deltaTime = 0.0f;
 	auto lastTime = 0.0f;

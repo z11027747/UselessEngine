@@ -1,10 +1,23 @@
-#pragma once
+﻿#pragma once
 
 #include <glm/glm.hpp>
 
-struct Camera final {
+namespace Logic {
 
-	glm::mat4 view;
-	glm::mat4 proj;
+	struct Frustum final {
+		float near;
+		float far;
+		float aspect;
+		float fov;
+	};
 
-};
+	struct Camera final {
+
+		Frustum frustum;
+
+		glm::mat4 view;
+		glm::mat4 projection;
+
+	};
+
+}
