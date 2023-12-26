@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include "render/vk/buffer/buffer_comp.h"
 
 namespace Render {
 
@@ -12,8 +13,15 @@ namespace Render {
 	};
 
 	struct Unit final {
+
 		std::vector<Vertex> vertices;
-		std::vector<uint32_t> indices;
+		std::vector<uint16_t> indices;
+
+		std::shared_ptr<Buffer> vertexBuffer;
+		std::shared_ptr<Buffer> indexBuffer;
+
+		std::vector<VkDescriptorSet> descriptorSets;
+
 	};
 
 }

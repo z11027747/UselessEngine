@@ -9,6 +9,8 @@
 #include "render/vk/cmd/cmd_comp.h"
 #include "render/vk/cmd/cmd_pool_logic.h"
 #include "render/vk/cmd/cmd_submit_logic.h"
+#include "render/vk/pipeline/pipeline_comp.h"
+#include "render/unit/unit_comp.h"
 #include "context.h"
 
 namespace Render {
@@ -230,7 +232,7 @@ namespace Render {
 
 		CmdPoolLogic::ResetBuffer(cmdBuffer, 0);
 		CmdSubmitLogic::Record(cmdBuffer,
-			[&](VkCommandBuffer& cmdBufferRef) {
+			[&](VkCommandBuffer& cmdBuffer) {
 
 				VkRenderPassBeginInfo renderPassBeginInfo = {};
 				renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -245,12 +247,31 @@ namespace Render {
 				renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 				renderPassBeginInfo.pClearValues = clearValues.data();
 
-				vkCmdBeginRenderPass(cmdBufferRef, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+				vkCmdBeginRenderPass(cmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				//TODO
-				//renderEOs
+				auto& pipelineEO = context->renderPipelineEOs["test"];
+				auto pipeline = pipelineEO->GetComponent<Pipeline>();
+				auto& graphicsPipeline = pipeline->graphicsPipeline;
 
-				vkCmdEndRenderPass(cmdBufferRef);
+				vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
+				auto& renderUnitEOs = context->renderUnitEOs;
+				for (const auto& renderUnitEO : renderUnitEOs) {
+					auto unit = renderUnitEO->GetComponent<Render::Unit>();
+
+					auto& vertexBuffer = unit->vertexBuffer;
+					VkBuffer vertexBuffers[] = { vertexBuffer->vkBuffer };
+					VkDeviceSize offsets[] = { 0 };
+					vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
+
+					auto& indices = unit->indices;
+					auto& indexBuffer = unit->indexBuffer;
+					vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+					vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+				}
+
+				vkCmdEndRenderPass(cmdBuffer);
 			});
 
 		VkSubmitInfo submitInfo = {};

@@ -53,7 +53,7 @@ void RenderSystem::CreateVertexTriangle(Context* context) {
 	auto& vertices = globalInfoComp->vertices;
 
 	//vertices.push_back({ {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} });
-	//vertices.push_back({ {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} });
+	//vertices.push_back({ {0.5f, 0.5f }, {0.0f, 1.0f, 0.0f} });
 	//vertices.push_back({ {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} });
 }
 

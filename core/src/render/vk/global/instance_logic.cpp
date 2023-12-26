@@ -68,18 +68,35 @@ namespace Render {
 
 		auto& global = renderGlobalEO->GetComponent<Global>();
 		auto& instance = global->instance;
-		auto& debugUtilsMessenger = global->debugUtilsMessenger;
 
 		VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
 		MakeDebugUtilsMessengerCreateInfo(createInfo);
 
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 		if (func == nullptr) {
-			throw std::runtime_error("get func error");
+			throw std::runtime_error("get vkCreateDebugUtilsMessengerEXT error");
 		}
 
-		auto ret = func(instance, &createInfo, nullptr, &debugUtilsMessenger);
+		VkDebugUtilsMessengerEXT vkDebugUtilsMessenger;
+		auto ret = func(instance, &createInfo, nullptr, &vkDebugUtilsMessenger);
 		CheckRet(ret, "vkCreateDebugUtilsMessengerEXT");
+
+		global->debugUtilsMessenger = vkDebugUtilsMessenger;
+	}
+
+	void InstanceLogic::DestroyDebugCallback(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto& global = renderGlobalEO->GetComponent<Global>();
+		auto& instance = global->instance;
+		auto& debugUtilsMessenger = global->debugUtilsMessenger;
+
+		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+		if (func == nullptr) {
+			throw std::runtime_error("get vkDestroyDebugUtilsMessengerEXT error");
+		}
+
+		func(instance, debugUtilsMessenger, nullptr);
 	}
 
 	uint32_t InstanceLogic::GetApiVersion() {

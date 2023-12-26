@@ -17,6 +17,7 @@ namespace Render {
 		static void Destroy(Context*);
 
 		static void CreateDebugCallback(Context*);
+		static void DestroyDebugCallback(Context*);
 
 		static uint32_t GetApiVersion();
 		static bool CheckExtension(const char*);

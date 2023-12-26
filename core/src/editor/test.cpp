@@ -4,7 +4,10 @@
 #include "logic/transform/transform_system.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/camera/camera_system.h"
+#include "render/vk/buffer/buffer_comp.h"
+#include "render/vk/buffer/buffer_logic.h"
 #include "render/unit/unit_comp.h"
+#include "render/unit/unit_logic.h"
 #include "context.h"
 #include "base.h"
 #include "editor/test.h"
@@ -43,40 +46,56 @@ namespace Editor {
 
 		auto cubeUnit = std::make_shared<Render::Unit>();
 
-		std::vector<glm::vec3> cubeVertices = {
-			{-0.5f, -0.5f, -0.5f},
-			{ 0.5f, -0.5f, -0.5f},
-			{ 0.5f,  0.5f, -0.5f},
-			{-0.5f,  0.5f, -0.5f},
-			{-0.5f, -0.5f,  0.5f},
-			{ 0.5f, -0.5f,  0.5f},
-			{ 0.5f,  0.5f,  0.5f},
-			{-0.5f,  0.5f,  0.5f}
-		};
-		glm::vec3 color = { 1.0f, 1.0f, 1.0f };
-		glm::vec2 uv = { 0.0f, 0.0f };
+		std::vector<Render::Vertex> vertices;
+		std::vector<uint16_t> indices;
+		MakeTriangle(vertices, indices);
 
-		for (int i = 0; i < 8; ++i) {
-			Render::Vertex vertex;
-			vertex.positionOS = cubeVertices[i];
-			vertex.color = color;
-			vertex.uv0 = uv;
-
-			cubeUnit->vertices.push_back(vertex);
-		}
-
-		std::vector<uint32_t> cubeIndices = {
-			0, 1, 2, 2, 3, 0, // 前面
-			4, 5, 6, 6, 7, 4, // 后面
-			0, 3, 7, 7, 4, 0, // 左侧
-			1, 2, 6, 6, 5, 1, // 右侧
-			0, 1, 5, 5, 4, 0, // 底部
-			2, 3, 7, 7, 6, 2  // 顶部
-		};
-		cubeUnit->indices = cubeIndices;
+		Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
+		Render::UnitLogic::SetIndices(context, cubeUnit, indices);
+		Render::UnitLogic::UpdateBuffers(context, cubeUnit);
 
 		cubeEO->AddComponent<Render::Unit>(cubeUnit);
 		context->renderUnitEOs.push_back(cubeEO);
+	}
+
+	void Test::MakeTriangle(
+		std::vector<Render::Vertex>& vertices,
+		std::vector<uint16_t>& indices) {
+
+		vertices = {
+			{{0.0f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5f, 0.5f , 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}
+		};
+
+		indices = {
+			0, 1, 2
+		};
+	}
+
+	void Test::MakeCube(
+		std::vector<Render::Vertex>& vertices,
+		std::vector<uint16_t>& indices) {
+
+		vertices = {
+			{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}
+		};
+
+		indices = {
+			0, 1, 2, 2, 3, 0,
+			4, 5, 6, 6, 7, 4,
+			0, 3, 7, 7, 4, 0,
+			1, 2, 6, 6, 5, 1,
+			0, 1, 5, 5, 4, 0,
+			2, 3, 7, 7, 6, 2
+		};
 	}
 
 }

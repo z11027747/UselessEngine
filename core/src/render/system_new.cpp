@@ -11,10 +11,13 @@
 #include "render/vk/cmd/cmd_pool_logic.h"
 #include "render/vk/cmd/cmd_submit_logic.h"
 #include "render/vk/pipeline/pipeline_system.h"
+#include "render/unit/unit_logic.h"
 #include "render/system_new.h"
 #include "context.h"
 
 namespace Render {
+
+	auto enabledDebug = true;
 
 	void System::OnCreate(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
@@ -24,7 +27,6 @@ namespace Render {
 		renderGlobalEO->AddComponent<Global>(global);
 
 		auto windowExtensions = GetWindowExtensions();
-		auto enabledDebug = true;
 
 		InstanceLogic::Create(context, windowExtensions, enabledDebug);
 		if (enabledDebug) {
@@ -43,7 +45,7 @@ namespace Render {
 	}
 
 	void System::OnUpdate(Context* context) {
-		
+
 		CmdSubmitLogic::Update(context);
 		FramebufferLogic::Update(context);
 
@@ -57,8 +59,12 @@ namespace Render {
 		PassLogic::Destroy(context);
 		SwapchainLogic::Destroy(context);
 		CmdPoolLogic::Destroy(context);
+		UnitLogic::Destroy(context);
 		LogicalDeviceLogic::Destroy(context);
 		SurfaceLogic::Destroy(context);
+		if (enabledDebug) {
+			InstanceLogic::DestroyDebugCallback(context);
+		}
 		InstanceLogic::Destroy(context);
 
 	}
