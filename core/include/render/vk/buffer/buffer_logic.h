@@ -7,6 +7,7 @@
 
 //TODO 为了模板实现
 #include "context.h"
+#include "render/vk/global/global_system.h"
 
 class Context;
 
@@ -41,8 +42,7 @@ namespace Render {
 
 			memcpy(data, &value, size);
 
-			auto unmapRet = vkUnmapMemory(logicalDevice, buffer->vkDeviceMemory);
-			CheckRet(unmapRet, "vkUnmapMemory");
+			vkUnmapMemory(logicalDevice, buffer->vkDeviceMemory);
 		}
 
 		template<typename T>
@@ -63,8 +63,7 @@ namespace Render {
 
 			memcpy(data, values.data(), size);
 
-			auto unmapRet = vkUnmapMemory(logicalDevice, buffer->vkDeviceMemory);
-			CheckRet(unmapRet, "vkUnmapMemory");
+			vkUnmapMemory(logicalDevice, buffer->vkDeviceMemory);
 		}
 
 	};

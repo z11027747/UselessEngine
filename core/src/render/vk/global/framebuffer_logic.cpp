@@ -218,7 +218,7 @@ namespace Render {
 		return true;
 	}
 
-	bool FramebufferLogic::UpdateSubmitCmds(Context* context, uint32_t imageIndex) {
+	bool FramebufferLogic::UpdateDraw(Context* context, uint32_t imageIndex) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
