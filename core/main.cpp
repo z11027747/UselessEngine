@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "context.h"
-#include "editor_test.h"
+#include "editor/test.h"
 
 void size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);

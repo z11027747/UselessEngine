@@ -1,17 +1,17 @@
 ﻿
-#include "render/global/global_comp.h"
-#include "render/global/global_system.h"
+#include "render/vk/global/global_comp.h"
+#include "render/vk/global/global_system.h"
+#include "render/vk/global/instance_logic.h"
+#include "render/vk/global/surface_logic.h"
+#include "render/vk/global/physical_device_logic.h"
+#include "render/vk/global/logical_device_logic.h"
+#include "render/vk/global/swapchain_logic.h"
+#include "render/vk/global/pass_logic.h"
+#include "render/vk/global/framebuffer_logic.h"
+#include "render/vk/cmd/cmd_pool_logic.h"
+#include "render/vk/cmd/cmd_submit_logic.h"
+#include "render/vk/pipeline/pipeline_system.h"
 #include "render/system_new.h"
-#include "render/global/instance_system.h"
-#include "render/global/logical_device_system.h"
-#include "render/global/physical_device_system.h"
-#include "render/global/pass_system.h"
-#include "render/global/swapchain_system.h"
-#include "render/global/framebuffer_system.h"
-#include "render/global/surface_system.h"
-#include "render/pipeline/pipeline_system.h"
-#include "render/cmd/cmd_pool_system.h"
-#include "render/cmd/cmd_submit_system.h"
 #include "context.h"
 
 namespace Render {
@@ -24,36 +24,42 @@ namespace Render {
 		renderGlobalEO->AddComponent<Global>(global);
 
 		auto windowExtensions = GetWindowExtensions();
-		InstanceSystem::Create(context, windowExtensions, true);
-		SurfaceSystem::Create(context);
-		PhysicalDeviceSystem::Create(context);
-		LogicalDeviceSystem::Create(context);
-		CmdPoolSystem::Create(context);
-		SwapchainSystem::Create(context);
-		PassSystem::Create(context);
-		FramebufferSystem::Create(context);
+		auto enabledDebug = true;
+
+		InstanceLogic::Create(context, windowExtensions, enabledDebug);
+		if (enabledDebug) {
+			InstanceLogic::CreateDebugCallback(context);
+		}
+		SurfaceLogic::Create(context);
+		PhysicalDeviceLogic::Find(context);
+		PhysicalDeviceLogic::GetInfo(context);
+		LogicalDeviceLogic::Create(context);
+		CmdPoolLogic::Create(context);
+		SwapchainLogic::Create(context);
+		PassLogic::Create(context);
+		FramebufferLogic::Create(context);
 		PipelineSystem::Create(context, "test");
 
 	}
 
 	void System::OnUpdate(Context* context) {
-
-		CmdSubmitSystem::Update(context);
-		FramebufferSystem::Update(context);
+		
+		CmdSubmitLogic::Update(context);
+		FramebufferLogic::Update(context);
 
 	}
 
 	void System::OnDestroy(Context* context) {
-		LogicalDeviceSystem::WaitIdle(context);
+		LogicalDeviceLogic::WaitIdle(context);
 
-		PipelineSystem::DestroyAll(context);
-		FramebufferSystem::Destroy(context);
-		PassSystem::Destroy(context);
-		SwapchainSystem::Destroy(context);
-		CmdPoolSystem::Destroy(context);
-		LogicalDeviceSystem::Destroy(context);
-		SurfaceSystem::Destroy(context);
-		InstanceSystem::Destroy(context);
+		PipelineSystem::Destroy(context);
+		FramebufferLogic::Destroy(context);
+		PassLogic::Destroy(context);
+		SwapchainLogic::Destroy(context);
+		CmdPoolLogic::Destroy(context);
+		LogicalDeviceLogic::Destroy(context);
+		SurfaceLogic::Destroy(context);
+		InstanceLogic::Destroy(context);
 
 	}
 

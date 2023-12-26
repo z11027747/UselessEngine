@@ -7,7 +7,7 @@
 
 namespace Common {
 
-	class LogSystem {
+	class LogSystem final {
 	public:
 
 		static void Debug(const std::string& message) {
@@ -17,6 +17,7 @@ namespace Common {
 			std::cout << "[" << std::put_time(&local_time, "%Y-%m-%d %H:%M:%S") << "]";
 			std::cout << "[Debug]";
 			std::cout << message;
+			//std::cout << "\n";
 			std::cout << std::endl;
 		}
 
@@ -27,7 +28,7 @@ namespace Common {
 			std::cout << "[" << std::put_time(&local_time, "%Y-%m-%d %H:%M:%S") << "]";
 			std::cout << "[Info]";
 			std::cout << "\033[1;32m" << message << "\033[0m";
-			std::cout << "\n";
+			//std::cout << "\n";
 			std::cout << std::endl;
 		}
 
@@ -38,7 +39,7 @@ namespace Common {
 			std::cout << "[" << std::put_time(&local_time, "%Y-%m-%d %H:%M:%S") << "]";
 			std::cout << "[Error]";
 			std::cerr << "\033[1;31m" << message << "\033[0m";
-			std::cout << "\n";
+			//std::cout << "\n";
 			std::cout << std::endl;
 		}
 
