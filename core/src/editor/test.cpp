@@ -1,9 +1,10 @@
 
+#include <vector>
 #include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
-#include "logic/transform/transform_system.h"
+#include "logic/transform/transform_logic.h"
 #include "logic/camera/camera_comp.h"
-#include "logic/camera/camera_system.h"
+#include "logic/camera/camera_logic.h"
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/unit/unit_comp.h"
@@ -18,19 +19,20 @@ namespace Editor {
 
 		//  Camera =============================
 
+		auto aspect = context->aspect;
 		auto& cameraEO = context->cameraEO;
 		cameraEO = std::make_shared<EngineObject>();
 
-		Logic::TransformSystem::Add(cameraEO,
+		Logic::TransformLogic::Add(cameraEO,
 			glm::vec3(0.0f, 0.0f, -10.0f),
 			glm::vec3(0.0f, 0.0f, 0.0f),
 			glm::vec3(1.0f, 1.0f, 1.0f)
 		);
 
-		Logic::CameraSystem::Add(cameraEO, {
+		Logic::CameraLogic::Add(cameraEO, {
 			0.1f,
 			100.0f,
-			800.0f / 600.0f,//TODO
+			aspect,
 			45.0f
 			});
 
@@ -38,9 +40,9 @@ namespace Editor {
 
 		auto cubeEO = std::make_shared<EngineObject>();
 
-		Logic::TransformSystem::Add(cubeEO,
+		Logic::TransformLogic::Add(cubeEO,
 			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(-30.0f, 50.0f, -30.0f),
 			glm::vec3(1.0f, 1.0f, 1.0f)
 		);
 
@@ -48,7 +50,8 @@ namespace Editor {
 
 		std::vector<Render::Vertex> vertices;
 		std::vector<uint16_t> indices;
-		MakeTriangle(vertices, indices);
+		//MakeTriangle(vertices, indices);
+		MakeCube(vertices, indices);
 
 		Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
 		Render::UnitLogic::SetIndices(context, cubeUnit, indices);
@@ -78,24 +81,46 @@ namespace Editor {
 		std::vector<uint16_t>& indices) {
 
 		vertices = {
-			{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}
+			{{0.5, -0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, -0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, 0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, 0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, 0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, 0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, -0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, -0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, 0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, 0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, 0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, 0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, -0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, -0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, -0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, -0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, -0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, 0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, 0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5, -0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, -0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, 0.5, -0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, 0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5, -0.5, 0.5}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}
 		};
 
 		indices = {
-			0, 1, 2, 2, 3, 0,
-			4, 5, 6, 6, 7, 4,
-			0, 3, 7, 7, 4, 0,
-			1, 2, 6, 6, 5, 1,
-			0, 1, 5, 5, 4, 0,
-			2, 3, 7, 7, 6, 2
+			0, 2, 3,
+			0, 3, 1,
+			8, 4, 5,
+			8, 5, 9,
+			10, 6, 7,
+			10, 7, 11,
+			12, 13, 14,
+			12, 14, 15,
+			16, 17, 18,
+			16, 18, 19,
+			20, 21, 22,
+			20, 22, 23
 		};
-	}
 
+	}
 }

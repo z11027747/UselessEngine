@@ -7,7 +7,7 @@ class EngineObject;
 
 namespace Logic {
 
-	class CameraSystem final {
+	class CameraLogic final {
 	public:
 
 		static void Add(std::shared_ptr<EngineObject>, Frustum);

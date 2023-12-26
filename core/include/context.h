@@ -16,9 +16,11 @@
 class Context final {
 public:
 	GLFWwindow* window;
+	float aspect;
 
-	Context(GLFWwindow* w) {
+	Context(GLFWwindow* w, float asp) {
 		window = w;
+		aspect = asp;
 		currTime = 0.0f;
 		deltaTime = 0.0f;
 	}

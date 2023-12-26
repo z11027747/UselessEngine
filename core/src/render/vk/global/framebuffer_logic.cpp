@@ -1,4 +1,6 @@
 ﻿
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <array>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
@@ -10,7 +12,10 @@
 #include "render/vk/cmd/cmd_pool_logic.h"
 #include "render/vk/cmd/cmd_submit_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
+#include "render/vk/pipeline/shader_logic.h"
 #include "render/unit/unit_comp.h"
+#include "logic/camera/camera_comp.h"
+#include "logic/transform/transform_comp.h"
 #include "context.h"
 
 namespace Render {
@@ -230,49 +235,92 @@ namespace Render {
 		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
 		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
 
+		auto& cameraEO = context->cameraEO;
+		auto camera = cameraEO->GetComponent<Logic::Camera>();
+
+		auto& pipelineEO = context->renderPipelineEOs["test"];
+		auto graphicsPipeline = pipelineEO->GetComponent<GraphicsPipeline>();
+		auto& pipeline = graphicsPipeline->pipeline;
+		auto& pipelineLayout = graphicsPipeline->pipelineLayout;
+
+		UniformCameraTransform uct = {
+			camera->view,
+			camera->projection
+		};
+
+		ShaderLogic::UpdateUniform0<UniformTest, UniformCameraTransform>(context,
+			graphicsPipeline,
+			imageIndex, uct);
+
 		CmdPoolLogic::ResetBuffer(cmdBuffer, 0);
-		CmdSubmitLogic::Record(cmdBuffer,
-			[&](VkCommandBuffer& cmdBuffer) {
 
-				VkRenderPassBeginInfo renderPassBeginInfo = {};
-				renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-				renderPassBeginInfo.renderPass = renderPass;
-				renderPassBeginInfo.framebuffer = frameBuffer;
-				renderPassBeginInfo.renderArea.offset = { 0, 0 };
-				renderPassBeginInfo.renderArea.extent = surfaceCapabilities.currentExtent;
+		VkCommandBufferBeginInfo beginInfo = {};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-				std::array<VkClearValue, 2> clearValues = {};
-				clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
-				clearValues[1].depthStencil = { 1.0f, 0 };
-				renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-				renderPassBeginInfo.pClearValues = clearValues.data();
+		auto beginRet = vkBeginCommandBuffer(cmdBuffer, &beginInfo);
+		CheckRet(beginRet, "vkBeginCommandBuffer");
 
-				vkCmdBeginRenderPass(cmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+		VkRenderPassBeginInfo renderPassBeginInfo = {};
+		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassBeginInfo.renderPass = renderPass;
+		renderPassBeginInfo.framebuffer = frameBuffer;
+		renderPassBeginInfo.renderArea.offset = { 0, 0 };
+		renderPassBeginInfo.renderArea.extent = surfaceCapabilities.currentExtent;
 
-				auto& pipelineEO = context->renderPipelineEOs["test"];
-				auto pipeline = pipelineEO->GetComponent<Pipeline>();
-				auto& graphicsPipeline = pipeline->graphicsPipeline;
+		std::array<VkClearValue, 2> clearValues = {};
+		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValues[1].depthStencil = { 1.0f, 0 };
+		renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassBeginInfo.pClearValues = clearValues.data();
 
-				vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+		vkCmdBeginRenderPass(cmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				auto& renderUnitEOs = context->renderUnitEOs;
-				for (const auto& renderUnitEO : renderUnitEOs) {
-					auto unit = renderUnitEO->GetComponent<Render::Unit>();
+		auto& uniform = graphicsPipeline->uniforms[imageIndex];
 
-					auto& vertexBuffer = unit->vertexBuffer;
-					VkBuffer vertexBuffers[] = { vertexBuffer->vkBuffer };
-					VkDeviceSize offsets[] = { 0 };
-					vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
+		vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-					auto& indices = unit->indices;
-					auto& indexBuffer = unit->indexBuffer;
-					vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
+		auto& renderUnitEOs = context->renderUnitEOs;
+		for (const auto& renderUnitEO : renderUnitEOs) {
 
-					vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
-				}
+			auto transform = renderUnitEO->GetComponent<Logic::Transform>();
 
-				vkCmdEndRenderPass(cmdBuffer);
-			});
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, transform->position);
+			model = glm::rotate(model, glm::radians(transform->eulerAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(transform->eulerAngles.x), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(transform->eulerAngles.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, transform->scale);
+
+			UniformObjectTransform uct = {
+				model
+			};
+
+			ShaderLogic::UpdateUniform1<UniformTest, UniformObjectTransform>(context,
+				graphicsPipeline,
+				imageIndex, uct);
+
+			auto unit = renderUnitEO->GetComponent<Render::Unit>();
+
+			auto& vertexBuffer = unit->vertexBuffer;
+			VkBuffer vertexBuffers[] = { vertexBuffer->vkBuffer };
+			VkDeviceSize offsets[] = { 0 };
+			vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
+
+			auto& indices = unit->indices;
+			auto& indexBuffer = unit->indexBuffer;
+			vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+			vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+				pipelineLayout, 0, 1, &uniform->descriptorSet, 0, nullptr);
+
+			vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+		}
+
+		vkCmdEndRenderPass(cmdBuffer);
+
+		auto endRet = vkEndCommandBuffer(cmdBuffer);
+		CheckRet(endRet, "vkEndCommandBuffer");
 
 		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -290,7 +338,7 @@ namespace Render {
 		auto submitRet = vkQueueSubmit(logicalQueue, 1, &submitInfo, inFlightFence);
 		CheckRet(submitRet, "vkQueueSubmit");
 
-		return false;
+		return true;
 	}
 
 	void FramebufferLogic::UpdatePresent(Context* context, uint32_t imageIndex) {

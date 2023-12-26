@@ -9,7 +9,7 @@ class EngineObject;
 
 namespace Logic {
 
-	class TransformSystem final {
+	class TransformLogic final {
 	public:
 
 		static void Add(std::shared_ptr<EngineObject> eo,

@@ -94,8 +94,6 @@ namespace Render {
 	void CmdPoolLogic::ResetBuffer(
 		VkCommandBuffer& buffer, VkCommandBufferResetFlags resetFlags) {
 
-		//VkCommandBufferResetFlags 重置要求
-		//	VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT 和资源一起释放
 		auto ret = vkResetCommandBuffer(buffer, resetFlags);
 		CheckRet(ret, "vkResetCommandBuffer");
 	}

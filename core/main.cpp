@@ -15,13 +15,16 @@ int main() {
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-	auto window = glfwCreateWindow(800, 600, "UselessEngine", nullptr, nullptr);
+	auto width = 1280;
+	auto height = 720;
+
+	auto window = glfwCreateWindow(width, height, "UselessEngine", nullptr, nullptr);
 	//glfwSetWindowPos(window, -1500, 200);
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetFramebufferSizeCallback(window, size_callback);
 
-	context = std::make_unique<Context>(window);
+	context = std::make_unique<Context>(window, width * 1.0f / height);
 	context->Create();
 
 	//TODO

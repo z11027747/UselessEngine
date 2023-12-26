@@ -20,7 +20,6 @@ namespace Render {
 		static void AllocateCmdBuffers(Context*);
 
 		static void Update(Context*);
-
 		static bool UpdateWaitFence(Context*);
 		static bool UpdateAcquireNext(Context*, uint32_t&);
 		static bool UpdateSubmitCmds(Context*, uint32_t);

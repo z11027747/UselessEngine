@@ -19,9 +19,6 @@ namespace Render {
 
 		std::shared_ptr<Buffer> vertexBuffer;
 		std::shared_ptr<Buffer> indexBuffer;
-
-		std::vector<VkDescriptorSet> descriptorSets;
-
 	};
 
 }
