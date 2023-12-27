@@ -109,8 +109,8 @@ namespace Render {
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalDevice = global->logicalDevice;
 		auto maxFrameInFlight = global->maxFrameInFlight;
+		auto& descriptorPool = global->descriptorPool;
 
-		auto& descriptorPool = graphicsPipeline->descriptorPool;
 		auto& descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		VkDescriptorSetAllocateInfo allocateInfo = {};

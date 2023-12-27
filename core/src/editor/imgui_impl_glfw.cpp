@@ -70,7 +70,7 @@
 
 #include "imgui/imgui.h"
 #ifndef IMGUI_DISABLE
-#include "editor/imgui_impl_glfw.h"
+#include "editor/imgui/imgui_impl_glfw.h"
 
 // Clang warnings with -Weverything
 #if defined(__clang__)

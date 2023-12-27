@@ -12,6 +12,7 @@
 #include "render/vk/pipeline/shader_logic.h"
 #include "render/unit/unit_comp.h"
 #include "context.h"
+#include "editor/window.h"
 
 namespace Render {
 
@@ -168,15 +169,7 @@ namespace Render {
 			maxFrameInFlight, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
 
-	void FramebufferLogic::Update(Context* context) {
-		UpdateWaitFence(context);
-
-		uint32_t imageIndex = UpdateAcquireImage(context);
-		UpdateDraw(context, imageIndex);
-		UpdatePresent(context, imageIndex);
-	}
-
-	bool FramebufferLogic::UpdateWaitFence(Context* context) {
+	void FramebufferLogic::WaitFence(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
@@ -189,10 +182,9 @@ namespace Render {
 		CheckRet(waitFenceRet, "vkWaitForFences");
 
 		vkResetFences(logicalDevice, 1, &inFlightFence);
-		return true;
 	}
 
-	uint32_t FramebufferLogic::UpdateAcquireImage(Context* context) {
+	uint32_t FramebufferLogic::AcquireImageIndex(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
@@ -213,22 +205,15 @@ namespace Render {
 		return imageIndex;
 	}
 
-	bool FramebufferLogic::UpdateDraw(Context* context, uint32_t imageIndex) {
+	void FramebufferLogic::BeginRenderPass(Context* context, uint32_t imageIndex) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalQueue = global->logicalQueue;
-		auto& swapchain = global->swapchain;
 		auto& renderPass = global->renderPass;
 		auto& surfaceCapabilities = global->surfaceCapabilities;
 
 		auto& frameBuffer = global->frameBuffers[imageIndex];
 		auto& cmdBuffer = global->cmdBuffers[imageIndex];
-
-		auto& currFrame = global->currFrame;
-		auto& inFlightFence = global->inFlightFences[currFrame];
-		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
-		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
 
 		CmdPoolLogic::ResetBuffer(cmdBuffer, 0);
 
@@ -253,6 +238,13 @@ namespace Render {
 		renderPassBeginInfo.pClearValues = clearValues.data();
 
 		vkCmdBeginRenderPass(cmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+	}
+
+	void FramebufferLogic::DrawUnits(Context* context, uint32_t imageIndex) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& cmdBuffer = global->cmdBuffers[imageIndex];
 
 		auto& unitEOs = context->renderUnitEOs;
 		for (const auto& unitEO : unitEOs) {
@@ -286,6 +278,20 @@ namespace Render {
 
 			vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		}
+	}
+
+	void FramebufferLogic::EndRenderPass(Context* context, uint32_t imageIndex) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalQueue = global->logicalQueue;
+
+		auto& cmdBuffer = global->cmdBuffers[imageIndex];
+
+		auto& currFrame = global->currFrame;
+		auto& inFlightFence = global->inFlightFences[currFrame];
+		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
+		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
 
 		vkCmdEndRenderPass(cmdBuffer);
 
@@ -307,11 +313,9 @@ namespace Render {
 
 		auto submitRet = vkQueueSubmit(logicalQueue, 1, &submitInfo, inFlightFence);
 		CheckRet(submitRet, "vkQueueSubmit");
-
-		return true;
 	}
 
-	void FramebufferLogic::UpdatePresent(Context* context, uint32_t imageIndex) {
+	void FramebufferLogic::Present(Context* context, uint32_t imageIndex) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();

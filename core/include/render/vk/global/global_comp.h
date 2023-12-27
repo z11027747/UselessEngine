@@ -42,6 +42,7 @@ namespace Render {
 		std::vector<VkSemaphore> imageAvailableSemaphores;
 		std::vector<VkSemaphore> renderFinishedSemaphores;
 
+		VkDescriptorPool descriptorPool;
 	};
 
 }

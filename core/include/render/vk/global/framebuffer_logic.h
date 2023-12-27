@@ -19,11 +19,12 @@ namespace Render {
 
 		static void AllocateCmdBuffers(Context*);
 
-		static void Update(Context*);
-		static bool UpdateWaitFence(Context*);
-		static uint32_t UpdateAcquireImage(Context*);
-		static bool UpdateDraw(Context*, uint32_t);
-		static void UpdatePresent(Context*, uint32_t);
+		static void WaitFence(Context*);
+		static uint32_t AcquireImageIndex(Context*);
+		static void BeginRenderPass(Context*, uint32_t);
+		static void DrawUnits(Context*, uint32_t);
+		static void EndRenderPass(Context*, uint32_t);
+		static void Present(Context*, uint32_t);
 	};
 
 

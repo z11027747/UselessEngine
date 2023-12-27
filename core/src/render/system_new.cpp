@@ -8,12 +8,14 @@
 #include "render/vk/global/swapchain_logic.h"
 #include "render/vk/global/pass_logic.h"
 #include "render/vk/global/framebuffer_logic.h"
+#include "render/vk/global/descriptor_pool_logic.h"
 #include "render/vk/cmd/cmd_pool_logic.h"
 #include "render/vk/cmd/cmd_submit_logic.h"
 #include "render/vk/pipeline/pipeline_system.h"
 #include "render/unit/unit_logic.h"
 #include "render/system_new.h"
 #include "context.h"
+#include "editor/window.h"
 
 namespace Render {
 
@@ -40,21 +42,32 @@ namespace Render {
 		SwapchainLogic::Create(context);
 		PassLogic::Create(context);
 		FramebufferLogic::Create(context);
+		DescriptorPoolLogic::Create(context);
 		PipelineSystem::Create(context, "test");
-
+		Editor::Window::Create(context);
 	}
 
 	void System::OnUpdate(Context* context) {
 
-		CmdSubmitLogic::Update(context);
-		FramebufferLogic::Update(context);
+		Editor::Window::Update(context);
 
+		CmdSubmitLogic::Update(context);
+
+		FramebufferLogic::WaitFence(context);
+		auto imageIndex = FramebufferLogic::AcquireImageIndex(context);
+		FramebufferLogic::BeginRenderPass(context, imageIndex);
+		FramebufferLogic::DrawUnits(context, imageIndex);
+		Editor::Window::DrawData(context, imageIndex);
+		FramebufferLogic::EndRenderPass(context, imageIndex);
+		FramebufferLogic::Present(context, imageIndex);
 	}
 
 	void System::OnDestroy(Context* context) {
+
 		LogicalDeviceLogic::WaitIdle(context);
 
 		PipelineSystem::Destroy(context);
+		DescriptorPoolLogic::Destroy(context);
 		FramebufferLogic::Destroy(context);
 		PassLogic::Destroy(context);
 		SwapchainLogic::Destroy(context);
@@ -66,7 +79,6 @@ namespace Render {
 			InstanceLogic::DestroyDebugCallback(context);
 		}
 		InstanceLogic::Destroy(context);
-
 	}
 
 

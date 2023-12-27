@@ -2,14 +2,12 @@
 #include <iostream>
 #include <cstdlib>
 #include "context.h"
-#include "editor/test.h"
 
 void size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-
 constexpr int width = 1280;
-constexpr int  height = 720;
+constexpr int height = 720;
 static float aspect = (width * 1.0f) / height;
 
 std::unique_ptr<Context> context;
@@ -20,7 +18,6 @@ int main() {
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-
 	auto window = glfwCreateWindow(width, height, "UselessEngine", nullptr, nullptr);
 	//glfwSetWindowPos(window, -1500, 200);
 
@@ -30,8 +27,7 @@ int main() {
 	context = std::make_unique<Context>(window, aspect);
 	context->Create();
 
-	//TODO
-	Editor::Test::Create(context.get());
+	//Editor::Test::Create(context.get());
 
 	auto deltaTime = 0.0f;
 	auto lastTime = 0.0f;
