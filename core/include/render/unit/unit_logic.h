@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 #include "render/vk/pipeline/pipeline_comp.h";
 #include "render/unit/unit_comp.h";
 
@@ -14,6 +15,10 @@ namespace Render {
 
 		static void Destroy(Context*);
 
+		static void SetPipelineName(Context*,
+			std::shared_ptr<Unit>,
+			std::string);
+
 		static void SetVertices(Context*,
 			std::shared_ptr<Unit>,
 			std::vector<Vertex>&);
@@ -22,9 +27,9 @@ namespace Render {
 			std::shared_ptr<Unit>,
 			std::vector<uint16_t>&);
 
-		static void UpdateUniformBuffer(Context*,
+		static void SetTexture(Context*,
 			std::shared_ptr<Unit>,
-			std::shared_ptr<GraphicsPipeline>, uint32_t image);
+			std::string);
 
 	};
 

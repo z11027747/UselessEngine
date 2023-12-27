@@ -117,7 +117,6 @@ namespace Render {
 		swapchainDepthImage2Ds.resize(swapchainImageCount);
 
 		for (auto i = 0u; i < swapchainImageCount; i++) {
-
 			auto depthImage2D = Image2DLogic::Create(context,
 				global->depthImageFormat, surfaceCapabilities.currentExtent,
 				VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,

@@ -2,15 +2,11 @@
 
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <memory>
 #include <string>
-
 #include "render/system_new.h"
-#include "render/system.h"
-#include "tool/system.h"
 #include "base.h"
 
 class Context final {
@@ -29,9 +25,6 @@ public:
 	float currTime;
 	float deltaTime;
 
-	//render_old
-	std::shared_ptr<EngineObject> renderEO;
-
 	//render
 	std::shared_ptr<EngineObject> renderGlobalEO;
 	std::shared_ptr<EngineObject> renderCmdSimpleEO;
@@ -44,23 +37,20 @@ public:
 	void Create() {
 
 		Render::System::OnCreate(this);
-
 	}
 
 	void Update() {
 
 		Render::System::OnUpdate(this);
-
 	}
 
 	void Destroy() {
 
 		Render::System::OnDestroy(this);
-
 	}
 
 	void OnSizeCallback() {
-		RenderSystem::SetNeedRecreateSwapchain(this);
+
 	}
 
 };

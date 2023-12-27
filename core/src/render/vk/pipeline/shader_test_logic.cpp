@@ -8,6 +8,9 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/pipeline_logic.h"
 #include "render/vk/pipeline/shader_test_logic.h"
+#include "render/vk/image/image_comp.h"
+#include "render/vk/image/image2d_logic.h"
+#include "render/vk/image/sampler_logic.h"
 #include "render/unit/unit_comp.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
@@ -40,12 +43,12 @@ namespace Render {
 		uniformBinding1.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 		bindings.push_back(uniformBinding1);
 
-		//VkDescriptorSetLayoutBinding samplerBinding2 = {};
-		//samplerBinding2.binding = 2;
-		//samplerBinding2.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		//samplerBinding2.descriptorCount = 1;
-		//samplerBinding2.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-		//bindings.push_back(samplerBinding2);
+		VkDescriptorSetLayoutBinding samplerBinding2 = {};
+		samplerBinding2.binding = 2;
+		samplerBinding2.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		samplerBinding2.descriptorCount = 1;
+		samplerBinding2.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		bindings.push_back(samplerBinding2);
 
 		VkDescriptorSetLayoutCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -88,7 +91,7 @@ namespace Render {
 		VkVertexInputAttributeDescription uv0Description2 = {};
 		uv0Description2.location = 2;
 		uv0Description2.binding = 0;
-		uv0Description2.format = VK_FORMAT_R32G32B32_SFLOAT;
+		uv0Description2.format = VK_FORMAT_R32G32_SFLOAT;
 		uv0Description2.offset = offsetof(Render::Vertex, uv0);
 
 		graphicsPipeline->vertexAttrDescriptions = {
@@ -138,6 +141,8 @@ namespace Render {
 				uniform1Size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
+			uniformTest->sampler = SamplerLogic::Create(context);
+
 			graphicsPipeline->uniforms.push_back(uniformTest);
 		}
 	}
@@ -154,6 +159,9 @@ namespace Render {
 
 			BufferLogic::Destroy(context,
 				uniformTest->uniform1Buffer);
+
+			SamplerLogic::Destroy(context,
+				uniformTest->sampler);
 		}
 		uniforms.clear();
 	}
@@ -206,21 +214,6 @@ namespace Render {
 			uniformWrite1.pBufferInfo = &uniformBuffer1;
 			writes.push_back(uniformWrite1);
 
-			//VkWriteDescriptorSet samplerWrite2 = {};
-			//samplerWrite2.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			//samplerWrite2.dstSet = uniformTest->descriptorSet;
-			//samplerWrite2.dstBinding = 2;
-			//samplerWrite2.dstArrayElement = 0;
-			//samplerWrite2.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			//samplerWrite2.descriptorCount = 1;
-
-			//VkDescriptorImageInfo samplerImage2 = {};
-			//samplerImage2.sampler = textureSampler;
-			//samplerImage2.imageView = textureImageView;
-			//samplerImage2.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			//samplerWrite2.pImageInfo = &samplerImage2;
-			//writes.push_back(samplerWrite2);
-
 			vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
 		}
 	}
@@ -229,6 +222,11 @@ namespace Render {
 		std::shared_ptr<EngineObject> unitEO,
 		std::shared_ptr<Uniform> uniform
 	) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+
 		auto uniformTest = std::dynamic_pointer_cast<UniformTest>(uniform);
 
 		auto& cameraEO = context->cameraEO;
@@ -245,7 +243,7 @@ namespace Render {
 
 		auto transform = unitEO->GetComponent<Logic::Transform>();
 
-		glm::mat4 model = glm::mat4(1.0f);
+		auto model = glm::mat4(1.0f);
 		model = glm::translate(model, transform->position);
 		model = glm::rotate(model, glm::radians(transform->eulerAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(transform->eulerAngles.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -259,6 +257,25 @@ namespace Render {
 		BufferLogic::SetValue(context,
 			uniformTest->uniform1Buffer,
 			transformUBO);
+
+		auto unit = unitEO->GetComponent<Render::Unit>();
+		auto& image2D = unit->image2D;
+
+		VkWriteDescriptorSet samplerWrite2 = {};
+		samplerWrite2.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		samplerWrite2.dstSet = uniformTest->descriptorSet;
+		samplerWrite2.dstBinding = 2;
+		samplerWrite2.dstArrayElement = 0;
+		samplerWrite2.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		samplerWrite2.descriptorCount = 1;
+
+		VkDescriptorImageInfo samplerImage2 = {};
+		samplerImage2.sampler = uniformTest->sampler;
+		samplerImage2.imageView = image2D->vkImageView;
+		samplerImage2.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		samplerWrite2.pImageInfo = &samplerImage2;
+
+		vkUpdateDescriptorSets(logicalDevice, 1, &samplerWrite2, 0, nullptr);
 	}
 
 }

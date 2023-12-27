@@ -24,6 +24,25 @@ namespace Render {
 			std::shared_ptr<Buffer>);
 
 		template<typename T>
+		static void SetPtr(Context* context,
+			std::shared_ptr<Buffer> buffer,
+			T* value, size_t size
+		) {
+			auto& renderGlobalEO = context->renderGlobalEO;
+
+			auto global = renderGlobalEO->GetComponent<Global>();
+			auto& logicalDevice = global->logicalDevice;
+
+			void* data;
+			auto mapRet = vkMapMemory(logicalDevice, buffer->vkDeviceMemory, 0, size, 0, &data);
+			CheckRet(mapRet, "vkMapMemory");
+
+			memcpy(data, value, size);
+
+			vkUnmapMemory(logicalDevice, buffer->vkDeviceMemory);
+		}
+
+		template<typename T>
 		static void SetValue(Context* context,
 			std::shared_ptr<Buffer> buffer,
 			T& value
@@ -36,7 +55,6 @@ namespace Render {
 			auto size = sizeof(value);
 
 			void* data;
-
 			auto mapRet = vkMapMemory(logicalDevice, buffer->vkDeviceMemory, 0, size, 0, &data);
 			CheckRet(mapRet, "vkMapMemory");
 

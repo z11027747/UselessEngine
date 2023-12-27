@@ -1,9 +1,7 @@
-#pragma once
 
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
-#include "render/vk/global/physical_device_logic.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/image/image2d_logic.h"
 #include "render/vk/cmd/cmd_submit_logic.h"
