@@ -21,7 +21,7 @@ namespace Render {
 
 		static void Update(Context*);
 		static bool UpdateWaitFence(Context*);
-		static bool UpdateAcquireNext(Context*, uint32_t&);
+		static uint32_t UpdateAcquireImage(Context*);
 		static bool UpdateDraw(Context*, uint32_t);
 		static void UpdatePresent(Context*, uint32_t);
 	};

@@ -1,6 +1,4 @@
 ﻿
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/euler_angles.hpp>
 #include <array>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
@@ -10,12 +8,9 @@
 #include "render/vk/image/image_comp.h"
 #include "render/vk/cmd/cmd_comp.h"
 #include "render/vk/cmd/cmd_pool_logic.h"
-#include "render/vk/cmd/cmd_submit_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/shader_logic.h"
 #include "render/unit/unit_comp.h"
-#include "logic/camera/camera_comp.h"
-#include "logic/transform/transform_comp.h"
 #include "context.h"
 
 namespace Render {
@@ -176,9 +171,8 @@ namespace Render {
 	void FramebufferLogic::Update(Context* context) {
 		UpdateWaitFence(context);
 
-		uint32_t imageIndex;
-		UpdateAcquireNext(context, imageIndex);
-		UpdateSubmitCmds(context, imageIndex);
+		uint32_t imageIndex = UpdateAcquireImage(context);
+		UpdateDraw(context, imageIndex);
 		UpdatePresent(context, imageIndex);
 	}
 
@@ -198,7 +192,7 @@ namespace Render {
 		return true;
 	}
 
-	bool FramebufferLogic::UpdateAcquireNext(Context* context, uint32_t& imageIndex) {
+	uint32_t FramebufferLogic::UpdateAcquireImage(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
@@ -211,11 +205,12 @@ namespace Render {
 		auto& currFrame = global->currFrame;
 		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
 
+		uint32_t imageIndex;
 		auto acquireNextRet = vkAcquireNextImageKHR(logicalDevice, swapchain, UINT64_MAX,
 			imageAvailableSemaphore, nullptr, &imageIndex);
 		CheckRet(acquireNextRet, "vkAcquireNextImageKHR");
 
-		return true;
+		return imageIndex;
 	}
 
 	bool FramebufferLogic::UpdateDraw(Context* context, uint32_t imageIndex) {
@@ -234,23 +229,6 @@ namespace Render {
 		auto& inFlightFence = global->inFlightFences[currFrame];
 		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
 		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
-
-		auto& cameraEO = context->cameraEO;
-		auto camera = cameraEO->GetComponent<Logic::Camera>();
-
-		auto& pipelineEO = context->renderPipelineEOs["test"];
-		auto graphicsPipeline = pipelineEO->GetComponent<GraphicsPipeline>();
-		auto& pipeline = graphicsPipeline->pipeline;
-		auto& pipelineLayout = graphicsPipeline->pipelineLayout;
-
-		UniformCameraTransform uct = {
-			camera->view,
-			camera->projection
-		};
-
-		ShaderLogic::UpdateUniform0<UniformTest, UniformCameraTransform>(context,
-			graphicsPipeline,
-			imageIndex, uct);
 
 		CmdPoolLogic::ResetBuffer(cmdBuffer, 0);
 
@@ -276,31 +254,18 @@ namespace Render {
 
 		vkCmdBeginRenderPass(cmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-		auto& uniform = graphicsPipeline->uniforms[imageIndex];
+		auto& unitEOs = context->renderUnitEOs;
+		for (const auto& unitEO : unitEOs) {
+			auto unit = unitEO->GetComponent<Render::Unit>();
 
-		vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+			auto& pipelineName = unit->pipelineName;
+			auto& pipelineEO = context->renderPipelineEOs[pipelineName];
 
-		auto& renderUnitEOs = context->renderUnitEOs;
-		for (const auto& renderUnitEO : renderUnitEOs) {
+			auto graphicsPipeline = pipelineEO->GetComponent<GraphicsPipeline>();
+			auto& pipeline = graphicsPipeline->pipeline;
+			auto& pipelineLayout = graphicsPipeline->pipelineLayout;
 
-			auto transform = renderUnitEO->GetComponent<Logic::Transform>();
-
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, transform->position);
-			model = glm::rotate(model, glm::radians(transform->eulerAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
-			model = glm::rotate(model, glm::radians(transform->eulerAngles.x), glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::rotate(model, glm::radians(transform->eulerAngles.z), glm::vec3(0.0f, 0.0f, 1.0f));
-			model = glm::scale(model, transform->scale);
-
-			UniformObjectTransform uct = {
-				model
-			};
-
-			ShaderLogic::UpdateUniform1<UniformTest, UniformObjectTransform>(context,
-				graphicsPipeline,
-				imageIndex, uct);
-
-			auto unit = renderUnitEO->GetComponent<Render::Unit>();
+			vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
 			auto& vertexBuffer = unit->vertexBuffer;
 			VkBuffer vertexBuffers[] = { vertexBuffer->vkBuffer };
@@ -310,6 +275,11 @@ namespace Render {
 			auto& indices = unit->indices;
 			auto& indexBuffer = unit->indexBuffer;
 			vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+			auto& uniform = graphicsPipeline->uniforms[imageIndex];
+			ShaderLogic::UpdateUniformBuffer(context,
+				unitEO,
+				uniform);
 
 			vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
 				pipelineLayout, 0, 1, &uniform->descriptorSet, 0, nullptr);

@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <string>
 #include "render/vk/buffer/buffer_comp.h"
 
 namespace Render {
@@ -13,12 +14,14 @@ namespace Render {
 	};
 
 	struct Unit final {
+		std::string pipelineName;
 
 		std::vector<Vertex> vertices;
 		std::vector<uint16_t> indices;
 
 		std::shared_ptr<Buffer> vertexBuffer;
 		std::shared_ptr<Buffer> indexBuffer;
+
 	};
 
 }

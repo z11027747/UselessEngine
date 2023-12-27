@@ -1,9 +1,10 @@
+
+#include <vector>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/pipeline_logic.h"
-#include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "render/vk/pipeline/descriptor_pool_logic.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "context.h"
@@ -24,16 +25,13 @@ namespace Render {
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		createInfo.maxSets = maxFrameInFlight;
 
-		std::array<VkDescriptorPoolSize, 3> sizes = {};
+		std::vector<VkDescriptorPoolSize> sizes(2);
 
 		sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		sizes[0].descriptorCount = 1;
+		sizes[0].descriptorCount = 2;
 
-		sizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		sizes[1].descriptorCount = 1;
-
-		sizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		sizes[2].descriptorCount = 1;
 
 		createInfo.poolSizeCount = static_cast<uint32_t>(sizes.size());
 		createInfo.pPoolSizes = sizes.data();

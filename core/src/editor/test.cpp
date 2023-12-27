@@ -47,6 +47,7 @@ namespace Editor {
 		);
 
 		auto cubeUnit = std::make_shared<Render::Unit>();
+		cubeUnit->pipelineName = "test";
 
 		std::vector<Render::Vertex> vertices;
 		std::vector<uint16_t> indices;
@@ -55,7 +56,6 @@ namespace Editor {
 
 		Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
 		Render::UnitLogic::SetIndices(context, cubeUnit, indices);
-		Render::UnitLogic::UpdateBuffers(context, cubeUnit);
 
 		cubeEO->AddComponent<Render::Unit>(cubeUnit);
 		context->renderUnitEOs.push_back(cubeEO);
