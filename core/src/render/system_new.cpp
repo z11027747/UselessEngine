@@ -66,6 +66,7 @@ namespace Render {
 
 		LogicalDeviceLogic::WaitIdle(context);
 
+		Editor::Window::Destroy(context);
 		PipelineSystem::Destroy(context);
 		DescriptorPoolLogic::Destroy(context);
 		FramebufferLogic::Destroy(context);
