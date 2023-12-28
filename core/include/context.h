@@ -11,6 +11,7 @@
 #include "render/vk/cmd/cmd_comp.h"
 #include "render/system.h"
 #include "logic/system.h"
+#include "editor/test.h"
 #include "engine_object.h"
 
 const std::string G_Camera = "Camera";
@@ -56,20 +57,21 @@ public:
 
 	void Create() {
 
-		Logic::System::Create(this);
 		Render::System::Create(this);
+		Logic::System::Create(this);
+		Editor::Test::Create(this);
 	}
 
 	void Update() {
 
-		Logic::System::Update(this);
 		Render::System::Update(this);
+		Logic::System::Update(this);
 	}
 
 	void Destroy() {
 
-		Logic::System::Destroy(this);
 		Render::System::Destroy(this);
+		Logic::System::Destroy(this);
 	}
 
 	void OnSizeCallback() {

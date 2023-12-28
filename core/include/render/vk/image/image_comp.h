@@ -5,10 +5,10 @@
 namespace Render {
 
 	struct Image final {
-
 		VkFormat fomat;
 		VkExtent3D extent;
 		VkImageAspectFlags aspectMask;
+		VkImageLayout layout;
 
 		VkImage vkImage;
 		VkDeviceMemory vkDeviceMemory;

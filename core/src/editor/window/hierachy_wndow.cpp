@@ -19,14 +19,17 @@ namespace Editor {
 			ImGui::Text("fps: %.1f ms: %.3f", io.Framerate, 1000.0f / io.Framerate);
 
 			ImGui::SeparatorText("EngineObjectList Begin"); {
+				auto index = 0;
 				auto& eos = context->allEOs;
 				for (const auto& eo : eos) {
+					ImGui::PushID(index++);
 					EngineObjectWrap::Draw(context, eo);
+					ImGui::PopID();
 				}
 			}
 			ImGui::SeparatorText("End");
 
-			ImGui::SetNextItemWidth(100.0f);
+			ImGui::SetNextItemWidth(150.0f);
 			ImGui::InputText("##addEOName", addEOName, IM_ARRAYSIZE(addEOName));
 			ImGui::SameLine();
 			if (ImGui::Button("Add EnginObject")) {

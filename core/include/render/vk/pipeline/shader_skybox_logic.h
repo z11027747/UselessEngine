@@ -12,26 +12,25 @@ namespace Render {
 	class ShaderSkyboxLogic final {
 	public:
 
+		static void CreateVertexAttrDescriptions(Context*,
+			std::shared_ptr<GraphicsPipeline>);
+
 		static void CreateDescriptorSetLayout(Context*,
 			std::shared_ptr<GraphicsPipeline>);
 		static void DestroyDescriptorSetLayout(Context*,
 			std::shared_ptr<GraphicsPipeline>);
 
-		static void CreateVertexAttrDescriptions(Context*,
+		static void CreateDescriptors(Context*,
 			std::shared_ptr<GraphicsPipeline>);
-
-		static void CreateUniforms(Context*,
-			std::shared_ptr<GraphicsPipeline>);
-		static void DestroyUniforms(Context*,
+		static void DestroyDescriptors(Context*,
 			std::shared_ptr<GraphicsPipeline>);
 
 		static void UpdateDescriptorSets(Context*,
 			std::shared_ptr<GraphicsPipeline>);
 
-		static void UpdateUniformBuffer(Context*,
+		static void UpdateDescriptor(Context*,
 			std::shared_ptr<EngineObject>,
-			std::shared_ptr<Uniform>
-		);
+			std::shared_ptr<Descriptor>);
 
 	};
 

@@ -169,6 +169,8 @@ namespace Render {
 					0, nullptr,
 					1, &imageMemoryBarrier);
 			});
+
+		image->layout = newLayout;
 	}
 
 	void ImageLogic::CopyBuffer(Context* context,

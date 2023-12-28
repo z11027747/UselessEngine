@@ -17,7 +17,7 @@ namespace Editor {
 		ImGui::PopID();
 
 		ImGui::PushID(1); {
-			ImGui_Drag_GlmVec3("EulerAngels", transform->eulerAngles);
+			ImGui_Drag_GlmVec3("EulerAngels", transform->eulerAngles, 60, 0.1f);
 		}
 		ImGui::PopID();
 

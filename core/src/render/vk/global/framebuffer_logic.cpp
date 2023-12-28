@@ -272,15 +272,16 @@ namespace Render {
 			auto& indexBuffer = unit->indexBuffer;
 			vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-			auto& uniform = graphicsPipeline->uniforms[imageIndex];
-			ShaderLogic::UpdateUniformBuffer(context,
-				unitEO,
-				uniform);
+			auto& globalDescriptor = graphicsPipeline->globalDescriptors[imageIndex];
+
+			ShaderLogic::UpdateDescriptor(context,
+				globalDescriptor,
+				unit);
 
 			auto model = Logic::TransformLogic::GetModel(unitEO);
 			vkCmdPushConstants(cmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(model), &model);
 
-			VkDescriptorSet descriptorSets[] = { uniform->globalDescriptorSet, uniform->descriptorSet };
+			VkDescriptorSet descriptorSets[] = { globalDescriptor->set, unit->descriptor->set };
 			vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
 				pipelineLayout, 0, 2, descriptorSets, 0, nullptr);
 

@@ -10,9 +10,29 @@
 
 namespace Render {
 
+	VkDescriptorSet DescriptorSetLogic::AllocateOne(Context* context
+		, VkDescriptorSetLayout descriptorSetLayout) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+		auto& descriptorPool = global->descriptorPool;
+
+		VkDescriptorSetAllocateInfo allocateInfo = {};
+		allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocateInfo.descriptorPool = descriptorPool;
+		allocateInfo.descriptorSetCount = 1;
+		allocateInfo.pSetLayouts = &descriptorSetLayout;
+
+		VkDescriptorSet descriptorSet;
+		auto ret = vkAllocateDescriptorSets(logicalDevice, &allocateInfo, &descriptorSet);
+		CheckRet(ret, "vkAllocateDescriptorSets");
+
+		return descriptorSet;
+	}
+
 	std::vector<VkDescriptorSet> DescriptorSetLogic::Allocate(Context* context,
-		VkDescriptorSetLayout descriptorSetLayout)
-	{
+		VkDescriptorSetLayout descriptorSetLayout) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();

@@ -17,9 +17,8 @@ namespace Editor {
 
 	void Test::Create(Context* context) {
 
-		//  Cube =============================
-
 		auto cubeEO = std::make_shared<EngineObject>();
+		cubeEO->name = "Cube";
 
 		Logic::TransformLogic::Add(cubeEO,
 			glm::vec3(0.0f, 0.0f, 0.0f),

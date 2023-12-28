@@ -24,8 +24,7 @@ namespace Render {
 		std::shared_ptr<Buffer> vertexBuffer;
 		std::shared_ptr<Buffer> indexBuffer;
 
-		std::shared_ptr<Image> image2D;
-		std::shared_ptr<Image> imageCube;
+		std::shared_ptr<Descriptor> descriptor;
 	};
 
 }

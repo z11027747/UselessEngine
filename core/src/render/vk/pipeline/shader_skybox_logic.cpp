@@ -19,47 +19,14 @@
 
 namespace Render {
 
+	void ShaderSkyboxLogic::CreateVertexAttrDescriptions(Context* context,
+		std::shared_ptr<GraphicsPipeline> graphicsPipeline
+	) {
+	}
+
 	void ShaderSkyboxLogic::CreateDescriptorSetLayout(Context* context,
 		std::shared_ptr<GraphicsPipeline> graphicsPipeline
 	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-
-		std::vector<VkDescriptorSetLayoutBinding> bindings;
-
-		VkDescriptorSetLayoutBinding uniformBinding0 = {};
-		uniformBinding0.binding = 0;
-		uniformBinding0.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		uniformBinding0.descriptorCount = 1;
-		uniformBinding0.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-		bindings.push_back(uniformBinding0);
-
-		VkDescriptorSetLayoutBinding uniformBinding1 = {};
-		uniformBinding1.binding = 1;
-		uniformBinding1.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		uniformBinding1.descriptorCount = 1;
-		uniformBinding1.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-		bindings.push_back(uniformBinding1);
-
-		VkDescriptorSetLayoutBinding samplerBinding2 = {};
-		samplerBinding2.binding = 2;
-		samplerBinding2.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerBinding2.descriptorCount = 1;
-		samplerBinding2.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-		bindings.push_back(samplerBinding2);
-
-		VkDescriptorSetLayoutCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		createInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-		createInfo.pBindings = bindings.data();
-
-		VkDescriptorSetLayout descriptorSetLayout;
-		auto ret = vkCreateDescriptorSetLayout(logicalDevice, &createInfo, nullptr, &descriptorSetLayout);
-		CheckRet(ret, "vkCreateDescriptorSetLayout");
-
-		graphicsPipeline->descriptorSetLayout = descriptorSetLayout;
 	}
 
 	void ShaderSkyboxLogic::DestroyDescriptorSetLayout(Context* context,
@@ -67,17 +34,12 @@ namespace Render {
 	) {
 	}
 
-	void ShaderSkyboxLogic::CreateVertexAttrDescriptions(Context* context,
+	void ShaderSkyboxLogic::CreateDescriptors(Context* context,
 		std::shared_ptr<GraphicsPipeline> graphicsPipeline
 	) {
 	}
 
-	void ShaderSkyboxLogic::CreateUniforms(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
-	}
-
-	void ShaderSkyboxLogic::DestroyUniforms(Context* context,
+	void ShaderSkyboxLogic::DestroyDescriptors(Context* context,
 		std::shared_ptr<GraphicsPipeline> graphicsPipeline
 	) {
 	}
@@ -87,9 +49,9 @@ namespace Render {
 	) {
 	}
 
-	void ShaderSkyboxLogic::UpdateUniformBuffer(Context* context,
+	void ShaderSkyboxLogic::UpdateDescriptor(Context* context,
 		std::shared_ptr<EngineObject> unitEO,
-		std::shared_ptr<Uniform> uniform
+		std::shared_ptr<Descriptor> descriptor
 	) {
 	}
 

@@ -7,6 +7,7 @@
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/pipeline/shader_logic.h"
+#include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
@@ -21,20 +22,16 @@
 namespace Render {
 
 	void UnitLogic::Destroy(Context* context) {
-		auto& renderUnitEOs = context->renderUnitEOs;
-		for (const auto& renderUnitEO : renderUnitEOs) {
-			auto unit = renderUnitEO->GetComponent<Render::Unit>();
+		auto& unitEOs = context->renderUnitEOs;
+		for (const auto& unitEO : unitEOs) {
+			auto unit = unitEO->GetComponent<Render::Unit>();
 
-			BufferLogic::Destroy(context,
-				unit->vertexBuffer);
+			BufferLogic::Destroy(context, unit->vertexBuffer);
+			BufferLogic::Destroy(context, unit->indexBuffer);
 
-			BufferLogic::Destroy(context,
-				unit->indexBuffer);
-
-			ImageLogic::Destroy(context,
-				unit->image2D);
+			ShaderLogic::DestroyUnitDescriptor(context, unit);
 		}
-		renderUnitEOs.clear();
+		unitEOs.clear();
 	}
 
 	void UnitLogic::SetPipelineName(Context* context,
@@ -118,7 +115,9 @@ namespace Render {
 
 		Common::ResSystem::FreeImg(data);
 
-		unit->image2D = image2d;
+		ShaderLogic::CreateUnitDescriptor(context,
+			unit,
+			image2d);
 	}
 
 	void UnitLogic::SetCubeTexture(Context* context,
@@ -158,10 +157,10 @@ namespace Render {
 			VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT, 6,
 			//memory
 			 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			//layout
-			VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_ACCESS_NONE, VK_ACCESS_TRANSFER_WRITE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
+			 //layout
+			 VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			 VK_ACCESS_NONE, VK_ACCESS_TRANSFER_WRITE_BIT,
+			 VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
 		};
 		auto imageCube = ImageLogic::CreateByInfo(context, imageCubeInfo);
 
@@ -180,7 +179,7 @@ namespace Render {
 			Common::ResSystem::FreeImg(datas[i]);
 		}
 
-		unit->imageCube= imageCube;
+		//TODO
 	}
 
 }

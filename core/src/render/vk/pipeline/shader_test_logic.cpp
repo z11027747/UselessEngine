@@ -52,11 +52,6 @@ namespace Render {
 	void ShaderTestLogic::CreateDescriptorSetLayout(Context* context,
 		std::shared_ptr<GraphicsPipeline> graphicsPipeline
 	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-
 		VkDescriptorSetLayoutBinding samplerBinding0 = {};
 		samplerBinding0.binding = 0;
 		samplerBinding0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -77,69 +72,55 @@ namespace Render {
 		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 	}
 
-	void ShaderTestLogic::CreateUniforms(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
-		auto& descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
-		auto descriptorSets = DescriptorSetLogic::Allocate(context, descriptorSetLayout);
-
-		for (auto i = 0; i < descriptorSets.size(); i++) {
-			auto uniformTest = std::make_shared<UniformTest>();
-
-			uniformTest->descriptorSet = descriptorSets[i];
-			uniformTest->sampler = SamplerLogic::Create(context, 0);
-
-			graphicsPipeline->uniforms.push_back(uniformTest);
-		}
-	}
-
-	void ShaderTestLogic::DestroyUniforms(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
-		auto& uniforms = graphicsPipeline->uniforms;
-		for (auto& uniform : uniforms) {
-			auto uniformTest = std::dynamic_pointer_cast<UniformTest>(uniform);
-
-			SamplerLogic::Destroy(context,
-				uniformTest->sampler);
-		}
-		uniforms.clear();
-	}
-
 	void ShaderTestLogic::UpdateDescriptorSets(Context* context,
 		std::shared_ptr<GraphicsPipeline> graphicsPipeline
 	) {
 	}
 
-	void ShaderTestLogic::UpdateUniformBuffer(Context* context,
-		std::shared_ptr<EngineObject> unitEO,
-		std::shared_ptr<Uniform> uniform
+	void ShaderTestLogic::CreateUnitDescriptor(Context* context,
+		std::shared_ptr<Unit> unit,
+		std::shared_ptr<Image> image
 	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+		auto& graphicsPipeline = context->renderPipelines[unit->pipelineName];
+		auto& descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
-		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
+		auto sampler = SamplerLogic::Create(context, 0);
 
-		auto uniformTest = std::dynamic_pointer_cast<UniformTest>(uniform);
+		VkDescriptorImageInfo imageInfo = {
+				sampler,
+				image->vkImageView,
+				image->layout
+		};
 
-		auto unit = unitEO->GetComponent<Render::Unit>();
-		auto& image2D = unit->image2D;
+		auto descriptor = std::make_shared<Descriptor>();
+		descriptor->set = descriptorSet;
+		descriptor->image = image;
+		descriptor->imageInfo = imageInfo;
 
-		VkWriteDescriptorSet samplerWrite2 = {};
-		samplerWrite2.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		samplerWrite2.dstSet = uniformTest->descriptorSet;
-		samplerWrite2.dstBinding = 0;
-		samplerWrite2.dstArrayElement = 0;
-		samplerWrite2.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerWrite2.descriptorCount = 1;
+		unit->descriptor = descriptor;
 
-		VkDescriptorImageInfo samplerImage2 = {};
-		samplerImage2.sampler = uniformTest->sampler;
-		samplerImage2.imageView = image2D->vkImageView;
-		samplerImage2.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		samplerWrite2.pImageInfo = &samplerImage2;
+		DescriptorSetLogic::Update(context,
+			[&](std::vector<VkWriteDescriptorSet>& writes) {
 
-		vkUpdateDescriptorSets(logicalDevice, 1, &samplerWrite2, 0, nullptr);
+				DescriptorSetLogic::WriteImage(context,
+				writes,
+				unit->descriptor);
+
+			});
+	}
+
+	void ShaderTestLogic::DestroyUnitDescriptor(Context* context,
+		std::shared_ptr<Unit> unit
+	) {
+		auto& descriptor = unit->descriptor;
+		ImageLogic::Destroy(context, descriptor->image);
+		SamplerLogic::Destroy(context, descriptor->imageInfo.sampler);
+	}
+
+	void ShaderTestLogic::UpdateUnitDescriptor(Context* context,
+		std::shared_ptr<Unit> unit
+	) {
 	}
 
 }

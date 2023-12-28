@@ -3,6 +3,8 @@
 #include <vulkan/vulkan.h>
 #include <memory>
 #include "render/vk/pipeline/pipeline_comp.h"
+#include "render/vk/image/image_comp.h"
+#include "render/unit/unit_comp.h"
 
 class Context;
 class EngineObject;
@@ -20,18 +22,16 @@ namespace Render {
 		static void DestroyDescriptorSetLayout(Context*,
 			std::shared_ptr<GraphicsPipeline>);
 
-		static void CreateUniforms(Context*,
-			std::shared_ptr<GraphicsPipeline>);
-		static void DestroyUniforms(Context*,
-			std::shared_ptr<GraphicsPipeline>);
-
 		static void UpdateDescriptorSets(Context*,
 			std::shared_ptr<GraphicsPipeline>);
 
-		static void UpdateUniformBuffer(Context*,
-			std::shared_ptr<EngineObject>,
-			std::shared_ptr<Uniform>
-		);
+		static void CreateUnitDescriptor(Context*,
+			std::shared_ptr<Unit>,
+			std::shared_ptr<Image>);
+		static void DestroyUnitDescriptor(Context*,
+			std::shared_ptr<Unit>);
+		static void UpdateUnitDescriptor(Context*,
+			std::shared_ptr<Unit>);
 
 	};
 

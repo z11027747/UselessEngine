@@ -17,6 +17,8 @@ namespace Editor {
 
 	std::shared_ptr<EngineObject> InspectorWindow::selectEO = nullptr;
 
+	static char addCompName[16] = "";
+
 	void InspectorWindow::Draw(Context* context) {
 		if (ImGui::Begin("Inspector", NULL)) {
 
@@ -52,15 +54,16 @@ namespace Editor {
 						}
 						ImGui::PopID();
 					}
-
-					//ImGui::SeparatorText("Render");
-					//ImGui::InputText("ShaderName", shaderName, IM_ARRAYSIZE(shaderName));
-					//ImGui::InputText("TextureName", textureName, IM_ARRAYSIZE(textureName));
-					//ImGui::Spacing();
 				}
 				ImGui::SeparatorText("End");
 
+				ImGui::SetNextItemWidth(150.0f);
+				ImGui::InputText("##addCompName", addCompName, IM_ARRAYSIZE(addCompName));
+				ImGui::SameLine();
 				if (ImGui::Button("Add Component")) {
+					std::cout << "Add Component Click!" << std::endl;
+
+					memset(addCompName, 0, sizeof(addCompName));
 				}
 			}
 

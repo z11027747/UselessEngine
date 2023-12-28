@@ -28,7 +28,7 @@ namespace Editor {
 		auto& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		ImGui::StyleColorsClassic();
@@ -55,8 +55,6 @@ namespace Editor {
 		init_info.CheckVkResultFn = VK_NULL_HANDLE;
 
 		ImGui_ImplVulkan_Init(&init_info, global->renderPass);
-
-		Test::Create(context);
 	}
 
 	void Global::Update(Context* context) {
