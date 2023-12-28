@@ -12,7 +12,8 @@ namespace Logic {
 
 		static void Add(std::shared_ptr<EngineObject>, Frustum);
 
-		static void UpdateVP(std::shared_ptr<EngineObject>);
+		static void UpdateView(std::shared_ptr<EngineObject>);
+		static void UpdateProjection(std::shared_ptr<Camera>);
 
 	};
 

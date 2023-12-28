@@ -14,15 +14,16 @@
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/pipeline/pipeline_system.h"
 #include "render/unit/unit_logic.h"
-#include "render/system_new.h"
+#include "render/system.h"
+#include "logic/camera/camera_comp.h"
 #include "context.h"
-#include "editor/window.h"
+#include "editor/global.h"
 
 namespace Render {
 
 	auto enabledDebug = true;
 
-	void System::OnCreate(Context* context) {
+	void System::Create(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 		renderGlobalEO = std::make_shared<EngineObject>();
 
@@ -45,31 +46,31 @@ namespace Render {
 		FramebufferLogic::Create(context);
 		DescriptorPoolLogic::Create(context);
 		PipelineSystem::Create(context, "test");
-		Editor::Window::Create(context);
+		Editor::Global::Create(context);
 	}
 
-	void System::OnUpdate(Context* context) {
-
-		Editor::Window::Update(context);
+	void System::Update(Context* context) {
 
 		CmdSubmitLogic::Update(context);
 		BufferLogic::DestroyAllTemps(context);
+
+		Editor::Global::Update(context);
 
 		FramebufferLogic::WaitFence(context);
 		auto imageIndex = FramebufferLogic::AcquireImageIndex(context);
 		FramebufferLogic::BeginRenderPass(context, imageIndex);
 		FramebufferLogic::DrawUnits(context, imageIndex);
-		Editor::Window::DrawData(context, imageIndex);
+		Editor::Global::RenderData(context, imageIndex);
 		FramebufferLogic::EndRenderPass(context, imageIndex);
 		FramebufferLogic::Present(context, imageIndex);
 	}
 
-	void System::OnDestroy(Context* context) {
+	void System::Destroy(Context* context) {
 
 		LogicalDeviceLogic::WaitIdle(context);
 
-		Editor::Window::Destroy(context);
-		PipelineSystem::Destroy(context);
+		Editor::Global::Destroy(context);
+		PipelineSystem::DestroyAll(context);
 		DescriptorPoolLogic::Destroy(context);
 		FramebufferLogic::Destroy(context);
 		PassLogic::Destroy(context);

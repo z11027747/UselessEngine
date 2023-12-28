@@ -9,8 +9,11 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/cmd/cmd_comp.h"
-#include "render/system_new.h"
-#include "base.h"
+#include "render/system.h"
+#include "logic/system.h"
+#include "engine_object.h"
+
+const std::string G_Camera = "Camera";
 
 class Context final {
 public:
@@ -30,30 +33,43 @@ public:
 
 	//render-global
 	std::shared_ptr<EngineObject> renderGlobalEO;
-	//render-pipeline
+	//render-pipelines
 	std::unordered_map<std::string, std::shared_ptr<Render::GraphicsPipeline>> renderPipelines;
-	//render-buffer
+	//render-cmdBuffer/buffer
 	std::shared_ptr<Render::CmdSimple> renderCmdSimple;
 	std::vector<std::shared_ptr<Render::Buffer>> renderTempBuffers;
 	//render-unit
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 
-	//camera
-	std::shared_ptr<EngineObject> cameraEO;
+	//all-engineObject
+	std::vector<std::shared_ptr<EngineObject>> allEOs;
+	std::unordered_map<std::string, std::shared_ptr<EngineObject>> allEOMap;
+
+	void AddEO(std::shared_ptr<EngineObject> eo) {
+		allEOs.emplace_back(eo);
+		allEOMap.emplace(eo->name, eo);
+	}
+
+	std::shared_ptr<EngineObject> GetEO(const std::string& name) {
+		return allEOMap[name];
+	}
 
 	void Create() {
 
-		Render::System::OnCreate(this);
+		Logic::System::Create(this);
+		Render::System::Create(this);
 	}
 
 	void Update() {
 
-		Render::System::OnUpdate(this);
+		Logic::System::Update(this);
+		Render::System::Update(this);
 	}
 
 	void Destroy() {
 
-		Render::System::OnDestroy(this);
+		Logic::System::Destroy(this);
+		Render::System::Destroy(this);
 	}
 
 	void OnSizeCallback() {

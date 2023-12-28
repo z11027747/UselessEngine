@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include <typeindex>
+#include <string>
 
 class EngineObject final {
 public:
@@ -11,24 +12,25 @@ public:
 
 	EngineObject() {
 		id = beginId++;
-		std::cout << "EngineObject id:" << id << " create." << std::endl;
-	}
-	~EngineObject() {
-		std::cout << "EngineObject id:" << id << " destroy." << std::endl;
+		name = "";
+		active = true;
 	}
 
 	uint32_t id;
-	std::unordered_map<std::type_index, std::shared_ptr<void>> compMap;
+	std::string name;
+	bool active;
+
+	std::unordered_map<std::type_index, std::shared_ptr<void>> componentMap;
 
 	template <typename T>
 	void AddComponent(std::shared_ptr<T> comp) {
-		compMap[typeid(T)] = comp;
+		componentMap[typeid(T)] = comp;
 	}
 
 	template <typename T>
 	std::shared_ptr<T> GetComponent() const {
-		auto it = compMap.find(typeid(T));
-		if (it != compMap.end()) {
+		auto it = componentMap.find(typeid(T));
+		if (it != componentMap.end()) {
 			return std::static_pointer_cast<T>(it->second);
 		}
 
@@ -37,13 +39,13 @@ public:
 
 	template <typename T>
 	void RemoveComponent() {
-		auto it = compMap.find(typeid(T));
-		if (it != compMap.end()) {
-			compMap.erase(it);
+		auto it = componentMap.find(typeid(T));
+		if (it != componentMap.end()) {
+			componentMap.erase(it);
 		}
 	}
 
 	void RemoveAllComponents() {
-		compMap.clear();
+		componentMap.clear();
 	}
 };

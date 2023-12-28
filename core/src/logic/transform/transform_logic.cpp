@@ -5,7 +5,7 @@
 
 #include "logic/transform/transform_comp.h"
 #include "logic/transform/transform_logic.h"
-#include "base.h"
+#include "engine_object.h"
 
 namespace Logic {
 

@@ -18,6 +18,9 @@ namespace Logic {
 		glm::mat4 view;
 		glm::mat4 projection;
 
+		glm::vec3 calcPos;
+		glm::vec3 calcEul;
+
 	};
 
 }

@@ -6,7 +6,7 @@
 #include "render/vk/global/descriptor_pool_logic.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "context.h"
-#include "base.h"
+#include "engine_object.h"
 
 namespace Render {
 

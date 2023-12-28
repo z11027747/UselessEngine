@@ -1,7 +1,6 @@
 
 #include <vector>
 #include <string>
-#include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/transform/transform_logic.h"
 #include "logic/camera/camera_comp.h"
@@ -11,31 +10,12 @@
 #include "render/unit/unit_comp.h"
 #include "render/unit/unit_logic.h"
 #include "context.h"
-#include "base.h"
+#include "engine_object.h"
 #include "editor/test.h"
 
 namespace Editor {
 
 	void Test::Create(Context* context) {
-
-		//  Camera =============================
-
-		auto aspect = context->aspect;
-		auto& cameraEO = context->cameraEO;
-		cameraEO = std::make_shared<EngineObject>();
-
-		Logic::TransformLogic::Add(cameraEO,
-			glm::vec3(0.0f, 0.0f, -10.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(1.0f, 1.0f, 1.0f)
-		);
-
-		Logic::CameraLogic::Add(cameraEO, {
-			0.1f,
-			100.0f,
-			aspect,
-			45.0f
-			});
 
 		//  Cube =============================
 
@@ -60,6 +40,8 @@ namespace Editor {
 		Render::UnitLogic::SetTexture(context, cubeUnit,"resource/texture/icon2.png");
 
 		cubeEO->AddComponent<Render::Unit>(cubeUnit);
+
+		context->AddEO(cubeEO);
 		context->renderUnitEOs.push_back(cubeEO);
 	}
 

@@ -15,7 +15,7 @@
 #include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "context.h"
-#include "base.h"
+#include "engine_object.h"
 
 namespace Render {
 
@@ -228,8 +228,9 @@ namespace Render {
 		auto& logicalDevice = global->logicalDevice;
 
 		auto uniformTest = std::dynamic_pointer_cast<UniformTest>(uniform);
+		std::unordered_map<std::string, std::shared_ptr<EngineObject>> allEOMap;
 
-		auto& cameraEO = context->cameraEO;
+		auto cameraEO = context->GetEO(G_Camera);
 		auto camera = cameraEO->GetComponent<Logic::Camera>();
 
 		CameraUBO cameraUBO = {

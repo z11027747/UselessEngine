@@ -8,7 +8,7 @@
 #include <functional>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "base.h"
+#include "engine_object.h"
 
 struct RenderVertex final {
 	glm::vec3 pos;

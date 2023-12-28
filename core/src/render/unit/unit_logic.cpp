@@ -16,7 +16,7 @@
 #include "render/unit/unit_logic.h"
 #include "common/res_system.h"
 #include "context.h"
-#include "base.h"
+#include "engine_object.h"
 
 namespace Render {
 

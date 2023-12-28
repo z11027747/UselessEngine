@@ -12,7 +12,6 @@
 #include "render/vk/pipeline/shader_logic.h"
 #include "render/unit/unit_comp.h"
 #include "context.h"
-#include "editor/window.h"
 
 namespace Render {
 
@@ -245,6 +244,10 @@ namespace Render {
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& cmdBuffer = global->cmdBuffers[imageIndex];
+
+		auto cameraEO = context->GetEO(G_Camera);
+		if (!cameraEO->active)
+			return;
 
 		auto& unitEOs = context->renderUnitEOs;
 		for (const auto& unitEO : unitEOs) {
