@@ -3,13 +3,12 @@
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
 #include "render/vk/image/image_comp.h"
-#include "render/vk/image/image2d_logic.h"
 #include "render/vk/image/sampler_logic.h"
 #include "context.h"
 
 namespace Render {
 
-	VkSampler SamplerLogic::Create(Context* context) {
+	VkSampler SamplerLogic::Create(Context* context, float maxLod) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
@@ -24,14 +23,14 @@ namespace Render {
 		createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 		createInfo.anisotropyEnable = false;
 		createInfo.maxAnisotropy = 1;
-		createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+		createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_WHITE;
 		createInfo.unnormalizedCoordinates = false;
-		//createInfo.compareEnable = false;
-		//createInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-		createInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+		createInfo.compareEnable = false;
+		createInfo.compareOp = VK_COMPARE_OP_NEVER;
+		createInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 		createInfo.mipLodBias = 0.0f;
 		createInfo.minLod = 0.0f;
-		createInfo.maxLod = 0.0f;
+		createInfo.maxLod = maxLod;
 
 		VkSampler sampler;
 		auto ret = vkCreateSampler(logicalDevice, &createInfo, nullptr, &sampler);

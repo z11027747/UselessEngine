@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 #include <memory>
 #include <string>
 #include "render/vk/pipeline/pipeline_comp.h";
@@ -30,6 +31,10 @@ namespace Render {
 		static void SetTexture(Context*,
 			std::shared_ptr<Unit>,
 			std::string);
+
+		static void SetCubeTexture(Context*,
+			std::shared_ptr<Unit>,
+			std::array<std::string, 6>);
 
 	};
 

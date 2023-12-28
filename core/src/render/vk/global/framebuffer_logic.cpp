@@ -1,4 +1,5 @@
 ﻿
+#include <glm/glm.hpp>
 #include <array>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
@@ -11,6 +12,8 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/shader_logic.h"
 #include "render/unit/unit_comp.h"
+#include "logic/transform/transform_comp.h"
+#include "logic/transform/transform_logic.h"
 #include "context.h"
 
 namespace Render {
@@ -274,8 +277,12 @@ namespace Render {
 				unitEO,
 				uniform);
 
+			auto model = Logic::TransformLogic::GetModel(unitEO);
+			vkCmdPushConstants(cmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(model), &model);
+
+			VkDescriptorSet descriptorSets[] = { uniform->globalDescriptorSet, uniform->descriptorSet };
 			vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-				pipelineLayout, 0, 1, &uniform->descriptorSet, 0, nullptr);
+				pipelineLayout, 0, 2, descriptorSets, 0, nullptr);
 
 			vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		}

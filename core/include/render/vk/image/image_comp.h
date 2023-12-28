@@ -4,10 +4,10 @@
 
 namespace Render {
 
-	struct Image2D final {
+	struct Image final {
 
 		VkFormat fomat;
-		VkExtent2D extent;
+		VkExtent3D extent;
 		VkImageAspectFlags aspectMask;
 
 		VkImage vkImage;
@@ -15,21 +15,25 @@ namespace Render {
 		VkImageView vkImageView;
 	};
 
-	struct Image2DInfo final {
+	struct ImageInfo final {
 
 		VkFormat format;
-		VkExtent2D extent;
-
-		VkImageTiling tiling;
-		VkImageUsageFlags usage;
-		VkMemoryPropertyFlags properitesFlags;
-
+		VkExtent3D extent;
 		VkImageAspectFlags aspectMask;
 
+		//image
+		VkImageTiling tiling;
+		VkImageUsageFlags usage;
+		VkImageCreateFlags flags;
+		uint32_t arrayLayers;
+
+		//memory
+		VkMemoryPropertyFlags propertiesFlags;
+
+		//layout
 		VkImageLayout oldLayout, newLayout;
 		VkAccessFlags srcAccessMask, dstAccessMask;
 		VkPipelineStageFlags srcStage, dstStage;
-
 	};
 
 }

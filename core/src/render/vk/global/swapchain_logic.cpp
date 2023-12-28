@@ -4,7 +4,7 @@
 #include "render/vk/global/logical_device_logic.h"
 #include "render/vk/global/physical_device_logic.h"
 #include "render/vk/global/swapchain_logic.h"
-#include "render/vk/image/image2d_logic.h"
+#include "render/vk/image/image_logic.h"
 #include "context.h"
 
 namespace Render {
@@ -64,6 +64,7 @@ namespace Render {
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalDevice = global->logicalDevice;
 		auto& swapchain = global->swapchain;
+		auto& currentExtent = global->surfaceCapabilities.currentExtent;
 
 		uint32_t swapchainImageCount;
 		vkGetSwapchainImagesKHR(logicalDevice, swapchain, &swapchainImageCount, nullptr);
@@ -75,13 +76,13 @@ namespace Render {
 		swapchainColorImage2Ds.resize(swapchainImageCount);
 
 		for (auto i = 0u; i < swapchainImageCount; i++) {
-			auto colorImage2D = std::make_shared<Image2D>();
+			auto colorImage2D = std::make_shared<Image>();
 			colorImage2D->fomat = global->surfaceFormat.format;
-			colorImage2D->extent = global->surfaceCapabilities.currentExtent;
+			colorImage2D->extent = { currentExtent.width, currentExtent.height, 0 };
 			colorImage2D->vkImage = swapchainImageViews[i];
 
-			Image2DLogic::CreateView(context,
-				colorImage2D, VK_IMAGE_ASPECT_COLOR_BIT);
+			ImageLogic::CreateView(context,
+				colorImage2D, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 
 			swapchainColorImage2Ds[i] = std::move(colorImage2D);
 		}
@@ -94,7 +95,7 @@ namespace Render {
 		auto& swapchainColorImage2Ds = global->swapchainColorImage2Ds;
 
 		for (auto& swapchainColorImage2D : swapchainColorImage2Ds) {
-			Image2DLogic::DestroyView(context,
+			ImageLogic::DestroyView(context,
 				swapchainColorImage2D);
 		}
 		swapchainColorImage2Ds.clear();
@@ -105,7 +106,7 @@ namespace Render {
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalDevice = global->logicalDevice;
-		auto& surfaceCapabilities = global->surfaceCapabilities;
+		auto& currentExtent = global->surfaceCapabilities.currentExtent;
 		auto& swapchain = global->swapchain;
 
 		global->depthImageFormat = VK_FORMAT_D32_SFLOAT;
@@ -117,18 +118,15 @@ namespace Render {
 		swapchainDepthImage2Ds.resize(swapchainImageCount);
 
 		for (auto i = 0u; i < swapchainImageCount; i++) {
-			Image2DInfo info = {
-				global->depthImageFormat,
-				surfaceCapabilities.currentExtent,
-				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			ImageInfo image2dInfo = {
+				global->depthImageFormat, { currentExtent.width, currentExtent.height, 0 },  VK_IMAGE_ASPECT_DEPTH_BIT,
+				VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 0, 1,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				VK_IMAGE_ASPECT_DEPTH_BIT,
 				VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 				0, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
 				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT
 			};
-			auto depthImage2d = Image2DLogic::CreateByInfo(context, info);
+			auto depthImage2d = ImageLogic::CreateByInfo(context, image2dInfo);
 
 			swapchainDepthImage2Ds[i] = std::move(depthImage2d);
 		}
@@ -141,7 +139,7 @@ namespace Render {
 		auto& swapchainDepthImage2Ds = global->swapchainDepthImage2Ds;
 
 		for (auto& swapchainDepthImage2D : swapchainDepthImage2Ds) {
-			Image2DLogic::Destroy(context,
+			ImageLogic::Destroy(context,
 				swapchainDepthImage2D);
 		}
 		swapchainDepthImage2Ds.clear();

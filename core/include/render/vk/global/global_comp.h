@@ -6,7 +6,7 @@
 
 namespace Render {
 
-	struct Image2D;
+	struct Image;
 
 	struct Global final {
 
@@ -29,8 +29,8 @@ namespace Render {
 		VkRenderPass renderPass;
 
 		VkSwapchainKHR swapchain;
-		std::vector<std::shared_ptr<Image2D>> swapchainColorImage2Ds;
-		std::vector<std::shared_ptr<Image2D>> swapchainDepthImage2Ds;
+		std::vector<std::shared_ptr<Image>> swapchainColorImage2Ds;
+		std::vector<std::shared_ptr<Image>> swapchainDepthImage2Ds;
 		VkFormat depthImageFormat;
 
 		std::vector<VkFramebuffer> frameBuffers;

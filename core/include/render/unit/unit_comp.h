@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "render/vk/buffer/buffer_comp.h"
+#include "render/vk/image/image_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 
 namespace Render {
@@ -22,7 +23,9 @@ namespace Render {
 
 		std::shared_ptr<Buffer> vertexBuffer;
 		std::shared_ptr<Buffer> indexBuffer;
-		std::shared_ptr<Image2D> image2D;
+
+		std::shared_ptr<Image> image2D;
+		std::shared_ptr<Image> imageCube;
 	};
 
 }

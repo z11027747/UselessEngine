@@ -9,15 +9,15 @@ class EngineObject;
 
 namespace Render {
 
-	class ShaderTestLogic final {
+	class ShaderSkyboxLogic final {
 	public:
-
-		static void CreateVertexAttrDescriptions(Context*,
-			std::shared_ptr<GraphicsPipeline>);
 
 		static void CreateDescriptorSetLayout(Context*,
 			std::shared_ptr<GraphicsPipeline>);
 		static void DestroyDescriptorSetLayout(Context*,
+			std::shared_ptr<GraphicsPipeline>);
+
+		static void CreateVertexAttrDescriptions(Context*,
 			std::shared_ptr<GraphicsPipeline>);
 
 		static void CreateUniforms(Context*,

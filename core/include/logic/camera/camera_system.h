@@ -25,7 +25,7 @@ namespace Logic {
 
 			Frustum frustum = {
 				0.1f,
-				10.0f,
+				20.0f,
 				context->aspect,
 				45.0f
 			};

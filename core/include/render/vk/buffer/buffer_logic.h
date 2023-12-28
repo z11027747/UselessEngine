@@ -49,7 +49,28 @@ namespace Render {
 		}
 
 		template<typename T>
-		static void SetValue(Context* context,
+		static void SetPtrVector(Context* context,
+			std::shared_ptr<Buffer> buffer,
+			std::vector<T*> values, size_t size
+		) {
+			auto& renderGlobalEO = context->renderGlobalEO;
+
+			auto global = renderGlobalEO->GetComponent<Global>();
+			auto& logicalDevice = global->logicalDevice;
+
+			void* data;
+			auto mapRet = vkMapMemory(logicalDevice, buffer->vkDeviceMemory, 0, size, 0, &data);
+			CheckRet(mapRet, "vkMapMemory");
+
+			for (size_t i = 0; i < values.size(); ++i) {
+				memcpy(static_cast<T*>(data) + i * sizeof(T), values[i], sizeof(T));
+			}
+
+			vkUnmapMemory(logicalDevice, buffer->vkDeviceMemory);
+		}
+
+		template<typename T>
+		static void Set(Context* context,
 			std::shared_ptr<Buffer> buffer,
 			T& value
 		) {
@@ -70,7 +91,7 @@ namespace Render {
 		}
 
 		template<typename T>
-		static void SetValues(Context* context,
+		static void SetVector(Context* context,
 			std::shared_ptr<Buffer> buffer,
 			std::vector<T>& values
 		) {

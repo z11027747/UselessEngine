@@ -15,7 +15,7 @@ namespace Logic {
 		static void Add(std::shared_ptr<EngineObject> eo,
 			glm::vec3, glm::vec3, glm::vec3);
 
-
+		static glm::mat4 GetModel(std::shared_ptr<EngineObject> eo);
 
 	};
 

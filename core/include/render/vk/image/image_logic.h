@@ -9,35 +9,31 @@ class Context;
 
 namespace Render {
 
-	class Image2DLogic final {
+	class ImageLogic final {
 	public:
 
-		static std::shared_ptr<Image2D> CreateByInfo(Context*,
-			Image2DInfo&);
+		static std::shared_ptr<Image> CreateByInfo(Context*,
+			ImageInfo&);
 
 		static void Create(Context*,
-			std::shared_ptr<Image2D>,
-			VkFormat, VkExtent2D,
-			VkImageTiling, VkImageUsageFlags,
-			VkMemoryPropertyFlags);
-		static void Destroy(Context*,
-			std::shared_ptr<Image2D>);
+			std::shared_ptr<Image>,
+			ImageInfo&);
+		static void Destroy(Context*, std::shared_ptr<Image>);
 
 		static void CreateView(Context*,
-			std::shared_ptr<Image2D>,
-			VkImageAspectFlags);
-		static void DestroyView(Context*,
-			std::shared_ptr<Image2D>);
+			std::shared_ptr<Image>,
+			VkImageAspectFlags, uint32_t);
+		static void DestroyView(Context*, std::shared_ptr<Image>);
 
 		static void TransitionLayout(Context*,
-			std::shared_ptr<Image2D>,
+			std::shared_ptr<Image>,
 			VkImageLayout, VkImageLayout,
 			VkImageAspectFlags,
 			VkAccessFlags, VkAccessFlags,
 			VkPipelineStageFlags, VkPipelineStageFlags);
 
 		static void CopyBuffer(Context*,
-			std::shared_ptr<Image2D>,
+			std::shared_ptr<Image>,
 			std::shared_ptr<Buffer>);
 
 	};
