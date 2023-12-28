@@ -49,8 +49,8 @@ namespace Render {
 
 		auto buffer = std::make_shared<Buffer>();
 		buffer->vkBuffer = vkBuffer;
-		buffer->size = size;
 		buffer->vkDeviceMemory = vkDeviceMemory;
+		buffer->size = memRequirements.size;
 		return buffer;
 	}
 

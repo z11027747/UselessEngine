@@ -85,7 +85,7 @@ namespace Render {
 		auto& descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
-		auto sampler = SamplerLogic::Create(context, 0);
+		auto sampler = SamplerLogic::Create(context);
 
 		VkDescriptorImageInfo imageInfo = {
 				sampler,
@@ -106,7 +106,6 @@ namespace Render {
 				DescriptorSetLogic::WriteImage(context,
 				writes,
 				unit->descriptor);
-
 			});
 	}
 

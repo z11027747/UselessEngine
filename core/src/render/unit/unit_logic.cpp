@@ -73,7 +73,7 @@ namespace Render {
 			unit->indices);
 	}
 
-	void UnitLogic::SetTexture(Context* context,
+	void UnitLogic::SetImage(Context* context,
 		std::shared_ptr<Unit> unit,
 		std::string name
 	) {
@@ -94,8 +94,12 @@ namespace Render {
 
 		ImageInfo image2dInfo = {
 			VK_FORMAT_R8G8B8A8_UNORM, { imageW, imageH, 1 }, VK_IMAGE_ASPECT_COLOR_BIT,
-			VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 0, 1,
-		 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			//image
+			VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			0, 1, VK_IMAGE_VIEW_TYPE_2D,
+			//memory
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			//layout
 			VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			VK_ACCESS_NONE, VK_ACCESS_TRANSFER_WRITE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
@@ -120,12 +124,11 @@ namespace Render {
 			image2d);
 	}
 
-	void UnitLogic::SetCubeTexture(Context* context,
+	void UnitLogic::SetImageCube(Context* context,
 		std::shared_ptr<Unit> unit,
 		std::array<std::string, 6> names
 	) {
-		uint32_t imageCubeW = 0;
-		uint32_t imageCubeH = 0;
+		uint32_t imageCubeW, imageCubeH = 0;
 
 		std::vector<unsigned char*> datas(6);
 
@@ -154,13 +157,13 @@ namespace Render {
 			VK_FORMAT_R8G8B8A8_UNORM, { imageCubeW, imageCubeH, 1 }, VK_IMAGE_ASPECT_COLOR_BIT,
 			//image
 			VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-			VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT, 6,
+			VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT, 6, VK_IMAGE_VIEW_TYPE_CUBE,
 			//memory
-			 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			 //layout
-			 VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			 VK_ACCESS_NONE, VK_ACCESS_TRANSFER_WRITE_BIT,
-			 VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			//layout
+			VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			VK_ACCESS_NONE, VK_ACCESS_TRANSFER_WRITE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
 		};
 		auto imageCube = ImageLogic::CreateByInfo(context, imageCubeInfo);
 
@@ -179,7 +182,9 @@ namespace Render {
 			Common::ResSystem::FreeImg(datas[i]);
 		}
 
-		//TODO
+		ShaderLogic::CreateUnitDescriptor(context,
+			unit,
+			imageCube);
 	}
 
 }

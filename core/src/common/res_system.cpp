@@ -25,8 +25,8 @@ namespace Common {
 	}
 
 	unsigned char* ResSystem::LoadImg(const std::string& fileName, int& w, int& h) {
-		int channels;
-		auto data = stbi_load(fileName.data(), &w, &h, &channels, STBI_rgb_alpha);
+		int comp;
+		auto data = stbi_load(fileName.data(), &w, &h, &comp, STBI_rgb_alpha);
 		if (!data) {
 			throw std::runtime_error("failed to load texture image!");
 		}

@@ -22,7 +22,7 @@ namespace Render {
 
 		static void CreateView(Context*,
 			std::shared_ptr<Image>,
-			VkImageAspectFlags, uint32_t);
+			VkImageViewType, VkImageAspectFlags, uint32_t);
 		static void DestroyView(Context*, std::shared_ptr<Image>);
 
 		static void TransitionLayout(Context*,

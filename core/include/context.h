@@ -59,7 +59,10 @@ public:
 
 		Render::System::Create(this);
 		Logic::System::Create(this);
-		Editor::Test::Create(this);
+
+		//Test
+		Editor::Test::CreateSkybox(this);
+		Editor::Test::CreateCube(this);
 	}
 
 	void Update() {

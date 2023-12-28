@@ -46,6 +46,7 @@ namespace Render {
 		FramebufferLogic::Create(context);
 		DescriptorPoolLogic::Create(context);
 		PipelineSystem::Create(context, "test");
+		PipelineSystem::Create(context, "skybox");
 		Editor::Global::Create(context);
 	}
 

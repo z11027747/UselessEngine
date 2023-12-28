@@ -18,14 +18,14 @@ namespace Logic {
 			cameraEO->name = G_Camera;
 
 			Logic::TransformLogic::Add(cameraEO,
-				glm::vec3(0.0f, 0.0f, -10.0f),
-				glm::vec3(0.0f, 0.0f, 0.0f),
+				glm::vec3(0.0f, 5.0f, -14.0f),
+				glm::vec3(12.8f, 0.0f, 0.0f),
 				glm::vec3(1.0f, 1.0f, 1.0f)
 			);
 
 			Frustum frustum = {
 				0.1f,
-				20.0f,
+				50.0f,
 				context->aspect,
 				45.0f
 			};

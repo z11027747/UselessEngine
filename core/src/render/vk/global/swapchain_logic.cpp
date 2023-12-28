@@ -82,9 +82,10 @@ namespace Render {
 			colorImage2D->vkImage = swapchainImageViews[i];
 
 			ImageLogic::CreateView(context,
-				colorImage2D, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+				colorImage2D,
+				VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 
-			swapchainColorImage2Ds[i] = std::move(colorImage2D);
+			swapchainColorImage2Ds[i] = colorImage2D;
 		}
 	}
 
@@ -119,9 +120,13 @@ namespace Render {
 
 		for (auto i = 0u; i < swapchainImageCount; i++) {
 			ImageInfo image2dInfo = {
-				global->depthImageFormat, { currentExtent.width, currentExtent.height, 0 },  VK_IMAGE_ASPECT_DEPTH_BIT,
-				VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 0, 1,
+				global->depthImageFormat, { currentExtent.width, currentExtent.height, 0 }, VK_IMAGE_ASPECT_DEPTH_BIT,
+				//image
+				VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+				0, 1, VK_IMAGE_VIEW_TYPE_2D,
+				//memory
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+				//layout
 				VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 				0, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
 				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT

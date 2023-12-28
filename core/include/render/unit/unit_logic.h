@@ -28,11 +28,11 @@ namespace Render {
 			std::shared_ptr<Unit>,
 			std::vector<uint16_t>&);
 
-		static void SetTexture(Context*,
+		static void SetImage(Context*,
 			std::shared_ptr<Unit>,
 			std::string);
 
-		static void SetCubeTexture(Context*,
+		static void SetImageCube(Context*,
 			std::shared_ptr<Unit>,
 			std::array<std::string, 6>);
 

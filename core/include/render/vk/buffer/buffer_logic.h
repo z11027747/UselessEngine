@@ -62,8 +62,14 @@ namespace Render {
 			auto mapRet = vkMapMemory(logicalDevice, buffer->vkDeviceMemory, 0, size, 0, &data);
 			CheckRet(mapRet, "vkMapMemory");
 
-			for (size_t i = 0; i < values.size(); ++i) {
-				memcpy(static_cast<T*>(data) + i * sizeof(T), values[i], sizeof(T));
+			uint64_t memAddress;
+			memAddress = reinterpret_cast<uint64_t>(data);
+
+			for (auto i = 0; i < values.size(); i++) {
+				auto src = reinterpret_cast<void*>(memAddress);
+				auto dst = values[i];
+				memcpy(src, dst, size);
+				memAddress += size;
 			}
 
 			vkUnmapMemory(logicalDevice, buffer->vkDeviceMemory);

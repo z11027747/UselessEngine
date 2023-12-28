@@ -8,7 +8,7 @@
 
 namespace Render {
 
-	VkSampler SamplerLogic::Create(Context* context, float maxLod) {
+	VkSampler SamplerLogic::Create(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
@@ -30,7 +30,7 @@ namespace Render {
 		createInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 		createInfo.mipLodBias = 0.0f;
 		createInfo.minLod = 0.0f;
-		createInfo.maxLod = maxLod;
+		createInfo.maxLod = 1.0f;
 
 		VkSampler sampler;
 		auto ret = vkCreateSampler(logicalDevice, &createInfo, nullptr, &sampler);

@@ -17,13 +17,14 @@ namespace Render {
 		image->fomat = info.format;
 		image->extent = info.extent;
 		image->aspectMask = info.aspectMask;
+		image->layerCount = info.arrayLayers;
 
 		Create(context,
 			image, info);
 
 		CreateView(context,
 			image,
-			info.aspectMask, info.arrayLayers);
+			info.viewType, info.aspectMask, info.arrayLayers);
 
 		TransitionLayout(context,
 			image,
@@ -81,6 +82,7 @@ namespace Render {
 
 		image->vkImage = vkImage;
 		image->vkDeviceMemory = vkDeviceMemory;
+		image->size = requirements.size;
 	}
 
 	void ImageLogic::Destroy(Context* context,
@@ -101,7 +103,8 @@ namespace Render {
 
 	void ImageLogic::CreateView(Context* context,
 		std::shared_ptr<Image> image,
-		VkImageAspectFlags aspectMask, uint32_t layerCount) {
+		VkImageViewType viewType, VkImageAspectFlags aspectMask, uint32_t layerCount
+	) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
@@ -113,7 +116,7 @@ namespace Render {
 		VkImageViewCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		createInfo.image = vkImage;
-		createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		createInfo.viewType = viewType;
 		createInfo.format = format;
 		createInfo.components = {
 			VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -158,7 +161,7 @@ namespace Render {
 				imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				imageMemoryBarrier.image = image->vkImage;
-				imageMemoryBarrier.subresourceRange = { aspectMask,0,1,0,1 };
+				imageMemoryBarrier.subresourceRange = { image->aspectMask,0,1,0,image->layerCount };
 				imageMemoryBarrier.srcAccessMask = srcAccessMask;
 				imageMemoryBarrier.dstAccessMask = dstAccessMask;
 
@@ -187,7 +190,7 @@ namespace Render {
 				imageCopy.imageSubresource.aspectMask = image->aspectMask;
 				imageCopy.imageSubresource.mipLevel = 0;
 				imageCopy.imageSubresource.baseArrayLayer = 0;
-				imageCopy.imageSubresource.layerCount = 1;
+				imageCopy.imageSubresource.layerCount = image->layerCount;
 				imageCopy.imageOffset = { 0, 0, 0 };
 				imageCopy.imageExtent = { image->extent.width, image->extent.height, 1 };
 
