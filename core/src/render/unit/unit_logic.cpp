@@ -9,6 +9,7 @@
 #include "render/vk/pipeline/shader_logic.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/image/image2d_logic.h"
+#include "render/vk/image/sampler_logic.h"
 #include "render/vk/cmd/cmd_comp.h"
 #include "render/vk/cmd/cmd_submit_logic.h"
 #include "render/unit/unit_comp.h"
@@ -30,6 +31,8 @@ namespace Render {
 			BufferLogic::Destroy(context,
 				unit->indexBuffer);
 
+			Image2DLogic::Destroy(context,
+				unit->image2D);
 		}
 		renderUnitEOs.clear();
 	}
@@ -82,48 +85,32 @@ namespace Render {
 
 		auto imageW = static_cast<uint32_t>(w);
 		auto imageH = static_cast<uint32_t>(h);
-		VkDeviceSize imageSize = static_cast<VkDeviceSize>(imageW * imageH * 4);
+		auto imageSize = static_cast<VkDeviceSize>(imageW * imageH * 4);
 
-		auto stagingBuffer = BufferLogic::Create(context,
+		auto tempBuffer = BufferLogic::CreateTemp(context,
 			imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 		BufferLogic::SetPtr(context,
-			stagingBuffer,
+			tempBuffer,
 			data, static_cast<size_t>(imageSize));
 
-		auto image2d = Image2DLogic::Create(context,
-			VK_FORMAT_R8G8B8A8_SRGB, { imageW, imageH },
-			VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-
-		Image2DLogic::CreateView(context,
-			image2d, VK_IMAGE_ASPECT_COLOR_BIT);
-
-		Image2DLogic::TransitionLayout(context,
-			image2d,
-			VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		Image2DInfo info = {
+			VK_FORMAT_R8G8B8A8_SRGB,
+			{ imageW, imageH },
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			VK_IMAGE_ASPECT_COLOR_BIT,
+			VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			VK_ACCESS_NONE, VK_ACCESS_TRANSFER_WRITE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT);
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
+		};
+		auto image2d = Image2DLogic::CreateByInfo(context, info);
 
-		CmdSubmitLogic::Create(context,
-			[&](VkCommandBuffer& cmdBuffer)
-			{
-				VkBufferImageCopy imageCopy = {};
-				imageCopy.bufferOffset = 0;
-				imageCopy.bufferRowLength = 0;
-				imageCopy.bufferImageHeight = 0;
-				imageCopy.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-				imageCopy.imageSubresource.mipLevel = 0;
-				imageCopy.imageSubresource.baseArrayLayer = 0;
-				imageCopy.imageSubresource.layerCount = 1;
-				imageCopy.imageOffset = { 0, 0, 0 };
-				imageCopy.imageExtent = { imageW, imageH, 1 };
-
-				vkCmdCopyBufferToImage(cmdBuffer, stagingBuffer->vkBuffer, image2d->vkImage,
-					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageCopy);
-			});
+		Image2DLogic::CopyBuffer(context,
+			image2d,
+			tempBuffer);
 
 		Image2DLogic::TransitionLayout(context,
 			image2d,
@@ -134,12 +121,7 @@ namespace Render {
 
 		Common::ResSystem::FreeImg(data);
 
-		//TODO
-		// BufferLogic::Destroy(context,
-		//	 stagingBuffer);
-
 		unit->image2D = image2d;
 	}
-
 
 }

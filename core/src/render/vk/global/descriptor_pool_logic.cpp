@@ -19,16 +19,13 @@ namespace Render {
 
 		VkDescriptorPoolCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		createInfo.maxSets = maxFrameInFlight + 1;
 
-		std::vector<VkDescriptorPoolSize> sizes(2);
-
-		sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		sizes[0].descriptorCount = 10;
-
-		sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		sizes[1].descriptorCount = 4;
-
+		std::vector<VkDescriptorPoolSize> sizes = {
+			{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10},
+			{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4},
+		};
 		createInfo.poolSizeCount = static_cast<uint32_t>(sizes.size());
 		createInfo.pPoolSizes = sizes.data();
 

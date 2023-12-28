@@ -6,6 +6,9 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
+#include "render/vk/pipeline/pipeline_comp.h"
+#include "render/vk/buffer/buffer_comp.h"
+#include "render/vk/cmd/cmd_comp.h"
 #include "render/system_new.h"
 #include "base.h"
 
@@ -25,10 +28,14 @@ public:
 	float currTime;
 	float deltaTime;
 
-	//render
+	//render-global
 	std::shared_ptr<EngineObject> renderGlobalEO;
-	std::shared_ptr<EngineObject> renderCmdSimpleEO;
-	std::unordered_map<std::string, std::shared_ptr<EngineObject>> renderPipelineEOs;
+	//render-pipeline
+	std::unordered_map<std::string, std::shared_ptr<Render::GraphicsPipeline>> renderPipelines;
+	//render-buffer
+	std::shared_ptr<Render::CmdSimple> renderCmdSimple;
+	std::vector<std::shared_ptr<Render::Buffer>> renderTempBuffers;
+	//render-unit
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 
 	//camera

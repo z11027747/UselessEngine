@@ -117,23 +117,20 @@ namespace Render {
 		swapchainDepthImage2Ds.resize(swapchainImageCount);
 
 		for (auto i = 0u; i < swapchainImageCount; i++) {
-			auto depthImage2D = Image2DLogic::Create(context,
-				global->depthImageFormat, surfaceCapabilities.currentExtent,
-				VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-
-			Image2DLogic::CreateView(context,
-				depthImage2D, VK_IMAGE_ASPECT_DEPTH_BIT);
-
-			Image2DLogic::TransitionLayout(context,
-				depthImage2D,
-				VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+			Image2DInfo info = {
+				global->depthImageFormat,
+				surfaceCapabilities.currentExtent,
+				VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				VK_IMAGE_ASPECT_DEPTH_BIT,
+				VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 				0, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
 				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT
-			);
+			};
+			auto depthImage2d = Image2DLogic::CreateByInfo(context, info);
 
-			swapchainDepthImage2Ds[i] = std::move(depthImage2D);
+			swapchainDepthImage2Ds[i] = std::move(depthImage2d);
 		}
 	}
 

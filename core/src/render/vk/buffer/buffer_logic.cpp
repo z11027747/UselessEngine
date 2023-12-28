@@ -29,7 +29,6 @@ namespace Render {
 		auto bufferRet = vkCreateBuffer(logicalDevice, &createInfo, nullptr, &vkBuffer);
 		CheckRet(bufferRet, "vkCreateBuffer");
 
-		//2.获取内存需求，分配内存
 		VkMemoryRequirements memRequirements;
 		vkGetBufferMemoryRequirements(logicalDevice, vkBuffer, &memRequirements);
 
@@ -45,7 +44,6 @@ namespace Render {
 		auto allocateRet = vkAllocateMemory(logicalDevice, &allocateInfo, nullptr, &vkDeviceMemory);
 		CheckRet(allocateRet, "vkAllocateMemory");
 
-		//3.绑定内存
 		auto bindRet = vkBindBufferMemory(logicalDevice, vkBuffer, vkDeviceMemory, 0);
 		CheckRet(bindRet, "vkBindBufferMemory");
 
@@ -65,5 +63,26 @@ namespace Render {
 
 		vkDestroyBuffer(logicalDevice, buffer->vkBuffer, nullptr);
 		vkFreeMemory(logicalDevice, buffer->vkDeviceMemory, nullptr);
+	}
+
+	std::shared_ptr<Buffer> BufferLogic::CreateTemp(Context* context,
+		VkDeviceSize size, VkBufferUsageFlags usageFlags,
+		VkMemoryPropertyFlags propertiesFlags
+	) {
+		auto buffer = Create(context,
+			size, usageFlags,
+			propertiesFlags);
+
+		context->renderTempBuffers.push_back(buffer);
+		return buffer;
+	}
+
+	void BufferLogic::DestroyAllTemps(Context* context) {
+		auto& tempBuffers = context->renderTempBuffers;
+		for (auto& tempBuffer : tempBuffers) {
+			Destroy(context,
+				tempBuffer);
+		}
+		tempBuffers.clear();
 	}
 }

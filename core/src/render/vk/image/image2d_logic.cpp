@@ -9,7 +9,37 @@
 
 namespace Render {
 
-	std::shared_ptr<Image2D> Image2DLogic::Create(Context* context,
+	std::shared_ptr<Image2D> Image2DLogic::CreateByInfo(Context* context,
+		Image2DInfo& info) {
+
+		auto image2d = std::make_shared<Image2D>();
+
+		image2d->fomat = info.format;
+		image2d->extent = info.extent;
+		image2d->aspectMask = info.aspectMask;
+
+		Create(context,
+			image2d,
+			info.format, info.extent,
+			info.tiling, info.usage,
+			info.properitesFlags);
+
+		CreateView(context,
+			image2d,
+			info.aspectMask);
+
+		TransitionLayout(context,
+			image2d,
+			info.oldLayout, info.newLayout,
+			info.aspectMask,
+			info.srcAccessMask, info.dstAccessMask,
+			info.srcStage, info.dstStage);
+
+		return image2d;
+	}
+
+	void Image2DLogic::Create(Context* context,
+		std::shared_ptr<Image2D> image2d,
 		VkFormat format, VkExtent2D extent,
 		VkImageTiling tiling, VkImageUsageFlags usage,
 		VkMemoryPropertyFlags propertiesFlags
@@ -55,12 +85,8 @@ namespace Render {
 		auto bindRet = vkBindImageMemory(logicalDevice, vkImage, vkDeviceMemory, 0);
 		CheckRet(bindRet, "vkBindImageMemory");
 
-		auto image2d = std::make_shared<Image2D>();
-		image2d->fomat = format;
-		image2d->extent = extent;
 		image2d->vkImage = vkImage;
 		image2d->vkDeviceMemory = vkDeviceMemory;
-		return image2d;
 	}
 
 	void Image2DLogic::Destroy(Context* context,
@@ -126,10 +152,9 @@ namespace Render {
 		std::shared_ptr<Image2D> image2d,
 		VkImageLayout oldLayout, VkImageLayout newLayout,
 		VkImageAspectFlags aspectMask,
-		VkAccessFlags srcAccessMas, VkAccessFlags dstAccessMas,
+		VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask,
 		VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage
 	) {
-
 		CmdSubmitLogic::Create(context,
 			[=](VkCommandBuffer& cmdBuffer)
 			{
@@ -141,8 +166,8 @@ namespace Render {
 				imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				imageMemoryBarrier.image = image2d->vkImage;
 				imageMemoryBarrier.subresourceRange = { aspectMask,0,1,0,1 };
-				imageMemoryBarrier.srcAccessMask = srcAccessMas;
-				imageMemoryBarrier.dstAccessMask = dstAccessMas;
+				imageMemoryBarrier.srcAccessMask = srcAccessMask;
+				imageMemoryBarrier.dstAccessMask = dstAccessMask;
 
 				vkCmdPipelineBarrier(cmdBuffer,
 					srcStage, dstStage,
@@ -151,7 +176,29 @@ namespace Render {
 					0, nullptr,
 					1, &imageMemoryBarrier);
 			});
+	}
 
+	void Image2DLogic::CopyBuffer(Context* context,
+		std::shared_ptr<Image2D> image2d,
+		std::shared_ptr<Buffer> buffer
+	) {
+		CmdSubmitLogic::Create(context,
+			[&](VkCommandBuffer& cmdBuffer)
+			{
+				VkBufferImageCopy imageCopy = {};
+				imageCopy.bufferOffset = 0;
+				imageCopy.bufferRowLength = 0;
+				imageCopy.bufferImageHeight = 0;
+				imageCopy.imageSubresource.aspectMask = image2d->aspectMask;
+				imageCopy.imageSubresource.mipLevel = 0;
+				imageCopy.imageSubresource.baseArrayLayer = 0;
+				imageCopy.imageSubresource.layerCount = 1;
+				imageCopy.imageOffset = { 0, 0, 0 };
+				imageCopy.imageExtent = { image2d->extent.width, image2d->extent.height, 1 };
+
+				vkCmdCopyBufferToImage(cmdBuffer, buffer->vkBuffer, image2d->vkImage,
+					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageCopy);
+			});
 	}
 
 }

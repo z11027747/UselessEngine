@@ -18,16 +18,11 @@ namespace Render {
 
 		Record(cmdBuffer, doCmds);
 
-		auto& cmdSimpleEO = context->renderCmdSimpleEO;
-
-		if (cmdSimpleEO == nullptr) {
-			cmdSimpleEO = std::make_shared<EngineObject>();
-
-			auto cmdSimple = std::make_shared<CmdSimple>();
-			cmdSimpleEO->AddComponent(cmdSimple);
+		if (context->renderCmdSimple == nullptr) {
+			context->renderCmdSimple = std::make_shared<CmdSimple>();
 		}
 
-		auto cmdSimple = cmdSimpleEO->GetComponent<CmdSimple>();
+		auto& cmdSimple = context->renderCmdSimple;
 		cmdSimple->vkCmdBuffers.push_back(cmdBuffer);
 	}
 
@@ -53,12 +48,11 @@ namespace Render {
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalQueue = global->logicalQueue;
 
-		auto& cmdSimpleEO = context->renderCmdSimpleEO;
-		auto cmdSimple = cmdSimpleEO->GetComponent<CmdSimple>();
+		auto& cmdSimple = context->renderCmdSimple;
 		auto& vkCmdBuffers = cmdSimple->vkCmdBuffers;
 
-		auto vkCmdBufferSize = static_cast<uint32_t>(vkCmdBuffers.size());;
-		if (vkCmdBufferSize == 0u) {
+		auto size = static_cast<uint32_t>(vkCmdBuffers.size());
+		if (size == 0u) {
 			return;
 		}
 

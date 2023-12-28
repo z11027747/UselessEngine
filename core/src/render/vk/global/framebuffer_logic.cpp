@@ -251,9 +251,7 @@ namespace Render {
 			auto unit = unitEO->GetComponent<Render::Unit>();
 
 			auto& pipelineName = unit->pipelineName;
-			auto& pipelineEO = context->renderPipelineEOs[pipelineName];
-
-			auto graphicsPipeline = pipelineEO->GetComponent<GraphicsPipeline>();
+			auto& graphicsPipeline = context->renderPipelines[pipelineName];
 			auto& pipeline = graphicsPipeline->pipeline;
 			auto& pipelineLayout = graphicsPipeline->pipelineLayout;
 

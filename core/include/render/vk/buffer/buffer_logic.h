@@ -23,6 +23,12 @@ namespace Render {
 		static void Destroy(Context*,
 			std::shared_ptr<Buffer>);
 
+		static std::shared_ptr<Buffer> CreateTemp(Context*,
+			VkDeviceSize, VkBufferUsageFlags,
+			VkMemoryPropertyFlags);
+
+		static void DestroyAllTemps(Context*);
+
 		template<typename T>
 		static void SetPtr(Context* context,
 			std::shared_ptr<Buffer> buffer,

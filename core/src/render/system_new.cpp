@@ -11,6 +11,7 @@
 #include "render/vk/global/descriptor_pool_logic.h"
 #include "render/vk/cmd/cmd_pool_logic.h"
 #include "render/vk/cmd/cmd_submit_logic.h"
+#include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/pipeline/pipeline_system.h"
 #include "render/unit/unit_logic.h"
 #include "render/system_new.h"
@@ -52,6 +53,7 @@ namespace Render {
 		Editor::Window::Update(context);
 
 		CmdSubmitLogic::Update(context);
+		BufferLogic::DestroyAllTemps(context);
 
 		FramebufferLogic::WaitFence(context);
 		auto imageIndex = FramebufferLogic::AcquireImageIndex(context);

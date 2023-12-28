@@ -15,10 +15,4 @@ namespace Render {
 		std::vector<VkCommandBuffer> vkCmdBuffers;
 	};
 
-	struct CmdSubmitSemaphore final {
-		std::vector<VkCommandBuffer> vkCmdBuffers;
-		VkSemaphore waitSemaphore;
-		VkSemaphore signalSemaphore;
-	};
-
 }
