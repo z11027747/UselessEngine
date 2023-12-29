@@ -1,11 +1,10 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include <glm/glm.hpp>
 #include <vector>
 #include <functional>
-#include "context.h"
 #include "render/vk/pipeline/pipeline_comp.h"
+#include "context.h"
 
 //class Context;
 

@@ -23,6 +23,12 @@ public:
 	std::unordered_map<std::type_index, std::shared_ptr<void>> componentMap;
 
 	template <typename T>
+	bool HasComponent() const {
+		auto it = componentMap.find(typeid(T));
+		return (it != componentMap.end());
+	}
+
+	template <typename T>
 	void AddComponent(std::shared_ptr<T> comp) {
 		componentMap[typeid(T)] = comp;
 	}

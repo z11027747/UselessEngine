@@ -3,10 +3,9 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <memory>
+#include "render/vk/image/image_comp.h"
 
 namespace Render {
-
-	struct Image;
 
 	struct Global final {
 

@@ -19,5 +19,5 @@ layout (location = 0) out vec3 outUVW;
 
 void main() {
 	outUVW = inPosition;
-	gl_Position = globalUBO.projection * push.model * vec4(inPosition, 1.0);
+	gl_Position = globalUBO.projection * globalUBO.view * push.model * vec4(inPosition, 1.0);
 }

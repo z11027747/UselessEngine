@@ -47,8 +47,12 @@ public:
 	std::unordered_map<std::string, std::shared_ptr<EngineObject>> allEOMap;
 
 	void AddEO(std::shared_ptr<EngineObject> eo) {
-		allEOs.emplace_back(eo);
-		allEOMap.emplace(eo->name, eo);
+		allEOs.push_back(eo);
+		allEOMap.insert({ eo->name, eo });
+
+		if (eo->HasComponent<Render::Unit>()) {
+			renderUnitEOs.push_back(eo);
+		}
 	}
 
 	std::shared_ptr<EngineObject> GetEO(const std::string& name) {

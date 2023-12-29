@@ -3,13 +3,13 @@
 #include <memory>
 #include <iostream>
 #include "logic/camera/camera_logic.h"
-#include "editor/wrap/logic_camera_wrap.h"
+#include "editor/wrap/logic_component_wrap.h"
 #include "editor/global.h"
 #include "context.h"
 
 namespace Editor {
 
-	void LogicCameraWrap::Draw(Context* context,
+	void LogicComponentWrap::DrawCamera(Context* context,
 		std::shared_ptr<Logic::Camera> camera
 	) {
 		auto& frustum = camera->frustum;

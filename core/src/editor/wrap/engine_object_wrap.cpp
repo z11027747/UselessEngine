@@ -3,7 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/wrap/engine_object_wrap.h"
-#include "editor/window/inspector_window.h"
+#include "editor/window.h"
 #include "editor/global.h"
 #include "context.h"
 #include "engine_object.h"
@@ -28,9 +28,9 @@ namespace Editor {
 		ImGui::Text("%s (id: %d)", eo->name.c_str(), eo->id);
 		ImGui::SameLine();
 
-		auto isSelected = (InspectorWindow::selectEO == eo);
+		auto isSelected = (Window::selectEO == eo);
 		if (ImGui_ButtonWithColor("Select", ImVec4(0.0f, 0.4f, 0.0f, 1.0f), isSelected)) {
-			InspectorWindow::selectEO = eo;
+			Window::selectEO = eo;
 		}
 		ImGui::SameLine();
 

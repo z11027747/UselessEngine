@@ -3,7 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/wrap/engine_object_wrap.h"
-#include "editor/window/hierachy_window.h"
+#include "editor/window.h"
 #include "editor/global.h"
 #include "context.h"
 #include "engine_object.h"
@@ -12,7 +12,7 @@ namespace Editor {
 
 	static char addEOName[16] = "";
 
-	void HierachyWindow::Draw(Context* context) {
+	void Window::DrawHierachy(Context* context) {
 		if (ImGui::Begin("Hierarchy", NULL)) {
 
 			auto& io = ImGui::GetIO();

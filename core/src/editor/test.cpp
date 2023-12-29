@@ -16,7 +16,7 @@
 namespace Editor {
 
 	void Test::CreateCube(Context* context) {
-
+		//Cube1
 		{
 			auto cubeEO = std::make_shared<EngineObject>();
 			cubeEO->name = "Cube1";
@@ -38,13 +38,11 @@ namespace Editor {
 			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
 			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/icon2.png");
 
-			context->AddEO(cubeEO);
-
 			cubeEO->AddComponent<Render::Unit>(cubeUnit);
-			context->renderUnitEOs.push_back(cubeEO);
+
+			context->AddEO(cubeEO);
 		}
-
-
+		//Cube2
 		{
 			auto cubeEO = std::make_shared<EngineObject>();
 			cubeEO->name = "Cube2";
@@ -66,23 +64,21 @@ namespace Editor {
 			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
 			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/Wall03_Diffuse.jpg");
 
-			context->AddEO(cubeEO);
-
 			cubeEO->AddComponent<Render::Unit>(cubeUnit);
-			context->renderUnitEOs.push_back(cubeEO);
+
+			context->AddEO(cubeEO);
 		}
 
 	}
 
 	void Test::CreateSkybox(Context* context) {
-
 		auto skyboxEO = std::make_shared<EngineObject>();
 		skyboxEO->name = "Skybox";
 
 		Logic::TransformLogic::Add(skyboxEO,
 			glm::vec3(0.0f, 0.0f, 0.0f),
 			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(1.0f, 1.0f, 1.0f)
+			glm::vec3(20.0f, 20.0f, 20.0f)
 		);
 
 		auto skyboxUnit = std::make_shared<Render::Unit>();
@@ -96,19 +92,18 @@ namespace Editor {
 		Render::UnitLogic::SetIndices(context, skyboxUnit, indices);
 
 		std::array<std::string, 6> names = {
-			"resource/texture/skybox/right.jpg",
-			"resource/texture/skybox/left.jpg",
-			"resource/texture/skybox/top.jpg",
-			"resource/texture/skybox/bottom.jpg",
-			"resource/texture/skybox/front.jpg",
-			"resource/texture/skybox/back.jpg"
+			"resource/texture/skybox2/sky_left_lnitial.png",
+			"resource/texture/skybox2/sky_right_lnitial.png",
+			"resource/texture/skybox2/sky_up_lnitial.png",
+			"resource/texture/skybox2/sky_down_lnitial.png",
+			"resource/texture/skybox2/sky_front_lnitial.png",
+			"resource/texture/skybox2/sky_back_lnitial.png"
 		};
 		Render::UnitLogic::SetImageCube(context, skyboxUnit, names);
 
-		context->AddEO(skyboxEO);
-
 		skyboxEO->AddComponent<Render::Unit>(skyboxUnit);
-		context->renderUnitEOs.push_back(skyboxEO);
+
+		context->AddEO(skyboxEO);
 	}
 
 	void Test::MakeTriangle(
@@ -174,28 +169,23 @@ namespace Editor {
 
 	}
 
-	glm::vec3 cubemapVertices[36] =
-	{
-		
-	};
-
 	void Test::MakeSkybox(
 		std::vector<Render::Vertex>& vertices,
 		std::vector<uint16_t>& indices
 	) {
 		vertices = {
-			{{-1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{ -1.0f, -1.0f, -1.0f }, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{ 1.0f, -1.0f, -1.0f }, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{ 1.0f,  1.0f, -1.0f }, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{ -1.0f, -1.0f,  1.0f }, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{ -1.0f,  1.0f,  1.0f }, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{ 1.0f, -1.0f, -1.0f }, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{ 1.0f, -1.0f,  1.0f } , {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{ 1.0f,  1.0f,  1.0f }, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{ 1.0f,  1.0f, -1.0f }, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{ 1.0f,  1.0f,  1.0f } , {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{ 1.0f, -1.0f,  1.0f }, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+			{{-1.0f, 1.0f, -1.0f},    {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ -1.0f, -1.0f, -1.0f }, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ 1.0f, -1.0f, -1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ 1.0f,  1.0f, -1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ -1.0f, -1.0f,  1.0f }, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ -1.0f,  1.0f,  1.0f }, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ 1.0f, -1.0f, -1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ 1.0f, -1.0f,  1.0f } , {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ 1.0f,  1.0f,  1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ 1.0f,  1.0f, -1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ 1.0f,  1.0f,  1.0f } , {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{ 1.0f, -1.0f,  1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
 		};
 
 		indices = {

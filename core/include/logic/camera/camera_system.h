@@ -42,6 +42,7 @@ namespace Logic {
 
 			if (transform->position != camera->calcPos
 				|| transform->eulerAngles != camera->calcEul) {
+
 				CameraLogic::UpdateView(cameraEO);
 			}
 

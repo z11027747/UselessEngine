@@ -1,14 +1,47 @@
 ﻿
-#include <array>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
 #include "render/vk/global/physical_device_logic.h"
 #include "render/vk/global/swapchain_logic.h"
-#include "render/vk/global/pass_logic.h"
+#include "render/vk/pass/pass_comp.h"
+#include "render/vk/pass/pass_logic.h"
 #include "context.h"
 
 namespace Render {
+
+	Pass PassLogic::Create(Context* context, std::vector<Attachment> attachments ) {
+
+
+		VkRenderPassCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		createInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+		createInfo.pAttachments = attachments.data();
+
+		VkSubpassDescription subpassDescription = {};
+		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpassDescription.colorAttachmentCount = 1;
+		subpassDescription.pColorAttachments = &colorAttachmentReference;
+		subpassDescription.pDepthStencilAttachment = &depthAttachmentReference;
+
+		createInfo.subpassCount = 1;
+		createInfo.pSubpasses = &subpassDescription;
+
+		VkSubpassDependency dependency = {};
+		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+		dependency.dstSubpass = 0;
+		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.srcAccessMask = 0;
+		dependency.dstAccessMask =
+			VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		createInfo.dependencyCount = 1;
+		createInfo.pDependencies = &dependency;
+
+		VkRenderPass vkRenderPass;
+		auto ret = vkCreateRenderPass(logicalDevice, &createInfo, nullptr, &vkRenderPass);
+
+	}
 
 	void PassLogic::Create(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;

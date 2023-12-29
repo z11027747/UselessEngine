@@ -47,6 +47,20 @@ namespace Render {
 		depthStencilStateCreateInfo.stencilTestEnable = false;
 	}
 
+	void ShaderSkyboxLogic::MakeRasterizationCreateInfo(Context* context,
+		std::shared_ptr<GraphicsPipeline> graphicsPipeline,
+		VkPipelineRasterizationStateCreateInfo& rasterizationStateCreateInfo
+	) {
+		rasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		rasterizationStateCreateInfo.rasterizerDiscardEnable = false;
+		rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
+		rasterizationStateCreateInfo.lineWidth = 1.0f;
+		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;
+		rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		rasterizationStateCreateInfo.depthClampEnable = false;
+		rasterizationStateCreateInfo.depthBiasEnable = false;
+	}
+
 	void ShaderSkyboxLogic::CreateDescriptorSetLayout(Context* context,
 		std::shared_ptr<GraphicsPipeline> graphicsPipeline
 	) {

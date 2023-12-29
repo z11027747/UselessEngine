@@ -5,8 +5,7 @@
 #include "editor/imgui/imgui_impl_glfw.h"
 #include "editor/imgui/imgui_impl_vulkan.h"
 #include "editor/global.h"
-#include "editor/window/hierachy_window.h"
-#include "editor/window/inspector_window.h"
+#include "editor/window.h"
 #include "editor/wrap/engine_object_wrap.h"
 #include "editor/test.h"
 #include "render/vk/global/global_comp.h"
@@ -68,33 +67,7 @@ namespace Editor {
 			ImGui::ShowDemoWindow(&showDemoWindow);
 		}
 
-		DrawMenuBar(context);
-
-		HierachyWindow::Draw(context);
-		InspectorWindow::Draw(context);
-	}
-
-	void Global::DrawMenuBar(Context* context) {
-		if (ImGui::BeginMainMenuBar()) {
-			if (ImGui::BeginMenu("File")) {
-				if (ImGui::MenuItem("New")) {}
-				if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-				ImGui::Separator();
-				if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-				if (ImGui::MenuItem("Save As..")) {}
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Edit")) {
-				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}
-				ImGui::Separator();
-				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-				ImGui::EndMenu();
-			}
-			ImGui::EndMainMenuBar();
-		}
+		Window::Draw(context);
 	}
 
 	void Global::RenderData(Context* context, uint32_t imageIndex) {

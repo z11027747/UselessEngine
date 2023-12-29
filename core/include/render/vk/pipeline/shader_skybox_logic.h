@@ -17,6 +17,9 @@ namespace Render {
 		static void MakeDepthStencilCreateInfo(Context*,
 			std::shared_ptr<GraphicsPipeline>,
 			VkPipelineDepthStencilStateCreateInfo&);
+		static void MakeRasterizationCreateInfo(Context*,
+			std::shared_ptr<GraphicsPipeline>,
+			VkPipelineRasterizationStateCreateInfo&);
 
 		static void CreateDescriptorSetLayout(Context*,
 			std::shared_ptr<GraphicsPipeline>);

@@ -14,9 +14,7 @@ namespace Editor {
 		static void Destroy(Context*);
 
 		static void Update(Context*);
-		static void DrawMenuBar(Context*);
 		static void RenderData(Context*, uint32_t);
-
 	};
 
 	inline static bool ImGui_ButtonWithColor(const char* label, ImVec4 color, bool cond = true) {

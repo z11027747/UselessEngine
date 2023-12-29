@@ -4,22 +4,19 @@
 #include <iostream>
 #include <string>
 #include "editor/wrap/engine_object_wrap.h"
-#include "editor/window/inspector_window.h"
+#include "editor/wrap/logic_component_wrap.h"
 #include "editor/global.h"
-#include "logic/transform/transform_comp.h"
-#include "editor/wrap/logic_transform_wrap.h"
-#include "logic/camera/camera_comp.h"
-#include "editor/wrap/logic_camera_wrap.h"
+#include "editor/window.h"
 #include "context.h"
 #include "engine_object.h"
 
 namespace Editor {
 
-	std::shared_ptr<EngineObject> InspectorWindow::selectEO = nullptr;
+	std::shared_ptr<EngineObject> Window::selectEO = nullptr;
 
 	static char addCompName[16] = "";
 
-	void InspectorWindow::Draw(Context* context) {
+	void Window::DrawInspector(Context* context) {
 		if (ImGui::Begin("Inspector", NULL)) {
 
 			if (selectEO == nullptr) {
@@ -41,12 +38,12 @@ namespace Editor {
 
 							if (typeId == typeid(Logic::Transform)) {
 								auto transform = std::static_pointer_cast<Logic::Transform>(component);
-								LogicTransformWrap::Draw(context,
+								LogicComponentWrap::DrawTransform(context,
 									transform);
 							}
 							else if (typeId == typeid(Logic::Camera)) {
 								auto camera = std::static_pointer_cast<Logic::Camera>(component);
-								LogicCameraWrap::Draw(context,
+								LogicComponentWrap::DrawCamera(context,
 									camera);
 							}
 
