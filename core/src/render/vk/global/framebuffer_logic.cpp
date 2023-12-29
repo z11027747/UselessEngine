@@ -254,6 +254,9 @@ namespace Render {
 
 		auto& unitEOs = context->renderUnitEOs;
 		for (const auto& unitEO : unitEOs) {
+			if (!unitEO->active) 
+				continue;
+
 			auto unit = unitEO->GetComponent<Render::Unit>();
 
 			auto& pipelineName = unit->pipelineName;
