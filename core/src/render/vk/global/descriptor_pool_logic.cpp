@@ -15,7 +15,6 @@ namespace Render {
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalDevice = global->logicalDevice;
-		auto maxFrameInFlight = global->maxFrameInFlight;
 
 		VkDescriptorPoolCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

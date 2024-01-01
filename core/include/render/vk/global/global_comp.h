@@ -8,7 +8,6 @@
 namespace Render {
 
 	struct Global final {
-
 		VkInstance instance;
 
 		bool enabledDebug;
@@ -16,7 +15,6 @@ namespace Render {
 
 		VkPhysicalDevice physicalDevice;
 		uint32_t physicalQueueFamilyIndex;
-
 		VkDevice logicalDevice;
 		VkQueue logicalQueue;
 
@@ -24,16 +22,11 @@ namespace Render {
 		VkSurfaceFormatKHR surfaceFormat;
 		VkPresentModeKHR surfacePresentMode;
 		VkSurfaceCapabilitiesKHR surfaceCapabilities;
-
-		VkRenderPass renderPass;
-
-		VkSwapchainKHR swapchain;
-		std::vector<std::shared_ptr<Image>> swapchainColorImage2Ds;
-		std::vector<std::shared_ptr<Image>> swapchainDepthImage2Ds;
 		VkFormat depthImageFormat;
 
-		std::vector<VkFramebuffer> frameBuffers;
-		std::vector<VkCommandBuffer> cmdBuffers;
+		VkSwapchainKHR swapchain;
+		uint32_t swapchainImageCount;
+		std::vector<std::shared_ptr<Image>> swapchainImages;
 
 		uint32_t currFrame;
 		uint32_t maxFrameInFlight;
@@ -41,6 +34,7 @@ namespace Render {
 		std::vector<VkSemaphore> imageAvailableSemaphores;
 		std::vector<VkSemaphore> renderFinishedSemaphores;
 
+		VkCommandPool vkPool;
 		VkDescriptorPool descriptorPool;
 	};
 

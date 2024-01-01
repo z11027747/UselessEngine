@@ -13,17 +13,16 @@ namespace Render {
 	void CmdSubmitLogic::Create(Context* context,
 		std::function<void(VkCommandBuffer&)> doCmds
 	) {
-		auto cmdBuffer = CmdPoolLogic::AllocateBuffer(context,
-			VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+		auto& batchCmd = context->renderBatchCmd;
 
-		Record(cmdBuffer, doCmds);
-
-		if (context->renderCmdSimple == nullptr) {
-			context->renderCmdSimple = std::make_shared<CmdSimple>();
+		if (batchCmd == nullptr) {
+			batchCmd = std::make_shared<Cmd>();
 		}
 
-		auto& cmdSimple = context->renderCmdSimple;
-		cmdSimple->vkCmdBuffers.push_back(cmdBuffer);
+		CmdPoolLogic::Allocate(context,
+			batchCmd, 1);
+
+		Record(batchCmd->vkCmdBuffers.back(), doCmds);
 	}
 
 	void CmdSubmitLogic::Record(VkCommandBuffer& cmdBuffer,
@@ -42,34 +41,30 @@ namespace Render {
 		CheckRet(endRet, "vkEndCommandBuffer");
 	}
 
-	void CmdSubmitLogic::Update(Context* context) {
+	// ==== ToSystem
+	void CmdSubmitLogic::UpdateBatch(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalQueue = global->logicalQueue;
 
-		auto& cmdSimple = context->renderCmdSimple;
-		auto& vkCmdBuffers = cmdSimple->vkCmdBuffers;
+		auto& batchCmd = context->renderBatchCmd;
 
-		auto size = static_cast<uint32_t>(vkCmdBuffers.size());
-		if (size == 0u) {
-			return;
+		auto& cmdBuffers = batchCmd->vkCmdBuffers;
+		auto cmdSize = static_cast<uint32_t>(cmdBuffers.size());
+
+		if (cmdSize > 0u) {
+			VkSubmitInfo submitInfo = {};
+			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			submitInfo.commandBufferCount = static_cast<uint32_t>(cmdBuffers.size());
+			submitInfo.pCommandBuffers = cmdBuffers.data();
+
+			auto submitRet = vkQueueSubmit(logicalQueue, 1, &submitInfo, nullptr);
+			CheckRet(submitRet, "vkQueueSubmit");
+
+			vkQueueWaitIdle(logicalQueue);
+
+			CmdPoolLogic::Free(context, batchCmd);
 		}
-
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = static_cast<uint32_t>(vkCmdBuffers.size());
-		submitInfo.pCommandBuffers = vkCmdBuffers.data();
-
-		auto submitRet = vkQueueSubmit(logicalQueue, 1, &submitInfo, nullptr);
-		CheckRet(submitRet, "vkQueueSubmit");
-
-		//直接等待传输操作完成
-		vkQueueWaitIdle(logicalQueue);
-
-		for (auto& vkCmdBuffer : vkCmdBuffers) {
-			CmdPoolLogic::FreeBuffer(context, vkCmdBuffer);
-		}
-		vkCmdBuffers.clear();
 	}
 }

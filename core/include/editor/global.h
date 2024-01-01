@@ -2,6 +2,7 @@
 
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
+#include "render/vk/framebuffer/framebuffer_comp.h"
 
 class Context;
 
@@ -13,8 +14,9 @@ namespace Editor {
 		static void Create(Context*);
 		static void Destroy(Context*);
 
-		static void Update(Context*);
-		static void RenderData(Context*, uint32_t);
+		static void NewFrame(Context*);
+		static void RenderDrawData(Context*,
+			std::shared_ptr<Render::Framebuffer>, uint32_t);
 	};
 
 	inline static bool ImGui_ButtonWithColor(const char* label, ImVec4 color, bool cond = true) {

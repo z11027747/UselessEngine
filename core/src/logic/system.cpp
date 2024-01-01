@@ -15,12 +15,13 @@ namespace Logic {
 
 	void System::Update(Context* context) {
 	
-		CameraSystem::UpdateView(context);
+		CameraSystem::Update(context);
 	}
 
 
 	void System::Destroy(Context* context) {
-	
+
+		CameraSystem::Destroy(context);
 	}
 
 }

@@ -1,22 +1,29 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <memory>
 #include <vector>
-
-class Context;
 
 namespace Render {
 
-	struct Attachment final {
-	};
-
 	struct Pass final {
-		
+
+		VkAttachmentDescription colorAttachmentDescription;
+		VkAttachmentReference colorAttachmentReference;
+		VkAttachmentDescription depthAttachmentDescription;
+		VkAttachmentReference depthAttachmentReference;
+
+		std::vector<std::shared_ptr<Image>> colorImage2ds;
+		std::vector<std::shared_ptr<Image>> depthImage2ds;
+
+		std::vector<VkClearColorValue> clearColorValues;
+		std::vector<VkClearDepthStencilValue> clearDepthValues;
+
+		VkSubpassDescription subpassDescription;
+		VkSubpassDependency subpassDependency;
 		VkRenderPass renderPass;
 
-		std::vector<VkAttachmentDescription> descrpitions;
-		std::vector<VkAttachmentReference> references;
+		std::vector<VkFramebuffer> frameBuffers;
 	};
-
 
 }

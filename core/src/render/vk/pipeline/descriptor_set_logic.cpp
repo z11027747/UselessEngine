@@ -37,18 +37,18 @@ namespace Render {
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalDevice = global->logicalDevice;
-		auto maxFrameInFlight = global->maxFrameInFlight;
+		auto swapchainImageCount = global->swapchainImageCount;
 		auto& descriptorPool = global->descriptorPool;
 
 		VkDescriptorSetAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocateInfo.descriptorPool = descriptorPool;
-		allocateInfo.descriptorSetCount = maxFrameInFlight;
+		allocateInfo.descriptorSetCount = swapchainImageCount;
 
-		std::vector<VkDescriptorSetLayout> layouts(maxFrameInFlight, descriptorSetLayout);
+		std::vector<VkDescriptorSetLayout> layouts(swapchainImageCount, descriptorSetLayout);
 		allocateInfo.pSetLayouts = layouts.data();
 
-		std::vector<VkDescriptorSet> descriptorSets(maxFrameInFlight);
+		std::vector<VkDescriptorSet> descriptorSets(swapchainImageCount);
 		auto ret = vkAllocateDescriptorSets(logicalDevice, &allocateInfo, descriptorSets.data());
 		CheckRet(ret, "vkAllocateDescriptorSets");
 

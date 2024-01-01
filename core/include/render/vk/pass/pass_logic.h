@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "render/vk/pass/pass_comp.h"
+#include "render/vk/pipeline/pipeline_comp.h"
 
 class Context;
 
@@ -11,23 +12,38 @@ namespace Render {
 
 	class PassLogic final {
 	public:
+		static void CreateMain(Context*);
+		static void DestroyAll(Context*);
+	};
 
-		static Pass Create(Context*, std::vector<Attachment> attachments);
+	class RenderPassLogic final {
+	public:
+		static void CreateColorAttachment(Context*, std::shared_ptr<Pass>);
+		static void CreateDepthAttachment(Context*, std::shared_ptr<Pass>);
 
-		static void Destroy(Context*);
+		static void CreatColorImage2dsBySwapchain(Context*, std::shared_ptr<Pass>);
+		static void CreateDepthImage2ds(Context*, std::shared_ptr<Pass>);
 
-		static Attachment CreateColorAttachment(Context*);
-		static Attachment CreateDepthAttachment(Context*);
+		static void AddSubPass(Context*, std::shared_ptr<Pass>);
 
-		static void MakeColorAttachment(Context*,
-			VkAttachmentDescription& colorAttachmentDescription,
-			VkAttachmentReference& colorAttachmentReference
-		);
-		static void MakeDepthAttachment(Context*,
-			VkAttachmentDescription& depthAttachmentDescription,
-			VkAttachmentReference& depthAttachmentReference
-		);
+		static void Create(Context*, std::shared_ptr<Pass>);
+		static void Destroy(Context*, std::shared_ptr<Pass>);
+	};
 
+	class FramebufferLogic final {
+	public:
+		static void Create(Context*, std::shared_ptr<Pass>);
+		static void Destroy(Context*, std::shared_ptr<Pass>);
+
+		static void BeginCmd(Context*, uint32_t, VkCommandBuffer&);
+		static void EndCmd(Context*, uint32_t, VkCommandBuffer&);
+
+		static void BeginRenderPass(Context*, uint32_t, std::shared_ptr<Pass>);
+		static void EndRenderPass(Context*, uint32_t, std::shared_ptr<Pass>);
+
+		static void RenderUnits(Context*,
+			std::shared_ptr<Framebuffer>, uint32_t,
+			GlobalUBO&);
 	};
 
 }

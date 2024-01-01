@@ -21,6 +21,9 @@ namespace Editor {
 		auto& renderGlobalEO = context->renderGlobalEO;
 		auto global = renderGlobalEO->GetComponent<Render::Global>();
 
+		auto& mainCameraEO = context->GetEO(G_MainCamera);
+		auto camera = mainCameraEO->GetComponent<Logic::Camera>();
+
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 
@@ -44,19 +47,19 @@ namespace Editor {
 		init_info.Device = global->logicalDevice;
 		init_info.QueueFamily = global->physicalQueueFamilyIndex;
 		init_info.Queue = global->logicalQueue;
-		init_info.PipelineCache = VK_NULL_HANDLE;
+		init_info.PipelineCache = nullptr;
 		init_info.DescriptorPool = global->descriptorPool;
 		init_info.Subpass = 0;
 		init_info.MinImageCount = global->surfaceCapabilities.minImageCount;
-		init_info.ImageCount = global->maxFrameInFlight;
+		init_info.ImageCount = camera->framebuffer->maxFrameInFlight;
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-		init_info.Allocator = VK_NULL_HANDLE;
-		init_info.CheckVkResultFn = VK_NULL_HANDLE;
+		init_info.Allocator = nullptr;
+		init_info.CheckVkResultFn = nullptr;
 
-		ImGui_ImplVulkan_Init(&init_info, global->renderPass);
+		ImGui_ImplVulkan_Init(&init_info, camera->renderPass->vkRenderPass);
 	}
 
-	void Global::Update(Context* context) {
+	void Global::NewFrame(Context* context) {
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -70,11 +73,10 @@ namespace Editor {
 		Window::Draw(context);
 	}
 
-	void Global::RenderData(Context* context, uint32_t imageIndex) {
-		auto& renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Render::Global>();
-		auto& cmdBuffer = global->cmdBuffers[imageIndex];
+	void Global::RenderDrawData(Context* context,
+		std::shared_ptr<Render::Framebuffer> framebuffer, uint32_t imageIndex
+	) {
+		auto& cmdBuffer = framebuffer->cmdBuffers[imageIndex];
 
 		ImGui::Render();
 		auto* main_draw_data = ImGui::GetDrawData();

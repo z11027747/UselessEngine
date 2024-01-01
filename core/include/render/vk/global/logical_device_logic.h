@@ -12,6 +12,7 @@ namespace Render {
 		static void Create(Context*);
 		static void Destroy(Context*);
 
+		static VkDevice& Get(Context*);
 		static void WaitIdle(Context*);
 
 	};

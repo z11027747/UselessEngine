@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include <vulkan/vulkan.h>
+#include <memory>
 #include <vector>
+#include "render/vk/cmd/cmd_comp.h"
 
 class Context;
 
@@ -9,21 +11,17 @@ namespace Render {
 
 	class CmdPoolLogic final {
 	public:
-
 		static void Create(Context*);
 		static void Destroy(Context*);
 
-		static std::vector<VkCommandBuffer> AllocateBuffers(Context*,
-			uint32_t size,
-			VkCommandBufferLevel level);
+		static std::shared_ptr<Cmd> CreateCmd(Context*);
 
-		static VkCommandBuffer AllocateBuffer(Context* context,
-			VkCommandBufferLevel level) {
-			return AllocateBuffers(context, 1, level)[0];
-		}
+		static void Allocate(Context*, 	std::shared_ptr<Cmd>, uint32_t);
+		static void Free(Context*, std::shared_ptr<Cmd>);
 
-		static void FreeBuffer(Context*, VkCommandBuffer&);
+		static std::shared_ptr<Cmd> CreateTempCmd(Context*);
+		static void DestroyAllTemps(Context*);
+
 		static void ResetBuffer(VkCommandBuffer&, VkCommandBufferResetFlags);
-
 	};
 }

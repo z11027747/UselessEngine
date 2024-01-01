@@ -4,22 +4,6 @@
 
 namespace Render {
 
-	struct Image final {
-		VkFormat fomat;
-		VkExtent3D extent;
-		VkImageAspectFlags aspectMask;
-		uint32_t layerCount;
-
-		VkImageLayout layout;
-
-		VkDeviceSize size;
-
-		VkImage vkImage;
-		VkDeviceMemory vkDeviceMemory;
-
-		VkImageView vkImageView;
-	};
-
 	struct ImageInfo final {
 		VkFormat format;
 		VkExtent3D extent;
@@ -39,6 +23,20 @@ namespace Render {
 		VkImageLayout oldLayout, newLayout;
 		VkAccessFlags srcAccessMask, dstAccessMask;
 		VkPipelineStageFlags srcStage, dstStage;
+	};
+
+	struct Image final {
+		VkFormat fomat;
+		VkExtent3D extent;
+		VkImageAspectFlags aspectMask;
+		uint32_t layerCount;
+		VkImageLayout layout;
+
+		VkImage vkImage;
+		VkDeviceSize size;
+		VkDeviceMemory vkDeviceMemory;
+
+		VkImageView vkImageView;
 	};
 
 }

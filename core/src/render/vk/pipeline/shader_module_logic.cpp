@@ -29,8 +29,6 @@ namespace Render {
 		auto& logicalDevice = global->logicalDevice;
 
 		auto& name = graphicsPipeline->name;
-		auto& shaderModules = graphicsPipeline->shaderModules;
-		auto& shaderStageCreateInfo = graphicsPipeline->shaderStageCreateInfo;
 
 		std::array<VkShaderStageFlagBits, 2> stages = {
 			VK_SHADER_STAGE_VERTEX_BIT,
@@ -42,9 +40,6 @@ namespace Render {
 			Common::ResSystem::ReadFile("resource/spv/" + name + ".frag.spv")
 		};
 
-		shaderModules.resize(2);
-		shaderStageCreateInfo.resize(2);
-
 		for (auto i = 0; i < 2; i++) {
 			VkShaderModuleCreateInfo createInfo = {};
 			createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -53,7 +48,9 @@ namespace Render {
 
 			VkShaderModule shaderModule;
 			auto vertRet = vkCreateShaderModule(logicalDevice, &createInfo, nullptr, &shaderModule);
-			CheckRet(vertRet, "vkCreateShaderModule-Vert");
+			CheckRet(vertRet, "vkCreateShaderModule");
+
+			graphicsPipeline->shaderModules.push_back(shaderModule);
 
 			VkPipelineShaderStageCreateInfo stageCreateInfo = {};
 			stageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -61,8 +58,7 @@ namespace Render {
 			stageCreateInfo.module = shaderModule;
 			stageCreateInfo.pName = "main";
 
-			shaderModules[i] = shaderModule;
-			shaderStageCreateInfo[i] = stageCreateInfo;
+			graphicsPipeline->shaderStageCreateInfo.push_back(stageCreateInfo);
 		}
 	}
 

@@ -7,11 +7,7 @@ class Context;
 
 namespace Render {
 
-	struct CmdPool final {
-		VkCommandPool vkPool;
-	};
-
-	struct CmdSimple final {
+	struct Cmd final {
 		std::vector<VkCommandBuffer> vkCmdBuffers;
 	};
 

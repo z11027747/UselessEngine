@@ -1,7 +1,10 @@
 ﻿#pragma once
 
 #include <glm/glm.hpp>
-#include "render/vk/pipeline/pipeline_comp.h"
+#include <memory>
+#include "render/vk/pass/pass_comp.h"
+#include "render/vk/global/global_comp.h"
+#include "render/vk/framebuffer/framebuffer_comp.h"
 
 namespace Logic {
 
@@ -20,8 +23,7 @@ namespace Logic {
 		glm::vec3 calcPos;
 		glm::vec3 calcEul;
 
-		VkRenderPass renderPass;
-
+		std::shared_ptr<Render::Pass> renderPass;
 	};
 
 }

@@ -12,6 +12,9 @@ namespace Render {
 
 	Pass PassLogic::Create(Context* context, std::vector<Attachment> attachments ) {
 
+		VkAttachmentDescription attachments[] = {
+			attachments
+		}
 
 		VkRenderPassCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;

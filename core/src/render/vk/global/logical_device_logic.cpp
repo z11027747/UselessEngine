@@ -54,6 +54,14 @@ namespace Render {
 		vkDestroyDevice(logicalDevice, nullptr);
 	}
 
+	VkDevice& LogicalDeviceLogic::Get(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& logicalDevice = global->logicalDevice;
+		return logicalDevice;
+	}
+
 	void LogicalDeviceLogic::WaitIdle(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
