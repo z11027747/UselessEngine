@@ -13,6 +13,7 @@
 #include "logic/system.h"
 #include "editor/test.h"
 #include "engine_object.h"
+#include "common/res_system.h"
 
 const std::string G_Camera = "Camera";
 
