@@ -1,6 +1,4 @@
-﻿#include "pass_logic.h"
-
-
+﻿
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
@@ -8,6 +6,7 @@
 #include "render/vk/global/swapchain_logic.h"
 #include "render/vk/pass/pass_comp.h"
 #include "render/vk/pass/pass_logic.h"
+#include "render/vk/image/image_logic.h"
 #include "context.h"
 
 namespace Render {
@@ -34,20 +33,16 @@ namespace Render {
 		colorAttachmentReference.attachment = 0;
 		colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		pass->colorAttachmentDescription = colorAttachmentDescription;
+		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
 		pass->colorAttachmentReference = colorAttachmentReference;
+		pass->clearColorValue = { 0.0f,0.0f,0.0f,0.0f };
 	}
 
 	void RenderPassLogic::CreateDepthAttachment(Context* context,
 		std::shared_ptr<Pass> pass
 	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
-		auto depthImageFormat = global->depthImageFormat;
-
 		VkAttachmentDescription depthAttachmentDescription = {};
-		depthAttachmentDescription.format = depthImageFormat;
+		depthAttachmentDescription.format = VK_FORMAT_D32_SFLOAT;
 		depthAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
 		depthAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -60,8 +55,9 @@ namespace Render {
 		depthAttachmentReference.attachment = 1;
 		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-		pass->depthAttachmentDescription = depthAttachmentDescription;
+		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
 		pass->depthAttachmentReference = depthAttachmentReference;
+		pass->clearDepthValue = { 1.0f, 0 };
 	}
 
 	void RenderPassLogic::CreatColorImage2dsBySwapchain(Context* context,
@@ -116,8 +112,8 @@ namespace Render {
 		VkSubpassDescription subpassDescription = {};
 		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpassDescription.colorAttachmentCount = 1;
-		subpassDescription.pColorAttachments = &pass->attachmentReferences[0];
-		subpassDescription.pDepthStencilAttachment = &pass->attachmentReferences[1];
+		subpassDescription.pColorAttachments = &pass->colorAttachmentReference;
+		subpassDescription.pDepthStencilAttachment = &pass->depthAttachmentReference;
 
 		VkSubpassDependency subpassDependency = {};
 		subpassDependency.srcSubpass = VK_SUBPASS_EXTERNAL;

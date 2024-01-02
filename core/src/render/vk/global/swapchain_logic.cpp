@@ -5,6 +5,7 @@
 #include "render/vk/global/physical_device_logic.h"
 #include "render/vk/global/swapchain_logic.h"
 #include "render/vk/image/image_logic.h"
+#include "render/vk/cmd/cmd_logic.h"
 #include "context.h"
 
 namespace Render {
@@ -42,7 +43,7 @@ namespace Render {
 		global->swapchain = vkwapchain;
 	}
 
-	void SwapchainLogic::CreateImages(Context* context) {
+	void SwapchainLogic::CreateImageViews(Context* context) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
@@ -81,8 +82,6 @@ namespace Render {
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalDevice = global->logicalDevice;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& swapchainImages = global->swapchainImages;
 
 		for (auto& swapchainImage : swapchainImages) {
@@ -200,17 +199,52 @@ namespace Render {
 		return imageIndex;
 	}
 
-	void SwapchainLogic::Submit(Context* context,
-		uint32_t imageIndex, std::vector<VkCommandBuffer>& cmdBuffers
-	) {
+	void SwapchainLogic::AllocateCmd(Context* context) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto swapchainImageCount = global->swapchainImageCount;
+
+		global->swapchainCmd = CmdPoolLogic::CreateCmd(context);
+		CmdPoolLogic::Allocate(context,
+			global->swapchainCmd, swapchainImageCount);
+	}
+
+	VkCommandBuffer& SwapchainLogic::BeginCmd(Context* context, uint32_t imageIndex) {
+		auto& renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto& swapchainCmd = global->swapchainCmd;
+		auto& vkCmdBuffer = swapchainCmd->vkCmdBuffers[imageIndex];
+
+		vkResetCommandBuffer(vkCmdBuffer, 0);
+
+		VkCommandBufferBeginInfo beginInfo = {};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+		auto beginRet = vkBeginCommandBuffer(vkCmdBuffer, &beginInfo);
+		CheckRet(beginRet, "vkBeginCommandBuffer");
+
+		return vkCmdBuffer;
+	}
+
+	void SwapchainLogic::EndAndSubmitCmd(Context* context, uint32_t imageIndex) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& logicalQueue = global->logicalQueue;
+
+		auto& swapchainCmd = global->swapchainCmd;
+		auto& vkCmdBuffer = swapchainCmd->vkCmdBuffers[imageIndex];
+
 		auto currFrame = global->currFrame;
 		auto& inFlightFence = global->inFlightFences[currFrame];
 		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
 		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
+
+		auto endRet = vkEndCommandBuffer(vkCmdBuffer);
+		CheckRet(endRet, "vkEndCommandBuffer");
 
 		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -218,8 +252,8 @@ namespace Render {
 		submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
 		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 		submitInfo.pWaitDstStageMask = waitStages;
-		submitInfo.commandBufferCount = static_cast<uint32_t>(cmdBuffers.size());
-		submitInfo.pCommandBuffers = cmdBuffers.data();
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &vkCmdBuffer;
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = &renderFinishedSemaphore;
 

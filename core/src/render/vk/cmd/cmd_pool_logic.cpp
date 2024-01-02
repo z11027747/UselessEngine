@@ -4,7 +4,7 @@
 #include "render/vk/global/logical_device_logic.h"
 #include "render/vk/global/physical_device_logic.h"
 #include "render/vk/cmd/cmd_comp.h"
-#include "render/vk/cmd/cmd_pool_logic.h"
+#include "render/vk/cmd/cmd_logic.h"
 #include "context.h"
 
 namespace Render {

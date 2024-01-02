@@ -7,14 +7,11 @@
 #include "render/vk/global/logical_device_logic.h"
 #include "render/vk/global/swapchain_logic.h"
 #include "render/vk/global/descriptor_pool_logic.h"
-#include "render/vk/cmd/cmd_pool_logic.h"
-#include "render/vk/cmd/cmd_submit_logic.h"
+#include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/pipeline/pipeline_system.h"
 #include "render/vk/pass/pass_comp.h"
 #include "render/vk/pass/pass_logic.h"
-#include "render/vk/framebuffer/framebuffer_comp.h"
-#include "render/vk/framebuffer/framebuffer_logic.h"
 #include "render/unit/unit_logic.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
@@ -42,29 +39,34 @@ namespace Render {
 		PhysicalDeviceLogic::Find(context);
 		PhysicalDeviceLogic::GetInfo(context);
 		LogicalDeviceLogic::Create(context);
+
 		CmdPoolLogic::Create(context);
-		SwapchainLogic::Create(context);
 		DescriptorPoolLogic::Create(context);
 
-		//auto& mainCameraEO = context->GetEO(G_MainCamera);
-		//auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
-		//PipelineLogic::Create(context, "test", mainCamera->renderPass);
-		//PipelineLogic::Create(context, "skybox", mainCamera->renderPass);
+		SwapchainLogic::Create(context);
+		SwapchainLogic::CreateImageViews(context);
+		SwapchainLogic::CreateFences(context);
+		SwapchainLogic::CreateSemaphores(context);
+		SwapchainLogic::AllocateCmd(context);
+
+		PassLogic::CreateMain(context);
+		PipelineLogic::Create(context, "test", context->renderMainPass);
+		PipelineLogic::Create(context, "skybox", context->renderMainPass);
 
 		Editor::Global::Create(context);
 	}
 
 	void System::Update(Context* context) {
 
-		BufferLogic::DestroyAllTemps(context);
-		CmdPoolLogic::FreeAllTemps(context);
-
 		CmdSubmitLogic::UpdateBatch(context);
+
+		BufferLogic::DestroyAllTemps(context);
+		CmdPoolLogic::DestroyAllTemps(context);
 
 		SwapchainLogic::WaitFence(context);
 		auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
 
-		auto tempCmd = CmdPoolLogic::CreateTempCmd(context);
+		auto& vkCmdBuffer = SwapchainLogic::BeginCmd(context, imageIndex);
 
 		auto& logicCameraEOs = context->logicCameraEOs;
 		for (const auto& cameraEO : logicCameraEOs) {
@@ -72,7 +74,8 @@ namespace Render {
 			if (!cameraEO->active)
 				return;
 
-			if (cameraEO->name == G_MainCamera) {
+			auto& cameraName = cameraEO->name;
+			if (cameraName == G_MainCamera) {
 				Editor::Global::NewFrame(context);
 			}
 
@@ -81,32 +84,20 @@ namespace Render {
 				camera->projection
 			};
 
-			CmdPoolLogic::Allocate(context, tempCmd, 1);
-			auto& vkCmdBuffer = tempCmd->vkCmdBuffers.back();
+			auto& renderPass = context->renderMainPass;
+			FramebufferLogic::BeginRenderPass(context, imageIndex, vkCmdBuffer, renderPass);
 
-			FramebufferLogic::BeginCmd(context, imageIndex, vkCmdBuffer);
-			{
-				auto& renderPass = camera->renderPass;
-				FramebufferLogic::BeginRenderPass(context,
-					framebuffer, renderPass, imageIndex);
-				{
-					FramebufferLogic::RenderUnits(context,
-						framebuffer, imageIndex,
-						globalUBO);
+			FramebufferLogic::RenderUnits(context,
+				imageIndex, vkCmdBuffer, globalUBO);
 
-					if (cameraEO->name == G_MainCamera) {
-						Editor::Global::RenderDrawData(context,
-							framebuffer, imageIndex);
-					}
-				}
-				FramebufferLogic::EndRenderPass(context,
-					framebuffer, renderPass, imageIndex);
+			if (cameraName == G_MainCamera) {
+				Editor::Global::RenderDrawData(context, imageIndex, vkCmdBuffer);
 			}
 
-			FramebufferLogic::EndCmd(context, imageIndex, vkCmdBuffer);
+			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
 		}
 
-		SwapchainLogic::Submit(context, imageIndex, tempCmd->vkCmdBuffers);
+		SwapchainLogic::EndAndSubmitCmd(context, imageIndex);
 		SwapchainLogic::Present(context, imageIndex);
 	}
 

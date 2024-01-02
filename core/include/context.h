@@ -10,6 +10,7 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/cmd/cmd_comp.h"
+#include "render/vk/pass/pass_comp.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/system.h"
@@ -46,7 +47,6 @@ public:
 	std::vector<std::shared_ptr<Render::Cmd>> renderTempCmds;
 	//render-buffer
 	std::vector<std::shared_ptr<Render::Buffer>> renderTempBuffers;
-	//
 	//render-unit
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 

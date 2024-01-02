@@ -5,7 +5,7 @@
 #include "render/vk/global/physical_device_logic.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/image/image_logic.h"
-#include "render/vk/cmd/cmd_submit_logic.h"
+#include "render/vk/cmd/cmd_logic.h"
 #include "context.h"
 
 namespace Render {

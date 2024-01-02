@@ -3,21 +3,22 @@
 #include <vulkan/vulkan.h>
 #include <memory>
 #include <vector>
+#include "render/vk/image/image_comp.h"
 
 namespace Render {
 
 	struct Pass final {
 
-		VkAttachmentDescription colorAttachmentDescription;
+		std::vector<VkAttachmentDescription> attachmentDescriptions;
+
 		VkAttachmentReference colorAttachmentReference;
-		VkAttachmentDescription depthAttachmentDescription;
 		VkAttachmentReference depthAttachmentReference;
 
 		std::vector<std::shared_ptr<Image>> colorImage2ds;
 		std::vector<std::shared_ptr<Image>> depthImage2ds;
 
-		std::vector<VkClearColorValue> clearColorValues;
-		std::vector<VkClearDepthStencilValue> clearDepthValues;
+		VkClearColorValue clearColorValue;
+		VkClearDepthStencilValue clearDepthValue;
 
 		VkSubpassDescription subpassDescription;
 		VkSubpassDependency subpassDependency;

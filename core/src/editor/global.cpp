@@ -21,9 +21,6 @@ namespace Editor {
 		auto& renderGlobalEO = context->renderGlobalEO;
 		auto global = renderGlobalEO->GetComponent<Render::Global>();
 
-		auto& mainCameraEO = context->GetEO(G_MainCamera);
-		auto camera = mainCameraEO->GetComponent<Logic::Camera>();
-
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 
@@ -51,12 +48,12 @@ namespace Editor {
 		init_info.DescriptorPool = global->descriptorPool;
 		init_info.Subpass = 0;
 		init_info.MinImageCount = global->surfaceCapabilities.minImageCount;
-		init_info.ImageCount = camera->framebuffer->maxFrameInFlight;
+		init_info.ImageCount = global->swapchainImageCount;
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 		init_info.Allocator = nullptr;
 		init_info.CheckVkResultFn = nullptr;
 
-		ImGui_ImplVulkan_Init(&init_info, camera->renderPass->vkRenderPass);
+		ImGui_ImplVulkan_Init(&init_info, context->renderMainPass->renderPass);
 	}
 
 	void Global::NewFrame(Context* context) {
@@ -74,13 +71,11 @@ namespace Editor {
 	}
 
 	void Global::RenderDrawData(Context* context,
-		std::shared_ptr<Render::Framebuffer> framebuffer, uint32_t imageIndex
+		uint32_t imageIndex, VkCommandBuffer& vkCmdBuffer
 	) {
-		auto& cmdBuffer = framebuffer->cmdBuffers[imageIndex];
-
 		ImGui::Render();
 		auto* main_draw_data = ImGui::GetDrawData();
-		ImGui_ImplVulkan_RenderDrawData(main_draw_data, cmdBuffer);
+		ImGui_ImplVulkan_RenderDrawData(main_draw_data, vkCmdBuffer);
 
 		auto& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

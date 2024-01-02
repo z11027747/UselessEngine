@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "render/vk/image/image_comp.h"
+#include "render/vk/cmd/cmd_comp.h"
 
 namespace Render {
 
@@ -22,11 +23,11 @@ namespace Render {
 		VkSurfaceFormatKHR surfaceFormat;
 		VkPresentModeKHR surfacePresentMode;
 		VkSurfaceCapabilitiesKHR surfaceCapabilities;
-		VkFormat depthImageFormat;
 
 		VkSwapchainKHR swapchain;
 		uint32_t swapchainImageCount;
 		std::vector<std::shared_ptr<Image>> swapchainImages;
+		std::shared_ptr<Cmd> swapchainCmd;
 
 		uint32_t currFrame;
 		uint32_t maxFrameInFlight;

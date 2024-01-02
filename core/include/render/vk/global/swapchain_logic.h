@@ -12,7 +12,7 @@ namespace Render {
 		static void Create(Context*);
 		static void Destroy(Context*);
 
-		static void CreateImages(Context*);
+		static void CreateImageViews(Context*);
 
 		static void CreateFences(Context*);
 		static void DestroyFences(Context*);
@@ -22,7 +22,10 @@ namespace Render {
 
 		static void WaitFence(Context*);
 		static uint32_t AcquireImageIndex(Context*);
-		static void Submit(Context*, uint32_t, std::vector<VkCommandBuffer>&);
+
+		static void AllocateCmd(Context*);
+		static VkCommandBuffer& BeginCmd(Context*, uint32_t);
+		static void EndAndSubmitCmd(Context*, uint32_t);
 		static void Present(Context*, uint32_t);
 	};
 

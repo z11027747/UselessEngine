@@ -4,14 +4,11 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
-#include "render/vk/framebuffer/framebuffer_comp.h"
-#include "render/vk/framebuffer/framebuffer_logic.h"
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/cmd/cmd_comp.h"
-#include "render/vk/cmd/cmd_pool_logic.h"
-#include "render/vk/cmd/cmd_submit_logic.h"
+#include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/shader_logic.h"
 #include "render/vk/pass/pass_logic.h"
@@ -65,37 +62,21 @@ namespace Render {
 		}
 	}
 
-	void FramebufferLogic::BeginCmd(Context* context,
-		uint32_t imageIndex, VkCommandBuffer& vkCmdBuffer
-	) {
-		VkCommandBufferBeginInfo beginInfo = {};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-		auto beginRet = vkBeginCommandBuffer(vkCmdBuffer, &beginInfo);
-		CheckRet(beginRet, "vkBeginCommandBuffer");
-	}
-
-	void FramebufferLogic::EndCmd(Context* context,
-		uint32_t imageIndex, VkCommandBuffer& vkCmdBuffer
-	) {
-		auto endRet = vkEndCommandBuffer(vkCmdBuffer);
-		CheckRet(endRet, "vkEndCommandBuffer");
-	}
-
 	void FramebufferLogic::BeginRenderPass(Context* context,
-		uint32_t imageIndex, std::shared_ptr<Pass> pass
+		uint32_t imageIndex, VkCommandBuffer& vkCmdBuffer,
+		std::shared_ptr<Pass> pass
 	) {
 		auto& renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto& surfaceCapabilities = global->surfaceCapabilities;
 
-		auto& frameBuffer = framebuffer->frameBuffers[imageIndex];
-		auto& cmdBuffer = framebuffer->cmdBuffers[imageIndex];
+		auto& renderPass = pass->renderPass;
+		auto& frameBuffer = pass->frameBuffers[imageIndex];
 
-		auto& renderPass = pass->vkRenderPass;
-		auto& clearValues = pass->clearValues;
+		std::array<VkClearValue, 2> clearValues = {};
+		clearValues[0].color = pass->clearColorValue;
+		clearValues[1].depthStencil = pass->clearDepthValue;
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -106,23 +87,18 @@ namespace Render {
 		renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		renderPassBeginInfo.pClearValues = clearValues.data();
 
-		vkCmdBeginRenderPass(cmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(vkCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void FramebufferLogic::EndRenderPass(Context* context,
-		uint32_t imageIndex, std::shared_ptr<Pass> pass
+		uint32_t imageIndex, VkCommandBuffer& vkCmdBuffer
 	) {
-		auto& cmdBuffer = framebuffer->cmdBuffers[imageIndex];
-
-		vkCmdEndRenderPass(cmdBuffer);
+		vkCmdEndRenderPass(vkCmdBuffer);
 	}
 
 	void FramebufferLogic::RenderUnits(Context* context,
-		std::shared_ptr<Framebuffer> framebuffer, uint32_t imageIndex,
-		GlobalUBO& globalUBO
+		uint32_t imageIndex, VkCommandBuffer& vkCmdBuffer, GlobalUBO& globalUBO
 	) {
-		auto& cmdBuffer = framebuffer->cmdBuffers[imageIndex];
-
 		auto& unitEOs = context->renderUnitEOs;
 		for (const auto& unitEO : unitEOs) {
 			if (!unitEO->active)
@@ -135,16 +111,16 @@ namespace Render {
 			auto& pipeline = graphicsPipeline->pipeline;
 			auto& pipelineLayout = graphicsPipeline->pipelineLayout;
 
-			vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+			vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
 			auto& vertexBuffer = unit->vertexBuffer;
 			VkBuffer vertexBuffers[] = { vertexBuffer->vkBuffer };
 			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
+			vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, vertexBuffers, offsets);
 
 			auto& indices = unit->indices;
 			auto& indexBuffer = unit->indexBuffer;
-			vkCmdBindIndexBuffer(cmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
+			vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
 
 			auto& globalDescriptor = graphicsPipeline->globalDescriptors[imageIndex];
 
@@ -156,13 +132,13 @@ namespace Render {
 				unit);
 
 			auto model = Logic::TransformLogic::GetModel(unitEO);
-			vkCmdPushConstants(cmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(model), &model);
+			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(model), &model);
 
 			VkDescriptorSet descriptorSets[] = { globalDescriptor->set, unit->descriptor->set };
-			vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+			vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
 				pipelineLayout, 0, 2, descriptorSets, 0, nullptr);
 
-			vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+			vkCmdDrawIndexed(vkCmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		}
 	}
 

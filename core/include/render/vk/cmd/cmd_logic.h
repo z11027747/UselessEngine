@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <memory>
 #include <vector>
+#include <functional>
 #include "render/vk/cmd/cmd_comp.h"
 
 class Context;
@@ -23,5 +24,14 @@ namespace Render {
 		static void DestroyAllTemps(Context*);
 
 		static void ResetBuffer(VkCommandBuffer&, VkCommandBufferResetFlags);
+	};
+
+	class CmdSubmitLogic final {
+	public:
+		static void Create(Context*, std::function<void(VkCommandBuffer&)> doCmds);
+
+		static void Record(VkCommandBuffer&, std::function<void(VkCommandBuffer&)> doCmds);
+
+		static void UpdateBatch(Context*);
 	};
 }

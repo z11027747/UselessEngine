@@ -2,8 +2,7 @@
 #include <vulkan/vulkan.h>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/cmd/cmd_comp.h"
-#include "render/vk/cmd/cmd_pool_logic.h"
-#include "render/vk/cmd/cmd_submit_logic.h"
+#include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/pipeline/shader_logic.h"
@@ -11,8 +10,6 @@
 #include "render/vk/image/image_comp.h"
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
-#include "render/vk/cmd/cmd_comp.h"
-#include "render/vk/cmd/cmd_submit_logic.h"
 #include "render/unit/unit_comp.h"
 #include "render/unit/unit_logic.h"
 #include "common/res_system.h"

@@ -14,26 +14,22 @@ namespace Render {
 
 		auto pass = std::make_shared<Pass>();
 
-		RenderPassLogic::AddColorAttachment(context, pass);
-		RenderPassLogic::AddDepthAttachment(context, pass);
+		RenderPassLogic::CreateColorAttachment(context, pass);
+		RenderPassLogic::CreateDepthAttachment(context, pass);
+
+		RenderPassLogic::CreatColorImage2dsBySwapchain(context, pass);
+		RenderPassLogic::CreateDepthImage2ds(context, pass);
+
 		RenderPassLogic::AddSubPass(context, pass);
 		RenderPassLogic::Create(context, pass);
 
-		CreateFramebuffers(context, pass, framebuffer);
-		CreateFences(context, pass, framebuffer);
-		CreateSemaphores(context, pass, framebuffer);
-		AllocateCmdBuffers(context, framebuffer);
+		FramebufferLogic::Create(context, pass);
 
 		context->renderMainPass = pass;
 	}
 
 	void PassLogic::DestroyAll(Context* context) {
 
-		RenderPassLogic::Destroy(context, context->renderMainPass);
-
-		DestroyFramebuffers(context, framebuffer);
-		DestroyFences(context, framebuffer);
-		DestroySemaphores(context, framebuffer);
 
 	}
 
