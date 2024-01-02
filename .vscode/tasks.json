@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "label": "make-vc2022",
+            "type": "process",
+            "command": "${config:cmake.cmakePath}",
+            "args": [
+                "--build", "${command:cmake.buildDirectory}",
+                "--config", "${command:cmake.buildType}",
+                "--target", "UselessEngine",      
+                "-j"                                        
+            ],
+            "group": "build",
+            "problemMatcher": ["$msCompile"]               
+        }
+	]
+	
+}

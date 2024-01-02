@@ -1,5 +1,5 @@
 .vs
-.vscode
 .idea
+#.vscode
 out
 build

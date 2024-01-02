@@ -1,0 +1,7 @@
+{
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "files.associations": {
+        "memory": "cpp",
+        "iostream": "cpp"
+    }
+}
