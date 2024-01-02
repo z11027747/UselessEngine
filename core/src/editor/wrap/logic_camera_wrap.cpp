@@ -34,7 +34,7 @@ namespace Editor
 
 		ImGui::Text("Clear Values");
 
-		static float clearColor[4] = {0.4f, 0.7f, 0.0f, 0.5f};
+		static float clearColor[4] = {0.1f, 0.1f, 0.1f, 1.0f};
 		static float clearDepth = 1.0f;
 
 		if (ImGui::ColorEdit4("Color", clearColor))

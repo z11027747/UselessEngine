@@ -9,23 +9,24 @@
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/unit/unit_comp.h"
 #include "render/unit/unit_logic.h"
+#include "render/light/light_comp.h"
 #include "context.h"
 #include "engine_object.h"
 #include "editor/test.h"
 
-namespace Editor {
-
-	void Test::CreateCube(Context* context) {
-		//Cube1
+namespace Editor
+{
+	void Test::CreateCube(Context *context)
+	{
+		// Cube1
 		{
 			auto cubeEO = std::make_shared<EngineObject>();
 			cubeEO->name = "Cube1";
 
 			Logic::TransformLogic::Add(cubeEO,
-				glm::vec3(0.0f, 0.0f, 0.0f),
-				glm::vec3(0.0f, 50.0f, 0.0f),
-				glm::vec3(1.0f, 1.0f, 1.0f)
-			);
+									   glm::vec3(0.0f, 0.0f, 0.0f),
+									   glm::vec3(0.0f, 50.0f, 0.0f),
+									   glm::vec3(1.0f, 1.0f, 1.0f));
 
 			auto cubeUnit = std::make_shared<Render::Unit>();
 
@@ -33,7 +34,7 @@ namespace Editor {
 			std::vector<uint16_t> indices;
 			MakeCube(vertices, indices);
 
-			Render::UnitLogic::SetPipelineName(context, cubeUnit, "test");
+			Render::UnitLogic::SetPipelineName(context, cubeUnit, "bling_phone");
 			Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
 			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
 			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/icon2.png");
@@ -42,16 +43,15 @@ namespace Editor {
 
 			context->AddEO(cubeEO);
 		}
-		//Cube2
+		// Cube2
 		{
 			auto cubeEO = std::make_shared<EngineObject>();
 			cubeEO->name = "Cube2";
 
 			Logic::TransformLogic::Add(cubeEO,
-				glm::vec3(0.0f, -0.5f, 0.0f),
-				glm::vec3(0.0f, 0.0f, 0.0f),
-				glm::vec3(10.0f, 0.1f, 10.0f)
-			);
+									   glm::vec3(0.0f, -0.5f, 0.0f),
+									   glm::vec3(0.0f, 0.0f, 0.0f),
+									   glm::vec3(10.0f, 0.1f, 10.0f));
 
 			auto cubeUnit = std::make_shared<Render::Unit>();
 
@@ -59,7 +59,7 @@ namespace Editor {
 			std::vector<uint16_t> indices;
 			MakeCube(vertices, indices);
 
-			Render::UnitLogic::SetPipelineName(context, cubeUnit, "test");
+			Render::UnitLogic::SetPipelineName(context, cubeUnit, "bling_phone");
 			Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
 			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
 			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/Wall03_Diffuse.jpg");
@@ -68,18 +68,17 @@ namespace Editor {
 
 			context->AddEO(cubeEO);
 		}
-
 	}
 
-	void Test::CreateSkybox(Context* context) {
+	void Test::CreateSkybox(Context *context)
+	{
 		auto skyboxEO = std::make_shared<EngineObject>();
 		skyboxEO->name = "Skybox";
 
 		Logic::TransformLogic::Add(skyboxEO,
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(20.0f, 20.0f, 20.0f)
-		);
+								   glm::vec3(0.0f, 0.0f, 0.0f),
+								   glm::vec3(0.0f, 0.0f, 0.0f),
+								   glm::vec3(20.0f, 20.0f, 20.0f));
 
 		auto skyboxUnit = std::make_shared<Render::Unit>();
 
@@ -97,8 +96,7 @@ namespace Editor {
 			"resource/texture/skybox2/sky_up_lnitial.png",
 			"resource/texture/skybox2/sky_down_lnitial.png",
 			"resource/texture/skybox2/sky_front_lnitial.png",
-			"resource/texture/skybox2/sky_back_lnitial.png"
-		};
+			"resource/texture/skybox2/sky_back_lnitial.png"};
 		Render::UnitLogic::SetImageCube(context, skyboxUnit, names);
 
 		skyboxEO->AddComponent<Render::Unit>(skyboxUnit);
@@ -106,51 +104,55 @@ namespace Editor {
 		context->AddEO(skyboxEO);
 	}
 
-	void Test::MakeTriangle(
-		std::vector<Render::Vertex>& vertices,
-		std::vector<uint16_t>& indices) {
+	void Test::CreateLight(Context *context)
+	{
+		auto directionLightEO = std::make_shared<EngineObject>();
+		directionLightEO->name = "DirectionLight";
 
-		vertices = {
-			{{0.0f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{0.5f, 0.5f , 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}
-		};
+		Logic::TransformLogic::Add(directionLightEO,
+								   glm::vec3(0.0f, 3.0f, 0.0f),
+								   glm::vec3(50.0f, -30.0f, 0.0f),
+								   glm::vec3(1.0f, 1.0f, 1.0f));
 
-		indices = {
-			0, 1, 2
-		};
+		auto directionLight = std::make_shared<Render::DirectionLight>();
+		directionLight->color = glm::vec3(1.0f, 0.9568627f, 0.8392157f);
+		directionLight->params = glm::vec4(0.4f, 10.0f, 0.5f, 0.0f);
+
+		directionLightEO->AddComponent(directionLight);
+
+		context->renderLightEOs.push_back(directionLightEO);
+		context->AddEO(directionLightEO);
 	}
 
 	void Test::MakeCube(
-		std::vector<Render::Vertex>& vertices,
-		std::vector<uint16_t>& indices) {
-
+		std::vector<Render::Vertex> &vertices,
+		std::vector<uint16_t> &indices)
+	{
 		vertices = {
-			{{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}
-		};
+			{{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+			{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+			{{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+			{{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+			{{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+			{{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+			{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+			{{0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+			{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+			{{0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5f, -0.5f, 0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+			{{-0.5f, -0.5f, 0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+			{{-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+			{{-0.5f, -0.5f, 0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{-0.5f, 0.5f, 0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+			{{-0.5f, 0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+			{{-0.5f, -0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+			{{0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+			{{0.5f, 0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+			{{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+			{{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}};
 
 		indices = {
 			0, 2, 3,
@@ -164,29 +166,26 @@ namespace Editor {
 			16, 17, 18,
 			16, 18, 19,
 			20, 21, 22,
-			20, 22, 23
-		};
-
+			20, 22, 23};
 	}
 
 	void Test::MakeSkybox(
-		std::vector<Render::Vertex>& vertices,
-		std::vector<uint16_t>& indices
-	) {
+		std::vector<Render::Vertex> &vertices,
+		std::vector<uint16_t> &indices)
+	{
 		vertices = {
-			{{-1.0f, 1.0f, -1.0f},    {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ -1.0f, -1.0f, -1.0f }, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ 1.0f, -1.0f, -1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ 1.0f,  1.0f, -1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ -1.0f, -1.0f,  1.0f }, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ -1.0f,  1.0f,  1.0f }, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ 1.0f, -1.0f, -1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ 1.0f, -1.0f,  1.0f } , {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ 1.0f,  1.0f,  1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ 1.0f,  1.0f, -1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ 1.0f,  1.0f,  1.0f } , {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{ 1.0f, -1.0f,  1.0f },  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-		};
+			Render::Vertex{{-1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{-1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{-1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			Render::Vertex{{1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}};
 
 		indices = {
 			0, 1, 2,
@@ -200,8 +199,6 @@ namespace Editor {
 			0, 3, 10,
 			10, 5, 0,
 			1, 4, 2,
-			2, 4, 11
-		};
-
+			2, 4, 11};
 	}
 }

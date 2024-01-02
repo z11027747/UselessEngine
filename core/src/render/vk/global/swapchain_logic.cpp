@@ -10,7 +10,6 @@
 
 namespace Render
 {
-
 	void SwapchainLogic::Create(Context *context)
 	{
 		auto &renderGlobalEO = context->renderGlobalEO;

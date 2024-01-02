@@ -9,7 +9,7 @@
                 "--build", "${command:cmake.buildDirectory}",
                 "--config", "${command:cmake.buildType}",
                 "--target", "UselessEngine",      
-                "-j"                                        
+                "-j",               
             ],
             "group": "build",
             "problemMatcher": ["$msCompile"]               

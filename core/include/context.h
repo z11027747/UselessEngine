@@ -49,6 +49,8 @@ public:
 	std::vector<std::shared_ptr<Render::Cmd>> renderTempCmds;
 	// render-buffer
 	std::vector<std::shared_ptr<Render::Buffer>> renderTempBuffers;
+	// render-light
+	std::vector<std::shared_ptr<EngineObject>> renderLightEOs;
 	// render-unit
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 
@@ -83,10 +85,10 @@ public:
 	{
 		Render::System::Create(this);
 		Logic::System::Create(this);
-		// Render::System::CreatePipelines(this);
 
 		// Test
 		Editor::Test::CreateSkybox(this);
+		Editor::Test::CreateLight(this);
 		Editor::Test::CreateCube(this);
 	}
 

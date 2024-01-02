@@ -90,7 +90,7 @@ namespace Render
 			auto global = renderGlobalEO->GetComponent<Global>();
 			auto &logicalDevice = global->logicalDevice;
 
-			auto size = sizeof(value);
+			auto size = sizeof(T);
 
 			void *data;
 			auto mapRet = vkMapMemory(logicalDevice, buffer->vkDeviceMemory, 0, size, 0, &data);
@@ -111,7 +111,7 @@ namespace Render
 			auto global = renderGlobalEO->GetComponent<Global>();
 			auto &logicalDevice = global->logicalDevice;
 
-			auto size = static_cast<size_t>(sizeof(values[0]) * values.size());
+			auto size = static_cast<size_t>(sizeof(T) * values.size());
 
 			void *data;
 			auto mapRet = vkMapMemory(logicalDevice, buffer->vkDeviceMemory, 0, size, 0, &data);

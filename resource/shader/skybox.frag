@@ -1,14 +1,18 @@
 #version 450
+layout(set = 0, binding = 0) uniform GlobalUBO {
+    vec3 cameraPos;
+    mat4 cameraView;
+    mat4 cameraProjection;
+    vec3 directionLightPos;
+    vec3 directionLightCol;
+} globalUBO;
 
-//uniform
 layout(set = 1, binding = 0) uniform samplerCube samplerCubeMap;
 
-//in
 layout(location = 0) in vec3 inUVW;
 
-//out
-layout(location = 0) out vec4 outFragColor;
+layout(location = 0) out vec4 outColor;
 
 void main() {
-	outFragColor = texture(samplerCubeMap, inUVW);
+	outColor = texture(samplerCubeMap, inUVW);
 }

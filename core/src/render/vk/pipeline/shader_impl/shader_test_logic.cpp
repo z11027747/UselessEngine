@@ -21,11 +21,9 @@
 
 namespace Render
 {
-
 	void ShaderTestLogic::CreateVertexAttrDescriptions(Context *context,
 													   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-
 		VkVertexInputAttributeDescription positionOSDescription0 = {};
 		positionOSDescription0.location = 0;
 		positionOSDescription0.binding = 0;
@@ -48,8 +46,7 @@ namespace Render
 		stageInfo.vertexInputAttributeDescriptions = {
 			positionOSDescription0,
 			colorDescription1,
-			uv0Description2,
-		};
+			uv0Description2};
 	}
 
 	void ShaderTestLogic::CreateDescriptorSetLayout(Context *context,

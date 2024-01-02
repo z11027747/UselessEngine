@@ -132,7 +132,7 @@ namespace Render {
 				unit);
 
 			auto model = Logic::TransformLogic::GetModel(unitEO);
-			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(model), &model);
+			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 
 			VkDescriptorSet descriptorSets[] = { globalDescriptor->set, unit->descriptor->set };
 			vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,

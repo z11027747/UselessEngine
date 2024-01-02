@@ -4,25 +4,23 @@
 
 class Context;
 
-namespace Editor {
+namespace Editor
+{
 
-	class Test final {
+	class Test final
+	{
 	public:
-
-		static void CreateCube(Context* );
-		static void CreateSkybox(Context*);
-
-		static void MakeTriangle(
-			std::vector<Render::Vertex>& vertices,
-			std::vector<uint16_t>& indices);
+		static void CreateCube(Context *);
+		static void CreateSkybox(Context *);
+		static void CreateLight(Context *);
 
 		static void MakeCube(
-			std::vector<Render::Vertex>& vertices,
-			std::vector<uint16_t>& indices);
+			std::vector<Render::Vertex> &vertices,
+			std::vector<uint16_t> &indices);
 
 		static void MakeSkybox(
-			std::vector<Render::Vertex>& vertices,
-			std::vector<uint16_t>& indices);
+			std::vector<Render::Vertex> &vertices,
+			std::vector<uint16_t> &indices);
 	};
 
 }

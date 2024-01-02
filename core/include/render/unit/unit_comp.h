@@ -7,24 +7,28 @@
 #include "render/vk/image/image_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 
-namespace Render {
-
-	struct Vertex final {
-		glm::vec3 positionOS;
-		glm::vec3 color;
+namespace Render
+{
+	struct Vertex final
+	{
+		alignas(16) glm::vec3 positionOS;
+		alignas(16) glm::vec3 normalOS;
+		alignas(16) glm::vec3 color;
 		glm::vec2 uv0;
 	};
 
-	struct Unit final {
+	struct Unit final
+	{
+		// shader
 		std::string pipelineName;
 
+		// mesh
 		std::vector<Vertex> vertices;
 		std::vector<uint16_t> indices;
-
 		std::shared_ptr<Buffer> vertexBuffer;
 		std::shared_ptr<Buffer> indexBuffer;
 
+		// material
 		std::shared_ptr<Descriptor> descriptor;
 	};
-
 }
