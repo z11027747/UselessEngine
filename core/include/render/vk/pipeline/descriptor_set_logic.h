@@ -6,40 +6,39 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "context.h"
 
-//class Context;
+namespace Render
+{
 
-namespace Render {
-
-	class DescriptorSetLogic final {
+	class DescriptorSetLogic final
+	{
 	public:
+		static VkDescriptorSet AllocateOne(Context *,
+										   VkDescriptorSetLayout);
 
-		static VkDescriptorSet AllocateOne(Context*,
-			VkDescriptorSetLayout);
+		static std::vector<VkDescriptorSet> Allocate(Context *,
+													 VkDescriptorSetLayout, uint32_t);
 
-		static std::vector<VkDescriptorSet> Allocate(Context*,
-			VkDescriptorSetLayout);
-
-		static void Update(Context* context,
-			std::function<void(std::vector<VkWriteDescriptorSet>&)> func
-		) {
-			auto& renderGlobalEO = context->renderGlobalEO;
+		static void Update(Context *context,
+						   std::function<void(std::vector<VkWriteDescriptorSet> &)> func)
+		{
+			auto &renderGlobalEO = context->renderGlobalEO;
 
 			auto global = renderGlobalEO->GetComponent<Global>();
-			auto& logicalDevice = global->logicalDevice;
+			auto &logicalDevice = global->logicalDevice;
 
 			std::vector<VkWriteDescriptorSet> writes;
 
 			func(writes);
 
 			vkUpdateDescriptorSets(logicalDevice,
-				static_cast<uint32_t>(writes.size()), writes.data(),
-				0, nullptr);
+								   static_cast<uint32_t>(writes.size()), writes.data(),
+								   0, nullptr);
 		}
 
-		static void WriteBuffer(Context*,
-			std::vector<VkWriteDescriptorSet>& writes,
-			std::shared_ptr<Descriptor> descriptor
-		) {
+		static void WriteBuffer(Context *,
+								std::vector<VkWriteDescriptorSet> &writes,
+								std::shared_ptr<Descriptor> descriptor)
+		{
 			VkWriteDescriptorSet write = {};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			write.dstSet = descriptor->set;
@@ -52,10 +51,10 @@ namespace Render {
 			writes.push_back(write);
 		}
 
-		static void WriteImage(Context*,
-			std::vector<VkWriteDescriptorSet>& writes,
-			std::shared_ptr<Descriptor> descriptor
-		) {
+		static void WriteImage(Context *,
+							   std::vector<VkWriteDescriptorSet> &writes,
+							   std::shared_ptr<Descriptor> descriptor)
+		{
 			VkWriteDescriptorSet write = {};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			write.dstSet = descriptor->set;
@@ -68,6 +67,5 @@ namespace Render {
 			writes.push_back(write);
 		}
 	};
-
 
 }

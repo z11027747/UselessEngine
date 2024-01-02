@@ -8,15 +8,16 @@
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "context.h"
 
-namespace Render {
+namespace Render
+{
 
-	VkDescriptorSet DescriptorSetLogic::AllocateOne(Context* context
-		, VkDescriptorSetLayout descriptorSetLayout) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	VkDescriptorSet DescriptorSetLogic::AllocateOne(Context *context, VkDescriptorSetLayout descriptorSetLayout)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& descriptorPool = global->descriptorPool;
+		auto &logicalDevice = global->logicalDevice;
+		auto &descriptorPool = global->descriptorPool;
 
 		VkDescriptorSetAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -31,29 +32,28 @@ namespace Render {
 		return descriptorSet;
 	}
 
-	std::vector<VkDescriptorSet> DescriptorSetLogic::Allocate(Context* context,
-		VkDescriptorSetLayout descriptorSetLayout) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	std::vector<VkDescriptorSet> DescriptorSetLogic::Allocate(Context *context,
+															  VkDescriptorSetLayout descriptorSetLayout, uint32_t count)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto swapchainImageCount = global->swapchainImageCount;
-		auto& descriptorPool = global->descriptorPool;
+		auto &logicalDevice = global->logicalDevice;
+		auto &descriptorPool = global->descriptorPool;
 
 		VkDescriptorSetAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocateInfo.descriptorPool = descriptorPool;
-		allocateInfo.descriptorSetCount = swapchainImageCount;
+		allocateInfo.descriptorSetCount = count;
 
-		std::vector<VkDescriptorSetLayout> layouts(swapchainImageCount, descriptorSetLayout);
+		std::vector<VkDescriptorSetLayout> layouts(count, descriptorSetLayout);
 		allocateInfo.pSetLayouts = layouts.data();
 
-		std::vector<VkDescriptorSet> descriptorSets(swapchainImageCount);
+		std::vector<VkDescriptorSet> descriptorSets(count);
 		auto ret = vkAllocateDescriptorSets(logicalDevice, &allocateInfo, descriptorSets.data());
 		CheckRet(ret, "vkAllocateDescriptorSets");
 
 		return descriptorSets;
-
 	}
 
 }

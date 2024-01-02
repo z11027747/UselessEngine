@@ -6,17 +6,15 @@
 
 class Context;
 
-namespace Render {
-
-	class DescriptorSetLayoutLogic final {
+namespace Render
+{
+	class DescriptorSetLayoutLogic final
+	{
 	public:
+		static VkDescriptorSetLayout Create(Context *,
+											std::vector<VkDescriptorSetLayoutBinding> &);
 
-		static VkDescriptorSetLayout Create(Context*,
-			std::vector<VkDescriptorSetLayoutBinding>&);
-
-		static void Destroy(Context*, VkDescriptorSetLayout);
-
+		static void Destroy(Context *, VkDescriptorSetLayout);
 	};
-
 
 }

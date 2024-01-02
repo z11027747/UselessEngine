@@ -4,8 +4,8 @@
 #include <array>
 #include <memory>
 #include <string>
-#include "render/vk/pipeline/pipeline_comp.h";
-#include "render/unit/unit_comp.h";
+#include "render/vk/pipeline/pipeline_comp.h"
+#include "render/unit/unit_comp.h"
 
 class Context;
 

@@ -8,13 +8,14 @@
 #include "context.h"
 #include "engine_object.h"
 
-namespace Render {
-
-	void DescriptorPoolLogic::Create(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+namespace Render
+{
+	void DescriptorPoolLogic::Create(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 
 		VkDescriptorPoolCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -35,12 +36,13 @@ namespace Render {
 		global->descriptorPool = vkDescriptorPool;
 	}
 
-	void DescriptorPoolLogic::Destroy(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void DescriptorPoolLogic::Destroy(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& descriptorPool = global->descriptorPool;
+		auto &logicalDevice = global->logicalDevice;
+		auto &descriptorPool = global->descriptorPool;
 		vkDestroyDescriptorPool(logicalDevice, descriptorPool, nullptr);
 	}
 

@@ -1,16 +1,14 @@
-﻿#pragma once
+#pragma once
 
 class Context;
 
-namespace Render {
-
-	class System final {
+namespace Render
+{
+	class System final
+	{
 	public:
-
-		static void Create(Context*);
-		static void Update(Context*);
-		static void Destroy(Context*);
-
+		static void Create(Context *);
+		static void Update(Context *);
+		static void Destroy(Context *);
 	};
-
 }

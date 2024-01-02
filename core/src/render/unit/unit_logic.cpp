@@ -49,7 +49,7 @@ namespace Render {
 			vertexSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-		BufferLogic::SetVector(context,
+		BufferSetLogic::SetVector(context,
 			unit->vertexBuffer,
 			unit->vertices);
 	}
@@ -65,7 +65,7 @@ namespace Render {
 			indexSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-		BufferLogic::SetVector(context,
+		BufferSetLogic::SetVector(context,
 			unit->indexBuffer,
 			unit->indices);
 	}
@@ -85,7 +85,7 @@ namespace Render {
 			imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-		BufferLogic::SetPtr(context,
+		BufferSetLogic::SetPtr(context,
 			tempBuffer,
 			data, static_cast<size_t>(imageSize));
 
@@ -146,7 +146,7 @@ namespace Render {
 			imageCubeSizeTotal, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-		BufferLogic::SetPtrVector(context,
+		BufferSetLogic::SetPtrVector(context,
 			tempBuffer,
 			datas, imageCubeSizeOne);
 

@@ -6,11 +6,13 @@
 #include <typeindex>
 #include <string>
 
-class EngineObject final {
+class EngineObject final
+{
 public:
 	inline static uint32_t beginId = 0;
 
-	EngineObject() {
+	EngineObject()
+	{
 		id = beginId++;
 		name = "";
 		active = true;
@@ -23,20 +25,24 @@ public:
 	std::unordered_map<std::type_index, std::shared_ptr<void>> componentMap;
 
 	template <typename T>
-	bool HasComponent() const {
+	bool HasComponent() const
+	{
 		auto it = componentMap.find(typeid(T));
 		return (it != componentMap.end());
 	}
 
 	template <typename T>
-	void AddComponent(std::shared_ptr<T> comp) {
+	void AddComponent(std::shared_ptr<T> comp)
+	{
 		componentMap[typeid(T)] = comp;
 	}
 
 	template <typename T>
-	std::shared_ptr<T> GetComponent() const {
+	std::shared_ptr<T> GetComponent() const
+	{
 		auto it = componentMap.find(typeid(T));
-		if (it != componentMap.end()) {
+		if (it != componentMap.end())
+		{
 			return std::static_pointer_cast<T>(it->second);
 		}
 
@@ -44,14 +50,17 @@ public:
 	}
 
 	template <typename T>
-	void RemoveComponent() {
+	void RemoveComponent()
+	{
 		auto it = componentMap.find(typeid(T));
-		if (it != componentMap.end()) {
+		if (it != componentMap.end())
+		{
 			componentMap.erase(it);
 		}
 	}
 
-	void RemoveAllComponents() {
+	void RemoveAllComponents()
+	{
 		componentMap.clear();
 	}
 };

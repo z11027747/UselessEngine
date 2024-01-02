@@ -9,9 +9,9 @@
 #include "render/vk/global/descriptor_pool_logic.h"
 #include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/buffer/buffer_logic.h"
-#include "render/vk/pipeline/pipeline_system.h"
 #include "render/vk/pass/pass_comp.h"
 #include "render/vk/pass/pass_logic.h"
+#include "render/vk/pipeline/pipeline_logic.h"
 #include "render/unit/unit_logic.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
@@ -35,6 +35,7 @@ namespace Render {
 		if (enabledDebug) {
 			InstanceLogic::CreateDebugCallback(context);
 		}
+		
 		SurfaceLogic::Create(context);
 		PhysicalDeviceLogic::Find(context);
 		PhysicalDeviceLogic::GetInfo(context);
@@ -106,13 +107,23 @@ namespace Render {
 		LogicalDeviceLogic::WaitIdle(context);
 
 		Editor::Global::Destroy(context);
-		//PipelineSystem::DestroyAll(context);
-		DescriptorPoolLogic::Destroy(context);
-		SwapchainLogic::Destroy(context);
-		CmdPoolLogic::Destroy(context);
+
 		UnitLogic::Destroy(context);
+		
+		PipelineLogic::DestroyAll(context);
+		PassLogic::DestroyAll(context);
+
+		SwapchainLogic::DestroyImageViews(context);
+		SwapchainLogic::DestroySemaphores(context);
+		SwapchainLogic::DestroyFences(context);
+		SwapchainLogic::Destroy(context);
+
+		DescriptorPoolLogic::Destroy(context);
+		CmdPoolLogic::Destroy(context);
+
 		LogicalDeviceLogic::Destroy(context);
 		SurfaceLogic::Destroy(context);
+
 		if (enabledDebug) {
 			InstanceLogic::DestroyDebugCallback(context);
 		}

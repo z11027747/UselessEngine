@@ -1,4 +1,4 @@
-﻿
+
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
@@ -8,17 +8,19 @@
 #include "render/vk/cmd/cmd_logic.h"
 #include "context.h"
 
-namespace Render {
+namespace Render
+{
 
-	void SwapchainLogic::Create(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::Create(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& surface = global->surface;
-		auto& surfaceCapabilities = global->surfaceCapabilities;
+		auto &logicalDevice = global->logicalDevice;
+		auto &surface = global->surface;
+		auto &surfaceCapabilities = global->surfaceCapabilities;
 		auto surfaceFormat = global->surfaceFormat;
-		auto& surfacePresentMode = global->surfacePresentMode;
+		auto &surfacePresentMode = global->surfacePresentMode;
 
 		VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
 		swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -43,13 +45,14 @@ namespace Render {
 		global->swapchain = vkwapchain;
 	}
 
-	void SwapchainLogic::CreateImageViews(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::CreateImageViews(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& swapchain = global->swapchain;
-		auto& currentExtent = global->surfaceCapabilities.currentExtent;
+		auto &logicalDevice = global->logicalDevice;
+		auto &swapchain = global->swapchain;
+		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
 		uint32_t swapchainImageCount;
 		vkGetSwapchainImagesKHR(logicalDevice, swapchain, &swapchainImageCount, nullptr);
@@ -57,10 +60,11 @@ namespace Render {
 		std::vector<VkImage> swapchainImages(swapchainImageCount);
 		vkGetSwapchainImagesKHR(logicalDevice, swapchain, &swapchainImageCount, swapchainImages.data());
 
-		for (auto i = 0u; i < swapchainImageCount; i++) {
+		for (auto i = 0u; i < swapchainImageCount; i++)
+		{
 			auto swapchainImage2d = std::make_shared<Image>();
 			swapchainImage2d->fomat = global->surfaceFormat.format;
-			swapchainImage2d->extent = { currentExtent.width, currentExtent.height, 0 };
+			swapchainImage2d->extent = {currentExtent.width, currentExtent.height, 0};
 			swapchainImage2d->aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 			swapchainImage2d->layerCount = 1;
 			swapchainImage2d->layout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
@@ -68,39 +72,50 @@ namespace Render {
 			swapchainImage2d->vkImage = swapchainImages[i];
 
 			ImageLogic::CreateView(context,
-				swapchainImage2d,
-				VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+								   swapchainImage2d,
+								   VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 
 			global->swapchainImages.push_back(std::move(swapchainImage2d));
-
 		}
 		global->swapchainImageCount = swapchainImageCount;
 	}
 
-	void SwapchainLogic::Destroy(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::DestroyImageViews(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& swapchainImages = global->swapchainImages;
+		auto &logicalDevice = global->logicalDevice;
+		auto &swapchainImages = global->swapchainImages;
 
-		for (auto& swapchainImage : swapchainImages) {
+		for (auto &swapchainImage : swapchainImages)
+		{
 			ImageLogic::DestroyView(context,
-				swapchainImage);
+									swapchainImage);
 		}
+	}
 
-		auto& swapchain = global->swapchain;
+	void SwapchainLogic::Destroy(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &logicalDevice = global->logicalDevice;
+
+		auto &swapchain = global->swapchain;
 		vkDestroySwapchainKHR(logicalDevice, swapchain, nullptr);
 	}
 
-	void SwapchainLogic::CreateFences(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::CreateFences(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		auto swapchainImageCount = global->swapchainImageCount;
 
-		for (auto i = 0u; i < swapchainImageCount; i++) {
+		for (auto i = 0u; i < swapchainImageCount; i++)
+		{
 			VkFenceCreateInfo createInfo = {};
 			createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 			createInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
@@ -115,26 +130,30 @@ namespace Render {
 		global->maxFrameInFlight = swapchainImageCount;
 	}
 
-	void SwapchainLogic::DestroyFences(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::DestroyFences(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 
-		auto& inFlightFences = global->inFlightFences;
-		for (const auto& inFlightFence : inFlightFences) {
+		auto &inFlightFences = global->inFlightFences;
+		for (const auto &inFlightFence : inFlightFences)
+		{
 			vkDestroyFence(logicalDevice, inFlightFence, nullptr);
 		}
 	}
 
-	void SwapchainLogic::CreateSemaphores(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::CreateSemaphores(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		auto swapchainImageCount = global->swapchainImageCount;
 
-		for (auto i = 0u; i < swapchainImageCount; i++) {
+		for (auto i = 0u; i < swapchainImageCount; i++)
+		{
 			VkSemaphoreCreateInfo createInfo = {};
 			createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 			createInfo.flags = 0;
@@ -152,29 +171,32 @@ namespace Render {
 		}
 	}
 
-	void SwapchainLogic::DestroySemaphores(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::DestroySemaphores(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		auto maxFrameInFlight = global->maxFrameInFlight;
 
-		auto& imageAvailableSemaphores = global->imageAvailableSemaphores;
-		auto& renderFinishedSemaphores = global->renderFinishedSemaphores;
+		auto &imageAvailableSemaphores = global->imageAvailableSemaphores;
+		auto &renderFinishedSemaphores = global->renderFinishedSemaphores;
 
-		for (auto i = 0u; i < maxFrameInFlight; i++) {
+		for (auto i = 0u; i < maxFrameInFlight; i++)
+		{
 			vkDestroySemaphore(logicalDevice, imageAvailableSemaphores[i], nullptr);
 			vkDestroySemaphore(logicalDevice, renderFinishedSemaphores[i], nullptr);
 		}
 	}
 
-	void SwapchainLogic::WaitFence(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::WaitFence(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		auto currFrame = global->currFrame;
-		auto& inFlightFence = global->inFlightFences[currFrame];
+		auto &inFlightFence = global->inFlightFences[currFrame];
 
 		auto waitFenceRet = vkWaitForFences(logicalDevice, 1, &inFlightFence, true, UINT64_MAX);
 		CheckRet(waitFenceRet, "vkWaitForFences");
@@ -182,40 +204,43 @@ namespace Render {
 		vkResetFences(logicalDevice, 1, &inFlightFence);
 	}
 
-	uint32_t SwapchainLogic::AcquireImageIndex(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	uint32_t SwapchainLogic::AcquireImageIndex(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& swapchain = global->swapchain;
+		auto &logicalDevice = global->logicalDevice;
+		auto &swapchain = global->swapchain;
 		auto currFrame = global->currFrame;
-		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
+		auto &imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
 
 		uint32_t imageIndex;
 		auto acquireNextRet = vkAcquireNextImageKHR(logicalDevice, swapchain, UINT64_MAX,
-			imageAvailableSemaphore, nullptr, &imageIndex);
+													imageAvailableSemaphore, nullptr, &imageIndex);
 		CheckRet(acquireNextRet, "vkAcquireNextImageKHR");
 
 		return imageIndex;
 	}
 
-	void SwapchainLogic::AllocateCmd(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::AllocateCmd(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto swapchainImageCount = global->swapchainImageCount;
 
 		global->swapchainCmd = CmdPoolLogic::CreateCmd(context);
 		CmdPoolLogic::Allocate(context,
-			global->swapchainCmd, swapchainImageCount);
+							   global->swapchainCmd, swapchainImageCount);
 	}
 
-	VkCommandBuffer& SwapchainLogic::BeginCmd(Context* context, uint32_t imageIndex) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	VkCommandBuffer &SwapchainLogic::BeginCmd(Context *context, uint32_t imageIndex)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& swapchainCmd = global->swapchainCmd;
-		auto& vkCmdBuffer = swapchainCmd->vkCmdBuffers[imageIndex];
+		auto &swapchainCmd = global->swapchainCmd;
+		auto &vkCmdBuffer = swapchainCmd->vkCmdBuffers[imageIndex];
 
 		vkResetCommandBuffer(vkCmdBuffer, 0);
 
@@ -229,19 +254,20 @@ namespace Render {
 		return vkCmdBuffer;
 	}
 
-	void SwapchainLogic::EndAndSubmitCmd(Context* context, uint32_t imageIndex) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::EndAndSubmitCmd(Context *context, uint32_t imageIndex)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalQueue = global->logicalQueue;
+		auto &logicalQueue = global->logicalQueue;
 
-		auto& swapchainCmd = global->swapchainCmd;
-		auto& vkCmdBuffer = swapchainCmd->vkCmdBuffers[imageIndex];
+		auto &swapchainCmd = global->swapchainCmd;
+		auto &vkCmdBuffer = swapchainCmd->vkCmdBuffers[imageIndex];
 
 		auto currFrame = global->currFrame;
-		auto& inFlightFence = global->inFlightFences[currFrame];
-		auto& imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
-		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
+		auto &inFlightFence = global->inFlightFences[currFrame];
+		auto &imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
+		auto &renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
 
 		auto endRet = vkEndCommandBuffer(vkCmdBuffer);
 		CheckRet(endRet, "vkEndCommandBuffer");
@@ -250,7 +276,7 @@ namespace Render {
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.waitSemaphoreCount = 1;
 		submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
-		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
 		submitInfo.pWaitDstStageMask = waitStages;
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &vkCmdBuffer;
@@ -261,15 +287,16 @@ namespace Render {
 		CheckRet(submitRet, "vkQueueSubmit");
 	}
 
-	void SwapchainLogic::Present(Context* context, uint32_t imageIndex) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SwapchainLogic::Present(Context *context, uint32_t imageIndex)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalQueue = global->logicalQueue;
-		auto& swapchain = global->swapchain;
-		auto& currFrame = global->currFrame;
+		auto &logicalQueue = global->logicalQueue;
+		auto &swapchain = global->swapchain;
+		auto &currFrame = global->currFrame;
 		auto maxFrameInFlight = global->maxFrameInFlight;
-		auto& renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
+		auto &renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
 
 		VkPresentInfoKHR presentInfo = {};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

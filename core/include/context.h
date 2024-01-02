@@ -20,84 +20,89 @@
 const std::string G_MainCamera = "MainCamera";
 const std::string G_ShadowCamera = "ShadowCamera";
 
-class Context final {
+class Context final
+{
 public:
-	GLFWwindow* window;
+	GLFWwindow *window;
 	float aspect;
 
-	Context(GLFWwindow* w, float asp) {
+	Context(GLFWwindow *w, float asp)
+	{
 		window = w;
 		aspect = asp;
 		currTime = 0.0f;
 		deltaTime = 0.0f;
 	}
 
-	//time
+	// time
 	float currTime;
 	float deltaTime;
 
-	//render-global
+	// render-global
 	std::shared_ptr<EngineObject> renderGlobalEO;
-	//render-pass
+	// render-pass
 	std::shared_ptr<Render::Pass> renderMainPass;
-	//render-pipelines
+	// render-pipelines
 	std::unordered_map<std::string, std::shared_ptr<Render::GraphicsPipeline>> renderPipelines;
-	//render-cmd
+	// render-cmd
 	std::shared_ptr<Render::Cmd> renderBatchCmd;
 	std::vector<std::shared_ptr<Render::Cmd>> renderTempCmds;
-	//render-buffer
+	// render-buffer
 	std::vector<std::shared_ptr<Render::Buffer>> renderTempBuffers;
-	//render-unit
+	// render-unit
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 
-	//logic-camera
+	// logic-camera
 	std::vector<std::shared_ptr<EngineObject>> logicCameraEOs;
 
-	//all-engineObject
+	// all-engineObject
 	std::vector<std::shared_ptr<EngineObject>> allEOs;
 	std::unordered_map<std::string, std::shared_ptr<EngineObject>> allEOMap;
 
-	void AddEO(std::shared_ptr<EngineObject> eo) {
+	void AddEO(std::shared_ptr<EngineObject> eo)
+	{
 		allEOs.push_back(eo);
-		allEOMap.insert({ eo->name, eo });
+		allEOMap.insert({eo->name, eo});
 
-		if (eo->HasComponent<Render::Unit>()) {
+		if (eo->HasComponent<Render::Unit>())
+		{
 			renderUnitEOs.push_back(eo);
 		}
-		if (eo->HasComponent<Logic::Camera>()) {
+		if (eo->HasComponent<Logic::Camera>())
+		{
 			logicCameraEOs.push_back(eo);
 		}
 	}
 
-	std::shared_ptr<EngineObject> GetEO(const std::string& name) {
+	std::shared_ptr<EngineObject> GetEO(const std::string &name)
+	{
 		return allEOMap[name];
 	}
 
-	void Create() {
-
+	void Create()
+	{
 		Render::System::Create(this);
 		Logic::System::Create(this);
-		//Render::System::CreatePipelines(this);
+		// Render::System::CreatePipelines(this);
 
-		//Test
+		// Test
 		Editor::Test::CreateSkybox(this);
 		Editor::Test::CreateCube(this);
 	}
 
-	void Update() {
-
+	void Update()
+	{
 		Render::System::Update(this);
 		Logic::System::Update(this);
 	}
 
-	void Destroy() {
-
+	void Destroy()
+	{
 		Render::System::Destroy(this);
 		Logic::System::Destroy(this);
 	}
 
-	void OnSizeCallback() {
-
+	void OnSizeCallback()
+	{
 	}
-
 };

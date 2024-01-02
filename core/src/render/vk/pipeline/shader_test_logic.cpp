@@ -19,11 +19,13 @@
 #include "context.h"
 #include "engine_object.h"
 
-namespace Render {
+namespace Render
+{
 
-	void ShaderTestLogic::CreateVertexAttrDescriptions(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
+	void ShaderTestLogic::CreateVertexAttrDescriptions(Context *context,
+													   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+
 		VkVertexInputAttributeDescription positionOSDescription0 = {};
 		positionOSDescription0.location = 0;
 		positionOSDescription0.binding = 0;
@@ -42,16 +44,17 @@ namespace Render {
 		uv0Description2.format = VK_FORMAT_R32G32_SFLOAT;
 		uv0Description2.offset = offsetof(Render::Vertex, uv0);
 
-		graphicsPipeline->vertexAttrDescriptions = {
+		auto &stageInfo = graphicsPipeline->stageInfo;
+		stageInfo.vertexInputAttributeDescriptions = {
 			positionOSDescription0,
 			colorDescription1,
 			uv0Description2,
 		};
 	}
 
-	void ShaderTestLogic::CreateDescriptorSetLayout(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
+	void ShaderTestLogic::CreateDescriptorSetLayout(Context *context,
+													std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
 		VkDescriptorSetLayoutBinding samplerBinding0 = {};
 		samplerBinding0.binding = 0;
 		samplerBinding0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -61,37 +64,35 @@ namespace Render {
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(samplerBinding0);
 
-		graphicsPipeline->descriptorSetLayout
-			= DescriptorSetLayoutLogic::Create(context, bindings);
+		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 
-	void ShaderTestLogic::DestroyDescriptorSetLayout(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
-		auto& descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
+	void ShaderTestLogic::DestroyDescriptorSetLayout(Context *context,
+													 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 	}
 
-	void ShaderTestLogic::UpdateDescriptorSets(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
+	void ShaderTestLogic::UpdateDescriptorSets(Context *context,
+											   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
 	}
 
-	void ShaderTestLogic::CreateUnitDescriptor(Context* context,
-		std::shared_ptr<Unit> unit,
-		std::shared_ptr<Image> image
-	) {
-		auto& graphicsPipeline = context->renderPipelines[unit->pipelineName];
-		auto& descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
+	void ShaderTestLogic::CreateUnitDescriptor(Context *context,
+											   std::shared_ptr<Unit> unit,
+											   std::shared_ptr<Image> image)
+	{
+		auto &graphicsPipeline = context->renderPipelines[unit->pipelineName];
+		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		auto sampler = SamplerLogic::Create(context);
 
 		VkDescriptorImageInfo imageInfo = {
-				sampler,
-				image->vkImageView,
-				image->layout
-		};
+			sampler,
+			image->vkImageView,
+			image->layout};
 
 		auto descriptor = std::make_shared<Descriptor>();
 		descriptor->set = descriptorSet;
@@ -101,25 +102,25 @@ namespace Render {
 		unit->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
-			[&](std::vector<VkWriteDescriptorSet>& writes) {
-
-				DescriptorSetLogic::WriteImage(context,
-				writes,
-				unit->descriptor);
-			});
+								   [&](std::vector<VkWriteDescriptorSet> &writes)
+								   {
+									   DescriptorSetLogic::WriteImage(context,
+																	  writes,
+																	  unit->descriptor);
+								   });
 	}
 
-	void ShaderTestLogic::DestroyUnitDescriptor(Context* context,
-		std::shared_ptr<Unit> unit
-	) {
-		auto& descriptor = unit->descriptor;
+	void ShaderTestLogic::DestroyUnitDescriptor(Context *context,
+												std::shared_ptr<Unit> unit)
+	{
+		auto &descriptor = unit->descriptor;
 		ImageLogic::Destroy(context, descriptor->image);
 		SamplerLogic::Destroy(context, descriptor->imageInfo.sampler);
 	}
 
-	void ShaderTestLogic::UpdateUnitDescriptor(Context* context,
-		std::shared_ptr<Unit> unit
-	) {
+	void ShaderTestLogic::UpdateUnitDescriptor(Context *context,
+											   std::shared_ptr<Unit> unit)
+	{
 	}
 
 }

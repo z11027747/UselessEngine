@@ -1,20 +1,20 @@
-﻿#pragma once
+#pragma once
 
 #include <vulkan/vulkan.h>
 
 class Context;
 
-namespace Render {
+namespace Render
+{
 
-	class LogicalDeviceLogic final {
+	class LogicalDeviceLogic final
+	{
 	public:
+		static void Create(Context *);
+		static void Destroy(Context *);
 
-		static void Create(Context*);
-		static void Destroy(Context*);
-
-		static VkDevice& Get(Context*);
-		static void WaitIdle(Context*);
-
+		static VkDevice &Get(Context *);
+		static void WaitIdle(Context *);
 	};
 
 }

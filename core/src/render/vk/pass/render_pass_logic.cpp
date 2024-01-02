@@ -9,12 +9,13 @@
 #include "render/vk/image/image_logic.h"
 #include "context.h"
 
-namespace Render {
+namespace Render
+{
 
-	void RenderPassLogic::CreateColorAttachment(Context* context,
-		std::shared_ptr<Pass> pass
-	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void RenderPassLogic::CreateColorAttachment(Context *context,
+												std::shared_ptr<Pass> pass)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto surfaceFormat = global->surfaceFormat;
@@ -35,12 +36,12 @@ namespace Render {
 
 		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
 		pass->colorAttachmentReference = colorAttachmentReference;
-		pass->clearColorValue = { 0.0f,0.0f,0.0f,0.0f };
+		pass->clearColorValue = {0.0f, 0.0f, 0.0f, 0.0f};
 	}
 
-	void RenderPassLogic::CreateDepthAttachment(Context* context,
-		std::shared_ptr<Pass> pass
-	) {
+	void RenderPassLogic::CreateDepthAttachment(Context *context,
+												std::shared_ptr<Pass> pass)
+	{
 		VkAttachmentDescription depthAttachmentDescription = {};
 		depthAttachmentDescription.format = VK_FORMAT_D32_SFLOAT;
 		depthAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -57,58 +58,82 @@ namespace Render {
 
 		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
 		pass->depthAttachmentReference = depthAttachmentReference;
-		pass->clearDepthValue = { 1.0f, 0 };
+		pass->clearDepthValue = {1.0f, 0};
 	}
 
-	void RenderPassLogic::CreatColorImage2dsBySwapchain(Context* context,
-		std::shared_ptr<Pass> pass
-	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void RenderPassLogic::CreateColorImage2dsBySwapchain(Context *context,
+														 std::shared_ptr<Pass> pass)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		auto swapchainImageCount = global->swapchainImageCount;
-		auto& swapchainImages = global->swapchainImages;
+		auto &swapchainImages = global->swapchainImages;
 
-		for (auto i = 0u; i < swapchainImageCount; i++) {
+		for (auto i = 0u; i < swapchainImageCount; i++)
+		{
 			pass->colorImage2ds.push_back(swapchainImages[i]);
 		}
 	}
 
-	void RenderPassLogic::CreateDepthImage2ds(Context* context,
-		std::shared_ptr<Pass> pass
-	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void RenderPassLogic::CreateDepthImage2ds(Context *context,
+											  std::shared_ptr<Pass> pass)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& currentExtent = global->surfaceCapabilities.currentExtent;
+		auto &logicalDevice = global->logicalDevice;
+		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 		auto swapchainImageCount = global->swapchainImageCount;
 
-		for (auto i = 0u; i < swapchainImageCount; i++) {
+		for (auto i = 0u; i < swapchainImageCount; i++)
+		{
 			ImageInfo image2dInfo = {
-				VK_FORMAT_D32_SFLOAT, { currentExtent.width, currentExtent.height, 0 }, VK_IMAGE_ASPECT_DEPTH_BIT,
-				//image
-				VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-				0, 1, VK_IMAGE_VIEW_TYPE_2D,
-				//memory
+				VK_FORMAT_D32_SFLOAT, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
+				// image
+				VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+				0,
+				1,
+				VK_IMAGE_VIEW_TYPE_2D,
+				// memory
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				//layout
-				VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-				0, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
-				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT
-			};
+				// layout
+				VK_IMAGE_LAYOUT_UNDEFINED,
+				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+				0,
+				VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
+				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT};
 
 			auto depthImage2d = ImageLogic::CreateByInfo(context,
-				image2dInfo);
+														 image2dInfo);
 
 			pass->depthImage2ds.push_back(depthImage2d);
 		}
 	}
 
-	void RenderPassLogic::AddSubPass(Context* context,
-		std::shared_ptr<Pass> pass
-	) {
+	void RenderPassLogic::DestroyColorImage2dsBySwapchain(Context *context,
+														  std::shared_ptr<Pass> pass)
+	{
+		pass->colorImage2ds.clear();
+	}
+
+	void RenderPassLogic::DestroyDepthImage2ds(Context *context,
+											   std::shared_ptr<Pass> pass)
+	{
+		auto &depthImage2ds = pass->depthImage2ds;
+		for (const auto &depthImage2d : depthImage2ds)
+		{
+			ImageLogic::Destroy(context, depthImage2d);
+		}
+		pass->depthImage2ds.clear();
+	}
+
+	void RenderPassLogic::AddSubPass(Context *context,
+									 std::shared_ptr<Pass> pass)
+	{
 		VkSubpassDescription subpassDescription = {};
 		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpassDescription.colorAttachmentCount = 1;
@@ -127,9 +152,9 @@ namespace Render {
 		pass->subpassDependency = subpassDependency;
 	}
 
-	void RenderPassLogic::Create(Context* context,
-		std::shared_ptr<Pass> pass
-	) {
+	void RenderPassLogic::Create(Context *context,
+								 std::shared_ptr<Pass> pass)
+	{
 		VkRenderPassCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		createInfo.attachmentCount = static_cast<uint32_t>(pass->attachmentDescriptions.size());
@@ -141,17 +166,17 @@ namespace Render {
 
 		VkRenderPass vkRenderPass;
 		auto ret = vkCreateRenderPass(LogicalDeviceLogic::Get(context),
-			&createInfo, nullptr, &vkRenderPass);
+									  &createInfo, nullptr, &vkRenderPass);
 
 		pass->renderPass = vkRenderPass;
 	}
 
-	void RenderPassLogic::Destroy(Context* context,
-		std::shared_ptr<Pass> pass
-	) {
-		auto& renderPass = pass->renderPass;
+	void RenderPassLogic::Destroy(Context *context,
+								  std::shared_ptr<Pass> pass)
+	{
+		auto &renderPass = pass->renderPass;
 		vkDestroyRenderPass(LogicalDeviceLogic::Get(context),
-			renderPass, nullptr);
+							renderPass, nullptr);
 	}
 
 }

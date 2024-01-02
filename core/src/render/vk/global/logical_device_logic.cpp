@@ -1,17 +1,19 @@
-﻿
+
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
 #include "render/vk/global/physical_device_logic.h"
 #include "context.h"
 
-namespace Render {
+namespace Render
+{
 
-	void LogicalDeviceLogic::Create(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void LogicalDeviceLogic::Create(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& physicalDevice = global->physicalDevice;
+		auto &physicalDevice = global->physicalDevice;
 		auto physicalQueueFamilyIndex = global->physicalQueueFamilyIndex;
 
 		VkDeviceCreateInfo deviceCreateInfo = {};
@@ -27,9 +29,8 @@ namespace Render {
 		deviceCreateInfo.queueCreateInfoCount = 1;
 		deviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
 
-		const std::vector<const char*> deviceExtensions = {
-			"VK_KHR_swapchain"
-		};
+		const std::vector<const char *> deviceExtensions = {
+			"VK_KHR_swapchain"};
 		deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
@@ -46,27 +47,30 @@ namespace Render {
 		global->logicalQueue = logicalQueue;
 	}
 
-	void LogicalDeviceLogic::Destroy(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void LogicalDeviceLogic::Destroy(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		vkDestroyDevice(logicalDevice, nullptr);
 	}
 
-	VkDevice& LogicalDeviceLogic::Get(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	VkDevice &LogicalDeviceLogic::Get(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		return logicalDevice;
 	}
 
-	void LogicalDeviceLogic::WaitIdle(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void LogicalDeviceLogic::WaitIdle(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		vkDeviceWaitIdle(logicalDevice);
 	}
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -6,9 +6,10 @@
 #include "render/vk/image/image_comp.h"
 #include "render/vk/cmd/cmd_comp.h"
 
-namespace Render {
-
-	struct Global final {
+namespace Render
+{
+	struct Global final
+	{
 		VkInstance instance;
 
 		bool enabledDebug;
@@ -38,5 +39,4 @@ namespace Render {
 		VkCommandPool vkPool;
 		VkDescriptorPool descriptorPool;
 	};
-
 }

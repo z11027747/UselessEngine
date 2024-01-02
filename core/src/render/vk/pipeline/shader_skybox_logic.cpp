@@ -19,51 +19,46 @@
 #include "context.h"
 #include "engine_object.h"
 
-namespace Render {
+namespace Render
+{
 
-	void ShaderSkyboxLogic::CreateVertexAttrDescriptions(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
+	void ShaderSkyboxLogic::CreateVertexAttrDescriptions(Context *context,
+														 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
 		VkVertexInputAttributeDescription positionOSDescription0 = {};
 		positionOSDescription0.location = 0;
 		positionOSDescription0.binding = 0;
 		positionOSDescription0.format = VK_FORMAT_R32G32B32_SFLOAT;
 		positionOSDescription0.offset = 0;
 
-		graphicsPipeline->vertexAttrDescriptions = {
-			positionOSDescription0
-		};
+		auto &stageInfo = graphicsPipeline->stageInfo;
+		stageInfo.vertexInputAttributeDescriptions = {
+			positionOSDescription0};
 	}
 
-	void ShaderSkyboxLogic::MakeDepthStencilCreateInfo(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline,
-		VkPipelineDepthStencilStateCreateInfo& depthStencilStateCreateInfo
-	) {
-		depthStencilStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-		depthStencilStateCreateInfo.depthTestEnable = false;
-		depthStencilStateCreateInfo.depthWriteEnable = false;
-		depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
-		depthStencilStateCreateInfo.depthBoundsTestEnable = false;
-		depthStencilStateCreateInfo.stencilTestEnable = false;
-	}
+	void ShaderSkyboxLogic::SetRasterizationCreateInfo(Context *context,
+													   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+		auto &stageInfo = graphicsPipeline->stageInfo;
 
-	void ShaderSkyboxLogic::MakeRasterizationCreateInfo(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline,
-		VkPipelineRasterizationStateCreateInfo& rasterizationStateCreateInfo
-	) {
-		rasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-		rasterizationStateCreateInfo.rasterizerDiscardEnable = false;
-		rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
-		rasterizationStateCreateInfo.lineWidth = 1.0f;
+		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
 		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;
 		rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		rasterizationStateCreateInfo.depthClampEnable = false;
-		rasterizationStateCreateInfo.depthBiasEnable = false;
 	}
 
-	void ShaderSkyboxLogic::CreateDescriptorSetLayout(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
+	void ShaderSkyboxLogic::SetDepthStencilCreateInfo(Context *context,
+													  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+		auto &stageInfo = graphicsPipeline->stageInfo;
+
+		auto &depthStencilStateCreateInfo = stageInfo.depthStencilStateCreateInfo;
+		depthStencilStateCreateInfo.depthTestEnable = false;
+		depthStencilStateCreateInfo.depthWriteEnable = false;
+	}
+
+	void ShaderSkyboxLogic::CreateDescriptorSetLayout(Context *context,
+													  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
 		VkDescriptorSetLayoutBinding samplerBinding0 = {};
 		samplerBinding0.binding = 0;
 		samplerBinding0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -73,37 +68,35 @@ namespace Render {
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(samplerBinding0);
 
-		graphicsPipeline->descriptorSetLayout
-			= DescriptorSetLayoutLogic::Create(context, bindings);
+		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 
-	void ShaderSkyboxLogic::DestroyDescriptorSetLayout(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
-		auto& descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
+	void ShaderSkyboxLogic::DestroyDescriptorSetLayout(Context *context,
+													   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 	}
 
-	void ShaderSkyboxLogic::UpdateDescriptorSets(Context* context,
-		std::shared_ptr<GraphicsPipeline> graphicsPipeline
-	) {
+	void ShaderSkyboxLogic::UpdateDescriptorSets(Context *context,
+												 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
 	}
 
-	void ShaderSkyboxLogic::CreateUnitDescriptor(Context* context,
-		std::shared_ptr<Unit> unit,
-		std::shared_ptr<Image> imageCube
-	) {
-		auto& graphicsPipeline = context->renderPipelines[unit->pipelineName];
-		auto& descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
+	void ShaderSkyboxLogic::CreateUnitDescriptor(Context *context,
+												 std::shared_ptr<Unit> unit,
+												 std::shared_ptr<Image> imageCube)
+	{
+		auto &graphicsPipeline = context->renderPipelines[unit->pipelineName];
+		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		auto sampler = SamplerLogic::Create(context);
 
 		VkDescriptorImageInfo imageInfo = {
-				sampler,
-				imageCube->vkImageView,
-				imageCube->layout
-		};
+			sampler,
+			imageCube->vkImageView,
+			imageCube->layout};
 
 		auto descriptor = std::make_shared<Descriptor>();
 		descriptor->set = descriptorSet;
@@ -113,25 +106,25 @@ namespace Render {
 		unit->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
-			[&](std::vector<VkWriteDescriptorSet>& writes) {
-
-				DescriptorSetLogic::WriteImage(context,
-				writes,
-				unit->descriptor);
-			});
+								   [&](std::vector<VkWriteDescriptorSet> &writes)
+								   {
+									   DescriptorSetLogic::WriteImage(context,
+																	  writes,
+																	  unit->descriptor);
+								   });
 	}
 
-	void ShaderSkyboxLogic::DestroyUnitDescriptor(Context* context,
-		std::shared_ptr<Unit> unit
-	) {
-		auto& descriptor = unit->descriptor;
+	void ShaderSkyboxLogic::DestroyUnitDescriptor(Context *context,
+												  std::shared_ptr<Unit> unit)
+	{
+		auto &descriptor = unit->descriptor;
 		ImageLogic::Destroy(context, descriptor->image);
 		SamplerLogic::Destroy(context, descriptor->imageInfo.sampler);
 	}
 
-	void ShaderSkyboxLogic::UpdateUnitDescriptor(Context* context,
-		std::shared_ptr<Unit> unit
-	) {
+	void ShaderSkyboxLogic::UpdateUnitDescriptor(Context *context,
+												 std::shared_ptr<Unit> unit)
+	{
 	}
 
 }

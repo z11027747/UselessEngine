@@ -5,10 +5,10 @@
 #include <vector>
 #include "render/vk/image/image_comp.h"
 
-namespace Render {
-
-	struct Pass final {
-
+namespace Render
+{
+	struct Pass final
+	{
 		std::vector<VkAttachmentDescription> attachmentDescriptions;
 
 		VkAttachmentReference colorAttachmentReference;

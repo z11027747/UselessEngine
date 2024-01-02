@@ -1,38 +1,37 @@
-﻿#pragma once
+#pragma once
 
 #include <vulkan/vulkan.h>
 
 class Context;
 
-namespace Render {
-
-	class PhysicalDeviceLogic final {
+namespace Render
+{
+	class PhysicalDeviceLogic final
+	{
 	public:
-
-		static bool Find(Context*);
-		static void GetInfo(Context*);
+		static bool Find(Context *);
+		static void GetInfo(Context *);
 
 		static bool CheckType(
-			const VkPhysicalDevice& physicalDevice,
+			const VkPhysicalDevice &physicalDevice,
 			VkPhysicalDeviceType deviceType);
 
-		static bool CheckQueueFamily(Context*,
-			const VkPhysicalDevice& physicalDevice,
-			VkQueueFlags queueFlags,
-			uint32_t& queueFamilyIndex);
+		static bool CheckQueueFamily(Context *,
+									 const VkPhysicalDevice &physicalDevice,
+									 VkQueueFlags queueFlags,
+									 uint32_t &queueFamilyIndex);
 
-		static uint32_t FindMemoryType(Context*,
-			uint32_t typeFilter,
-			VkMemoryPropertyFlags propertiesFlags);
+		static uint32_t FindMemoryType(Context *,
+									   uint32_t typeFilter,
+									   VkMemoryPropertyFlags propertiesFlags);
 
-		static VkFormat FindSupportedFormat(Context*,
-			const std::vector<VkFormat>& candidates,
-			VkImageTiling tiling, VkFormatFeatureFlags features
-		);
+		static VkFormat FindSupportedFormat(Context *,
+											const std::vector<VkFormat> &candidates,
+											VkImageTiling tiling, VkFormatFeatureFlags features);
 
-		static VkSurfaceFormatKHR GetFormat(Context*);
-		static VkSurfaceCapabilitiesKHR GetCapbilities(Context*);
-		static VkPresentModeKHR GetPresentMode(Context*);
+		static VkSurfaceFormatKHR GetFormat(Context *);
+		static VkSurfaceCapabilitiesKHR GetCapbilities(Context *);
+		static VkPresentModeKHR GetPresentMode(Context *);
 	};
 
 }

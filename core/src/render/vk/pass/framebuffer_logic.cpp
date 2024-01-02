@@ -124,7 +124,7 @@ namespace Render {
 
 			auto& globalDescriptor = graphicsPipeline->globalDescriptors[imageIndex];
 
-			BufferLogic::Set(context,
+			BufferSetLogic::Set(context,
 				globalDescriptor->buffer,
 				globalUBO);
 

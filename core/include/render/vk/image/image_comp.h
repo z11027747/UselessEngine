@@ -1,31 +1,33 @@
-﻿#pragma once
+#pragma once
 
 #include <vulkan/vulkan.h>
 
-namespace Render {
-
-	struct ImageInfo final {
+namespace Render
+{
+	struct ImageInfo final
+	{
 		VkFormat format;
 		VkExtent3D extent;
 		VkImageAspectFlags aspectMask;
 
-		//image
+		// image
 		VkImageTiling tiling;
 		VkImageUsageFlags usage;
 		VkImageCreateFlags flags;
-		uint32_t arrayLayers;
+		uint32_t layerCount;
 		VkImageViewType viewType;
 
-		//memory
+		// memory
 		VkMemoryPropertyFlags propertiesFlags;
 
-		//layout
+		// layout
 		VkImageLayout oldLayout, newLayout;
 		VkAccessFlags srcAccessMask, dstAccessMask;
 		VkPipelineStageFlags srcStage, dstStage;
 	};
 
-	struct Image final {
+	struct Image final
+	{
 		VkFormat fomat;
 		VkExtent3D extent;
 		VkImageAspectFlags aspectMask;
