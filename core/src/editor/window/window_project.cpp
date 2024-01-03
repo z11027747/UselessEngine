@@ -14,7 +14,7 @@ namespace Editor
     {
         if (ImGui::Begin("Project", NULL))
         {
-            ImGui::End();
         }
+        ImGui::End();
     }
 }

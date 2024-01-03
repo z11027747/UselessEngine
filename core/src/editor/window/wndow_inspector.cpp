@@ -78,9 +78,9 @@ namespace Editor
 					memset(addCompName, 0, sizeof(addCompName));
 				}
 			}
-
-			ImGui::End();
 		}
+
+		ImGui::End();
 	}
 
 }

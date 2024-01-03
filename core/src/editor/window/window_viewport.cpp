@@ -12,8 +12,7 @@ namespace Editor
 {
     void Window::DrawViewport(Context *context, uint32_t imageIndex)
     {
-        auto sceneVisible = ImGui::Begin("Scene", NULL);
-        if (sceneVisible)
+        if (ImGui::Begin("Scene", NULL))
         {
             auto viewportPanelSize = ImGui::GetContentRegionAvail();
             ImGui::Image(Global::descriptors[imageIndex]->set,

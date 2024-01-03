@@ -42,8 +42,7 @@ namespace Editor
 				EngineObjectWrap::Add(context, std::string(addEOName));
 				memset(addEOName, 0, sizeof(addEOName));
 			}
-
-			ImGui::End();
 		}
+		ImGui::End();
 	}
 }
