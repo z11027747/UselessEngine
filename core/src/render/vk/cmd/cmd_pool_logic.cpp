@@ -7,13 +7,15 @@
 #include "render/vk/cmd/cmd_logic.h"
 #include "context.h"
 
-namespace Render {
+namespace Render
+{
 
-	void CmdPoolLogic::Create(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void CmdPoolLogic::Create(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 		auto physicalQueueFamilyIndex = global->physicalQueueFamilyIndex;
 
 		VkCommandPoolCreateInfo createInfo = {};
@@ -28,76 +30,74 @@ namespace Render {
 		global->vkPool = vkPool;
 	}
 
-	void CmdPoolLogic::Destroy(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void CmdPoolLogic::Destroy(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyCommandPool(logicalDevice, global->vkPool, nullptr);
 	}
 
-	std::shared_ptr<Cmd> CmdPoolLogic::CreateCmd(Context* context) {
-		auto cmd = std::make_shared<Cmd>();
-		cmd->vkCmdBuffers = {};
-
-		return cmd;
-	}
-
-	void CmdPoolLogic::Allocate(Context* context,
-		std::shared_ptr<Cmd> cmd, uint32_t size
-	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	std::vector<VkCommandBuffer> CmdPoolLogic::CreateBuffers(Context *context,
+															 uint32_t count)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& vkPool = global->vkPool;
+		auto &logicalDevice = global->logicalDevice;
+		auto &vkPool = global->vkPool;
 
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocateInfo.commandPool = vkPool;
-		allocateInfo.commandBufferCount = size;
+		allocateInfo.commandBufferCount = count;
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 
-		std::vector<VkCommandBuffer> vkCmdBuffers(size);
+		std::vector<VkCommandBuffer> vkCmdBuffers(count);
 		auto ret = vkAllocateCommandBuffers(logicalDevice, &allocateInfo, vkCmdBuffers.data());
 		CheckRet(ret, "vkAllocateCommandBuffers");
 
-		cmd->vkCmdBuffers.insert(cmd->vkCmdBuffers.end(),
-			vkCmdBuffers.begin(), vkCmdBuffers.end());
+		return vkCmdBuffers;
 	}
 
-	void CmdPoolLogic::Free(Context* context, std::shared_ptr<Cmd> cmd) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	VkCommandBuffer CmdPoolLogic::CreateBuffer(Context *context)
+	{
+		return CreateBuffers(context, 1)[0];
+	}
+
+	VkCommandBuffer CmdPoolLogic::CreateTempBuffer(Context *context)
+	{
+		auto cmdBuffer = CreateBuffer(context);
+		context->renderTempCmdBuffers.push_back(cmdBuffer);
+		return cmdBuffer;
+	}
+
+	void CmdPoolLogic::DestroyAllTempBuffers(Context *context)
+	{
+		auto &tempCmdBuffers = context->renderTempCmdBuffers;
+		if (tempCmdBuffers.size() > 0)
+		{
+			FreeBuffers(context, tempCmdBuffers);
+			tempCmdBuffers.clear();
+		}
+	}
+
+	void CmdPoolLogic::FreeBuffers(Context *context, std::vector<VkCommandBuffer> &cmdBuffers)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
-		auto& vkPool = global->vkPool;
+		auto &logicalDevice = global->logicalDevice;
+		auto &vkPool = global->vkPool;
 
-		auto& vkCmdBuffers = cmd->vkCmdBuffers;
-		for (const auto& vkCmdBuffer : vkCmdBuffers) {
-			vkFreeCommandBuffers(logicalDevice, vkPool, 1, &vkCmdBuffer);
-		}
-		vkCmdBuffers.clear();
-	}
-
-	std::shared_ptr<Cmd> CmdPoolLogic::CreateTempCmd(Context* context) {
-		auto cmd = CreateCmd(context);
-		context->renderTempCmds.push_back(cmd);
-		return cmd;
-	}
-
-	void CmdPoolLogic::DestroyAllTemps(Context* context) {
-		auto& tempCmds = context->renderTempCmds;
-		for (const auto& tempCmd : tempCmds) {
-			Free(context, tempCmd);
-		}
-		tempCmds.clear();
+		vkFreeCommandBuffers(logicalDevice, vkPool, static_cast<uint32_t>(cmdBuffers.size()), cmdBuffers.data());
 	}
 
 	void CmdPoolLogic::ResetBuffer(
-		VkCommandBuffer& buffer, VkCommandBufferResetFlags resetFlags) {
-
+		VkCommandBuffer &buffer, VkCommandBufferResetFlags resetFlags)
+	{
 		auto ret = vkResetCommandBuffer(buffer, resetFlags);
 		CheckRet(ret, "vkResetCommandBuffer");
 	}

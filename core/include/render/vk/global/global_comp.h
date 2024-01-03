@@ -28,7 +28,7 @@ namespace Render
 		VkSwapchainKHR swapchain;
 		uint32_t swapchainImageCount;
 		std::vector<std::shared_ptr<Image>> swapchainImages;
-		std::shared_ptr<Cmd> swapchainCmd;
+		std::vector<VkCommandBuffer> swapchainCmdBuffers;
 
 		uint32_t currFrame;
 		uint32_t maxFrameInFlight;

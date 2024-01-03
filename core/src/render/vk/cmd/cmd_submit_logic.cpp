@@ -7,26 +7,20 @@
 #include "render/vk/cmd/cmd_logic.h"
 #include "context.h"
 
-namespace Render {
+namespace Render
+{
 
-	void CmdSubmitLogic::Create(Context* context,
-		std::function<void(VkCommandBuffer&)> doCmds
-	) {
-		auto& batchCmd = context->renderBatchCmd;
-
-		if (batchCmd == nullptr) {
-			batchCmd = std::make_shared<Cmd>();
-		}
-
-		CmdPoolLogic::Allocate(context,
-			batchCmd, 1);
-
-		Record(batchCmd->vkCmdBuffers.back(), doCmds);
+	void CmdSubmitLogic::Create(Context *context,
+								std::function<void(VkCommandBuffer &)> doCmds)
+	{
+		auto cmdBuffer = CmdPoolLogic::CreateBuffer(context);
+		Record(cmdBuffer, doCmds);
+		context->renderBatchCmdBuffers.push_back(cmdBuffer);
 	}
 
-	void CmdSubmitLogic::Record(VkCommandBuffer& cmdBuffer,
-		std::function<void(VkCommandBuffer&)> doCmds
-	) {
+	void CmdSubmitLogic::Record(VkCommandBuffer &cmdBuffer,
+								std::function<void(VkCommandBuffer &)> doCmds)
+	{
 		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -40,30 +34,51 @@ namespace Render {
 		CheckRet(endRet, "vkEndCommandBuffer");
 	}
 
+	VkCommandBuffer CmdSubmitLogic::CreateAndBegin(Context *context)
+	{
+		auto cmdBuffer = CmdPoolLogic::CreateBuffer(context);
+
+		VkCommandBufferBeginInfo beginInfo = {};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+		auto beginRet = vkBeginCommandBuffer(cmdBuffer, &beginInfo);
+		CheckRet(beginRet, "vkBeginCommandBuffer");
+
+		return cmdBuffer;
+	}
+
+	void CmdSubmitLogic::End(Context *context, VkCommandBuffer &cmdBuffer)
+	{
+		auto endRet = vkEndCommandBuffer(cmdBuffer);
+		CheckRet(endRet, "vkEndCommandBuffer");
+	}
+
 	// ==== ToSystem
-	void CmdSubmitLogic::UpdateBatch(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void CmdSubmitLogic::UpdateBatch(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalQueue = global->logicalQueue;
+		auto &logicalQueue = global->logicalQueue;
 
-		auto& batchCmd = context->renderBatchCmd;
+		auto &batchCmdBuffers = context->renderBatchCmdBuffers;
+		auto batchCmdBufferSize = static_cast<uint32_t>(batchCmdBuffers.size());
 
-		auto& cmdBuffers = batchCmd->vkCmdBuffers;
-		auto cmdSize = static_cast<uint32_t>(cmdBuffers.size());
-
-		if (cmdSize > 0u) {
+		if (batchCmdBufferSize > 0u)
+		{
 			VkSubmitInfo submitInfo = {};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			submitInfo.commandBufferCount = static_cast<uint32_t>(cmdBuffers.size());
-			submitInfo.pCommandBuffers = cmdBuffers.data();
+			submitInfo.commandBufferCount = static_cast<uint32_t>(batchCmdBuffers.size());
+			submitInfo.pCommandBuffers = batchCmdBuffers.data();
 
 			auto submitRet = vkQueueSubmit(logicalQueue, 1, &submitInfo, nullptr);
 			CheckRet(submitRet, "vkQueueSubmit");
 
 			vkQueueWaitIdle(logicalQueue);
 
-			CmdPoolLogic::Free(context, batchCmd);
+			CmdPoolLogic::FreeBuffers(context, batchCmdBuffers);
+			batchCmdBuffers.clear();
 		}
 	}
 }

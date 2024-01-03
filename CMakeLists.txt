@@ -17,6 +17,8 @@ file(GLOB_RECURSE SRC_LIST
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/out)
 add_executable(${PROJ} ${SRC_LIST} "core/main.cpp")
 
+set_target_properties(${PROJ} PROPERTIES COMPILE_FLAGS "/EHsc")
+
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
 if (CMAKE_GENERATOR MATCHES "Visual Studio 17 2022")

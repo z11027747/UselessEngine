@@ -28,13 +28,15 @@ namespace Render
 		static void TransitionLayout(Context *,
 									 std::shared_ptr<Image>,
 									 VkImageLayout, VkImageLayout,
-									 VkImageAspectFlags,
 									 VkAccessFlags, VkAccessFlags,
 									 VkPipelineStageFlags, VkPipelineStageFlags);
 
 		static void CopyBuffer(Context *,
 							   std::shared_ptr<Image>,
 							   std::shared_ptr<Buffer>);
+		static void CopyImage(Context *,
+							  std::shared_ptr<Image>,
+							  std::shared_ptr<Image>);
 	};
 
 }

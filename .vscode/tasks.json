@@ -12,7 +12,7 @@
                 "-j",               
             ],
             "group": "build",
-            "problemMatcher": ["$msCompile"]               
+            "problemMatcher": ["$msCompile"]
         }
 	]
 	

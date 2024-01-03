@@ -10,12 +10,12 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "console": "externalTerminal",
+            // "console": "externalTerminal",
             "logging": {
                 "moduleLoad": false,
                 "trace": true
             },
-            "preLaunchTask": "make-vc2022",
+            "preLaunchTask": "make-vc2022"
         }
 
     ]

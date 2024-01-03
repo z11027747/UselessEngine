@@ -68,7 +68,7 @@ namespace Render
 		CmdSubmitLogic::UpdateBatch(context);
 
 		BufferLogic::DestroyAllTemps(context);
-		CmdPoolLogic::DestroyAllTemps(context);
+		CmdPoolLogic::DestroyAllTempBuffers(context);
 
 		SwapchainLogic::WaitFence(context);
 		auto imageIndex = SwapchainLogic::AcquireImageIndex(context);

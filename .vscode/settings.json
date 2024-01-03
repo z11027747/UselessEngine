@@ -56,6 +56,17 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "charconv": "cpp",
+        "cstdarg": "cpp",
+        "format": "cpp",
+        "locale": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "span": "cpp",
+        "sstream": "cpp",
+        "xlocbuf": "cpp",
+        "xlocmes": "cpp",
+        "xtree": "cpp"
     }
 }

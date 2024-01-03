@@ -10,7 +10,6 @@
 
 namespace Render
 {
-
 	std::shared_ptr<Image> ImageLogic::CreateByInfo(Context *context,
 													ImageInfo &info)
 	{
@@ -32,7 +31,6 @@ namespace Render
 		TransitionLayout(context,
 						 image,
 						 info.oldLayout, info.newLayout,
-						 info.aspectMask,
 						 info.srcAccessMask, info.dstAccessMask,
 						 info.srcStage, info.dstStage);
 
@@ -151,7 +149,6 @@ namespace Render
 	void ImageLogic::TransitionLayout(Context *context,
 									  std::shared_ptr<Image> image,
 									  VkImageLayout oldLayout, VkImageLayout newLayout,
-									  VkImageAspectFlags aspectMask,
 									  VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask,
 									  VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage)
 	{
@@ -200,6 +197,27 @@ namespace Render
 
 								   vkCmdCopyBufferToImage(cmdBuffer, buffer->vkBuffer, image->vkImage,
 														  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageCopy);
+							   });
+	}
+
+	void ImageLogic::CopyImage(Context *context,
+							   std::shared_ptr<Image> image,
+							   std::shared_ptr<Image> srcImage)
+	{
+		CmdSubmitLogic::Create(context,
+							   [&](VkCommandBuffer &cmdBuffer)
+							   {
+								   VkImageCopy copyRegion = {};
+								   copyRegion.srcSubresource.aspectMask = srcImage->aspectMask;
+								   copyRegion.srcSubresource.layerCount = srcImage->layerCount;
+								   copyRegion.dstSubresource.aspectMask = image->aspectMask;
+								   copyRegion.dstSubresource.layerCount = image->layerCount;
+								   copyRegion.extent = {image->extent.width, image->extent.height, 1};
+
+								   vkCmdCopyImage(cmdBuffer,
+												  srcImage->vkImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+												  image->vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+												  1, &copyRegion);
 							   });
 	}
 

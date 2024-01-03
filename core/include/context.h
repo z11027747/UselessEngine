@@ -45,8 +45,8 @@ public:
 	// render-pipelines
 	std::unordered_map<std::string, std::shared_ptr<Render::GraphicsPipeline>> renderPipelines;
 	// render-cmd
-	std::shared_ptr<Render::Cmd> renderBatchCmd;
-	std::vector<std::shared_ptr<Render::Cmd>> renderTempCmds;
+	std::vector<VkCommandBuffer> renderBatchCmdBuffers;
+	std::vector<VkCommandBuffer> renderTempCmdBuffers;
 	// render-buffer
 	std::vector<std::shared_ptr<Render::Buffer>> renderTempBuffers;
 	// render-light

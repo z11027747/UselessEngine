@@ -228,9 +228,7 @@ namespace Render
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto swapchainImageCount = global->swapchainImageCount;
 
-		global->swapchainCmd = CmdPoolLogic::CreateCmd(context);
-		CmdPoolLogic::Allocate(context,
-							   global->swapchainCmd, swapchainImageCount);
+		global->swapchainCmdBuffers = CmdPoolLogic::CreateBuffers(context, swapchainImageCount);
 	}
 
 	VkCommandBuffer &SwapchainLogic::BeginCmd(Context *context, uint32_t imageIndex)
@@ -238,19 +236,18 @@ namespace Render
 		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto &swapchainCmd = global->swapchainCmd;
-		auto &vkCmdBuffer = swapchainCmd->vkCmdBuffers[imageIndex];
+		auto &swapchainCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
-		vkResetCommandBuffer(vkCmdBuffer, 0);
+		vkResetCommandBuffer(swapchainCmdBuffer, 0);
 
 		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-		auto beginRet = vkBeginCommandBuffer(vkCmdBuffer, &beginInfo);
+		auto beginRet = vkBeginCommandBuffer(swapchainCmdBuffer, &beginInfo);
 		CheckRet(beginRet, "vkBeginCommandBuffer");
 
-		return vkCmdBuffer;
+		return swapchainCmdBuffer;
 	}
 
 	void SwapchainLogic::EndAndSubmitCmd(Context *context, uint32_t imageIndex)
@@ -260,15 +257,14 @@ namespace Render
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto &logicalQueue = global->logicalQueue;
 
-		auto &swapchainCmd = global->swapchainCmd;
-		auto &vkCmdBuffer = swapchainCmd->vkCmdBuffers[imageIndex];
+		auto &swapchainCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
 		auto currFrame = global->currFrame;
 		auto &inFlightFence = global->inFlightFences[currFrame];
 		auto &imageAvailableSemaphore = global->imageAvailableSemaphores[currFrame];
 		auto &renderFinishedSemaphore = global->renderFinishedSemaphores[currFrame];
 
-		auto endRet = vkEndCommandBuffer(vkCmdBuffer);
+		auto endRet = vkEndCommandBuffer(swapchainCmdBuffer);
 		CheckRet(endRet, "vkEndCommandBuffer");
 
 		VkSubmitInfo submitInfo = {};
@@ -278,7 +274,7 @@ namespace Render
 		VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
 		submitInfo.pWaitDstStageMask = waitStages;
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &vkCmdBuffer;
+		submitInfo.pCommandBuffers = &swapchainCmdBuffer;
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = &renderFinishedSemaphore;
 

@@ -16,14 +16,13 @@ namespace Render
 		static void Create(Context *);
 		static void Destroy(Context *);
 
-		static std::shared_ptr<Cmd> CreateCmd(Context *);
+		static std::vector<VkCommandBuffer> CreateBuffers(Context *, uint32_t);
+		static VkCommandBuffer CreateBuffer(Context *);
 
-		static void Allocate(Context *, std::shared_ptr<Cmd>, uint32_t);
-		static void Free(Context *, std::shared_ptr<Cmd>);
+		static VkCommandBuffer CreateTempBuffer(Context *);
+		static void DestroyAllTempBuffers(Context *);
 
-		static std::shared_ptr<Cmd> CreateTempCmd(Context *);
-		static void DestroyAllTemps(Context *);
-
+		static void FreeBuffers(Context *, std::vector<VkCommandBuffer> &);
 		static void ResetBuffer(VkCommandBuffer &, VkCommandBufferResetFlags);
 	};
 
@@ -31,8 +30,10 @@ namespace Render
 	{
 	public:
 		static void Create(Context *, std::function<void(VkCommandBuffer &)> doCmds);
-
 		static void Record(VkCommandBuffer &, std::function<void(VkCommandBuffer &)> doCmds);
+
+		static VkCommandBuffer CreateAndBegin(Context *);
+		static void End(Context *, VkCommandBuffer &);
 
 		static void UpdateBatch(Context *);
 	};
