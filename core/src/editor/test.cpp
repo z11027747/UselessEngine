@@ -120,6 +120,19 @@ namespace Editor
 
 		directionLightEO->AddComponent(directionLight);
 
+		auto directionLightCamera = std::make_shared<Logic::Camera>();
+		directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
+
+		directionLightCamera->frustum = {
+			0.1f,
+			50.0f,
+			context->aspect,
+			45.0f};
+		Logic::CameraLogic::UpdateView(directionLightEO);
+		Logic::CameraLogic::UpdateProjection(directionLightCamera);
+
+		directionLightCamera->renderPass = context->renderShadowPass;
+
 		context->renderLightEOs.push_back(directionLightEO);
 		context->AddEO(directionLightEO);
 	}

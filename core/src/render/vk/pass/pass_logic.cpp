@@ -13,6 +13,7 @@ namespace Render
 	void PassLogic::CreateImGui(Context *context)
 	{
 		auto pass = std::make_shared<Pass>();
+		pass->name = "ImGui";
 
 		RenderPassLogic::CreateColorAttachment(context, pass,
 											   VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -32,6 +33,7 @@ namespace Render
 	void PassLogic::CreateMain(Context *context)
 	{
 		auto pass = std::make_shared<Pass>();
+		pass->name = "Main";
 
 		RenderPassLogic::CreateColorAttachment(context, pass,
 											   VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -52,17 +54,32 @@ namespace Render
 
 	void PassLogic::CreateShadow(Context *context)
 	{
+		auto pass = std::make_shared<Pass>();
+		pass->name = "Shadow";
+
+		RenderPassLogic::CreateDepthAttachment(context, pass, 0);
+		RenderPassLogic::CreateDepthImage2ds(context, pass);
+		RenderPassLogic::AddSubpassDependency(context, pass,
+											  VK_SUBPASS_EXTERNAL, 0,
+											  VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+											  VK_ACCESS_NONE, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+		RenderPassLogic::SetSubPassDescription(context, pass);
+		RenderPassLogic::Create(context, pass);
+		FramebufferLogic::Create(context, pass);
+
+		context->renderShadowPass = pass;
 	}
 
 	void PassLogic::DestroyAll(Context *context)
 	{
 		std::vector<std::shared_ptr<Pass>> passes = {
 			context->renderImGuiPass,
-			context->renderMainPass};
+			context->renderMainPass,
+			context->renderShadowPass};
 
 		for (const auto &pass : passes)
 		{
-			RenderPassLogic::DestroyColorImage2dsBySwapchain(context, pass);
+			RenderPassLogic::DestroyColorImage2ds(context, pass);
 			RenderPassLogic::DestroyDepthImage2ds(context, pass);
 			RenderPassLogic::Destroy(context, pass);
 			FramebufferLogic::Destroy(context, pass);

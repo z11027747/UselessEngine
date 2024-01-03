@@ -34,13 +34,14 @@ namespace Logic
 		UpdateView(mainCameraEO);
 		UpdateProjection(mainCamera);
 
+		mainCamera->renderPass = context->renderMainPass;
+
 		context->AddEO(mainCameraEO);
 	}
 
-	void CameraLogic::DestroyMain(Context *context)
+	void CameraLogic::DestroyAll(Context *context)
 	{
-		auto &mainCameraEO = context->GetEO(G_MainCamera);
-		auto mainCamera = mainCameraEO->GetComponent<Camera>();
+		// nothing
 	}
 
 	void CameraLogic::UpdateView(std::shared_ptr<EngineObject> eo)

@@ -57,8 +57,11 @@ namespace Render
 
 		PassLogic::CreateImGui(context);
 		PassLogic::CreateMain(context);
+		PassLogic::CreateShadow(context);
+
 		PipelineLogic::Create(context, "skybox", context->renderMainPass);
 		PipelineLogic::Create(context, "bling_phone", context->renderMainPass);
+		PipelineLogic::Create(context, "shadow", context->renderShadowPass);
 
 		Editor::Global::Create(context);
 	}
@@ -78,33 +81,36 @@ namespace Render
 		auto directionLightTransform = directionLightEO->GetComponent<Logic::Transform>();
 		auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
 
+		// camera
 		auto &logicCameraEOs = context->logicCameraEOs;
 		for (const auto &cameraEO : logicCameraEOs)
 		{
-			if (!cameraEO->active)
-				return;
-
-			auto &mainPass = context->renderMainPass;
-			FramebufferLogic::BeginRenderPass(context, imageIndex, vkCmdBuffer, mainPass);
-
 			auto cameraTransform = cameraEO->GetComponent<Logic::Transform>();
 			auto camera = cameraEO->GetComponent<Logic::Camera>();
 
-			GlobalUBO globalUBO = {
-				cameraTransform->position,
-				camera->view,
-				camera->projection,
-				directionLightTransform->position,
-				directionLight->color,
-				directionLight->params};
+			auto &renderPass = camera->renderPass;
+			FramebufferLogic::BeginRenderPass(context,
+											  imageIndex, vkCmdBuffer, renderPass);
 
-			FramebufferLogic::RenderUnits(context,
-										  imageIndex, vkCmdBuffer, globalUBO);
+			if (cameraEO->active)
+			{
+				GlobalUBO globalUBO = {
+					cameraTransform->position,
+					camera->view,
+					camera->projection,
+					directionLightTransform->position,
+					directionLight->color,
+					directionLight->params};
+
+				FramebufferLogic::RenderUnits(context,
+											  imageIndex, vkCmdBuffer, renderPass,
+											  globalUBO);
+			}
 
 			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
 		}
 
-		//imgui
+		// imGui
 		{
 			auto &imGuiPass = context->renderImGuiPass;
 			FramebufferLogic::BeginRenderPass(context, imageIndex, vkCmdBuffer, imGuiPass);

@@ -12,7 +12,7 @@ namespace Logic
 	{
 	public:
 		static void CreateMain(Context *);
-		static void DestroyMain(Context *);
+		static void DestroyAll(Context *);
 
 		static void UpdateView(std::shared_ptr<EngineObject>);
 		static void UpdateProjection(std::shared_ptr<Camera>);

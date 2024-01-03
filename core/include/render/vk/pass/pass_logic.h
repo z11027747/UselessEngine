@@ -16,6 +16,7 @@ namespace Render
 		static void CreateImGui(Context *);
 		static void CreateMain(Context *);
 		static void CreateShadow(Context *);
+
 		static void DestroyAll(Context *);
 	};
 
@@ -26,13 +27,13 @@ namespace Render
 										  std::shared_ptr<Pass>,
 										  VkAttachmentLoadOp,
 										  VkImageLayout, VkImageLayout);
-		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>);
+		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>, uint32_t index = 1);
 
 		static void GetSwapchainImage2ds(Context *, std::shared_ptr<Pass>);
 		static void CreateColorImage2ds(Context *, std::shared_ptr<Pass>);
 		static void CreateDepthImage2ds(Context *, std::shared_ptr<Pass>);
 
-		static void DestroyColorImage2dsBySwapchain(Context *, std::shared_ptr<Pass>);
+		static void DestroyColorImage2ds(Context *, std::shared_ptr<Pass>);
 		static void DestroyDepthImage2ds(Context *, std::shared_ptr<Pass>);
 
 		static void AddSubpassDependency(Context *,
@@ -57,6 +58,6 @@ namespace Render
 		static void BeginRenderPass(Context *, uint32_t, VkCommandBuffer &, std::shared_ptr<Pass>);
 		static void EndRenderPass(Context *, uint32_t, VkCommandBuffer &);
 
-		static void RenderUnits(Context *, uint32_t, VkCommandBuffer &, GlobalUBO &);
+		static void RenderUnits(Context *, uint32_t, VkCommandBuffer &, std::shared_ptr<Pass>, GlobalUBO &);
 	};
 }

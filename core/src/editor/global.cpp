@@ -63,12 +63,13 @@ namespace Editor
 
 		ImGui_ImplVulkan_Init(&init_info, context->renderImGuiPass->renderPass);
 
-		CreateDescriptorSets(context);
+		CreateDescriptors(context);
 	}
 
+	VkDescriptorSetLayout Global::descriptorSetLayout = nullptr;
 	std::vector<std::shared_ptr<Render::Descriptor>> Global::descriptors = {};
 
-	void Global::CreateDescriptorSets(Context *context)
+	void Global::CreateDescriptors(Context *context)
 	{
 		auto &renderGlobalEO = context->renderGlobalEO;
 
@@ -77,12 +78,21 @@ namespace Editor
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 		auto swapchainImageCount = global->swapchainImageCount;
 
-		// TODO
-		auto &descriptorSetLayout = context->renderPipelines["bling_phone"]->descriptorSetLayout;
+		VkDescriptorSetLayoutBinding samplerBinding0 = {};
+		samplerBinding0.binding = 0;
+		samplerBinding0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		samplerBinding0.descriptorCount = 1;
+		samplerBinding0.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+		std::vector<VkDescriptorSetLayoutBinding> bindings;
+		bindings.push_back(samplerBinding0);
+
+		auto descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
-			auto &colorImage2d = context->renderMainPass->colorImage2ds[i];
+			// auto &colorImage2d = context->renderMainPass->colorImage2ds[i];
+			auto &colorImage2d = context->renderShadowPass->depthImage2ds[i];
 
 			auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 			auto sampler = Render::SamplerLogic::Create(context);
@@ -106,6 +116,16 @@ namespace Editor
 											   });
 
 			descriptors.push_back(descriptor);
+		}
+	}
+
+	void Global::DestroyDescriptors(Context *context)
+	{
+		Render::DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
+		for (auto &descriptor : descriptors)
+		{
+			// Render::ImageLogic::Destroy(context, descriptor->image);
+			Render::SamplerLogic::Destroy(context, descriptor->imageInfo.sampler);
 		}
 	}
 
@@ -171,6 +191,8 @@ namespace Editor
 
 	void Global::Destroy(Context *context)
 	{
+		DestroyDescriptors(context);
+
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();

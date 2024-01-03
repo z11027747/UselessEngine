@@ -17,8 +17,10 @@ namespace Editor
 		static void Create(Context *);
 		static void Destroy(Context *);
 
+		static VkDescriptorSetLayout descriptorSetLayout;
 		static std::vector<std::shared_ptr<Render::Descriptor>> descriptors;
-		static void CreateDescriptorSets(Context *);
+		static void CreateDescriptors(Context *);
+		static void DestroyDescriptors(Context *);
 
 		static void NewFrame(Context *);
 		static void Draw(Context *, uint32_t);

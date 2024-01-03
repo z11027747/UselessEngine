@@ -50,9 +50,10 @@ namespace Render
 		pipelineCreateInfo.pDepthStencilState = &stageInfo.depthStencilStateCreateInfo;
 		pipelineCreateInfo.pColorBlendState = &stageInfo.colorBlendingStateCreateInfo;
 
+		ShaderLogic::CreateGlobalDescriptorSetLayout(context, graphicsPipeline);
+		ShaderLogic::CreateGlobalDescriptors(context, graphicsPipeline);
+		ShaderLogic::UpdateGlobalDescriptors(context, graphicsPipeline);
 		ShaderLogic::CreateDescriptorSetLayout(context, graphicsPipeline);
-		ShaderLogic::CreateDescriptors(context, graphicsPipeline);
-		ShaderLogic::UpdateDescriptorSets(context, graphicsPipeline);
 		PipelineLayoutLogic::Create(context, graphicsPipeline);
 
 		auto &pipelineLayout = graphicsPipeline->pipelineLayout;
@@ -79,8 +80,9 @@ namespace Render
 		auto &logicalDevice = global->logicalDevice;
 
 		PipelineLayoutLogic::Destroy(context, graphicsPipeline);
-		ShaderLogic::DestroyDescriptors(context, graphicsPipeline);
 		ShaderLogic::DestroyDescriptorSetLayout(context, graphicsPipeline);
+		ShaderLogic::DestroyGlobalDescriptors(context, graphicsPipeline);
+		ShaderLogic::DestroyGlobalDescriptorSetLayout(context, graphicsPipeline);
 
 		DestroyShaderStage(context, graphicsPipeline);
 

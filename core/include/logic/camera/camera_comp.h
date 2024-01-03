@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <memory>
+#include "render/vk/pass/pass_comp.h"
 
 namespace Logic
 {
@@ -21,5 +22,7 @@ namespace Logic
 		glm::mat4 projection;
 		glm::vec3 calcPos;
 		glm::vec3 calcEul;
+
+		std::shared_ptr<Render::Pass> renderPass;
 	};
 }

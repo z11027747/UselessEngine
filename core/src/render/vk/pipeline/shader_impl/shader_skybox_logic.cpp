@@ -7,7 +7,7 @@
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/pipeline_logic.h"
-#include "render/vk/pipeline/shader_skybox_logic.h"
+#include "render/vk/pipeline/shader_impl/shader_skybox_logic.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "render/vk/image/image_comp.h"
@@ -76,11 +76,6 @@ namespace Render
 	{
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
-	}
-
-	void ShaderSkyboxLogic::UpdateDescriptorSets(Context *context,
-												 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
 	}
 
 	void ShaderSkyboxLogic::CreateUnitDescriptor(Context *context,

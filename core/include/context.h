@@ -37,6 +37,7 @@ public:
 	float currTime;
 	float deltaTime;
 
+	// logic ====================
 	// render-global
 	std::shared_ptr<EngineObject> renderGlobalEO;
 	// render-pass
@@ -55,6 +56,7 @@ public:
 	// render-unit
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 
+	// logic ====================
 	// logic-camera
 	std::vector<std::shared_ptr<EngineObject>> logicCameraEOs;
 

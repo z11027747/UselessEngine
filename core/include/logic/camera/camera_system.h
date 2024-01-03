@@ -27,7 +27,7 @@ namespace Logic
 
 		static void Destroy(Context *context)
 		{
-			CameraLogic::DestroyMain(context);
+			CameraLogic::DestroyAll(context);
 		}
 	};
 }

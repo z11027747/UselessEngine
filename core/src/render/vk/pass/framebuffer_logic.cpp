@@ -32,7 +32,9 @@ namespace Render
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			std::vector<VkImageView> attachments = {};
-			attachments.push_back(pass->colorImage2ds[i]->vkImageView);
+			if (pass->colorImage2ds.size() > 0)
+				attachments.push_back(pass->colorImage2ds[i]->vkImageView);
+
 			if (pass->depthImage2ds.size() > 0)
 				attachments.push_back(pass->depthImage2ds[i]->vkImageView);
 
@@ -99,7 +101,8 @@ namespace Render
 	}
 
 	void FramebufferLogic::RenderUnits(Context *context,
-									   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer, GlobalUBO &globalUBO)
+									   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer, std::shared_ptr<Pass> pass,
+									   GlobalUBO &globalUBO)
 	{
 		auto &unitEOs = context->renderUnitEOs;
 		for (const auto &unitEO : unitEOs)
@@ -109,7 +112,12 @@ namespace Render
 
 			auto unit = unitEO->GetComponent<Render::Unit>();
 
-			auto &pipelineName = unit->pipelineName;
+			auto pipelineName = unit->pipelineName;
+
+			// TODO
+			if (pass->name == "Shadow")
+				pipelineName = "shadow";
+
 			auto &graphicsPipeline = context->renderPipelines[pipelineName];
 			auto &pipeline = graphicsPipeline->pipeline;
 			auto &pipelineLayout = graphicsPipeline->pipelineLayout;

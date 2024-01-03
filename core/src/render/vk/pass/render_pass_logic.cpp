@@ -41,7 +41,7 @@ namespace Render
 	}
 
 	void RenderPassLogic::CreateDepthAttachment(Context *context,
-												std::shared_ptr<Pass> pass)
+												std::shared_ptr<Pass> pass, uint32_t index)
 	{
 		VkAttachmentDescription depthAttachmentDescription = {};
 		depthAttachmentDescription.format = VK_FORMAT_D16_UNORM;
@@ -51,10 +51,10 @@ namespace Render
 		depthAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		depthAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL;
+		depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
 		VkAttachmentReference depthAttachmentReference = {};
-		depthAttachmentReference.attachment = 1;
+		depthAttachmentReference.attachment = index;
 		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
@@ -76,6 +76,7 @@ namespace Render
 		{
 			pass->colorImage2ds.push_back(swapchainImages[i]);
 		}
+		pass->isGetSwapchainImage = true;
 	}
 
 	void RenderPassLogic::CreateColorImage2ds(Context *context,
@@ -126,7 +127,7 @@ namespace Render
 				VK_FORMAT_D16_UNORM, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
 				// image
 				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 				0,
 				1,
 				VK_IMAGE_VIEW_TYPE_2D,
@@ -143,10 +144,21 @@ namespace Render
 		}
 	}
 
-	void RenderPassLogic::DestroyColorImage2dsBySwapchain(Context *context,
-														  std::shared_ptr<Pass> pass)
+	void RenderPassLogic::DestroyColorImage2ds(Context *context,
+											   std::shared_ptr<Pass> pass)
 	{
-		pass->colorImage2ds.clear();
+		if (pass->isGetSwapchainImage)
+		{
+			pass->colorImage2ds.clear();
+			return;
+		}
+
+		auto &colorImage2ds = pass->colorImage2ds;
+		for (const auto &colorImage2d : colorImage2ds)
+		{
+			ImageLogic::Destroy(context, colorImage2d);
+		}
+		colorImage2ds.clear();
 	}
 
 	void RenderPassLogic::DestroyDepthImage2ds(Context *context,
@@ -157,7 +169,7 @@ namespace Render
 		{
 			ImageLogic::Destroy(context, depthImage2d);
 		}
-		pass->depthImage2ds.clear();
+		depthImage2ds.clear();
 	}
 
 	void RenderPassLogic::AddSubpassDependency(Context *context,
@@ -183,11 +195,17 @@ namespace Render
 	{
 		VkSubpassDescription subpassDescription = {};
 		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpassDescription.colorAttachmentCount = 1;
-		subpassDescription.pColorAttachments = &pass->colorAttachmentReference;
+
+		if (pass->colorImage2ds.size() > 0)
+		{
+			subpassDescription.colorAttachmentCount = 1;
+			subpassDescription.pColorAttachments = &pass->colorAttachmentReference;
+		}
 
 		if (pass->depthImage2ds.size() > 0)
+		{
 			subpassDescription.pDepthStencilAttachment = &pass->depthAttachmentReference;
+		}
 
 		pass->subpassDescription = subpassDescription;
 	}
@@ -207,6 +225,7 @@ namespace Render
 		VkRenderPass vkRenderPass;
 		auto ret = vkCreateRenderPass(LogicalDeviceLogic::Get(context),
 									  &createInfo, nullptr, &vkRenderPass);
+		CheckRet(ret, "vkCreateRenderPass");
 
 		pass->renderPass = vkRenderPass;
 	}
