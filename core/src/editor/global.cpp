@@ -19,8 +19,6 @@
 
 namespace Editor
 {
-	static std::shared_ptr<Render::Image> imguiViewportImage2d = nullptr;
-	static VkSampler imguiViewportImageSampler = nullptr;
 
 	void Global::Create(Context *context)
 	{
@@ -62,7 +60,16 @@ namespace Editor
 		init_info.CheckVkResultFn = nullptr;
 
 		ImGui_ImplVulkan_Init(&init_info, context->renderMainPass->renderPass);
+	}
 
+	static std::shared_ptr<Render::Image> imguiViewportImage2d = nullptr;
+	static VkSampler imguiViewportImageSampler = nullptr;
+
+	void Global::CreateViewport(Context *context)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Render::Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
 		Render::ImageInfo imguiViewportImage2dInfo = {
@@ -77,14 +84,9 @@ namespace Editor
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			// layout
 			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-			VK_ACCESS_NONE,
-			VK_ACCESS_SHADER_READ_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT};
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
-		imguiViewportImage2d = Render::ImageLogic::CreateByInfo(context,
-																imguiViewportImage2dInfo);
+		imguiViewportImage2d = Render::ImageLogic::CreateByInfo(context, imguiViewportImage2dInfo);
 		imguiViewportImageSampler = Render::SamplerLogic::Create(context);
 	}
 

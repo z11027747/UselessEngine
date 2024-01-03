@@ -13,7 +13,6 @@ namespace Render
 	std::shared_ptr<Image> ImageLogic::CreateByInfo(Context *context,
 													ImageInfo &info)
 	{
-
 		auto image = std::make_shared<Image>();
 
 		image->fomat = info.format;
@@ -30,9 +29,7 @@ namespace Render
 
 		TransitionLayout(context,
 						 image,
-						 info.oldLayout, info.newLayout,
-						 info.srcAccessMask, info.dstAccessMask,
-						 info.srcStage, info.dstStage);
+						 info.oldLayout, info.newLayout);
 
 		return image;
 	}
@@ -63,7 +60,6 @@ namespace Render
 		auto ret = vkCreateImage(logicalDevice, &createInfo, nullptr, &vkImage);
 		CheckRet(ret, "vkCreateImage");
 
-		// 申请内存绑定数据
 		VkMemoryRequirements requirements;
 		vkGetImageMemoryRequirements(logicalDevice, vkImage, &requirements);
 
@@ -148,77 +144,111 @@ namespace Render
 
 	void ImageLogic::TransitionLayout(Context *context,
 									  std::shared_ptr<Image> image,
-									  VkImageLayout oldLayout, VkImageLayout newLayout,
-									  VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask,
-									  VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage)
+									  VkImageLayout oldLayout, VkImageLayout newLayout)
 	{
-		CmdSubmitLogic::Create(context,
-							   [=](VkCommandBuffer &cmdBuffer)
-							   {
-								   VkImageMemoryBarrier imageMemoryBarrier = {};
-								   imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-								   imageMemoryBarrier.oldLayout = oldLayout;
-								   imageMemoryBarrier.newLayout = newLayout;
-								   imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-								   imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-								   imageMemoryBarrier.image = image->vkImage;
-								   imageMemoryBarrier.subresourceRange = {image->aspectMask, 0, 1, 0, image->layerCount};
-								   imageMemoryBarrier.srcAccessMask = srcAccessMask;
-								   imageMemoryBarrier.dstAccessMask = dstAccessMask;
+		auto cmdBuffer = CmdSubmitLogic::CreateAndBegin(context);
 
-								   vkCmdPipelineBarrier(cmdBuffer,
-														srcStage, dstStage,
-														0,
-														0, nullptr,
-														0, nullptr,
-														1, &imageMemoryBarrier);
-							   });
+		VkImageMemoryBarrier imageMemoryBarrier = {};
+		imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imageMemoryBarrier.oldLayout = oldLayout;
+		imageMemoryBarrier.newLayout = newLayout;
+		imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imageMemoryBarrier.image = image->vkImage;
+		imageMemoryBarrier.subresourceRange = {image->aspectMask, 0, 1, 0, image->layerCount};
+
+		VkPipelineStageFlags srcStage;
+		VkPipelineStageFlags dstStage;
+		if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+			dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		}
+		else
+		{
+			Common::LogSystem::Error("unsupported layout transition!");
+		}
+
+		vkCmdPipelineBarrier(cmdBuffer,
+							 srcStage, dstStage,
+							 0,
+							 0, nullptr,
+							 0, nullptr,
+							 1, &imageMemoryBarrier);
+
+		CmdSubmitLogic::End(context, cmdBuffer);
 
 		image->layout = newLayout;
 	}
 
-	void ImageLogic::CopyBuffer(Context *context,
-								std::shared_ptr<Image> image,
-								std::shared_ptr<Buffer> buffer)
+	void ImageLogic::CopyFromBuffer(Context *context,
+									std::shared_ptr<Image> image,
+									std::shared_ptr<Buffer> buffer)
 	{
-		CmdSubmitLogic::Create(context,
-							   [&](VkCommandBuffer &cmdBuffer)
-							   {
-								   VkBufferImageCopy imageCopy = {};
-								   imageCopy.bufferOffset = 0;
-								   imageCopy.bufferRowLength = 0;
-								   imageCopy.bufferImageHeight = 0;
-								   imageCopy.imageSubresource.aspectMask = image->aspectMask;
-								   imageCopy.imageSubresource.mipLevel = 0;
-								   imageCopy.imageSubresource.baseArrayLayer = 0;
-								   imageCopy.imageSubresource.layerCount = image->layerCount;
-								   imageCopy.imageOffset = {0, 0, 0};
-								   imageCopy.imageExtent = {image->extent.width, image->extent.height, 1};
+		auto cmdBuffer = CmdSubmitLogic::CreateAndBegin(context);
 
-								   vkCmdCopyBufferToImage(cmdBuffer, buffer->vkBuffer, image->vkImage,
-														  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageCopy);
-							   });
+		VkBufferImageCopy imageCopy = {};
+		imageCopy.bufferOffset = 0;
+		imageCopy.bufferRowLength = 0;
+		imageCopy.bufferImageHeight = 0;
+		imageCopy.imageSubresource.aspectMask = image->aspectMask;
+		imageCopy.imageSubresource.mipLevel = 0;
+		imageCopy.imageSubresource.baseArrayLayer = 0;
+		imageCopy.imageSubresource.layerCount = image->layerCount;
+		imageCopy.imageOffset = {0, 0, 0};
+		imageCopy.imageExtent = {image->extent.width, image->extent.height, 1};
+
+		vkCmdCopyBufferToImage(cmdBuffer, buffer->vkBuffer, image->vkImage,
+							   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageCopy);
+
+		CmdSubmitLogic::End(context, cmdBuffer);
 	}
 
-	void ImageLogic::CopyImage(Context *context,
-							   std::shared_ptr<Image> image,
-							   std::shared_ptr<Image> srcImage)
+	void ImageLogic::CopyFromImage(Context *context,
+								   std::shared_ptr<Image> image,
+								   std::shared_ptr<Image> srcImage)
 	{
-		CmdSubmitLogic::Create(context,
-							   [&](VkCommandBuffer &cmdBuffer)
-							   {
-								   VkImageCopy copyRegion = {};
-								   copyRegion.srcSubresource.aspectMask = srcImage->aspectMask;
-								   copyRegion.srcSubresource.layerCount = srcImage->layerCount;
-								   copyRegion.dstSubresource.aspectMask = image->aspectMask;
-								   copyRegion.dstSubresource.layerCount = image->layerCount;
-								   copyRegion.extent = {image->extent.width, image->extent.height, 1};
+		auto cmdBuffer = CmdSubmitLogic::CreateAndBegin(context);
 
-								   vkCmdCopyImage(cmdBuffer,
-												  srcImage->vkImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-												  image->vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-												  1, &copyRegion);
-							   });
+		VkImageCopy copyRegion = {};
+		copyRegion.srcSubresource.aspectMask = srcImage->aspectMask;
+		copyRegion.srcSubresource.layerCount = srcImage->layerCount;
+		copyRegion.dstSubresource.aspectMask = image->aspectMask;
+		copyRegion.dstSubresource.layerCount = image->layerCount;
+		copyRegion.extent = {image->extent.width, image->extent.height, 1};
+
+		vkCmdCopyImage(cmdBuffer,
+					   srcImage->vkImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+					   image->vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+					   1, &copyRegion);
+
+		CmdSubmitLogic::End(context, cmdBuffer);
 	}
-
 }

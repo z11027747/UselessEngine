@@ -1,7 +1,6 @@
 
 #include <vulkan/vulkan.h>
 #include "render/vk/global/global_comp.h"
-#include "render/vk/cmd/cmd_comp.h"
 #include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/buffer/buffer_logic.h"
@@ -103,22 +102,16 @@ namespace Render
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			// layout
 			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_ACCESS_NONE,
-			VK_ACCESS_TRANSFER_WRITE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_TRANSFER_BIT};
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL};
 		auto image2d = ImageLogic::CreateByInfo(context, image2dInfo);
 
-		ImageLogic::CopyBuffer(context,
+		ImageLogic::CopyFromBuffer(context,
 							   image2d,
 							   tempBuffer);
 
 		ImageLogic::TransitionLayout(context,
 									 image2d,
-									 VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-									 VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT,
-									 VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+									 VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		Common::ResSystem::FreeImg(data);
 
@@ -169,22 +162,16 @@ namespace Render
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			// layout
 			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_ACCESS_NONE,
-			VK_ACCESS_TRANSFER_WRITE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_TRANSFER_BIT};
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL};
 		auto imageCube = ImageLogic::CreateByInfo(context, imageCubeInfo);
 
-		ImageLogic::CopyBuffer(context,
+		ImageLogic::CopyFromBuffer(context,
 							   imageCube,
 							   tempBuffer);
 
 		ImageLogic::TransitionLayout(context,
 									 imageCube,
-									 VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-									 VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT,
-									 VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+									 VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		for (auto i = 0; i < 6; i++)
 		{

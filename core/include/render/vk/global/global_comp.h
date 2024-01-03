@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 #include "render/vk/image/image_comp.h"
-#include "render/vk/cmd/cmd_comp.h"
 
 namespace Render
 {

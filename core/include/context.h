@@ -9,7 +9,6 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
-#include "render/vk/cmd/cmd_comp.h"
 #include "render/vk/pass/pass_comp.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"

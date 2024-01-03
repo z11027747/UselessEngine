@@ -4,7 +4,6 @@
 #include <memory>
 #include <vector>
 #include <functional>
-#include "render/vk/cmd/cmd_comp.h"
 
 class Context;
 
@@ -29,11 +28,9 @@ namespace Render
 	class CmdSubmitLogic final
 	{
 	public:
-		static void Create(Context *, std::function<void(VkCommandBuffer &)> doCmds);
-		static void Record(VkCommandBuffer &, std::function<void(VkCommandBuffer &)> doCmds);
-
 		static VkCommandBuffer CreateAndBegin(Context *);
 		static void End(Context *, VkCommandBuffer &);
+		static void EndSingleTime(Context *, VkCommandBuffer &);
 
 		static void UpdateBatch(Context *);
 	};

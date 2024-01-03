@@ -22,8 +22,6 @@ namespace Render
 
 		// layout
 		VkImageLayout oldLayout, newLayout;
-		VkAccessFlags srcAccessMask, dstAccessMask;
-		VkPipelineStageFlags srcStage, dstStage;
 	};
 
 	struct Image final

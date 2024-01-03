@@ -7,7 +7,6 @@
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/image/image_comp.h"
-#include "render/vk/cmd/cmd_comp.h"
 #include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/shader_logic.h"

@@ -14,6 +14,8 @@ namespace Editor
 	public:
 		static void Create(Context *);
 		static void Destroy(Context *);
+		
+		static void CreateViewport(Context *);
 
 		static void NewFrame(Context *);
 		static void RenderDrawData(Context *, uint32_t, VkCommandBuffer &);
