@@ -13,7 +13,6 @@
 
 namespace Editor
 {
-
 	std::shared_ptr<EngineObject> Window::selectEO = nullptr;
 
 	static char addCompName[16] = "";
@@ -22,7 +21,6 @@ namespace Editor
 	{
 		if (ImGui::Begin("Inspector", NULL))
 		{
-
 			if (selectEO == nullptr)
 			{
 				ImGui::Text("Please Select an EngineObject");

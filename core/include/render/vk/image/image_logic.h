@@ -16,25 +16,24 @@ namespace Render
 												   ImageInfo &);
 
 		static void Create(Context *,
-						   std::shared_ptr<Image>,
-						   ImageInfo &);
-		static void Destroy(Context *, std::shared_ptr<Image>);
+						   std::shared_ptr<Image>, ImageInfo &);
+		static void Destroy(Context *,
+							std::shared_ptr<Image>);
 
 		static void CreateView(Context *,
 							   std::shared_ptr<Image>,
 							   VkImageViewType, VkImageAspectFlags, uint32_t);
-		static void DestroyView(Context *, std::shared_ptr<Image>);
+		static void DestroyView(Context *,
+								std::shared_ptr<Image>);
 
 		static void TransitionLayout(Context *,
 									 std::shared_ptr<Image>,
-									 VkImageLayout, VkImageLayout);
+									 VkImageLayout, VkImageLayout, bool singleTime = false);
 
 		static void CopyFromBuffer(Context *,
-								   std::shared_ptr<Image>,
-								   std::shared_ptr<Buffer>);
+								   std::shared_ptr<Image>, std::shared_ptr<Buffer>);
 		static void CopyFromImage(Context *,
-								  std::shared_ptr<Image>,
-								  std::shared_ptr<Image>);
+								  std::shared_ptr<Image>, std::shared_ptr<Image>, bool singleTime = false);
 	};
 
 }

@@ -20,8 +20,8 @@ namespace Render
 		VkClearColorValue clearColorValue;
 		VkClearDepthStencilValue clearDepthValue;
 
+		std::vector<VkSubpassDependency> subpassDependencies;
 		VkSubpassDescription subpassDescription;
-		VkSubpassDependency subpassDependency;
 		VkRenderPass renderPass;
 
 		std::vector<VkFramebuffer> frameBuffers;

@@ -40,7 +40,9 @@ public:
 	// render-global
 	std::shared_ptr<EngineObject> renderGlobalEO;
 	// render-pass
+	std::shared_ptr<Render::Pass> renderImGuiPass;
 	std::shared_ptr<Render::Pass> renderMainPass;
+	std::shared_ptr<Render::Pass> renderShadowPass;
 	// render-pipelines
 	std::unordered_map<std::string, std::shared_ptr<Render::GraphicsPipeline>> renderPipelines;
 	// render-cmd

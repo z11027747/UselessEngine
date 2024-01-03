@@ -144,7 +144,7 @@ namespace Render
 
 	void ImageLogic::TransitionLayout(Context *context,
 									  std::shared_ptr<Image> image,
-									  VkImageLayout oldLayout, VkImageLayout newLayout)
+									  VkImageLayout oldLayout, VkImageLayout newLayout, bool singleTime)
 	{
 		auto cmdBuffer = CmdSubmitLogic::CreateAndBegin(context);
 
@@ -167,20 +167,20 @@ namespace Render
 			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 			dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		}
 		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 		{
 			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
 			imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-			dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		}
-		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
-		{
-			imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-			srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 			dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		}
 		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
@@ -190,6 +190,31 @@ namespace Render
 
 			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 			dstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+			dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+			imageMemoryBarrier.dstAccessMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+			srcStage = VK_ACCESS_SHADER_READ_BIT;
+			dstStage = VK_ACCESS_TRANSFER_WRITE_BIT;
+		}
+		//swapchain
+		else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		}
 		else
 		{
@@ -203,7 +228,10 @@ namespace Render
 							 0, nullptr,
 							 1, &imageMemoryBarrier);
 
-		CmdSubmitLogic::End(context, cmdBuffer);
+		if (singleTime)
+			CmdSubmitLogic::EndSingleTime(context, cmdBuffer);
+		else
+			CmdSubmitLogic::End(context, cmdBuffer);
 
 		image->layout = newLayout;
 	}
@@ -233,7 +261,7 @@ namespace Render
 
 	void ImageLogic::CopyFromImage(Context *context,
 								   std::shared_ptr<Image> image,
-								   std::shared_ptr<Image> srcImage)
+								   std::shared_ptr<Image> srcImage, bool singleTime)
 	{
 		auto cmdBuffer = CmdSubmitLogic::CreateAndBegin(context);
 
@@ -245,10 +273,13 @@ namespace Render
 		copyRegion.extent = {image->extent.width, image->extent.height, 1};
 
 		vkCmdCopyImage(cmdBuffer,
-					   srcImage->vkImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-					   image->vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+					   srcImage->vkImage, srcImage->layout,
+					   image->vkImage, image->layout,
 					   1, &copyRegion);
 
-		CmdSubmitLogic::End(context, cmdBuffer);
+		if (singleTime)
+			CmdSubmitLogic::EndSingleTime(context, cmdBuffer);
+		else
+			CmdSubmitLogic::End(context, cmdBuffer);
 	}
 }

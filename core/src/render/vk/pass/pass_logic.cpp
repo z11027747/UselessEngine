@@ -10,27 +10,69 @@
 
 namespace Render
 {
+	void PassLogic::CreateImGui(Context *context)
+	{
+		auto pass = std::make_shared<Pass>();
+
+		RenderPassLogic::CreateColorAttachment(context, pass,
+											   VK_ATTACHMENT_LOAD_OP_CLEAR,
+											   VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+		RenderPassLogic::GetSwapchainImage2ds(context, pass);
+		RenderPassLogic::AddSubpassDependency(context, pass,
+											  VK_SUBPASS_EXTERNAL, 0,
+											  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+											  0, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+											  0);
+		RenderPassLogic::SetSubPassDescription(context, pass);
+		RenderPassLogic::Create(context, pass);
+		FramebufferLogic::Create(context, pass);
+
+		context->renderImGuiPass = pass;
+	}
+
 	void PassLogic::CreateMain(Context *context)
 	{
 		auto pass = std::make_shared<Pass>();
 
-		RenderPassLogic::CreateColorAttachment(context, pass);
+		RenderPassLogic::CreateColorAttachment(context, pass,
+											   VK_ATTACHMENT_LOAD_OP_CLEAR,
+											   VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		RenderPassLogic::CreateDepthAttachment(context, pass);
-		RenderPassLogic::CreateColorImage2dsBySwapchain(context, pass);
+		RenderPassLogic::CreateColorImage2ds(context, pass);
 		RenderPassLogic::CreateDepthImage2ds(context, pass);
-		RenderPassLogic::AddSubPass(context, pass);
+		RenderPassLogic::AddSubpassDependency(context, pass,
+											  VK_SUBPASS_EXTERNAL, 0,
+											  VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+											  VK_ACCESS_MEMORY_READ_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+											  VK_DEPENDENCY_BY_REGION_BIT);
+		RenderPassLogic::AddSubpassDependency(context, pass,
+											  0, VK_SUBPASS_EXTERNAL,
+											  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+											  VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_ACCESS_MEMORY_READ_BIT,
+											  0);
+		RenderPassLogic::SetSubPassDescription(context, pass);
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
 		context->renderMainPass = pass;
 	}
 
+	void PassLogic::CreateShadow(Context *context)
+	{
+	}
+
 	void PassLogic::DestroyAll(Context *context)
 	{
-		auto &pass = context->renderMainPass;
-		RenderPassLogic::DestroyColorImage2dsBySwapchain(context, pass);
-		RenderPassLogic::DestroyDepthImage2ds(context, pass);
-		RenderPassLogic::Destroy(context, pass);
-		FramebufferLogic::Destroy(context, pass);
+		std::vector<std::shared_ptr<Pass>> passes = {
+			context->renderImGuiPass,
+			context->renderMainPass};
+
+		for (const auto &pass : passes)
+		{
+			RenderPassLogic::DestroyColorImage2dsBySwapchain(context, pass);
+			RenderPassLogic::DestroyDepthImage2ds(context, pass);
+			RenderPassLogic::Destroy(context, pass);
+			FramebufferLogic::Destroy(context, pass);
+		}
 	}
 }

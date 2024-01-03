@@ -4,6 +4,8 @@
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <memory>
+#include <vector>
+#include "render/vk/pipeline/pipeline_comp.h"
 
 class Context;
 
@@ -14,11 +16,13 @@ namespace Editor
 	public:
 		static void Create(Context *);
 		static void Destroy(Context *);
-		
-		static void CreateViewport(Context *);
+
+		static std::vector<std::shared_ptr<Render::Descriptor>> descriptors;
+		static void CreateDescriptorSets(Context *);
 
 		static void NewFrame(Context *);
-		static void RenderDrawData(Context *, uint32_t, VkCommandBuffer &);
+		static void Draw(Context *, uint32_t);
+		static void Render(Context *, VkCommandBuffer &);
 	};
 
 	inline static bool ImGui_ButtonWithColor(const char *label, ImVec4 color, bool cond = true)

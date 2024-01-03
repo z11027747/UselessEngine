@@ -8,14 +8,15 @@
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "context.h"
 
-namespace Render {
-
-	VkDescriptorSetLayout DescriptorSetLayoutLogic::Create(Context* context,
-		std::vector<VkDescriptorSetLayoutBinding>& bindings) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+namespace Render
+{
+	VkDescriptorSetLayout DescriptorSetLayoutLogic::Create(Context *context,
+														   std::vector<VkDescriptorSetLayoutBinding> &bindings)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 
 		VkDescriptorSetLayoutCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -29,12 +30,13 @@ namespace Render {
 		return descriptorSetLayout;
 	}
 
-	void DescriptorSetLayoutLogic::Destroy(Context* context,
-		VkDescriptorSetLayout descriptorSetLayout) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void DescriptorSetLayoutLogic::Destroy(Context *context,
+										   VkDescriptorSetLayout descriptorSetLayout)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyDescriptorSetLayout(logicalDevice, descriptorSetLayout, nullptr);
 	}

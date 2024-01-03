@@ -112,7 +112,8 @@ namespace Render
 
 		for (auto i = 0u; i < memProperties.memoryTypeCount; i++)
 		{
-			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & propertiesFlags) == propertiesFlags)
+			if ((typeFilter & (1 << i)) 
+				&& (memProperties.memoryTypes[i].propertyFlags & propertiesFlags) == propertiesFlags)
 			{
 				return i;
 			}
@@ -167,7 +168,8 @@ namespace Render
 
 		for (const auto &surfaceFormat : surfaceFormats)
 		{
-			if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM && surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+			if (surfaceFormat.format == VK_FORMAT_R8G8B8A8_UNORM 
+				&& surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
 			{
 				return surfaceFormat;
 			}

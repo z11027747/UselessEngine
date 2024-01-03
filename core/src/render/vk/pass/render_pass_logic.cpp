@@ -1,4 +1,4 @@
-﻿
+
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
@@ -11,9 +11,10 @@
 
 namespace Render
 {
-
 	void RenderPassLogic::CreateColorAttachment(Context *context,
-												std::shared_ptr<Pass> pass)
+												std::shared_ptr<Pass> pass,
+												VkAttachmentLoadOp loadOp,
+												VkImageLayout initLayout, VkImageLayout finalLayout)
 	{
 		auto &renderGlobalEO = context->renderGlobalEO;
 
@@ -23,12 +24,12 @@ namespace Render
 		VkAttachmentDescription colorAttachmentDescription = {};
 		colorAttachmentDescription.format = surfaceFormat.format;
 		colorAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
-		colorAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		colorAttachmentDescription.loadOp = loadOp;
 		colorAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		colorAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		colorAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		colorAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		colorAttachmentDescription.initialLayout = initLayout;
+		colorAttachmentDescription.finalLayout = finalLayout;
 
 		VkAttachmentReference colorAttachmentReference = {};
 		colorAttachmentReference.attachment = 0;
@@ -43,7 +44,7 @@ namespace Render
 												std::shared_ptr<Pass> pass)
 	{
 		VkAttachmentDescription depthAttachmentDescription = {};
-		depthAttachmentDescription.format = VK_FORMAT_D32_SFLOAT;
+		depthAttachmentDescription.format = VK_FORMAT_D16_UNORM;
 		depthAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
 		depthAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -61,8 +62,8 @@ namespace Render
 		pass->clearDepthValue = {1.0f, 0};
 	}
 
-	void RenderPassLogic::CreateColorImage2dsBySwapchain(Context *context,
-														 std::shared_ptr<Pass> pass)
+	void RenderPassLogic::GetSwapchainImage2ds(Context *context,
+											   std::shared_ptr<Pass> pass)
 	{
 		auto &renderGlobalEO = context->renderGlobalEO;
 
@@ -74,6 +75,38 @@ namespace Render
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			pass->colorImage2ds.push_back(swapchainImages[i]);
+		}
+	}
+
+	void RenderPassLogic::CreateColorImage2ds(Context *context,
+											  std::shared_ptr<Pass> pass)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &logicalDevice = global->logicalDevice;
+		auto &currentExtent = global->surfaceCapabilities.currentExtent;
+		auto swapchainImageCount = global->swapchainImageCount;
+
+		for (auto i = 0u; i < swapchainImageCount; i++)
+		{
+			ImageInfo image2dInfo = {
+				VK_FORMAT_R8G8B8A8_UNORM, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
+				// image
+				VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+				0,
+				1,
+				VK_IMAGE_VIEW_TYPE_2D,
+				// memory
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+				// layout
+				VK_IMAGE_LAYOUT_UNDEFINED,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+			auto colorImage2d = ImageLogic::CreateByInfo(context,
+														 image2dInfo);
+
+			pass->colorImage2ds.push_back(colorImage2d);
 		}
 	}
 
@@ -90,7 +123,7 @@ namespace Render
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			ImageInfo image2dInfo = {
-				VK_FORMAT_D32_SFLOAT, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
+				VK_FORMAT_D16_UNORM, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
 				// image
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -127,25 +160,37 @@ namespace Render
 		pass->depthImage2ds.clear();
 	}
 
-	void RenderPassLogic::AddSubPass(Context *context,
-									 std::shared_ptr<Pass> pass)
+	void RenderPassLogic::AddSubpassDependency(Context *context,
+											   std::shared_ptr<Pass> pass,
+											   uint32_t srcSubpass, uint32_t dstSubpass,
+											   VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+											   VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask,
+											   VkDependencyFlags dependencyFlags)
+	{
+		VkSubpassDependency subpassDependency = {};
+		subpassDependency.srcSubpass = srcSubpass;
+		subpassDependency.dstSubpass = dstSubpass;
+		subpassDependency.srcStageMask = srcStageMask;
+		subpassDependency.dstStageMask = dstStageMask;
+		subpassDependency.srcAccessMask = srcAccessMask;
+		subpassDependency.dstAccessMask = dstAccessMask;
+		subpassDependency.dependencyFlags = dependencyFlags;
+
+		pass->subpassDependencies.push_back(subpassDependency);
+	}
+
+	void RenderPassLogic::SetSubPassDescription(Context *context,
+												std::shared_ptr<Pass> pass)
 	{
 		VkSubpassDescription subpassDescription = {};
 		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpassDescription.colorAttachmentCount = 1;
 		subpassDescription.pColorAttachments = &pass->colorAttachmentReference;
-		subpassDescription.pDepthStencilAttachment = &pass->depthAttachmentReference;
 
-		VkSubpassDependency subpassDependency = {};
-		subpassDependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		subpassDependency.dstSubpass = 0;
-		subpassDependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		subpassDependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		subpassDependency.srcAccessMask = 0;
-		subpassDependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		if (pass->depthImage2ds.size() > 0)
+			subpassDescription.pDepthStencilAttachment = &pass->depthAttachmentReference;
 
 		pass->subpassDescription = subpassDescription;
-		pass->subpassDependency = subpassDependency;
 	}
 
 	void RenderPassLogic::Create(Context *context,
@@ -157,8 +202,8 @@ namespace Render
 		createInfo.pAttachments = pass->attachmentDescriptions.data();
 		createInfo.subpassCount = 1;
 		createInfo.pSubpasses = &pass->subpassDescription;
-		createInfo.dependencyCount = 1;
-		createInfo.pDependencies = &pass->subpassDependency;
+		createInfo.dependencyCount = static_cast<uint32_t>(pass->subpassDependencies.size());
+		createInfo.pDependencies = pass->subpassDependencies.data();
 
 		VkRenderPass vkRenderPass;
 		auto ret = vkCreateRenderPass(LogicalDeviceLogic::Get(context),

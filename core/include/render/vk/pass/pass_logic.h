@@ -10,27 +10,40 @@ class Context;
 
 namespace Render
 {
-
 	class PassLogic final
 	{
 	public:
+		static void CreateImGui(Context *);
 		static void CreateMain(Context *);
+		static void CreateShadow(Context *);
 		static void DestroyAll(Context *);
 	};
 
 	class RenderPassLogic final
 	{
 	public:
-		static void CreateColorAttachment(Context *, std::shared_ptr<Pass>);
+		static void CreateColorAttachment(Context *,
+										  std::shared_ptr<Pass>,
+										  VkAttachmentLoadOp,
+										  VkImageLayout, VkImageLayout);
 		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>);
 
-		static void CreateColorImage2dsBySwapchain(Context *, std::shared_ptr<Pass>);
+		static void GetSwapchainImage2ds(Context *, std::shared_ptr<Pass>);
+		static void CreateColorImage2ds(Context *, std::shared_ptr<Pass>);
 		static void CreateDepthImage2ds(Context *, std::shared_ptr<Pass>);
 
 		static void DestroyColorImage2dsBySwapchain(Context *, std::shared_ptr<Pass>);
 		static void DestroyDepthImage2ds(Context *, std::shared_ptr<Pass>);
 
-		static void AddSubPass(Context *, std::shared_ptr<Pass>);
+		static void AddSubpassDependency(Context *,
+										 std::shared_ptr<Pass>,
+										 uint32_t, uint32_t,
+										 VkPipelineStageFlags, VkPipelineStageFlags,
+										 VkAccessFlags, VkAccessFlags,
+										 VkDependencyFlags);
+
+		static void SetSubPassDescription(Context *,
+										  std::shared_ptr<Pass>);
 
 		static void Create(Context *, std::shared_ptr<Pass>);
 		static void Destroy(Context *, std::shared_ptr<Pass>);

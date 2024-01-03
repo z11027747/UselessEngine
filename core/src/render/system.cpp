@@ -23,7 +23,6 @@
 
 namespace Render
 {
-
 	auto enabledDebug = true;
 
 	void System::Create(Context *context)
@@ -56,6 +55,7 @@ namespace Render
 		SwapchainLogic::CreateSemaphores(context);
 		SwapchainLogic::AllocateCmd(context);
 
+		PassLogic::CreateImGui(context);
 		PassLogic::CreateMain(context);
 		PipelineLogic::Create(context, "skybox", context->renderMainPass);
 		PipelineLogic::Create(context, "bling_phone", context->renderMainPass);
@@ -72,15 +72,11 @@ namespace Render
 
 		SwapchainLogic::WaitFence(context);
 		auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
-
 		auto &vkCmdBuffer = SwapchainLogic::BeginCmd(context, imageIndex);
 
 		auto &directionLightEO = context->renderLightEOs[0];
 		auto directionLightTransform = directionLightEO->GetComponent<Logic::Transform>();
-		auto &directionLightPos = directionLightTransform->position;
 		auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
-		auto &directionCol = directionLight->color;
-		auto &directionParams = directionLight->params;
 
 		auto &logicCameraEOs = context->logicCameraEOs;
 		for (const auto &cameraEO : logicCameraEOs)
@@ -88,34 +84,33 @@ namespace Render
 			if (!cameraEO->active)
 				return;
 
-			auto &cameraName = cameraEO->name;
-			if (cameraName == G_MainCamera)
-			{
-				Editor::Global::NewFrame(context);
-			}
-
-			auto &renderPass = context->renderMainPass;
-			FramebufferLogic::BeginRenderPass(context, imageIndex, vkCmdBuffer, renderPass);
+			auto &mainPass = context->renderMainPass;
+			FramebufferLogic::BeginRenderPass(context, imageIndex, vkCmdBuffer, mainPass);
 
 			auto cameraTransform = cameraEO->GetComponent<Logic::Transform>();
-			auto &cameraPos = cameraTransform->position;
 			auto camera = cameraEO->GetComponent<Logic::Camera>();
 
 			GlobalUBO globalUBO = {
-				directionLightPos,
+				cameraTransform->position,
 				camera->view,
 				camera->projection,
-				directionLightPos,
-				directionCol,
-				directionParams};
+				directionLightTransform->position,
+				directionLight->color,
+				directionLight->params};
 
 			FramebufferLogic::RenderUnits(context,
 										  imageIndex, vkCmdBuffer, globalUBO);
 
-			if (cameraName == G_MainCamera)
-			{
-				Editor::Global::RenderDrawData(context, imageIndex, vkCmdBuffer);
-			}
+			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
+		}
+
+		{
+			auto &imGuiPass = context->renderImGuiPass;
+			FramebufferLogic::BeginRenderPass(context, imageIndex, vkCmdBuffer, imGuiPass);
+
+			Editor::Global::NewFrame(context);
+			Editor::Global::Draw(context, imageIndex);
+			Editor::Global::Render(context, vkCmdBuffer);
 
 			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
 		}

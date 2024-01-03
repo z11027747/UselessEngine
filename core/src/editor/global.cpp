@@ -14,6 +14,8 @@
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
+#include "render/vk/pipeline/descriptor_set_layout_logic.h"
+#include "render/vk/cmd/cmd_logic.h"
 #include "context.h"
 #include "engine_object.h"
 
@@ -59,74 +61,52 @@ namespace Editor
 		init_info.Allocator = nullptr;
 		init_info.CheckVkResultFn = nullptr;
 
-		ImGui_ImplVulkan_Init(&init_info, context->renderMainPass->renderPass);
+		ImGui_ImplVulkan_Init(&init_info, context->renderImGuiPass->renderPass);
+
+		CreateDescriptorSets(context);
 	}
 
-	static std::shared_ptr<Render::Image> imguiViewportImage2d = nullptr;
-	static VkSampler imguiViewportImageSampler = nullptr;
+	std::vector<std::shared_ptr<Render::Descriptor>> Global::descriptors = {};
 
-	void Global::CreateViewport(Context *context)
-	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Render::Global>();
-		auto &currentExtent = global->surfaceCapabilities.currentExtent;
-
-		Render::ImageInfo imguiViewportImage2dInfo = {
-			VK_FORMAT_R8G8B8A8_UNORM, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
-			// image
-			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_SAMPLED_BIT,
-			0,
-			1,
-			VK_IMAGE_VIEW_TYPE_2D,
-			// memory
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			// layout
-			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
-
-		imguiViewportImage2d = Render::ImageLogic::CreateByInfo(context, imguiViewportImage2dInfo);
-		imguiViewportImageSampler = Render::SamplerLogic::Create(context);
-	}
-
-	VkDescriptorSet GetTexture(Context *context,
-							   VkSampler sampler, VkImageView image_view, VkImageLayout image_layout)
+	void Global::CreateDescriptorSets(Context *context)
 	{
 		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
+		auto &currentExtent = global->surfaceCapabilities.currentExtent;
+		auto swapchainImageCount = global->swapchainImageCount;
+
+		// TODO
 		auto &descriptorSetLayout = context->renderPipelines["bling_phone"]->descriptorSetLayout;
 
-		// Create Descriptor Set:
-		VkDescriptorSet descriptor_set = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
+		for (auto i = 0u; i < swapchainImageCount; i++)
+		{
+			auto &colorImage2d = context->renderMainPass->colorImage2ds[i];
 
-		// Update the Descriptor Set:
-		VkDescriptorImageInfo desc_image[1] = {};
-		desc_image[0].sampler = sampler;
-		desc_image[0].imageView = image_view;
-		desc_image[0].imageLayout = image_layout;
-		VkWriteDescriptorSet write_desc[1] = {};
-		write_desc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write_desc[0].dstSet = descriptor_set;
-		write_desc[0].descriptorCount = 1;
-		write_desc[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		write_desc[0].pImageInfo = desc_image;
-		vkUpdateDescriptorSets(logicalDevice, 1, write_desc, 0, nullptr);
+			auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
+			auto sampler = Render::SamplerLogic::Create(context);
 
-		return descriptor_set;
-	}
+			VkDescriptorImageInfo imageInfo = {
+				sampler,
+				colorImage2d->vkImageView,
+				colorImage2d->layout};
 
-	void FreeTexture(Context *context, VkDescriptorSet descriptorSet)
-	{
-		auto &renderGlobalEO = context->renderGlobalEO;
+			auto descriptor = std::make_shared<Render::Descriptor>();
+			descriptor->set = descriptorSet;
+			descriptor->image = colorImage2d;
+			descriptor->imageInfo = imageInfo;
 
-		auto global = renderGlobalEO->GetComponent<Render::Global>();
-		auto &logicalDevice = global->logicalDevice;
-		auto &descriptorPool = global->descriptorPool;
+			Render::DescriptorSetLogic::Update(context,
+											   [&](std::vector<VkWriteDescriptorSet> &writes)
+											   {
+												   Render::DescriptorSetLogic::WriteImage(context,
+																						  writes,
+																						  descriptor);
+											   });
 
-		vkFreeDescriptorSets(logicalDevice, descriptorPool, 1, &descriptorSet);
+			descriptors.push_back(descriptor);
+		}
 	}
 
 	void Global::NewFrame(Context *context)
@@ -134,17 +114,15 @@ namespace Editor
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+	}
 
+	void Global::Draw(Context *context, uint32_t imageIndex)
+	{
 		static bool showDemoWindow = false;
-		ImGui::Checkbox("DemoWindow", &showDemoWindow);
 		if (showDemoWindow)
 		{
 			ImGui::ShowDemoWindow(&showDemoWindow);
 		}
-
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_PassthruCentralNode;
-
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
 		const auto *viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -152,53 +130,32 @@ namespace Editor
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
 		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		window_flags |= ImGuiWindowFlags_NoBackground;
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
 		bool p_open = true;
-		ImGui::Begin("##DockSpace", &p_open, window_flags);
-
-		ImGui::PopStyleVar(3);
-
-		auto &io = ImGui::GetIO();
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		if (ImGui::Begin("##DockSpace-FullScreen", &p_open, window_flags))
 		{
-			ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+			auto &io = ImGui::GetIO();
+			if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+			{
+				auto dockspace_id = ImGui::GetID("MyDockSpace");
+				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+			}
+
+			Window::Draw(context, imageIndex);
+
+			ImGui::End();
 		}
 
-		Window::Draw(context);
-
-		ImGui::End();
-
-		ImGui::Begin("Viewport");
-
-		auto &renderGlobalEO = context->renderGlobalEO;
-		auto global = renderGlobalEO->GetComponent<Render::Global>();
-
-		auto &currFrameImage = global->swapchainImages[global->currFrame];
-
-		// VkCommandBuffer commandBuffer = beginSingleTimeCommands();
-		// transitionImageLayout(commandBuffer, swapchainImages[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-		// transitionImageLayout(commandBuffer, intermediateImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-		// copyImage(commandBuffer, swapchainImages[imageIndex], intermediateImage, width, height);
-		// transitionImageLayout(commandBuffer, intermediateImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		// endSingleTimeCommands(commandBuffer);
-
-		// auto vkDescriptorSet = GetTexture(context, vkSampler, vkImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-		// ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		// ImGui::Image(vkDescriptorSet, ImVec2{viewportPanelSize.x, viewportPanelSize.y});
-		// FreeTexture(context, vkDescriptorSet);
-
-		ImGui::End();
+		ImGui::PopStyleVar(3);
 	}
 
-	void Global::RenderDrawData(Context *context,
-								uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer)
+	void Global::Render(Context *context, VkCommandBuffer &vkCmdBuffer)
 	{
 		ImGui::Render();
 		auto *main_draw_data = ImGui::GetDrawData();
@@ -218,5 +175,4 @@ namespace Editor
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
-
 }

@@ -29,7 +29,7 @@ namespace Render
 		swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
 		swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
 		swapchainCreateInfo.imageArrayLayers = 1;
-		swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		swapchainCreateInfo.preTransform = surfaceCapabilities.currentTransform;
 		swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -66,7 +66,7 @@ namespace Render
 			swapchainImage2d->extent = {currentExtent.width, currentExtent.height, 0};
 			swapchainImage2d->aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 			swapchainImage2d->layerCount = 1;
-			swapchainImage2d->layout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
+			swapchainImage2d->layout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 			swapchainImage2d->vkImage = swapchainImages[i];
 
