@@ -1,4 +1,5 @@
 ﻿
+#include <vector>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
@@ -36,7 +37,7 @@ namespace Render
 		CheckRet(endRet, "vkEndCommandBuffer");
 
 		auto &renderGlobalEO = context->renderGlobalEO;
-		
+
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto &logicalQueue = global->logicalQueue;
 
@@ -49,6 +50,9 @@ namespace Render
 		CheckRet(submitRet, "vkQueueSubmit");
 
 		vkQueueWaitIdle(logicalQueue);
+
+		std::vector<VkCommandBuffer> cmdBuffers = {cmdBuffer};
+		CmdPoolLogic::FreeBuffers(context, cmdBuffers);
 	}
 
 	// ==== ToSystem
