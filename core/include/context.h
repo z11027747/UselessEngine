@@ -88,8 +88,8 @@ public:
 		Logic::System::Create(this);
 
 		// Test
-		Editor::Test::CreateSkybox(this);
 		Editor::Test::CreateLight(this);
+		Editor::Test::CreateSkybox(this);
 		Editor::Test::CreateCube(this);
 	}
 

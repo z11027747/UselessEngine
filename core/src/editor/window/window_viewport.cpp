@@ -15,9 +15,14 @@ namespace Editor
         auto sceneVisible = ImGui::Begin("Scene", NULL);
         if (sceneVisible)
         {
-            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+            auto viewportPanelSize = ImGui::GetContentRegionAvail();
             ImGui::Image(Global::descriptors[imageIndex]->set,
                          ImVec2{viewportPanelSize.x, viewportPanelSize.y});
+
+            ImGui::SetWindowFontScale(1.8f);
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(ImGui::GetWindowContentRegionMin());
+            ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Viewport Size: %.fx%.f", viewportPanelSize.x, viewportPanelSize.y);
         }
         ImGui::End();
 

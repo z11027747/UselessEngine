@@ -6,22 +6,20 @@
 
 class Context;
 
-namespace Logic {
-
-	void System::Create(Context* context){
-
+namespace Logic
+{
+	void System::Create(Context *context)
+	{
 		CameraSystem::Create(context);
 	}
 
-	void System::Update(Context* context) {
-	
+	void System::Update(Context *context)
+	{
 		CameraSystem::Update(context);
 	}
 
-
-	void System::Destroy(Context* context) {
-
+	void System::Destroy(Context *context)
+	{
 		CameraSystem::Destroy(context);
 	}
-
 }

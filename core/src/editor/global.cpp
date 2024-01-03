@@ -122,6 +122,7 @@ namespace Editor
 		if (showDemoWindow)
 		{
 			ImGui::ShowDemoWindow(&showDemoWindow);
+			return;
 		}
 
 		const auto *viewport = ImGui::GetMainViewport();
@@ -130,7 +131,6 @@ namespace Editor
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
 		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
@@ -152,7 +152,7 @@ namespace Editor
 			ImGui::End();
 		}
 
-		ImGui::PopStyleVar(3);
+		ImGui::PopStyleVar(2);
 	}
 
 	void Global::Render(Context *context, VkCommandBuffer &vkCmdBuffer)

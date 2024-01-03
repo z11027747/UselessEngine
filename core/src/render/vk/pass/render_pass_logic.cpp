@@ -164,8 +164,7 @@ namespace Render
 											   std::shared_ptr<Pass> pass,
 											   uint32_t srcSubpass, uint32_t dstSubpass,
 											   VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-											   VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask,
-											   VkDependencyFlags dependencyFlags)
+											   VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask)
 	{
 		VkSubpassDependency subpassDependency = {};
 		subpassDependency.srcSubpass = srcSubpass;
@@ -174,7 +173,7 @@ namespace Render
 		subpassDependency.dstStageMask = dstStageMask;
 		subpassDependency.srcAccessMask = srcAccessMask;
 		subpassDependency.dstAccessMask = dstAccessMask;
-		subpassDependency.dependencyFlags = dependencyFlags;
+		// subpassDependency.dependencyFlags = dependencyFlags;
 
 		pass->subpassDependencies.push_back(subpassDependency);
 	}

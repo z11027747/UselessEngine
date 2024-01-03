@@ -21,8 +21,7 @@ namespace Render
 		RenderPassLogic::AddSubpassDependency(context, pass,
 											  VK_SUBPASS_EXTERNAL, 0,
 											  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-											  0, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-											  0);
+											  VK_ACCESS_NONE, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 		RenderPassLogic::SetSubPassDescription(context, pass);
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
@@ -42,14 +41,8 @@ namespace Render
 		RenderPassLogic::CreateDepthImage2ds(context, pass);
 		RenderPassLogic::AddSubpassDependency(context, pass,
 											  VK_SUBPASS_EXTERNAL, 0,
-											  VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-											  VK_ACCESS_MEMORY_READ_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-											  VK_DEPENDENCY_BY_REGION_BIT);
-		RenderPassLogic::AddSubpassDependency(context, pass,
-											  0, VK_SUBPASS_EXTERNAL,
-											  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-											  VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_ACCESS_MEMORY_READ_BIT,
-											  0);
+											  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+											  VK_ACCESS_NONE, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 		RenderPassLogic::SetSubPassDescription(context, pass);
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);

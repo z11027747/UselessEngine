@@ -8,20 +8,20 @@
 #include "context.h"
 #include "engine_object.h"
 
-namespace Editor {
-
-	void EngineObjectWrap::Add(Context* context,
-		const std::string& name
-	) {
+namespace Editor
+{
+	void EngineObjectWrap::Add(Context *context,
+							   const std::string &name)
+	{
 		auto eo = std::make_shared<EngineObject>();
 		eo->name = name;
 		context->allEOs.emplace_back(eo);
 		context->allEOMap.emplace(name, eo);
 	}
 
-	void EngineObjectWrap::Draw(Context* context,
-		std::shared_ptr<EngineObject> eo
-	) {
+	void EngineObjectWrap::Draw(Context *context,
+								std::shared_ptr<EngineObject> eo)
+	{
 		ImGui::Checkbox("##active", &eo->active);
 		ImGui::SameLine();
 
@@ -29,14 +29,15 @@ namespace Editor {
 		ImGui::SameLine();
 
 		auto isSelected = (Window::selectEO == eo);
-		if (ImGui_ButtonWithColor("Select", ImVec4(0.0f, 0.4f, 0.0f, 1.0f), isSelected)) {
+		if (ImGui_ButtonWithColor("Select", ImVec4(0.0f, 0.4f, 0.0f, 1.0f), isSelected))
+		{
 			Window::selectEO = eo;
 		}
 		ImGui::SameLine();
 
-		if (ImGui_ButtonWithColor("Delete", ImVec4(0.4f, 0.0f, 0.0f, 1.0f))) {
+		if (ImGui_ButtonWithColor("Delete", ImVec4(0.4f, 0.0f, 0.0f, 1.0f)))
+		{
 			std::cout << "delete" << std::endl;
 		}
 	}
-
 }

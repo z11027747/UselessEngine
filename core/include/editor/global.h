@@ -46,9 +46,10 @@ namespace Editor
 		return result;
 	}
 
-	inline static void ImGui_Drag_GlmVec3(const char *label, glm::vec3 &v3,
+	inline static void ImGui_Drag_GlmVec3(const char *label, glm::vec3 &v3, int id,
 										  float width = 60, float speed = 0.02f)
 	{
+		ImGui::PushID(id);
 		ImGui::PushItemWidth(width);
 
 		ImGui::DragFloat("##f0", &v3.x, speed);
@@ -63,6 +64,7 @@ namespace Editor
 		ImGui::PopItemWidth();
 
 		ImGui::Text(label);
+		ImGui::PopID();
 	}
 
 }

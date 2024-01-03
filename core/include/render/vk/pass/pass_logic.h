@@ -39,8 +39,7 @@ namespace Render
 										 std::shared_ptr<Pass>,
 										 uint32_t, uint32_t,
 										 VkPipelineStageFlags, VkPipelineStageFlags,
-										 VkAccessFlags, VkAccessFlags,
-										 VkDependencyFlags);
+										 VkAccessFlags, VkAccessFlags);
 
 		static void SetSubPassDescription(Context *,
 										  std::shared_ptr<Pass>);
@@ -60,5 +59,4 @@ namespace Render
 
 		static void RenderUnits(Context *, uint32_t, VkCommandBuffer &, GlobalUBO &);
 	};
-
 }

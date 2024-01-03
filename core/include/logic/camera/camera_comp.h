@@ -1,18 +1,20 @@
-﻿#pragma once
+#pragma once
 
 #include <glm/glm.hpp>
 #include <memory>
 
-namespace Logic {
-
-	struct Frustum final {
+namespace Logic
+{
+	struct Frustum final
+	{
 		float near;
 		float far;
 		float aspect;
 		float fov;
 	};
 
-	struct Camera final {
+	struct Camera final
+	{
 		Frustum frustum;
 
 		glm::mat4 view;
@@ -20,5 +22,4 @@ namespace Logic {
 		glm::vec3 calcPos;
 		glm::vec3 calcEul;
 	};
-
 }

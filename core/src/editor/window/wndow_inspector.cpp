@@ -28,21 +28,20 @@ namespace Editor
 			else
 			{
 				ImGui::Text("Select EngineObject: %s", selectEO->name.c_str());
-
 				ImGui::SeparatorText("ComponentList Begin");
 				{
 
-					auto index = 0;
+					auto id = 0;
 					auto &componentMap = selectEO->componentMap;
 					for (const auto &kv : componentMap)
 					{
 						auto typeId = kv.first;
 						auto &component = kv.second;
 
-						ImGui::PushID(index++);
+						ImGui::PushID(id++);
+						ImGui::SetNextItemOpen(true);
 						if (ImGui::TreeNode("Comp: &s", typeId.name()))
 						{
-
 							if (typeId == typeid(Logic::Transform))
 							{
 								auto transform = std::static_pointer_cast<Logic::Transform>(component);
