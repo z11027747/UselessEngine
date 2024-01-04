@@ -21,15 +21,15 @@ namespace Logic
 		mainCameraEO->name = G_MainCamera;
 
 		Logic::TransformLogic::Add(mainCameraEO,
-								   glm::vec3(0.0f, 6.0f, -10.0f),
-								   glm::vec3(32.0f, 0.0f, 0.0f),
+								   glm::vec3(0.0f, 4.0f, -10.0f),
+								   glm::vec3(15.0f, 0.0f, 0.0f),
 								   glm::vec3(1.0f, 1.0f, 1.0f));
 
 		auto mainCamera = std::make_shared<Camera>();
 		mainCamera->near = 0.1f;
-		mainCamera->far = 50.0f;
+		mainCamera->far = 100.0f;
 		mainCamera->mode = CameraMode::ePerspective;
-		mainCamera->fov = 45.0f;
+		mainCamera->fov = 50.0f;
 		mainCamera->renderPass = context->renderMainPass;
 		mainCameraEO->AddComponent<Camera>(mainCamera);
 

@@ -34,7 +34,7 @@ namespace Render
 
 	void UnitLogic::SetPipelineName(Context *context,
 									std::shared_ptr<Unit> unit,
-									std::string name)
+									const std::string &name)
 	{
 		unit->pipelineName = name;
 	}
@@ -73,7 +73,7 @@ namespace Render
 
 	void UnitLogic::SetImage(Context *context,
 							 std::shared_ptr<Unit> unit,
-							 std::string name)
+							 const std::string &name)
 	{
 		int w, h;
 		unsigned char *data = Common::ResSystem::LoadImg(name, w, h);
@@ -185,4 +185,49 @@ namespace Render
 										  unit);
 	}
 
+	void UnitLogic::SetObj(Context *context,
+						   std::shared_ptr<Unit> unit,
+						   const std::string &name)
+	{
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes;
+
+		Common::ResSystem::LoadObjShapes(name, attrib, shapes);
+
+		std::vector<Render::Vertex> vertices;
+		std::vector<uint16_t> indices;
+
+		std::unordered_map<Render::Vertex, uint32_t> uniqueVertices = {};
+
+		for (const auto &shape : shapes)
+		{
+			for (const auto &index : shape.mesh.indices)
+			{
+				Render::Vertex vertex = {};
+				vertex.positionOS = {
+					attrib.vertices[3 * index.vertex_index + 0],
+					attrib.vertices[3 * index.vertex_index + 1],
+					attrib.vertices[3 * index.vertex_index + 2]};
+				vertex.normalOS = {
+					attrib.normals[3 * index.normal_index + 0],
+					attrib.normals[3 * index.normal_index + 1],
+					attrib.normals[3 * index.normal_index + 2]};
+				vertex.color = {1.0f, 1.0f, 1.0f};
+				vertex.uv0 = {
+					attrib.texcoords[2 * index.texcoord_index + 0],
+					1.0f - attrib.texcoords[2 * index.texcoord_index + 1]};
+
+				// if (uniqueVertices.count(vertex) == 0)
+				{
+					// uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+					vertices.push_back(vertex);
+				}
+
+				indices.push_back(static_cast<uint16_t>(indices.size()));
+			}
+		}
+
+		Render::UnitLogic::SetVertices(context, unit, vertices);
+		Render::UnitLogic::SetIndices(context, unit, indices);
+	}
 }

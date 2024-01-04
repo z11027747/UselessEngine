@@ -1,5 +1,7 @@
 #pragma once
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
@@ -14,7 +16,12 @@ namespace Render
 		alignas(16) glm::vec3 positionOS;
 		alignas(16) glm::vec3 normalOS;
 		alignas(16) glm::vec3 color;
-		glm::vec2 uv0;
+		alignas(8) glm::vec2 uv0;
+
+		bool operator==(const Vertex &other) const
+		{
+			return positionOS == other.positionOS && normalOS == other.normalOS && color == other.color && uv0 == other.uv0;
+		}
 	};
 
 	struct Unit final
@@ -33,5 +40,20 @@ namespace Render
 
 		// descriptor
 		std::shared_ptr<Descriptor> descriptor;
+	};
+}
+
+namespace std
+{
+	template <>
+	struct hash<Render::Vertex>
+	{
+		size_t operator()(Render::Vertex const &vertex) const
+		{
+			return (((((hash<glm::vec3>()(vertex.positionOS) 
+           	 	^ (hash<glm::vec3>()(vertex.color) << 1)) >> 1) 
+           		 ^ (hash<glm::vec2>()(vertex.uv0) << 1)) 
+           		 ^ (hash<glm::vec3>()(vertex.normalOS) << 1)));
+		}
 	};
 }

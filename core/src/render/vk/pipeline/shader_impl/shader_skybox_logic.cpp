@@ -42,8 +42,7 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
-		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;
-		rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 	}
 
 	void ShaderSkyboxLogic::SetDepthStencilCreateInfo(Context *context,
@@ -52,7 +51,7 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &depthStencilStateCreateInfo = stageInfo.depthStencilStateCreateInfo;
-		depthStencilStateCreateInfo.depthTestEnable = false;
+		depthStencilStateCreateInfo.depthTestEnable = true;
 		depthStencilStateCreateInfo.depthWriteEnable = false;
 	}
 

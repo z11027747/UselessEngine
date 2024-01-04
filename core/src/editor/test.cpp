@@ -16,6 +16,98 @@
 
 namespace Editor
 {
+	void Test::CreateLight(Context *context)
+	{
+		auto directionLightEO = std::make_shared<EngineObject>();
+		directionLightEO->name = "DirectionLight";
+
+		auto directionLightPos = glm::vec3(5.0f, 5.0f, 0.0f);
+		Logic::TransformLogic::Add(directionLightEO,
+								   directionLightPos,
+								   glm::vec3(45.0f, -90.0f, 0.0f),
+								   glm::vec3(1.0f, 1.0f, 1.0f));
+
+		auto directionLight = std::make_shared<Render::DirectionLight>();
+		directionLight->color = glm::vec3(1.0f, 0.9568627f, 0.8392157f);
+		directionLight->params = glm::vec4(0.4f, 10.0f, 0.5f, 0.0f);
+
+		directionLightEO->AddComponent(directionLight);
+
+		auto directionLightCamera = std::make_shared<Logic::Camera>();
+		directionLightCamera->near = 0.1f;
+		directionLightCamera->far = 20.0f;
+		directionLightCamera->mode = Logic::CameraMode::eOrtho;
+		directionLightCamera->size = 15.0f;
+		directionLightCamera->renderPass = context->renderShadowPass;
+		directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
+
+		Logic::CameraLogic::UpdateView(directionLightEO);
+		Logic::CameraLogic::UpdateProjection(context, directionLightCamera);
+
+		context->renderLightEOs.push_back(directionLightEO);
+		context->AddEO(directionLightEO);
+
+		// Pos
+		{
+			auto directionLightPosEO = std::make_shared<EngineObject>();
+			directionLightPosEO->name = "DirectionLightPos";
+
+			Logic::TransformLogic::Add(directionLightPosEO,
+									   directionLightPos,
+									   glm::vec3(00.0f, 0.0f, 0.0f),
+									   glm::vec3(1.0f, 1.0f, 1.0f));
+
+			auto directionLightPosUnit = std::make_shared<Render::Unit>();
+
+			std::vector<Render::Vertex> vertices;
+			std::vector<uint16_t> indices;
+			MakeCube(vertices, indices);
+
+			Render::UnitLogic::SetPipelineName(context, directionLightPosUnit, "bling_phone");
+			Render::UnitLogic::SetVertices(context, directionLightPosUnit, vertices);
+			Render::UnitLogic::SetIndices(context, directionLightPosUnit, indices);
+			Render::UnitLogic::SetImage(context, directionLightPosUnit, "resource/texture/Wall03_Diffuse.jpg");
+
+			directionLightPosEO->AddComponent<Render::Unit>(directionLightPosUnit);
+
+			context->AddEO(directionLightPosEO);
+		}
+	}
+
+	void Test::CreateSkybox(Context *context)
+	{
+		auto skyboxEO = std::make_shared<EngineObject>();
+		skyboxEO->name = "Skybox";
+
+		Logic::TransformLogic::Add(skyboxEO,
+								   glm::vec3(0.0f, 0.0f, 0.0f),
+								   glm::vec3(0.0f, 0.0f, 0.0f),
+								   glm::vec3(20.0f, 20.0f, 20.0f));
+
+		auto skyboxUnit = std::make_shared<Render::Unit>();
+
+		std::vector<Render::Vertex> vertices;
+		std::vector<uint16_t> indices;
+		MakeSkybox(vertices, indices);
+
+		Render::UnitLogic::SetPipelineName(context, skyboxUnit, "skybox");
+		Render::UnitLogic::SetVertices(context, skyboxUnit, vertices);
+		Render::UnitLogic::SetIndices(context, skyboxUnit, indices);
+
+		std::array<std::string, 6> names = {
+			"resource/texture/skybox2/sky_left_lnitial.png",
+			"resource/texture/skybox2/sky_right_lnitial.png",
+			"resource/texture/skybox2/sky_up_lnitial.png",
+			"resource/texture/skybox2/sky_down_lnitial.png",
+			"resource/texture/skybox2/sky_front_lnitial.png",
+			"resource/texture/skybox2/sky_back_lnitial.png"};
+		Render::UnitLogic::SetImageCube(context, skyboxUnit, names);
+
+		skyboxEO->AddComponent<Render::Unit>(skyboxUnit);
+
+		context->AddEO(skyboxEO);
+	}
+
 	void Test::CreateCube(Context *context)
 	{
 		// Cube1
@@ -70,69 +162,25 @@ namespace Editor
 		}
 	}
 
-	void Test::CreateSkybox(Context *context)
+	void Test::CreateModel(Context *context)
 	{
-		auto skyboxEO = std::make_shared<EngineObject>();
-		skyboxEO->name = "Skybox";
+		auto modelEO = std::make_shared<EngineObject>();
+		modelEO->name = "Model-VikingRoom";
 
-		Logic::TransformLogic::Add(skyboxEO,
-								   glm::vec3(0.0f, 0.0f, 0.0f),
-								   glm::vec3(0.0f, 0.0f, 0.0f),
-								   glm::vec3(20.0f, 20.0f, 20.0f));
+		Logic::TransformLogic::Add(modelEO,
+								   glm::vec3(0.0f, -0.5f, 0.0f),
+								   glm::vec3(-90.0f, 45.0f, 0.0f),
+								   glm::vec3(4.0f, 4.0f, 4.0f));
 
-		auto skyboxUnit = std::make_shared<Render::Unit>();
+		auto modelUnit = std::make_shared<Render::Unit>();
 
-		std::vector<Render::Vertex> vertices;
-		std::vector<uint16_t> indices;
-		MakeSkybox(vertices, indices);
+		Render::UnitLogic::SetPipelineName(context, modelUnit, "bling_phone");
+		Render::UnitLogic::SetObj(context, modelUnit, "resource/model/viking_room/viking_room.obj");
+		Render::UnitLogic::SetImage(context, modelUnit, "resource/model/viking_room/viking_room.png");
 
-		Render::UnitLogic::SetPipelineName(context, skyboxUnit, "skybox");
-		Render::UnitLogic::SetVertices(context, skyboxUnit, vertices);
-		Render::UnitLogic::SetIndices(context, skyboxUnit, indices);
+		modelEO->AddComponent<Render::Unit>(modelUnit);
 
-		std::array<std::string, 6> names = {
-			"resource/texture/skybox2/sky_left_lnitial.png",
-			"resource/texture/skybox2/sky_right_lnitial.png",
-			"resource/texture/skybox2/sky_up_lnitial.png",
-			"resource/texture/skybox2/sky_down_lnitial.png",
-			"resource/texture/skybox2/sky_front_lnitial.png",
-			"resource/texture/skybox2/sky_back_lnitial.png"};
-		Render::UnitLogic::SetImageCube(context, skyboxUnit, names);
-
-		skyboxEO->AddComponent<Render::Unit>(skyboxUnit);
-
-		context->AddEO(skyboxEO);
-	}
-
-	void Test::CreateLight(Context *context)
-	{
-		auto directionLightEO = std::make_shared<EngineObject>();
-		directionLightEO->name = "DirectionLight";
-
-		Logic::TransformLogic::Add(directionLightEO,
-								   glm::vec3(5.0f, 5.0f, 0.0f),
-								   glm::vec3(45.0f, -90.0f, 0.0f),
-								   glm::vec3(1.0f, 1.0f, 1.0f));
-
-		auto directionLight = std::make_shared<Render::DirectionLight>();
-		directionLight->color = glm::vec3(1.0f, 0.9568627f, 0.8392157f);
-		directionLight->params = glm::vec4(0.4f, 10.0f, 0.5f, 0.0f);
-
-		directionLightEO->AddComponent(directionLight);
-
-		auto directionLightCamera = std::make_shared<Logic::Camera>();
-		directionLightCamera->near = 0.1f;
-		directionLightCamera->far = 20.0f;
-		directionLightCamera->mode = Logic::CameraMode::eOrtho;
-		directionLightCamera->size = 15.0f;
-		directionLightCamera->renderPass = context->renderShadowPass;
-		directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
-
-		Logic::CameraLogic::UpdateView(directionLightEO);
-		Logic::CameraLogic::UpdateProjection(context, directionLightCamera);
-
-		context->renderLightEOs.push_back(directionLightEO);
-		context->AddEO(directionLightEO);
+		context->AddEO(modelEO);
 	}
 
 	void Test::MakeCube(

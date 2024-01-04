@@ -1,6 +1,6 @@
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <image/stb_image.h>
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "common/res_system.h"
 
 namespace Common
@@ -44,4 +44,17 @@ namespace Common
 		stbi_image_free(data);
 	}
 
+	bool ResSystem::LoadObjShapes(const std::string &fileName,
+								  tinyobj::attrib_t &attrib, std::vector<tinyobj::shape_t> &shapes)
+	{
+		std::vector<tinyobj::material_t> materials;
+		std::string err;
+
+		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.data()))
+		{
+			throw std::runtime_error(err);
+		}
+
+		return true;
+	}
 }
