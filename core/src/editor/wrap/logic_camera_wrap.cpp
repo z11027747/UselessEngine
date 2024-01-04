@@ -39,18 +39,18 @@ namespace Editor
 
 		if (ImGui::ColorEdit4("Color", clearColor))
 		{
-			auto &passClearColorValue = context->renderMainPass->clearColorValue.float32;
-			passClearColorValue[0] = clearColor[0];
-			passClearColorValue[1] = clearColor[1];
-			passClearColorValue[2] = clearColor[2];
-			passClearColorValue[3] = clearColor[3];
+			auto &colors = camera->renderPass->clearColorValue.float32;
+			colors[0] = clearColor[0];
+			colors[1] = clearColor[1];
+			colors[2] = clearColor[2];
+			colors[3] = clearColor[3];
 		}
 
 		if (ImGui::InputFloat("Depth", &clearDepth))
 		{
 			clearDepth = std::clamp(clearDepth, 0.0f, 1.0f);
 
-			auto &depth = context->renderMainPass->clearDepthValue.depth;
+			auto &depth = camera->renderPass->clearDepthValue.depth;
 			depth = clearDepth;
 		}
 	}

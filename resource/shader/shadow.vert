@@ -12,8 +12,11 @@ layout(push_constant) uniform Push {
     mat4 model;
 } push;
 
-layout (location = 0) in vec3 inPositionOS;
+layout(location = 0) in vec3 inPositionOS;
+
+layout(location = 0) out float outDepth; 
 
 void main() {
 	gl_Position = globalUBO.cameraProjection * globalUBO.cameraView * push.model * vec4(inPositionOS, 1.0);
+    outDepth = gl_Position.z;
 }

@@ -78,9 +78,19 @@ namespace Render
 		auto &renderPass = pass->renderPass;
 		auto &frameBuffer = pass->frameBuffers[imageIndex];
 
-		std::array<VkClearValue, 2> clearValues = {};
-		clearValues[0].color = pass->clearColorValue;
-		clearValues[1].depthStencil = pass->clearDepthValue;
+		std::vector<VkClearValue> clearValues;
+		if (pass->colorImage2ds.size() > 0)
+		{
+			VkClearValue colorValue = {};
+			colorValue.color = pass->clearColorValue;
+			clearValues.push_back(colorValue);
+		}
+		if (pass->depthImage2ds.size() > 0)
+		{
+			VkClearValue depthValue = {};
+			depthValue.depthStencil = pass->clearDepthValue;
+			clearValues.push_back(depthValue);
+		}
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -117,6 +127,8 @@ namespace Render
 			// TODO
 			if (pass->name == "Shadow")
 				pipelineName = "shadow";
+			if (pass->name == "Shadow" && unitEO->name == "Skybox")
+				continue;
 
 			auto &graphicsPipeline = context->renderPipelines[pipelineName];
 			auto &pipeline = graphicsPipeline->pipeline;
@@ -145,9 +157,17 @@ namespace Render
 			auto model = Logic::TransformLogic::GetModel(unitEO);
 			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 
-			VkDescriptorSet descriptorSets[] = {globalDescriptor->set, unit->descriptor->set};
+			std::vector<VkDescriptorSet> descriptorSets;
+			descriptorSets.push_back(globalDescriptor->set);
+
+			// TODO
+			if (pass->name != "Shadow")
+			{
+				descriptorSets.push_back(unit->descriptor->set);
+			}
+
 			vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-									pipelineLayout, 0, 2, descriptorSets, 0, nullptr);
+									pipelineLayout, 0, static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
 
 			vkCmdDrawIndexed(vkCmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		}

@@ -91,7 +91,7 @@ namespace Editor
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
-			// auto &colorImage2d = context->renderMainPass->colorImage2ds[i];
+			// auto &colorImage2d = context->renderMainPass->depthImage2ds[i];
 			auto &colorImage2d = context->renderShadowPass->depthImage2ds[i];
 
 			auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);

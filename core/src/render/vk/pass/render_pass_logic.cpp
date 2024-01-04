@@ -1,4 +1,4 @@
-
+﻿
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
 #include "render/vk/global/logical_device_logic.h"
@@ -13,7 +13,6 @@ namespace Render
 {
 	void RenderPassLogic::CreateColorAttachment(Context *context,
 												std::shared_ptr<Pass> pass,
-												VkAttachmentLoadOp loadOp,
 												VkImageLayout initLayout, VkImageLayout finalLayout)
 	{
 		auto &renderGlobalEO = context->renderGlobalEO;
@@ -24,7 +23,7 @@ namespace Render
 		VkAttachmentDescription colorAttachmentDescription = {};
 		colorAttachmentDescription.format = surfaceFormat.format;
 		colorAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
-		colorAttachmentDescription.loadOp = loadOp;
+		colorAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		colorAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		colorAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		colorAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -47,10 +46,10 @@ namespace Render
 		depthAttachmentDescription.format = VK_FORMAT_D16_UNORM;
 		depthAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
 		depthAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		depthAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		depthAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 		depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
 		VkAttachmentReference depthAttachmentReference = {};
@@ -86,13 +85,14 @@ namespace Render
 
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
+		auto surfaceFormat = global->surfaceFormat;
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 		auto swapchainImageCount = global->swapchainImageCount;
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			ImageInfo image2dInfo = {
-				VK_FORMAT_R8G8B8A8_UNORM, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
+				surfaceFormat.format, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 				// image
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -135,7 +135,7 @@ namespace Render
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				// layout
 				VK_IMAGE_LAYOUT_UNDEFINED,
-				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
+				VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL};
 
 			auto depthImage2d = ImageLogic::CreateByInfo(context,
 														 image2dInfo);

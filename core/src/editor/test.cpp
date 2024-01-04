@@ -110,8 +110,8 @@ namespace Editor
 		directionLightEO->name = "DirectionLight";
 
 		Logic::TransformLogic::Add(directionLightEO,
-								   glm::vec3(0.0f, 3.0f, 0.0f),
-								   glm::vec3(50.0f, -30.0f, 0.0f),
+								   glm::vec3(0.0f, 6.0f, -10.0f),
+								   glm::vec3(32.0f, 0.0f, 0.0f),
 								   glm::vec3(1.0f, 1.0f, 1.0f));
 
 		auto directionLight = std::make_shared<Render::DirectionLight>();

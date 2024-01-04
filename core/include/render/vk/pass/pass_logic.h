@@ -25,7 +25,6 @@ namespace Render
 	public:
 		static void CreateColorAttachment(Context *,
 										  std::shared_ptr<Pass>,
-										  VkAttachmentLoadOp,
 										  VkImageLayout, VkImageLayout);
 		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>, uint32_t index = 1);
 
