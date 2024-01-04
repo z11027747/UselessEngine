@@ -65,8 +65,15 @@ namespace Render
 		samplerBinding0.descriptorCount = 1;
 		samplerBinding0.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
+		VkDescriptorSetLayoutBinding samplerBinding1 = {};
+		samplerBinding1.binding = 1;
+		samplerBinding1.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		samplerBinding1.descriptorCount = 1;
+		samplerBinding1.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(samplerBinding0);
+		bindings.push_back(samplerBinding1);
 
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
@@ -79,24 +86,33 @@ namespace Render
 	}
 
 	void ShaderBlingPhoneLogic::CreateUnitDescriptor(Context *context,
-													 std::shared_ptr<Unit> unit,
-													 std::shared_ptr<Image> image)
+													 std::shared_ptr<Unit> unit)
 	{
 		auto &graphicsPipeline = context->renderPipelines[unit->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
-		auto sampler = SamplerLogic::Create(context);
 
-		VkDescriptorImageInfo imageInfo = {
-			sampler,
-			image->vkImageView,
-			image->layout};
+		auto sampler0 = SamplerLogic::Create(context);
+		auto sampler1 = SamplerLogic::Create(context);
 
 		auto descriptor = std::make_shared<Descriptor>();
 		descriptor->set = descriptorSet;
-		descriptor->image = image;
-		descriptor->imageInfo = imageInfo;
+
+		VkDescriptorImageInfo vkImage0Info = {
+			sampler0,
+			unit->image0->vkImageView,
+			unit->image0->layout};
+		descriptor->vkImage0Info = vkImage0Info;
+
+		auto &renderShadowPass = context->renderShadowPass;
+		auto depthImage2d = renderShadowPass->depthImage2ds[0];
+
+		VkDescriptorImageInfo vkImage1Info = {
+			sampler1,
+			depthImage2d->vkImageView,
+			depthImage2d->layout};
+		descriptor->vkImage1Info = vkImage1Info;
 
 		unit->descriptor = descriptor;
 
@@ -113,12 +129,14 @@ namespace Render
 													  std::shared_ptr<Unit> unit)
 	{
 		auto &descriptor = unit->descriptor;
-		ImageLogic::Destroy(context, descriptor->image);
-		SamplerLogic::Destroy(context, descriptor->imageInfo.sampler);
+		ImageLogic::Destroy(context, unit->image0);
+		SamplerLogic::Destroy(context, descriptor->vkImage0Info.sampler);
+		SamplerLogic::Destroy(context, descriptor->vkImage1Info.sampler);
 	}
 
 	void ShaderBlingPhoneLogic::UpdateUnitDescriptor(Context *context,
-													 std::shared_ptr<Unit> unit)
+													 std::shared_ptr<Unit> unit,
+													 uint32_t imageIndex)
 	{
 	}
 

@@ -15,6 +15,6 @@ namespace Logic
 		static void DestroyAll(Context *);
 
 		static void UpdateView(std::shared_ptr<EngineObject>);
-		static void UpdateProjection(std::shared_ptr<Camera>);
+		static void UpdateProjection(Context *, std::shared_ptr<Camera>);
 	};
 }

@@ -79,34 +79,55 @@ namespace Render
 
 		auto &directionLightEO = context->renderLightEOs[0];
 		auto directionLightTransform = directionLightEO->GetComponent<Logic::Transform>();
+		auto directionLightCamera = directionLightEO->GetComponent<Logic::Camera>();
 		auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
 
-		// camera
-		auto &logicCameraEOs = context->logicCameraEOs;
-		for (const auto &cameraEO : logicCameraEOs)
-		{
-			auto cameraTransform = cameraEO->GetComponent<Logic::Transform>();
-			auto camera = cameraEO->GetComponent<Logic::Camera>();
+		DirectionLightUBO directionLightUBO = {
+			directionLightCamera->view,
+			directionLightCamera->projection,
+			directionLightCamera->calcForward,
+			directionLight->color,
+			directionLight->params};
 
-			auto &renderPass = camera->renderPass;
+		auto &mainCameraEO = context->logicCameraEOs[0];
+		auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
+		auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
+
+		CameraUBO cameraUBO = {
+			mainCameraTransform->position,
+			mainCamera->view,
+			mainCamera->projection,
+		};
+
+		GlobalUBO globalUBO = {
+			cameraUBO,
+			directionLightUBO};
+
+		// shadow
+		{
+			auto &renderPass = directionLightCamera->renderPass;
 			FramebufferLogic::BeginRenderPass(context,
 											  imageIndex, vkCmdBuffer, renderPass);
-
-			if (cameraEO->active)
+			if (directionLightEO->active)
 			{
-				GlobalUBO globalUBO = {
-					cameraTransform->position,
-					camera->view,
-					camera->projection,
-					directionLightTransform->position,
-					directionLight->color,
-					directionLight->params};
-
 				FramebufferLogic::RenderUnits(context,
 											  imageIndex, vkCmdBuffer, renderPass,
 											  globalUBO);
 			}
+			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
+		}
 
+		// main
+		{
+			auto &renderPass = mainCamera->renderPass;
+			FramebufferLogic::BeginRenderPass(context,
+											  imageIndex, vkCmdBuffer, renderPass);
+			if (mainCameraEO->active)
+			{
+				FramebufferLogic::RenderUnits(context,
+											  imageIndex, vkCmdBuffer, renderPass,
+											  globalUBO);
+			}
 			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
 		}
 

@@ -79,8 +79,7 @@ namespace Render
 	}
 
 	void ShaderSkyboxLogic::CreateUnitDescriptor(Context *context,
-												 std::shared_ptr<Unit> unit,
-												 std::shared_ptr<Image> imageCube)
+												 std::shared_ptr<Unit> unit)
 	{
 		auto &graphicsPipeline = context->renderPipelines[unit->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
@@ -88,15 +87,14 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		auto sampler = SamplerLogic::Create(context);
 
-		VkDescriptorImageInfo imageInfo = {
-			sampler,
-			imageCube->vkImageView,
-			imageCube->layout};
-
 		auto descriptor = std::make_shared<Descriptor>();
 		descriptor->set = descriptorSet;
-		descriptor->image = imageCube;
-		descriptor->imageInfo = imageInfo;
+
+		VkDescriptorImageInfo vkImageCubeInfo = {
+			sampler,
+			unit->image0->vkImageView,
+			unit->image0->layout};
+		descriptor->vkImage0Info = vkImageCubeInfo;
 
 		unit->descriptor = descriptor;
 
@@ -113,13 +111,8 @@ namespace Render
 												  std::shared_ptr<Unit> unit)
 	{
 		auto &descriptor = unit->descriptor;
-		ImageLogic::Destroy(context, descriptor->image);
-		SamplerLogic::Destroy(context, descriptor->imageInfo.sampler);
-	}
-
-	void ShaderSkyboxLogic::UpdateUnitDescriptor(Context *context,
-												 std::shared_ptr<Unit> unit)
-	{
+		ImageLogic::Destroy(context, unit->image0);
+		SamplerLogic::Destroy(context, descriptor->vkImage0Info.sampler);
 	}
 
 }

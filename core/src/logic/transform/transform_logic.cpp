@@ -26,10 +26,13 @@ namespace Logic
 	{
 		auto transform = eo->GetComponent<Logic::Transform>();
 
-		auto scale = glm::scale(glm::mat4(1.0f), transform->scale);
-		auto rotation = glm::toMat4(glm::quat(transform->eulerAngles));
 		auto translation = glm::translate(glm::mat4(1.0f), transform->position);
-		return translation * rotation * scale;
+		auto quat = glm::quat(glm::radians(transform->eulerAngles));
+		auto rotation = glm::toMat4(quat);
+		auto scale = glm::scale(glm::mat4(1.0f), transform->scale);
+
+		auto model = translation * rotation * scale;
+		return model;
 	}
 
 }

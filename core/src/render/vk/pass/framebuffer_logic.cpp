@@ -125,8 +125,7 @@ namespace Render
 			auto pipelineName = unit->pipelineName;
 
 			// TODO
-			if (pass->name == "Shadow")
-				pipelineName = "shadow";
+			if (pass->name == "Shadow") pipelineName = "shadow";
 			if (pass->name == "Shadow" && unitEO->name == "Skybox")
 				continue;
 
@@ -146,13 +145,14 @@ namespace Render
 			vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
 
 			auto &globalDescriptor = graphicsPipeline->globalDescriptors[imageIndex];
+			auto &globalBuffer = graphicsPipeline->globalBuffers[imageIndex];
 
 			BufferSetLogic::Set(context,
-								globalDescriptor->buffer,
+								globalBuffer,
 								globalUBO);
 
 			ShaderLogic::UpdateUnitDescriptor(context,
-											  unit);
+											  unit, imageIndex);
 
 			auto model = Logic::TransformLogic::GetModel(unitEO);
 			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);

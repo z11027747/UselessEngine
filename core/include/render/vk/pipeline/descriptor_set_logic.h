@@ -37,12 +37,12 @@ namespace Render
 
 		static void WriteBuffer(Context *,
 								std::vector<VkWriteDescriptorSet> &writes,
-								std::shared_ptr<Descriptor> descriptor)
+								std::shared_ptr<Descriptor> descriptor, int binding = 0)
 		{
 			VkWriteDescriptorSet write = {};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			write.dstSet = descriptor->set;
-			write.dstBinding = 0;
+			write.dstBinding = binding;
 			write.dstArrayElement = 0;
 			write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			write.descriptorCount = 1;
@@ -55,16 +55,30 @@ namespace Render
 							   std::vector<VkWriteDescriptorSet> &writes,
 							   std::shared_ptr<Descriptor> descriptor)
 		{
-			VkWriteDescriptorSet write = {};
-			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstSet = descriptor->set;
-			write.dstBinding = 0;
-			write.dstArrayElement = 0;
-			write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			write.descriptorCount = 1;
-			write.pImageInfo = &descriptor->imageInfo;
+			VkWriteDescriptorSet write0 = {};
+			write0.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write0.dstSet = descriptor->set;
+			write0.dstBinding = 0;
+			write0.dstArrayElement = 0;
+			write0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			write0.descriptorCount = 1;
+			write0.pImageInfo = &descriptor->vkImage0Info;
 
-			writes.push_back(write);
+			writes.push_back(write0);
+
+			if (descriptor->vkImage1Info.imageView != nullptr)
+			{
+				VkWriteDescriptorSet write1 = {};
+				write1.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				write1.dstSet = descriptor->set;
+				write1.dstBinding = 1;
+				write1.dstArrayElement = 0;
+				write1.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				write1.descriptorCount = 1;
+				write1.pImageInfo = &descriptor->vkImage1Info;
+
+				writes.push_back(write1);
+			}
 		}
 	};
 

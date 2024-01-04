@@ -1,15 +1,28 @@
 #version 450
 
+struct CameraUBO
+{
+    vec3 pos;
+    mat4 view;
+    mat4 projection;
+};
+
+struct DirectionLightUBO 
+{
+    mat4 view;
+    mat4 projection;
+	vec3 dir;
+	vec3 col;
+	vec4 params;
+};
+
 layout(set = 0, binding = 0) uniform GlobalUBO {
-    vec3 cameraPos;
-    mat4 cameraView;
-    mat4 cameraProjection;
-    vec3 directionLightPos;
-    vec3 directionLightCol;
-    vec4 directionLightParams;
+    CameraUBO camera;
+    DirectionLightUBO directionLight;
 } globalUBO;
 
-layout(set = 1, binding = 0) uniform sampler2D imgSampler;
+layout(set = 1, binding = 0) uniform sampler2D baseSampler;
+layout(set = 1, binding = 1) uniform sampler2DShadow shadowSampler;
 
 layout(location = 0) in vec3 inPositionWS;
 layout(location = 1) in vec3 inNormalWS;
@@ -22,24 +35,74 @@ vec3 CalcDirectionLight()
 {
     vec3 ambient = vec3(0.4);
 
-    float diffuseIntensity = globalUBO.directionLightParams.x;
+    float diffuseIntensity = globalUBO.directionLight.params.x;
 
-    vec3 lightDir = normalize(globalUBO.directionLightPos);
+    vec3 lightDir = normalize(globalUBO.directionLight.dir);
     vec3 normalDir = normalize(inNormalWS);
-    vec3 diffuse = max(0.0, dot(normalDir, lightDir)) * diffuseIntensity * globalUBO.directionLightCol;
+    vec3 diffuse = max(0.0, dot(normalDir, lightDir)) * diffuseIntensity * globalUBO.directionLight.col;
     
-    float specualrShininess = globalUBO.directionLightParams.y;
-    float specularIntensity = globalUBO.directionLightParams.z;
+    float specualrShininess = globalUBO.directionLight.params.y;
+    float specularIntensity = globalUBO.directionLight.params.z;
 
-    vec3 viewDir = normalize(globalUBO.cameraPos - inPositionWS);
+    vec3 viewDir = normalize(globalUBO.camera.pos - inPositionWS);
     vec3 halfDir = normalize(viewDir + lightDir);
-    vec3 specular = pow(max(0.0, dot(normalDir, halfDir)), specualrShininess) * specularIntensity * globalUBO.directionLightCol;
+    vec3 specular = pow(max(0.0, dot(normalDir, halfDir)), specualrShininess) * specularIntensity * globalUBO.directionLight.col;
 
     return ambient + diffuse + specular;
 }
 
+vec3 CalcShadow()
+{
+    vec4 positionLS_Clip = globalUBO.directionLight.projection * globalUBO.directionLight.view * vec4(inPositionWS, 1.0);
+    vec3 positionLS_NDC = positionLS_Clip.xyz / positionLS_Clip.w;
+
+    float depth = positionLS_NDC.z;
+    vec2 uv = positionLS_NDC.xy * 0.5 + 0.5;
+    
+    float shadowDepth = texture(shadowSampler, vec3(uv, depth));
+
+    if(depth > shadowDepth){
+        return vec3(depth - shadowDepth);
+    }
+
+    return vec3(1);
+}
+
+vec3 CalcShadow_PCF()
+{
+    vec4 positionLS_Clip = globalUBO.directionLight.projection * globalUBO.directionLight.view * vec4(inPositionWS, 1.0);
+    vec3 positionLS_NDC = positionLS_Clip.xyz / positionLS_Clip.w;
+
+    float depth = positionLS_NDC.z;
+    vec2 uv = positionLS_NDC.xy * 0.5 + 0.5;
+            
+    int samplerCount = 0;
+    float samplerValue = 0.0;
+    vec2 samplerTexelSize = 1 / vec2(1920.0, 1080.0);
+
+    int pcfCount = 3;
+    for (int x = -pcfCount; x <= pcfCount; x++)
+    {
+        for (int y = -pcfCount; y <= pcfCount; y++)
+        {
+            vec2 uv_pcf = uv + vec2(x, y)*samplerTexelSize;
+            samplerCount += 1;
+            samplerValue += texture(shadowSampler, vec3(uv_pcf, depth));
+        }
+    }
+
+    float shadowDepth = samplerValue / samplerCount;
+    
+    if(depth > shadowDepth){
+        return vec3(shadowDepth);
+    }
+
+    return vec3(1);
+}
+
 void main() {
-    vec3 baseCol = texture(imgSampler, inUV).rgb;
+    vec3 baseCol = texture(baseSampler, inUV).rgb;
     vec3 directionLightCol = CalcDirectionLight();
-    outColor = vec4(inColor * baseCol * directionLightCol, 1.0);
+    vec3 shadowColor = CalcShadow_PCF();
+    outColor = vec4(inColor * baseCol * directionLightCol * shadowColor, 1.0);
 }

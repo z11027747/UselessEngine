@@ -6,22 +6,29 @@
 
 namespace Logic
 {
-	struct Frustum final
+	enum class CameraMode
 	{
-		float near;
-		float far;
-		float aspect;
-		float fov;
+		ePerspective = 0,
+		eOrtho = 1
 	};
 
 	struct Camera final
 	{
-		Frustum frustum;
-
 		glm::mat4 view;
 		glm::mat4 projection;
+
+		float near;
+		float far;
+		float aspect;
+
+		CameraMode mode;
+		float fov;
+		float size;
+
 		glm::vec3 calcPos;
 		glm::vec3 calcEul;
+		glm::vec3 calcForward;
+		glm::vec3 calcUp;
 
 		std::shared_ptr<Render::Pass> renderPass;
 	};

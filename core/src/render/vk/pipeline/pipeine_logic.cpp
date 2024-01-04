@@ -229,7 +229,7 @@ namespace Render
 		rasterizationStateCreateInfo.rasterizerDiscardEnable = false;
 		rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
 		rasterizationStateCreateInfo.lineWidth = 1.0f;
-		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;
 		rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		rasterizationStateCreateInfo.depthClampEnable = false;
 		rasterizationStateCreateInfo.depthBiasEnable = false;
@@ -260,6 +260,8 @@ namespace Render
 		depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
 		depthStencilStateCreateInfo.depthBoundsTestEnable = false;
 		depthStencilStateCreateInfo.stencilTestEnable = false;
+		depthStencilStateCreateInfo.minDepthBounds = 0.0f;
+		depthStencilStateCreateInfo.maxDepthBounds = 1.0f;
 
 		ShaderLogic::SetDepthStencilCreateInfo(context, graphicsPipeline);
 	}

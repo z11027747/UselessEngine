@@ -42,8 +42,13 @@ namespace Render
 	void RenderPassLogic::CreateDepthAttachment(Context *context,
 												std::shared_ptr<Pass> pass, uint32_t index)
 	{
+		auto &renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto depthFormat = global->depthFormat;
+
 		VkAttachmentDescription depthAttachmentDescription = {};
-		depthAttachmentDescription.format = VK_FORMAT_D16_UNORM;
+		depthAttachmentDescription.format = depthFormat;
 		depthAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
 		depthAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -119,12 +124,13 @@ namespace Render
 		auto global = renderGlobalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
+		auto depthFormat = global->depthFormat;
 		auto swapchainImageCount = global->swapchainImageCount;
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			ImageInfo image2dInfo = {
-				VK_FORMAT_D16_UNORM, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
+				depthFormat, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
 				// image
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,

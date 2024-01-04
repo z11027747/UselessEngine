@@ -21,7 +21,6 @@
 
 namespace Render
 {
-
 	void ShaderShadowLogic::CreateVertexAttrDescriptions(Context *context,
 														 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
@@ -42,7 +41,7 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
-		rasterizationStateCreateInfo.depthBiasEnable = VK_TRUE;
+		rasterizationStateCreateInfo.depthBiasEnable = true;
 		rasterizationStateCreateInfo.depthBiasConstantFactor = 8.0f;
 		rasterizationStateCreateInfo.depthBiasClamp = 0.0f;
 		rasterizationStateCreateInfo.depthBiasSlopeFactor = 3.0f;

@@ -13,23 +13,26 @@ namespace Editor
 	void LogicComponentWrap::DrawCamera(Context *context,
 										std::shared_ptr<Logic::Camera> camera)
 	{
-		auto &frustum = camera->frustum;
-
-		if (ImGui::DragFloat("Near", &frustum.near, 0.01f, 0.01f, 10.0f))
+		if (ImGui::DragFloat("Near", &camera->near, 0.01f, 0.01f, 10.0f))
 		{
-			frustum.far = std::max(frustum.far, frustum.near + 0.01f);
+			camera->far = std::max(camera->far, camera->near + 0.01f);
 
-			Logic::CameraLogic::UpdateProjection(camera);
+			Logic::CameraLogic::UpdateProjection(context, camera);
 		}
 
-		if (ImGui::DragFloat("Far", &frustum.far, 0.02f, frustum.near + 0.01f, 100.0f))
+		if (ImGui::DragFloat("Far", &camera->far, 0.02f, camera->near + 0.01f, 100.0f))
 		{
-			Logic::CameraLogic::UpdateProjection(camera);
+			Logic::CameraLogic::UpdateProjection(context, camera);
 		}
 
-		if (ImGui::DragFloat("FOV", &frustum.fov, 0.02f, 10.0f, 90.0f))
+		if (ImGui::DragFloat("FOV", &camera->fov, 0.02f, 10.0f, 90.0f))
 		{
-			Logic::CameraLogic::UpdateProjection(camera);
+			Logic::CameraLogic::UpdateProjection(context, camera);
+		}
+
+		if (ImGui::DragFloat("Size", &camera->size, 0.02f))
+		{
+			Logic::CameraLogic::UpdateProjection(context, camera);
 		}
 
 		ImGui::Text("Clear Values");

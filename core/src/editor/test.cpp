@@ -25,7 +25,7 @@ namespace Editor
 
 			Logic::TransformLogic::Add(cubeEO,
 									   glm::vec3(0.0f, 0.0f, 0.0f),
-									   glm::vec3(0.0f, 50.0f, 0.0f),
+									   glm::vec3(10.0f, 20.0f, 0.0f),
 									   glm::vec3(1.0f, 1.0f, 1.0f));
 
 			auto cubeUnit = std::make_shared<Render::Unit>();
@@ -37,7 +37,7 @@ namespace Editor
 			Render::UnitLogic::SetPipelineName(context, cubeUnit, "bling_phone");
 			Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
 			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
-			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/icon2.png");
+			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/container2.png");
 
 			cubeEO->AddComponent<Render::Unit>(cubeUnit);
 
@@ -110,8 +110,8 @@ namespace Editor
 		directionLightEO->name = "DirectionLight";
 
 		Logic::TransformLogic::Add(directionLightEO,
-								   glm::vec3(0.0f, 6.0f, -10.0f),
-								   glm::vec3(32.0f, 0.0f, 0.0f),
+								   glm::vec3(5.0f, 5.0f, 0.0f),
+								   glm::vec3(45.0f, -90.0f, 0.0f),
 								   glm::vec3(1.0f, 1.0f, 1.0f));
 
 		auto directionLight = std::make_shared<Render::DirectionLight>();
@@ -121,17 +121,15 @@ namespace Editor
 		directionLightEO->AddComponent(directionLight);
 
 		auto directionLightCamera = std::make_shared<Logic::Camera>();
+		directionLightCamera->near = 0.1f;
+		directionLightCamera->far = 20.0f;
+		directionLightCamera->mode = Logic::CameraMode::eOrtho;
+		directionLightCamera->size = 15.0f;
+		directionLightCamera->renderPass = context->renderShadowPass;
 		directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
 
-		directionLightCamera->frustum = {
-			0.1f,
-			50.0f,
-			context->aspect,
-			45.0f};
 		Logic::CameraLogic::UpdateView(directionLightEO);
-		Logic::CameraLogic::UpdateProjection(directionLightCamera);
-
-		directionLightCamera->renderPass = context->renderShadowPass;
+		Logic::CameraLogic::UpdateProjection(context, directionLightCamera);
 
 		context->renderLightEOs.push_back(directionLightEO);
 		context->AddEO(directionLightEO);

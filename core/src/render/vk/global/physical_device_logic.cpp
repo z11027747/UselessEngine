@@ -8,7 +8,6 @@
 
 namespace Render
 {
-
 	bool PhysicalDeviceLogic::Find(Context *context)
 	{
 		auto &renderGlobalEO = context->renderGlobalEO;
@@ -53,6 +52,10 @@ namespace Render
 		global->surfaceFormat = GetFormat(context);
 		global->surfacePresentMode = GetPresentMode(context);
 		global->surfaceCapabilities = GetCapbilities(context);
+
+		global->depthFormat = FindSupportedFormat(context,
+												  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+												  VK_IMAGE_TILING_OPTIMAL,   VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
 	bool PhysicalDeviceLogic::CheckType(
@@ -112,8 +115,7 @@ namespace Render
 
 		for (auto i = 0u; i < memProperties.memoryTypeCount; i++)
 		{
-			if ((typeFilter & (1 << i)) 
-				&& (memProperties.memoryTypes[i].propertyFlags & propertiesFlags) == propertiesFlags)
+			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & propertiesFlags) == propertiesFlags)
 			{
 				return i;
 			}
@@ -134,7 +136,6 @@ namespace Render
 
 		for (auto format : candidates)
 		{
-
 			VkFormatProperties props;
 			vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
 
@@ -168,8 +169,7 @@ namespace Render
 
 		for (const auto &surfaceFormat : surfaceFormats)
 		{
-			if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM 
-				&& surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+			if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM && surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
 			{
 				return surfaceFormat;
 			}

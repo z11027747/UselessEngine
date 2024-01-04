@@ -106,8 +106,8 @@ namespace Render
 		auto image2d = ImageLogic::CreateByInfo(context, image2dInfo);
 
 		ImageLogic::CopyFromBuffer(context,
-							   image2d,
-							   tempBuffer);
+								   image2d,
+								   tempBuffer);
 
 		ImageLogic::TransitionLayout(context,
 									 image2d,
@@ -115,9 +115,10 @@ namespace Render
 
 		Common::ResSystem::FreeImg(data);
 
+		unit->image0 = image2d;
+
 		ShaderLogic::CreateUnitDescriptor(context,
-										  unit,
-										  image2d);
+										  unit);
 	}
 
 	void UnitLogic::SetImageCube(Context *context,
@@ -166,8 +167,8 @@ namespace Render
 		auto imageCube = ImageLogic::CreateByInfo(context, imageCubeInfo);
 
 		ImageLogic::CopyFromBuffer(context,
-							   imageCube,
-							   tempBuffer);
+								   imageCube,
+								   tempBuffer);
 
 		ImageLogic::TransitionLayout(context,
 									 imageCube,
@@ -178,9 +179,10 @@ namespace Render
 			Common::ResSystem::FreeImg(datas[i]);
 		}
 
+		unit->image0 = imageCube;
+
 		ShaderLogic::CreateUnitDescriptor(context,
-										  unit,
-										  imageCube);
+										  unit);
 	}
 
 }

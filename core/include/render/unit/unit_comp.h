@@ -25,10 +25,13 @@ namespace Render
 		// mesh
 		std::vector<Vertex> vertices;
 		std::vector<uint16_t> indices;
+
+		// memory
 		std::shared_ptr<Buffer> vertexBuffer;
 		std::shared_ptr<Buffer> indexBuffer;
+		std::shared_ptr<Image> image0;
 
-		// material
+		// descriptor
 		std::shared_ptr<Descriptor> descriptor;
 	};
 }

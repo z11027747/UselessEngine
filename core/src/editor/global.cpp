@@ -91,21 +91,20 @@ namespace Editor
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
-			// auto &colorImage2d = context->renderMainPass->depthImage2ds[i];
-			auto &colorImage2d = context->renderShadowPass->depthImage2ds[i];
+			auto &colorImage2d = context->renderMainPass->colorImage2ds[i];
+			// auto &colorImage2d = context->renderShadowPass->colorImage2ds[i];
 
 			auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 			auto sampler = Render::SamplerLogic::Create(context);
 
-			VkDescriptorImageInfo imageInfo = {
+			VkDescriptorImageInfo vkImageInfo = {
 				sampler,
 				colorImage2d->vkImageView,
 				colorImage2d->layout};
 
 			auto descriptor = std::make_shared<Render::Descriptor>();
 			descriptor->set = descriptorSet;
-			descriptor->image = colorImage2d;
-			descriptor->imageInfo = imageInfo;
+			descriptor->vkImage0Info = vkImageInfo;
 
 			Render::DescriptorSetLogic::Update(context,
 											   [&](std::vector<VkWriteDescriptorSet> &writes)
@@ -124,8 +123,7 @@ namespace Editor
 		Render::DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 		for (auto &descriptor : descriptors)
 		{
-			// Render::ImageLogic::Destroy(context, descriptor->image);
-			Render::SamplerLogic::Destroy(context, descriptor->imageInfo.sampler);
+			Render::SamplerLogic::Destroy(context, descriptor->vkImage0Info.sampler);
 		}
 	}
 

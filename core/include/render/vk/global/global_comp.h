@@ -23,6 +23,7 @@ namespace Render
 		VkSurfaceFormatKHR surfaceFormat;
 		VkPresentModeKHR surfacePresentMode;
 		VkSurfaceCapabilitiesKHR surfaceCapabilities;
+		VkFormat depthFormat;
 
 		VkSwapchainKHR swapchain;
 		uint32_t swapchainImageCount;

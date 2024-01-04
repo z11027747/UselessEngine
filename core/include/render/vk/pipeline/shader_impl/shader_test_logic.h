@@ -19,8 +19,7 @@ namespace Render
 		static void CreateDescriptorSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void DestroyDescriptorSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
 		
-		static void CreateUnitDescriptor(Context *, std::shared_ptr<Unit>, std::shared_ptr<Image>);
+		static void CreateUnitDescriptor(Context *, std::shared_ptr<Unit>);
 		static void DestroyUnitDescriptor(Context *, std::shared_ptr<Unit>);
-		static void UpdateUnitDescriptor(Context *, std::shared_ptr<Unit>);
 	};
 }
