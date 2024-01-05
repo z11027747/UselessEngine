@@ -6,7 +6,6 @@
 #include "editor/imgui/imgui_impl_vulkan.h"
 #include "editor/global.h"
 #include "editor/window.h"
-#include "editor/wrap/engine_object_wrap.h"
 #include "editor/test.h"
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
@@ -136,11 +135,11 @@ namespace Editor
 
 	void Global::Draw(Context *context, uint32_t imageIndex)
 	{
-		static bool showDemoWindow = false;
+		static bool showDemoWindow = true;
 		if (showDemoWindow)
 		{
 			ImGui::ShowDemoWindow(&showDemoWindow);
-			return;
+			// return;
 		}
 
 		const auto *viewport = ImGui::GetMainViewport();

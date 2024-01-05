@@ -58,7 +58,7 @@ public:
 
 	// logic ====================
 	// logic-camera
-	std::vector<std::shared_ptr<EngineObject>> logicCameraEOs;
+	std::shared_ptr<EngineObject> mainCameraEO;
 
 	// all-engineObject
 	std::vector<std::shared_ptr<EngineObject>> allEOs;
@@ -73,10 +73,6 @@ public:
 		{
 			renderUnitEOs.push_back(eo);
 		}
-		if (eo->HasComponent<Logic::Camera>())
-		{
-			logicCameraEOs.push_back(eo);
-		}
 	}
 
 	std::shared_ptr<EngineObject> GetEO(const std::string &name)
@@ -90,6 +86,7 @@ public:
 		Logic::System::Create(this);
 
 		// Test
+		Editor::Test::CreateMainCamera(this);
 		Editor::Test::CreateLight(this);
 		Editor::Test::CreateSkybox(this);
 		// Editor::Test::CreateCube(this);

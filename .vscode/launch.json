@@ -5,7 +5,7 @@
             "name": "(Windows) 启动",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/out/${command:cmake.buildType}/UselessEngine.exe",
+            "program": "${workspaceFolder}/build/out/${command:cmake.buildType}/UselessEngine.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -2,7 +2,6 @@
 #include <imgui/imgui.h>
 #include <memory>
 #include <iostream>
-#include "editor/wrap/engine_object_wrap.h"
 #include "editor/window.h"
 #include "editor/global.h"
 #include "context.h"

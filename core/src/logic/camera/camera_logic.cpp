@@ -15,35 +15,6 @@
 
 namespace Logic
 {
-	void CameraLogic::CreateMain(Context *context)
-	{
-		auto mainCameraEO = std::make_shared<EngineObject>();
-		mainCameraEO->name = G_MainCamera;
-
-		Logic::TransformLogic::Add(mainCameraEO,
-								   glm::vec3(0.0f, 4.0f, -10.0f),
-								   glm::vec3(15.0f, 0.0f, 0.0f),
-								   glm::vec3(1.0f, 1.0f, 1.0f));
-
-		auto mainCamera = std::make_shared<Camera>();
-		mainCamera->near = 0.1f;
-		mainCamera->far = 100.0f;
-		mainCamera->mode = CameraMode::ePerspective;
-		mainCamera->fov = 50.0f;
-		mainCamera->renderPass = context->renderMainPass;
-		mainCameraEO->AddComponent<Camera>(mainCamera);
-
-		UpdateView(mainCameraEO);
-		UpdateProjection(context, mainCamera);
-
-		context->AddEO(mainCameraEO);
-	}
-
-	void CameraLogic::DestroyAll(Context *context)
-	{
-		// nothing
-	}
-
 	void CameraLogic::UpdateView(std::shared_ptr<EngineObject> eo)
 	{
 		auto camera = eo->GetComponent<Camera>();

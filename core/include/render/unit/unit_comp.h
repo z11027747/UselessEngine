@@ -30,12 +30,14 @@ namespace Render
 		std::string pipelineName;
 
 		// mesh
+		std::string objName;
 		std::vector<Vertex> vertices;
 		std::vector<uint16_t> indices;
-
-		// memory
 		std::shared_ptr<Buffer> vertexBuffer;
 		std::shared_ptr<Buffer> indexBuffer;
+
+		// image
+		std::string textureName;
 		std::shared_ptr<Image> image0;
 
 		// descriptor

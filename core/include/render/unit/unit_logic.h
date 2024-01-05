@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <vector>
 #include <array>
 #include <memory>
@@ -31,7 +32,8 @@ namespace Render
 								 std::shared_ptr<Unit>, std::array<std::string, 6>);
 
 		static void SetObj(Context *,
-						   std::shared_ptr<Unit>, const std::string &);
+						   std::shared_ptr<Unit>, const std::string &,
+						   glm::vec3 &defaultColor = glm::vec3(1.0f, 1.0f, 1.0f));
 	};
 
 }

@@ -17,6 +17,7 @@
 #include "render/light/light_comp.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
+#include "logic/camera/camera_logic.h"
 #include "logic/transform/transform_comp.h"
 #include "context.h"
 #include "editor/global.h"
@@ -59,9 +60,11 @@ namespace Render
 		PassLogic::CreateMain(context);
 		PassLogic::CreateShadow(context);
 
+		PipelineLogic::Create(context, "shadow", context->renderShadowPass);
+
 		PipelineLogic::Create(context, "skybox", context->renderMainPass);
 		PipelineLogic::Create(context, "bling_phone", context->renderMainPass);
-		PipelineLogic::Create(context, "shadow", context->renderShadowPass);
+		PipelineLogic::Create(context, "color", context->renderMainPass);
 
 		Editor::Global::Create(context);
 	}
@@ -89,9 +92,12 @@ namespace Render
 			directionLight->color,
 			directionLight->params};
 
-		auto &mainCameraEO = context->logicCameraEOs[0];
+		auto &mainCameraEO = context->mainCameraEO;
 		auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
 		auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
+
+		Logic::CameraLogic::UpdateView(directionLightEO);
+		Logic::CameraLogic::UpdateView(mainCameraEO);
 
 		CameraUBO cameraUBO = {
 			mainCameraTransform->position,

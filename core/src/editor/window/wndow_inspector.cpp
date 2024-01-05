@@ -3,7 +3,6 @@
 #include <memory>
 #include <iostream>
 #include <string>
-#include "editor/wrap/engine_object_wrap.h"
 #include "editor/wrap/logic_component_wrap.h"
 #include "editor/wrap/render_component_wrap.h"
 #include "editor/global.h"
@@ -30,7 +29,6 @@ namespace Editor
 				ImGui::Text("Select EngineObject: %s", selectEO->name.c_str());
 				ImGui::SeparatorText("ComponentList Begin");
 				{
-
 					auto id = 0;
 					auto &componentMap = selectEO->componentMap;
 					for (const auto &kv : componentMap)
@@ -71,11 +69,11 @@ namespace Editor
 				ImGui::SetNextItemWidth(150.0f);
 				ImGui::InputText("##addCompName", addCompName, IM_ARRAYSIZE(addCompName));
 				ImGui::SameLine();
+
 				if (ImGui::Button("Add Component"))
 				{
 					std::cout << "Add Component Click!" << std::endl;
-
-					memset(addCompName, 0, sizeof(addCompName));
+					// memset(addCompName, 0, sizeof(addCompName));
 				}
 			}
 		}

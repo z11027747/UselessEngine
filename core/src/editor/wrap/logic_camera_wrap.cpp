@@ -16,7 +16,6 @@ namespace Editor
 		if (ImGui::DragFloat("Near", &camera->near, 0.01f, 0.01f, 10.0f))
 		{
 			camera->far = std::max(camera->far, camera->near + 0.01f);
-
 			Logic::CameraLogic::UpdateProjection(context, camera);
 		}
 
@@ -25,16 +24,29 @@ namespace Editor
 			Logic::CameraLogic::UpdateProjection(context, camera);
 		}
 
-		if (ImGui::DragFloat("FOV", &camera->fov, 0.02f, 10.0f, 90.0f))
+		static int mode = 0;
+		if (ImGui::Combo("Mode", &mode, "Perspective\0Orthographic\0"))
 		{
+			camera->mode = static_cast<Logic::CameraMode>(mode);
 			Logic::CameraLogic::UpdateProjection(context, camera);
 		}
 
-		if (ImGui::DragFloat("Size", &camera->size, 0.02f))
+		if (camera->mode == Logic::CameraMode::ePerspective)
 		{
-			Logic::CameraLogic::UpdateProjection(context, camera);
+			if (ImGui::DragFloat("fov", &camera->fov, 0.02f, 10.0f, 90.0f))
+			{
+				Logic::CameraLogic::UpdateProjection(context, camera);
+			}
+		}
+		if (camera->mode == Logic::CameraMode::eOrtho)
+		{
+			if (ImGui::DragFloat("Size", &camera->size, 0.02f))
+			{
+				Logic::CameraLogic::UpdateProjection(context, camera);
+			}
 		}
 
+		ImGui::Spacing();
 		ImGui::Text("Clear Values");
 
 		static float clearColor[4] = {0.1f, 0.1f, 0.1f, 1.0f};

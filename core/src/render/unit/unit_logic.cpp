@@ -187,7 +187,7 @@ namespace Render
 
 	void UnitLogic::SetObj(Context *context,
 						   std::shared_ptr<Unit> unit,
-						   const std::string &name)
+						   const std::string &name, glm::vec3 &defaultColor)
 	{
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;
@@ -203,23 +203,26 @@ namespace Render
 		{
 			for (const auto &index : shape.mesh.indices)
 			{
-				Render::Vertex vertex = {};
-				vertex.positionOS = {
-					attrib.vertices[3 * index.vertex_index + 0],
-					attrib.vertices[3 * index.vertex_index + 1],
-					attrib.vertices[3 * index.vertex_index + 2]};
-				vertex.normalOS = {
-					attrib.normals[3 * index.normal_index + 0],
-					attrib.normals[3 * index.normal_index + 1],
-					attrib.normals[3 * index.normal_index + 2]};
-				vertex.color = {1.0f, 1.0f, 1.0f};
-				vertex.uv0 = {
-					attrib.texcoords[2 * index.texcoord_index + 0],
-					1.0f - attrib.texcoords[2 * index.texcoord_index + 1]};
+				auto vi = index.vertex_index;
+				auto ni = index.normal_index;
 
-				// if (uniqueVertices.count(vertex) == 0)
+				Render::Vertex vertex = {};
+				vertex.positionOS = {attrib.vertices[3 * vi + 0], attrib.vertices[3 * vi + 1], attrib.vertices[3 * vi + 2]};
+				vertex.normalOS = {attrib.normals[3 * ni + 0], attrib.normals[3 * ni + 1], attrib.normals[3 * ni + 2]};
+				vertex.color = defaultColor;
+				if (attrib.texcoords.size() > 0)
 				{
-					// uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+					auto ui = index.texcoord_index;
+					vertex.uv0 = {attrib.texcoords[2 * ui + 0], 1.0f - attrib.texcoords[2 * ui + 1]};
+				}
+				else
+				{
+					vertex.uv0 = {0.0f, 0.0f};
+				}
+
+				if (uniqueVertices.count(vertex) == 0)
+				{
+					uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
 					vertices.push_back(vertex);
 				}
 

@@ -14,7 +14,7 @@ file(GLOB_RECURSE SRC_LIST
 	"${PROJECT_SOURCE_DIR}/core/src/*.c" 
 	"${PROJECT_SOURCE_DIR}/core/src/*.cpp")
 	
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/out)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/out)
 add_executable(${PROJ} ${SRC_LIST} "core/main.cpp")
 
 set_target_properties(${PROJ} PROPERTIES COMPILE_FLAGS "/EHsc")

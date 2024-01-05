@@ -125,8 +125,11 @@ namespace Render
 			auto pipelineName = unit->pipelineName;
 
 			// TODO
-			if (pass->name == "Shadow") pipelineName = "shadow";
-			if (pass->name == "Shadow" && unitEO->name == "Skybox")
+			if (pass->name == "shadow")
+				pipelineName = "shadow";
+			if (pass->name == "shadow" && unitEO->name == "Skybox")
+				continue;
+			if (pass->name == "shadow" && unitEO->name == "DirectionLight")
 				continue;
 
 			auto &graphicsPipeline = context->renderPipelines[pipelineName];
@@ -161,9 +164,10 @@ namespace Render
 			descriptorSets.push_back(globalDescriptor->set);
 
 			// TODO
-			if (pass->name != "Shadow")
+			if (pass->name != "shadow")
 			{
-				descriptorSets.push_back(unit->descriptor->set);
+				if (unit->descriptor != nullptr)
+					descriptorSets.push_back(unit->descriptor->set);
 			}
 
 			vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
