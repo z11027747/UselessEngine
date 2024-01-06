@@ -29,8 +29,8 @@ namespace Render
 		auto ret = vkAllocateDescriptorSets(logicalDevice, &allocateInfo, &descriptorSet);
 		CheckRet(ret, "vkAllocateDescriptorSets");
 
-		static int allocateCount = 0;
-		Common::LogSystem::Info("Allocate VkDescriptorSet count: " + std::to_string(allocateCount++));
+		// static int allocateCount = 0;
+		// Common::LogSystem::Info("Allocate VkDescriptorSet count: " + std::to_string(allocateCount++));
 
 		return descriptorSet;
 	}

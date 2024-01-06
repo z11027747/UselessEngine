@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 #include <memory>
-#include "logic/transform/transform_comp.h"
 
 class EngineObject;
 
@@ -14,6 +13,6 @@ namespace Logic
 		static void Add(std::shared_ptr<EngineObject> eo,
 						glm::vec3, glm::vec3, glm::vec3);
 
-		static glm::mat4 GetModel(std::shared_ptr<EngineObject> eo);
+		static void UpdateModel(std::shared_ptr<EngineObject> eo);
 	};
 }

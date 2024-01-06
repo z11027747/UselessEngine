@@ -157,8 +157,9 @@ namespace Render
 			ShaderLogic::UpdateUnitDescriptor(context,
 											  unit, imageIndex);
 
-			auto model = Logic::TransformLogic::GetModel(unitEO);
-			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
+			auto unitTransform = unitEO->GetComponent<Logic::Transform>();
+			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT,
+							   0, sizeof(glm::mat4), &unitTransform->model);
 
 			std::vector<VkDescriptorSet> descriptorSets;
 			descriptorSets.push_back(globalDescriptor->set);

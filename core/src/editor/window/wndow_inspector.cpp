@@ -28,42 +28,42 @@ namespace Editor
 			{
 				ImGui::Text("Select EngineObject: %s", selectEO->name.c_str());
 				ImGui::SeparatorText("ComponentList Begin");
+
+				auto id = 0;
+				auto &componentMap = selectEO->componentMap;
+				for (const auto &kv : componentMap)
 				{
-					auto id = 0;
-					auto &componentMap = selectEO->componentMap;
-					for (const auto &kv : componentMap)
+					auto typeId = kv.first;
+					auto &component = kv.second;
+
+					ImGui::PushID(id++);
+					ImGui::SetNextItemOpen(true);
+					if (ImGui::TreeNode("Comp: &s", typeId.name()))
 					{
-						auto typeId = kv.first;
-						auto &component = kv.second;
-
-						ImGui::PushID(id++);
-						ImGui::SetNextItemOpen(true);
-						if (ImGui::TreeNode("Comp: &s", typeId.name()))
+						if (typeId == typeid(Logic::Transform))
 						{
-							if (typeId == typeid(Logic::Transform))
-							{
-								auto transform = std::static_pointer_cast<Logic::Transform>(component);
-								LogicComponentWrap::DrawTransform(context,
-																  transform);
-							}
-							else if (typeId == typeid(Logic::Camera))
-							{
-								auto camera = std::static_pointer_cast<Logic::Camera>(component);
-								LogicComponentWrap::DrawCamera(context,
-															   camera);
-							}
-							else if (typeId == typeid(Render::DirectionLight))
-							{
-								auto directionLight = std::static_pointer_cast<Render::DirectionLight>(component);
-								RenderComponentWrap::DrawDirectionLight(context,
-																		directionLight);
-							}
-
-							ImGui::TreePop();
+							auto transform = std::static_pointer_cast<Logic::Transform>(component);
+							LogicComponentWrap::DrawTransform(context,
+															  transform);
 						}
-						ImGui::PopID();
+						else if (typeId == typeid(Logic::Camera))
+						{
+							auto camera = std::static_pointer_cast<Logic::Camera>(component);
+							LogicComponentWrap::DrawCamera(context,
+														   camera);
+						}
+						else if (typeId == typeid(Render::DirectionLight))
+						{
+							auto directionLight = std::static_pointer_cast<Render::DirectionLight>(component);
+							RenderComponentWrap::DrawDirectionLight(context,
+																	directionLight);
+						}
+
+						ImGui::TreePop();
 					}
+					ImGui::PopID();
 				}
+
 				ImGui::SeparatorText("End");
 
 				ImGui::SetNextItemWidth(150.0f);

@@ -22,22 +22,20 @@ namespace Logic
 		eo->AddComponent<Transform>(transform);
 	}
 
-	glm::mat4 TransformLogic::GetModel(std::shared_ptr<EngineObject> eo)
+	void TransformLogic::UpdateModel(std::shared_ptr<EngineObject> eo)
 	{
 		auto transform = eo->GetComponent<Logic::Transform>();
 
 		auto translation = glm::translate(glm::mat4(1.0f), transform->position);
-		auto rotation = glm::eulerAngleYXZ(
-			glm::radians(transform->eulerAngles.y),
-			glm::radians(transform->eulerAngles.x),
-			glm::radians(transform->eulerAngles.z));
+		auto rotation = glm::toMat4(glm::quat(glm::radians(transform->eulerAngles)));
 		auto scale = glm::scale(glm::mat4(1.0f), transform->scale);
 
-		auto model = translation * rotation * scale;
+		transform->model = translation * rotation * scale;
+		transform->forward = rotation * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+		transform->right = rotation * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+		transform->up = rotation * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 
-		auto test = model * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-
-		return model;
+		auto test = transform->model * glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 }

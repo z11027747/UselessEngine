@@ -88,7 +88,7 @@ namespace Render
 		DirectionLightUBO directionLightUBO = {
 			directionLightCamera->view,
 			directionLightCamera->projection,
-			directionLightCamera->calcForward,
+			directionLightTransform->forward,
 			directionLight->color,
 			directionLight->params};
 

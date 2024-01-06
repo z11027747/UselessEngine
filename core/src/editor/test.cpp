@@ -22,8 +22,8 @@ namespace Editor
 		mainCameraEO->name = G_MainCamera;
 
 		Logic::TransformLogic::Add(mainCameraEO,
-								   glm::vec3(0.0f, 4.0f, -10.0f),
-								   glm::vec3(15.0f, 0.0f, 0.0f),
+								   glm::vec3(0.0f, 4.0f, 10.0f),
+								   glm::vec3(-15.0f, 0.0f, 0.0f),
 								   glm::vec3(1.0f, 1.0f, 1.0f));
 
 		auto mainCamera = std::make_shared<Logic::Camera>();
@@ -48,8 +48,8 @@ namespace Editor
 		directionLightEO->name = "DirectionLight";
 
 		Logic::TransformLogic::Add(directionLightEO,
-								   glm::vec3(5.0f, 5.0f, 0.0f),
-								   glm::vec3(45.0f, -90.0f, 0.0f),
+								   glm::vec3(-5.0f, 5.0f, 0.0f),
+								   glm::vec3(-45.0f, -90.0f, 0.0f),
 								   glm::vec3(0.3f, 0.3f, 0.3f));
 
 		auto directionLight = std::make_shared<Render::DirectionLight>();
@@ -177,7 +177,7 @@ namespace Editor
 
 		Logic::TransformLogic::Add(modelEO,
 								   glm::vec3(0.0f, -0.5f, 0.0f),
-								   glm::vec3(10.0f, 10.0f, 10.0f),
+								   glm::vec3(-90.0f, 225.0f, 0.0f),
 								   glm::vec3(4.0f, 4.0f, 4.0f));
 
 		auto modelUnit = std::make_shared<Render::Unit>();

@@ -20,36 +20,36 @@ namespace Editor
 			ImGui::Text("fps: %.1f ms: %.3f", io.Framerate, 1000.0f / io.Framerate);
 
 			ImGui::SeparatorText("EngineObjectList Begin");
+
+			auto &eos = context->allEOs;
+			auto eoSize = eos.size();
+			for (auto i = 0; i < eoSize; i++)
 			{
-				auto &eos = context->allEOs;
-				auto eoSize = eos.size();
-				for (auto i = 0; i < eoSize; i++)
+				ImGui::PushID(i);
+
+				auto &eo = eos[i];
+
+				ImGui::Checkbox("##active", &eo->active);
+				ImGui::SameLine();
+
+				if (ImGui::Selectable(eo->name.data(), selectEOIndex == i))
 				{
-					ImGui::PushID(i);
-
-					auto &eo = eos[i];
-
-					ImGui::Checkbox("##active", &eo->active);
-					ImGui::SameLine();
-
-					if (ImGui::Selectable(eo->name.data(), selectEOIndex == i))
-					{
-						selectEOIndex = i;
-						Window::selectEO = eo;
-					}
-
-					if (ImGui::BeginPopupContextItem())
-					{
-						if (ImGui::Button("Delete"))
-						{
-							std::cout << "Delete Click!" << std::endl;
-						}
-						ImGui::EndPopup();
-					}
-
-					ImGui::PopID();
+					selectEOIndex = i;
+					Window::selectEO = eo;
 				}
+
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::Button("Delete"))
+					{
+						std::cout << "Delete Click!" << std::endl;
+					}
+					ImGui::EndPopup();
+				}
+
+				ImGui::PopID();
 			}
+
 			ImGui::SeparatorText("End");
 
 			ImGui::SetNextItemWidth(150.0f);

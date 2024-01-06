@@ -25,10 +25,6 @@ namespace Logic
 		float fov;
 		float size;
 
-		glm::vec3 calcPos;
-		glm::vec3 calcEul;
-		glm::vec3 calcForward;
-
 		std::shared_ptr<Render::Pass> renderPass;
 	};
 }

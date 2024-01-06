@@ -21,22 +21,11 @@ namespace Logic
 		auto camera = eo->GetComponent<Camera>();
 
 		auto transform = eo->GetComponent<Transform>();
-		auto &position = transform->position;
-		auto &eulerAngles = transform->eulerAngles;
+		auto position = transform->position;
+		auto forward = transform->forward;
+		auto up = transform->up;
 
-		auto translation = glm::translate(glm::mat4(1.0f), transform->position);
-		auto rotation = glm::eulerAngleZXY(
-			glm::radians(transform->eulerAngles.z),
-			glm::radians(transform->eulerAngles.x),
-			glm::radians(transform->eulerAngles.y));
-		camera->view = glm::inverse(translation * rotation);
-
-		auto forward = camera->view * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-		auto test = camera->view * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-
-		camera->calcPos = position;
-		camera->calcEul = eulerAngles;
-		camera->calcForward = forward;
+		camera->view = glm::lookAtLH(position, position + forward, up);
 	}
 
 	void CameraLogic::UpdateProjection(Context *context,
@@ -50,8 +39,6 @@ namespace Logic
 		if (camera->mode == CameraMode::ePerspective)
 		{
 			auto fov = camera->fov;
-			// auto projection1 = glm::perspectiveRH_NO(glm::radians(fov), aspect, near, far);
-			// auto projection2 = glm::perspectiveRH_ZO(glm::radians(fov), aspect, near, far);
 			camera->projection = glm::perspective(glm::radians(fov), aspect, near, far);
 		}
 		else if (camera->mode == CameraMode::eOrtho)
@@ -60,7 +47,5 @@ namespace Logic
 			float halfHeight = halfWidth / aspect;
 			camera->projection = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, near, far);
 		}
-
-		auto test = camera->projection * camera->view * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 }

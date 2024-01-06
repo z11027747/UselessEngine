@@ -84,7 +84,7 @@ namespace Editor
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(samplerBinding0);
 
-		auto descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
+		descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{

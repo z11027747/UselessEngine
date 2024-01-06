@@ -1,6 +1,7 @@
 #pragma once
 
-#include "logic/camera/camera_logic.h"
+#include "logic/camera/camera_system.h"
+#include "logic/transform/transform_system.h"
 #include "context.h"
 #include "engine_object.h"
 
@@ -11,11 +12,12 @@ namespace Logic
 	void System::Create(Context *context)
 	{
 	}
-
 	void System::Update(Context *context)
 	{
+		TransformUpdateModelSystem::Update(context);
+		CameraUpdateViewSystem::Update(context);
+		CameraMoveSystem::Update(context);
 	}
-
 	void System::Destroy(Context *context)
 	{
 	}

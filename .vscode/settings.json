@@ -67,6 +67,8 @@
         "sstream": "cpp",
         "xlocbuf": "cpp",
         "xlocmes": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "unordered_set": "cpp",
+        "transform_update_model_system": "cpp"
     }
 }

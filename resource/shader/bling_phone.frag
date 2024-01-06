@@ -95,7 +95,7 @@ void main() {
     vec3 baseCol = texture(baseSampler, inUV).rgb;
     vec3 directionLightCol = CalcDirectionLight();
     vec3 shadowColor = CalcShadow();
-    outColor = vec4(shadowColor, 1.0);
-    return;
+    // outColor = vec4(shadowColor, 1.0);
+    // return;
     outColor = vec4(inColor * baseCol * directionLightCol * shadowColor, 1.0);
 }

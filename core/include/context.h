@@ -11,6 +11,7 @@
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/pass/pass_comp.h"
 #include "render/system.h"
+#include "logic/input/input_comp.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/system.h"
 #include "editor/test.h"
@@ -107,5 +108,12 @@ public:
 
 	void OnSizeCallback()
 	{
+	}
+
+	void OnKeyCallback(int key, int action, int mode)
+	{
+		std::cout << "key : " << key
+				  << ", action: " << action
+				  << ", mode: " << mode << std::endl;
 	}
 };
