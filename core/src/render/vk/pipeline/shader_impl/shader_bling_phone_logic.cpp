@@ -56,6 +56,15 @@ namespace Render
 			uv0Description3};
 	}
 
+	void ShaderBlingPhoneLogic::SetRasterizationCreateInfo(Context *context,
+														   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+		auto &stageInfo = graphicsPipeline->stageInfo;
+
+		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
+		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+	}
+
 	void ShaderBlingPhoneLogic::CreateDescriptorSetLayout(Context *context,
 														  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{

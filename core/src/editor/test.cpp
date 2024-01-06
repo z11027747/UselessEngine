@@ -75,7 +75,7 @@ namespace Editor
 
 		Render::UnitLogic::SetPipelineName(context, directionLightUnit, "color");
 		Render::UnitLogic::SetObj(context, directionLightUnit,
-								  "resource/model/basic/convexmesh.obj", directionLight->color);
+								  "resource/model/basic/capsule.obj", directionLight->color);
 
 		directionLightEO->AddComponent<Render::Unit>(directionLightUnit);
 
@@ -177,7 +177,7 @@ namespace Editor
 
 		Logic::TransformLogic::Add(modelEO,
 								   glm::vec3(0.0f, -0.5f, 0.0f),
-								   glm::vec3(-90.0f, 45.0f, 0.0f),
+								   glm::vec3(10.0f, 10.0f, 10.0f),
 								   glm::vec3(4.0f, 4.0f, 4.0f));
 
 		auto modelUnit = std::make_shared<Render::Unit>();

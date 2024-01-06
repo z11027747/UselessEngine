@@ -60,12 +60,7 @@ vec3 CalcShadow()
     vec2 uv = positionLS_NDC.xy * 0.5 + 0.5;
     
     float shadowDepth = texture(shadowSampler, vec3(uv, depth));
-
-    if(depth > shadowDepth){
-        return vec3(depth - shadowDepth);
-    }
-
-    return vec3(1);
+    return vec3(1-(depth-shadowDepth));
 }
 
 vec3 CalcShadow_PCF()
@@ -78,7 +73,7 @@ vec3 CalcShadow_PCF()
             
     int samplerCount = 0;
     float samplerValue = 0.0;
-    vec2 samplerTexelSize = 1 / vec2(1920.0, 1080.0);
+    vec2 samplerTexelSize = 5 / vec2(1920.0, 1080.0);
 
     int pcfCount = 3;
     for (int x = -pcfCount; x <= pcfCount; x++)
@@ -92,17 +87,15 @@ vec3 CalcShadow_PCF()
     }
 
     float shadowDepth = samplerValue / samplerCount;
-    
-    if(depth > shadowDepth){
-        return vec3(shadowDepth);
-    }
 
-    return vec3(1);
+    return vec3(1-(depth-shadowDepth));
 }
 
 void main() {
     vec3 baseCol = texture(baseSampler, inUV).rgb;
     vec3 directionLightCol = CalcDirectionLight();
-    vec3 shadowColor = CalcShadow_PCF();
+    vec3 shadowColor = CalcShadow();
+    outColor = vec4(shadowColor, 1.0);
+    return;
     outColor = vec4(inColor * baseCol * directionLightCol * shadowColor, 1.0);
 }

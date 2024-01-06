@@ -15,6 +15,7 @@ namespace Render
 	{
 	public:
 		static void CreateVertexAttrDescriptions(Context *, std::shared_ptr<GraphicsPipeline>);
+		static void SetRasterizationCreateInfo(Context *, std::shared_ptr<GraphicsPipeline>);
 
 		static void CreateDescriptorSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void DestroyDescriptorSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);

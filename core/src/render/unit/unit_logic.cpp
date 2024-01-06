@@ -207,8 +207,12 @@ namespace Render
 				auto ni = index.normal_index;
 
 				Render::Vertex vertex = {};
-				vertex.positionOS = {attrib.vertices[3 * vi + 0], attrib.vertices[3 * vi + 1], attrib.vertices[3 * vi + 2]};
-				vertex.normalOS = {attrib.normals[3 * ni + 0], attrib.normals[3 * ni + 1], attrib.normals[3 * ni + 2]};
+				vertex.positionOS = {attrib.vertices[3 * vi + 0],
+									 attrib.vertices[3 * vi + 1],
+									 attrib.vertices[3 * vi + 2]};
+				vertex.normalOS = {attrib.normals[3 * ni + 0],
+								   attrib.normals[3 * ni + 1],
+								   attrib.normals[3 * ni + 2]};
 				vertex.color = defaultColor;
 				if (attrib.texcoords.size() > 0)
 				{
@@ -226,7 +230,7 @@ namespace Render
 					vertices.push_back(vertex);
 				}
 
-				indices.push_back(static_cast<uint16_t>(indices.size()));
+				indices.push_back(uniqueVertices[vertex]);
 			}
 		}
 

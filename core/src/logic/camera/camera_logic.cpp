@@ -1,4 +1,5 @@
 
+#include <cmath>
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,17 +24,19 @@ namespace Logic
 		auto &position = transform->position;
 		auto &eulerAngles = transform->eulerAngles;
 
-		auto quat = glm::quat(glm::radians(eulerAngles));
-		auto forward = quat * glm::vec3(0.0f, 0.0f, 1.0f);
-		auto up = quat * glm::vec3(0.0f, 1.0f, 0.0f);
+		auto translation = glm::translate(glm::mat4(1.0f), transform->position);
+		auto rotation = glm::eulerAngleZXY(
+			glm::radians(transform->eulerAngles.z),
+			glm::radians(transform->eulerAngles.x),
+			glm::radians(transform->eulerAngles.y));
+		camera->view = glm::inverse(translation * rotation);
 
-		camera->view = glm::lookAt(position, position + forward, up);
-		// camera->view[0][0] *= -1;
+		auto forward = camera->view * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+		auto test = camera->view * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 		camera->calcPos = position;
 		camera->calcEul = eulerAngles;
 		camera->calcForward = forward;
-		camera->calcUp = up;
 	}
 
 	void CameraLogic::UpdateProjection(Context *context,
@@ -47,6 +50,8 @@ namespace Logic
 		if (camera->mode == CameraMode::ePerspective)
 		{
 			auto fov = camera->fov;
+			// auto projection1 = glm::perspectiveRH_NO(glm::radians(fov), aspect, near, far);
+			// auto projection2 = glm::perspectiveRH_ZO(glm::radians(fov), aspect, near, far);
 			camera->projection = glm::perspective(glm::radians(fov), aspect, near, far);
 		}
 		else if (camera->mode == CameraMode::eOrtho)
@@ -56,6 +61,6 @@ namespace Logic
 			camera->projection = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, near, far);
 		}
 
-		camera->projection[1][1] *= -1;
+		auto test = camera->projection * camera->view * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 }
