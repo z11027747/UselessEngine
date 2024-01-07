@@ -38,7 +38,7 @@ namespace Logic
 		view[2][2] = -f.z;
 		view[3][0] = -glm::dot(r, position);
 		view[3][1] = -glm::dot(u, position);
-		view[3][2] = -glm::dot(-f, position);
+		view[3][2] = glm::dot(f, position);
 		camera->view = view;
 	}
 

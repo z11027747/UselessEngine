@@ -22,7 +22,7 @@ namespace Editor
 		mainCameraEO->name = G_MainCamera;
 
 		Logic::TransformLogic::Add(mainCameraEO,
-								   glm::vec3(0.0f, 3.0f, -10.0f),
+								   glm::vec3(0.0f, 3.8f, -10.0f),
 								   glm::vec3(15.0f, 0.0f, 0.0f),
 								   glm::vec3(1.0f, 1.0f, 1.0f));
 
