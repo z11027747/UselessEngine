@@ -57,9 +57,9 @@ namespace Editor
 
 		auto directionLightCamera = std::make_shared<Logic::Camera>();
 		directionLightCamera->near = 0.1f;
-		directionLightCamera->far = 20.0f;
+		directionLightCamera->far = 50.0f;
 		directionLightCamera->mode = Logic::CameraMode::eOrtho;
-		directionLightCamera->size = 30.0f;
+		directionLightCamera->size = 50.0f;
 		directionLightCamera->renderPass = context->renderShadowPass;
 		directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
 

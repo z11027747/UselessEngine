@@ -22,7 +22,7 @@ namespace Editor
 		ImGui::Text("Position");
 
 		static int eId = 1;
-		ImGui_Drag_GlmVec3(transform->eulerAngles, eId, 0.03f);
+		ImGui_Drag_GlmVec3(transform->eulerAngles, eId, 0.05f);
 		ImGui::SameLine();
 		if (ImGui::Button("E", ImVec2(20, 20)))
 		{

@@ -40,7 +40,7 @@ vec3 CalcDirectionLight()
 
     vec3 lightDir = normalize(globalUBO.directionLight.dir);
     vec3 normalDir = normalize(inNormalWS);
-    vec3 diffuse = max(0.0, dot(normalDir, lightDir)) * diffuseIntensity * globalUBO.directionLight.col;
+    vec3 diffuse = (max(0.0, dot(normalDir, lightDir))* 0.5 + 0.5) * diffuseIntensity * globalUBO.directionLight.col;
     
     float specualrShininess = globalUBO.directionLight.params.y;
     float specularIntensity = globalUBO.directionLight.params.z;
@@ -49,23 +49,50 @@ vec3 CalcDirectionLight()
     vec3 halfDir = normalize(viewDir + lightDir);
     vec3 specular = pow(max(0.0, dot(normalDir, halfDir)), specualrShininess) * specularIntensity * vec3(1.0);
 
-    return diffuse + specular;
+    return ambient + diffuse + specular;
 }
 
-vec3 CalcShadow()
+float CalcShadow()
 {
     vec3 shadowUVW = inPositionLS.xyz / inPositionLS.w;
     shadowUVW.xy = shadowUVW.xy * 0.5 + 0.5;
 
     float shadowCmp = texture(shadowSampler, shadowUVW);
-    return vec3(shadowCmp);
+    return shadowCmp;
+}
+
+float CalcShadow_PCF()
+{
+    ivec2 texSize = textureSize(shadowSampler, 0);
+    float scale = 1;
+    float dx = scale * 1.0 / float(texSize.x);
+    float dy = scale * 1.0 / float(texSize.y);
+
+    float shadowFactor = 0.0;
+    int count = 0;
+    int range = 2;
+	
+    vec3 shadowUVW = inPositionLS.xyz / inPositionLS.w;
+    shadowUVW.xy = shadowUVW.xy * 0.5 + 0.5;
+
+	for (int x = -range; x <= range; x++)
+	{
+		for (int y = -range; y <= range; y++)
+		{
+            shadowUVW.xy += vec2(dx*x, dy*y);
+
+            float shadowCmp = texture(shadowSampler, shadowUVW);
+            shadowFactor += shadowCmp;
+			count++;
+		}
+	}
+
+	return shadowFactor / count;
 }
 
 void main() {
     vec3 baseCol = texture(baseSampler, inUV).rgb;
     vec3 directionLightCol = CalcDirectionLight();
-    vec3 shadowColor = CalcShadow();
-    outColor = vec4(shadowColor,1.0);
-    return;
-    outColor = vec4(inColor * baseCol * directionLightCol * shadowColor, 1.0);
+    float shadowAtten = CalcShadow();
+    outColor = vec4(inColor * baseCol * directionLightCol * shadowAtten, 1.0);
 }

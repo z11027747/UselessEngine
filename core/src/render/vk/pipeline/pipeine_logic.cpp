@@ -207,6 +207,8 @@ namespace Render
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 
+		ShaderLogic::SetViewport(context, graphicsPipeline);
+
 		auto &scissor = stageInfo.scissor;
 		scissor.offset = {0, 0};
 		scissor.extent = currentExtent;

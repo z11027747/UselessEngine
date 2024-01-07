@@ -25,7 +25,7 @@ namespace Render
 		createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 		createInfo.anisotropyEnable = false;
 		createInfo.maxAnisotropy = 1;
-		createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_WHITE;
+		createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
 		createInfo.unnormalizedCoordinates = false;
 		if (forDepth)
 		{

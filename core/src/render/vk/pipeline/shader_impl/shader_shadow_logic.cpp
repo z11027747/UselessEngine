@@ -35,14 +35,32 @@ namespace Render
 			positionOSDescription0};
 	}
 
+	void ShaderShadowLogic::SetViewport(Context *context,
+										std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
+
+		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &currentExtent = global->surfaceCapabilities.currentExtent;
+
+		auto &stageInfo = graphicsPipeline->stageInfo;
+
+		auto &viewport = stageInfo.viewport;
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = static_cast<float>(currentExtent.width);
+		viewport.height = static_cast<float>(currentExtent.height);
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+	}
+
 	void ShaderShadowLogic::SetRasterizationCreateInfo(Context *context,
 													   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
-		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT; 
-		rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		// rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
 		rasterizationStateCreateInfo.depthBiasEnable = true;
 		rasterizationStateCreateInfo.depthBiasConstantFactor = 1.25f;
 		rasterizationStateCreateInfo.depthBiasClamp = 0.0f;
