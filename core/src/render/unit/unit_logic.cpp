@@ -210,7 +210,7 @@ namespace Render
 				vertex.positionOS = {-attrib.vertices[3 * vi + 0],
 									 attrib.vertices[3 * vi + 1],
 									 attrib.vertices[3 * vi + 2]};
-				vertex.normalOS = {attrib.normals[3 * ni + 0],
+				vertex.normalOS = {-attrib.normals[3 * ni + 0],
 								   attrib.normals[3 * ni + 1],
 								   attrib.normals[3 * ni + 2]};
 				vertex.color = defaultColor;

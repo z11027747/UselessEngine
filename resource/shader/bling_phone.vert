@@ -34,6 +34,7 @@ layout(location = 0) out vec3 fragPositionWS;
 layout(location = 1) out vec3 fragNormalWS;
 layout(location = 2) out vec3 fragColor;
 layout(location = 3) out vec2 fragUV0;
+layout(location = 4) out vec4 fragPositionLS;
 
 void main() {
     gl_Position = globalUBO.camera.projection * globalUBO.camera.view * push.model * vec4(inPositionOS, 1.0);
@@ -41,4 +42,5 @@ void main() {
 	fragNormalWS = mat3(push.model) * inNormalOS;
     fragColor = inColor;
     fragUV0 = inUV0;
+    fragPositionLS = globalUBO.directionLight.projection * globalUBO.directionLight.view * vec4(fragPositionWS, 1.0);
 }

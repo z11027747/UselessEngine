@@ -47,7 +47,7 @@ namespace Editor
 		Logic::TransformLogic::Add(directionLightEO,
 								   glm::vec3(-5.0f, 5.0f, 0.0f),
 								   glm::vec3(45.0f, 90.0f, 0.0f),
-								   glm::vec3(0.3f, 0.3f, 0.3f));
+								   glm::vec3(1.0f, 1.0f, 1.0f));
 
 		auto directionLight = std::make_shared<Render::DirectionLight>();
 		directionLight->color = glm::vec3(1.0f, 0.9568627f, 0.8392157f);

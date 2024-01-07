@@ -127,9 +127,7 @@ namespace Render
 			// TODO
 			if (pass->name == "shadow")
 				pipelineName = "shadow";
-			if (pass->name == "shadow" && unitEO->name == "Skybox")
-				continue;
-			if (pass->name == "shadow" && unitEO->name == "DirectionLight")
+			if (pass->name == "shadow" && unitEO->name != "Model-VikingRoom")
 				continue;
 
 			auto &graphicsPipeline = context->renderPipelines[pipelineName];
@@ -158,8 +156,8 @@ namespace Render
 											  unit, imageIndex);
 
 			auto unitTransform = unitEO->GetComponent<Logic::Transform>();
-			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT,
-							   0, sizeof(glm::mat4), &unitTransform->model);
+			auto &model = unitTransform->model;
+			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 
 			std::vector<VkDescriptorSet> descriptorSets;
 			descriptorSets.push_back(globalDescriptor->set);

@@ -62,7 +62,7 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
-		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+		// rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 	}
 
 	void ShaderBlingPhoneLogic::CreateDescriptorSetLayout(Context *context,
@@ -103,7 +103,7 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 
 		auto sampler0 = SamplerLogic::Create(context);
-		auto sampler1 = SamplerLogic::Create(context);
+		auto samplerShadow1 = SamplerLogic::Create(context, true);
 
 		auto descriptor = std::make_shared<Descriptor>();
 		descriptor->set = descriptorSet;
@@ -118,7 +118,7 @@ namespace Render
 		auto depthImage2d = renderShadowPass->depthImage2ds[0];
 
 		VkDescriptorImageInfo vkImage1Info = {
-			sampler1,
+			samplerShadow1,
 			depthImage2d->vkImageView,
 			depthImage2d->layout};
 		descriptor->vkImage1Info = vkImage1Info;

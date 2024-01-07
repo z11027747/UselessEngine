@@ -28,6 +28,5 @@ layout(push_constant) uniform Push {
 layout(location = 0) in vec3 inPositionOS;
 
 void main() {
-	gl_Position = globalUBO.directionLight.projection * globalUBO.directionLight.view * vec4(inPositionOS, 1.0);
-    // gl_Position.z += 0.001 * gl_Position.w;
+	gl_Position = globalUBO.directionLight.projection * globalUBO.directionLight.view * push.model * vec4(inPositionOS, 1.0);
 }

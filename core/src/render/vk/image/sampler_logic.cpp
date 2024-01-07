@@ -6,27 +6,37 @@
 #include "render/vk/image/sampler_logic.h"
 #include "context.h"
 
-namespace Render {
+namespace Render
+{
 
-	VkSampler SamplerLogic::Create(Context* context) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	VkSampler SamplerLogic::Create(Context *context, bool forDepth)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 
 		VkSamplerCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 		createInfo.magFilter = VK_FILTER_LINEAR;
 		createInfo.minFilter = VK_FILTER_LINEAR;
-		createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 		createInfo.anisotropyEnable = false;
 		createInfo.maxAnisotropy = 1;
 		createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_WHITE;
 		createInfo.unnormalizedCoordinates = false;
-		createInfo.compareEnable = false;
-		createInfo.compareOp = VK_COMPARE_OP_NEVER;
+		if (forDepth)
+		{
+			createInfo.compareEnable = true;
+			createInfo.compareOp = VK_COMPARE_OP_LESS;
+		}
+		else
+		{
+			createInfo.compareEnable = false;
+			createInfo.compareOp = VK_COMPARE_OP_NEVER;
+		}
 		createInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 		createInfo.mipLodBias = 0.0f;
 		createInfo.minLod = 0.0f;
@@ -39,11 +49,12 @@ namespace Render {
 		return sampler;
 	}
 
-	void SamplerLogic::Destroy(Context* context, VkSampler& sampler) {
-		auto& renderGlobalEO = context->renderGlobalEO;
+	void SamplerLogic::Destroy(Context *context, VkSampler &sampler)
+	{
+		auto &renderGlobalEO = context->renderGlobalEO;
 
 		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroySampler(logicalDevice, sampler, nullptr);
 	}

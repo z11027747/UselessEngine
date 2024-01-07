@@ -41,9 +41,11 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
+		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT; 
+		rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		rasterizationStateCreateInfo.depthBiasEnable = true;
-		rasterizationStateCreateInfo.depthBiasConstantFactor = 8.0f;
+		rasterizationStateCreateInfo.depthBiasConstantFactor = 1.25f;
 		rasterizationStateCreateInfo.depthBiasClamp = 0.0f;
-		rasterizationStateCreateInfo.depthBiasSlopeFactor = 3.0f;
+		rasterizationStateCreateInfo.depthBiasSlopeFactor = 1.75f;
 	}
 }
