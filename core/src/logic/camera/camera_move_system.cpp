@@ -18,10 +18,10 @@ namespace Logic
         auto moveSpeed = 5.0f;
 
         if (glfwGetKey(context->window, GLFW_KEY_W) == GLFW_PRESS)
-            moveDir = -cameraTransform->forward;
+            moveDir = cameraTransform->forward;
 
         if (glfwGetKey(context->window, GLFW_KEY_S) == GLFW_PRESS)
-            moveDir = cameraTransform->forward;
+            moveDir = -cameraTransform->forward;
 
         if (glfwGetKey(context->window, GLFW_KEY_A) == GLFW_PRESS)
             moveDir = -cameraTransform->right;

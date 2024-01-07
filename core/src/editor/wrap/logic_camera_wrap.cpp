@@ -25,7 +25,7 @@ namespace Editor
 		}
 
 		static int mode = 0;
-		if (ImGui::Combo("Mode", &mode, "Perspective\0Orthographic\0"))
+		if (ImGui::Combo("Mode", &mode, "Perspective\0Ortho\0"))
 		{
 			camera->mode = static_cast<Logic::CameraMode>(mode);
 			Logic::CameraLogic::UpdateProjection(context, camera);

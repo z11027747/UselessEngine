@@ -21,11 +21,25 @@ namespace Logic
 		auto camera = eo->GetComponent<Camera>();
 
 		auto transform = eo->GetComponent<Transform>();
-		auto position = transform->position;
-		auto forward = transform->forward;
-		auto up = transform->up;
+		auto &position = transform->position;
+		auto &r = transform->right;
+		auto &u = transform->up;
+		auto &f = transform->forward;
 
-		camera->view = glm::lookAtLH(position, position + forward, up);
+		auto view = glm::mat4(1.0f);
+		view[0][0] = r.x;
+		view[1][0] = r.y;
+		view[2][0] = r.z;
+		view[0][1] = u.x;
+		view[1][1] = u.y;
+		view[2][1] = u.z;
+		view[0][2] = -f.x;
+		view[1][2] = -f.y;
+		view[2][2] = -f.z;
+		view[3][0] = -glm::dot(r, position);
+		view[3][1] = -glm::dot(u, position);
+		view[3][2] = -glm::dot(-f, position);
+		camera->view = view;
 	}
 
 	void CameraLogic::UpdateProjection(Context *context,

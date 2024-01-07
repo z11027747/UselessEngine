@@ -96,8 +96,11 @@ namespace Render
 		auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
 		auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
 
+		//TODO
 		Logic::CameraLogic::UpdateView(directionLightEO);
+		Logic::CameraLogic::UpdateProjection(context, directionLightCamera);
 		Logic::CameraLogic::UpdateView(mainCameraEO);
+		Logic::CameraLogic::UpdateProjection(context, mainCamera);
 
 		CameraUBO cameraUBO = {
 			mainCameraTransform->position,

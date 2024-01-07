@@ -22,8 +22,8 @@ namespace Editor
 		mainCameraEO->name = G_MainCamera;
 
 		Logic::TransformLogic::Add(mainCameraEO,
-								   glm::vec3(0.0f, 4.0f, 10.0f),
-								   glm::vec3(-15.0f, 0.0f, 0.0f),
+								   glm::vec3(0.0f, 3.0f, -10.0f),
+								   glm::vec3(15.0f, 0.0f, 0.0f),
 								   glm::vec3(1.0f, 1.0f, 1.0f));
 
 		auto mainCamera = std::make_shared<Logic::Camera>();
@@ -34,9 +34,6 @@ namespace Editor
 		mainCamera->size = 15.0f;
 		mainCamera->renderPass = context->renderMainPass;
 		mainCameraEO->AddComponent<Logic::Camera>(mainCamera);
-
-		Logic::CameraLogic::UpdateView(mainCameraEO);
-		Logic::CameraLogic::UpdateProjection(context, mainCamera);
 
 		context->mainCameraEO = mainCameraEO;
 		context->AddEO(mainCameraEO);
@@ -49,7 +46,7 @@ namespace Editor
 
 		Logic::TransformLogic::Add(directionLightEO,
 								   glm::vec3(-5.0f, 5.0f, 0.0f),
-								   glm::vec3(-45.0f, -90.0f, 0.0f),
+								   glm::vec3(45.0f, 90.0f, 0.0f),
 								   glm::vec3(0.3f, 0.3f, 0.3f));
 
 		auto directionLight = std::make_shared<Render::DirectionLight>();
@@ -62,12 +59,9 @@ namespace Editor
 		directionLightCamera->near = 0.1f;
 		directionLightCamera->far = 20.0f;
 		directionLightCamera->mode = Logic::CameraMode::eOrtho;
-		directionLightCamera->size = 15.0f;
+		directionLightCamera->size = 30.0f;
 		directionLightCamera->renderPass = context->renderShadowPass;
 		directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
-
-		Logic::CameraLogic::UpdateView(directionLightEO);
-		Logic::CameraLogic::UpdateProjection(context, directionLightCamera);
 
 		context->renderLightEOs.push_back(directionLightEO);
 
@@ -75,7 +69,7 @@ namespace Editor
 
 		Render::UnitLogic::SetPipelineName(context, directionLightUnit, "color");
 		Render::UnitLogic::SetObj(context, directionLightUnit,
-								  "resource/model/basic/capsule.obj", directionLight->color);
+								  "resource/model/ef_wt_001_az5.obj", directionLight->color);
 
 		directionLightEO->AddComponent<Render::Unit>(directionLightUnit);
 
@@ -177,7 +171,7 @@ namespace Editor
 
 		Logic::TransformLogic::Add(modelEO,
 								   glm::vec3(0.0f, -0.5f, 0.0f),
-								   glm::vec3(-90.0f, 225.0f, 0.0f),
+								   glm::vec3(-90.0f, -45.0f, 0.0f),
 								   glm::vec3(4.0f, 4.0f, 4.0f));
 
 		auto modelUnit = std::make_shared<Render::Unit>();

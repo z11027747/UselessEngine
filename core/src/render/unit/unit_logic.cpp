@@ -207,7 +207,7 @@ namespace Render
 				auto ni = index.normal_index;
 
 				Render::Vertex vertex = {};
-				vertex.positionOS = {attrib.vertices[3 * vi + 0],
+				vertex.positionOS = {-attrib.vertices[3 * vi + 0],
 									 attrib.vertices[3 * vi + 1],
 									 attrib.vertices[3 * vi + 2]};
 				vertex.normalOS = {attrib.normals[3 * ni + 0],

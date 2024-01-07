@@ -30,12 +30,12 @@ namespace Logic
 		auto rotation = glm::toMat4(glm::quat(glm::radians(transform->eulerAngles)));
 		auto scale = glm::scale(glm::mat4(1.0f), transform->scale);
 
-		transform->model = translation * rotation * scale;
+		auto model = translation * rotation * scale;
+		transform->model = model;
+
 		transform->forward = rotation * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 		transform->right = rotation * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		transform->up = rotation * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-
-		auto test = transform->model * glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 }
