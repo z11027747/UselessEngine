@@ -22,9 +22,8 @@ namespace Render
 	void FramebufferLogic::Create(Context *context,
 								  std::shared_ptr<Pass> pass)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &surfaceCapabilities = global->surfaceCapabilities;
 		auto swapchainImageCount = global->swapchainImageCount;
@@ -70,9 +69,8 @@ namespace Render
 										   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer,
 										   std::shared_ptr<Pass> pass)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 		auto &surfaceCapabilities = global->surfaceCapabilities;
 
 		auto &renderPass = pass->renderPass;
@@ -114,6 +112,9 @@ namespace Render
 									   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer,
 									   GlobalUBO &globalUBO, bool isShadow)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
 		auto &unitEOs = context->renderUnitEOs;
 		for (const auto &unitEO : unitEOs)
 		{
@@ -127,7 +128,7 @@ namespace Render
 
 			auto pipelineName = !isShadow ? unit->pipelineName : "shadow";
 
-			auto &graphicsPipeline = context->renderPipelines[pipelineName];
+			auto &graphicsPipeline = global->pipelines[pipelineName];
 			auto &pipeline = graphicsPipeline->pipeline;
 			auto &pipelineLayout = graphicsPipeline->pipelineLayout;
 

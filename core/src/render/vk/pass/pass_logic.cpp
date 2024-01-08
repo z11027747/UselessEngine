@@ -10,10 +10,13 @@
 
 namespace Render
 {
-	void PassLogic::CreateImGui(Context *context)
+	std::shared_ptr<Pass> PassLogic::CreateImGui(Context *context)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
 		auto pass = std::make_shared<Pass>();
-		pass->name = "imGui";
+		pass->name = Pass_ImGui;
 
 		RenderPassLogic::CreateColorAttachment(context, pass,
 											   VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
@@ -26,13 +29,17 @@ namespace Render
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
-		context->renderImGuiPass = pass;
+		global->passes.emplace(pass->name, pass);
+		return pass;
 	}
 
-	void PassLogic::CreateMain(Context *context)
+	std::shared_ptr<Pass> PassLogic::CreateMain(Context *context)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
 		auto pass = std::make_shared<Pass>();
-		pass->name = "main";
+		pass->name = Pass_Main;
 
 		RenderPassLogic::CreateColorAttachment(context, pass,
 											   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -47,13 +54,17 @@ namespace Render
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
-		context->renderMainPass = pass;
+		global->passes.emplace(pass->name, pass);
+		return pass;
 	}
 
-	void PassLogic::CreateShadow(Context *context)
+	std::shared_ptr<Pass> PassLogic::CreateShadow(Context *context)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
 		auto pass = std::make_shared<Pass>();
-		pass->name = "shadow";
+		pass->name = Pass_Shadow;
 
 		RenderPassLogic::CreateDepthAttachment(context, pass, 0);
 		RenderPassLogic::CreateDepthImage2ds(context, pass);
@@ -65,18 +76,18 @@ namespace Render
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
-		context->renderShadowPass = pass;
+		global->passes.emplace(pass->name, pass);
+		return pass;
 	}
 
 	void PassLogic::DestroyAll(Context *context)
 	{
-		std::vector<std::shared_ptr<Pass>> passes = {
-			context->renderImGuiPass,
-			context->renderMainPass,
-			context->renderShadowPass};
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 
-		for (const auto &pass : passes)
+		for (const auto &kv : global->passes)
 		{
+			auto &pass = kv.second;
 			RenderPassLogic::DestroyColorImage2ds(context, pass);
 			RenderPassLogic::DestroyDepthImage2ds(context, pass);
 			RenderPassLogic::Destroy(context, pass);

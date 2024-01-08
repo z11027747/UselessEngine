@@ -11,7 +11,7 @@ class Context;
 
 namespace Editor
 {
-	class Global final
+	class System final
 	{
 	public:
 		static void Create(Context *);
@@ -48,8 +48,7 @@ namespace Editor
 		return result;
 	}
 
-	inline static void ImGui_Drag_GlmVec3(glm::vec3 &v3, int id, float speed,
-										  float width = 60 )
+	inline static void ImGui_Drag_GlmVec3(glm::vec3 &v3, int id, float speed,   float width = 60)
 	{
 		ImGui::PushID(id);
 		ImGui::PushItemWidth(width);

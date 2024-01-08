@@ -80,7 +80,10 @@ namespace Render
 	void ShaderSkyboxLogic::CreateUnitDescriptor(Context *context,
 												 std::shared_ptr<Unit> unit)
 	{
-		auto &graphicsPipeline = context->renderPipelines[unit->pipelineName];
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
+		auto &graphicsPipeline = global->pipelines[unit->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);

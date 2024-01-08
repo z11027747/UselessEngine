@@ -10,6 +10,9 @@ namespace Render
 							   std::vector<const char *> windowExtensions,
 							   bool enabledDebug)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+
 		VkInstanceCreateInfo instanceCreateInfo = {};
 		instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO; // 最后会转成void*存，需要定义类型
 
@@ -52,26 +55,20 @@ namespace Render
 		auto ret = vkCreateInstance(&instanceCreateInfo, nullptr, &vkInstance);
 		CheckRet(ret, "vkCreateInstance");
 
-		auto global = std::make_shared<Global>();
 		global->instance = vkInstance;
-
-		auto &renderGlobalEO = context->renderGlobalEO;
-		renderGlobalEO->AddComponent<Global>(global);
 	}
 
 	void InstanceLogic::Destroy(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto &global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		vkDestroyInstance(global->instance, nullptr);
 	}
 
 	void InstanceLogic::CreateDebugCallback(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto &global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &instance = global->instance;
 
 		VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
@@ -92,9 +89,8 @@ namespace Render
 
 	void InstanceLogic::DestroyDebugCallback(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto &global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &instance = global->instance;
 		auto &debugUtilsMessenger = global->debugUtilsMessenger;
 

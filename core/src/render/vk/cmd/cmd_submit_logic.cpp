@@ -25,21 +25,23 @@ namespace Render
 
 	void CmdSubmitLogic::End(Context *context, VkCommandBuffer &cmdBuffer)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
 		auto endRet = vkEndCommandBuffer(cmdBuffer);
 		CheckRet(endRet, "vkEndCommandBuffer");
 
-		context->renderBatchCmdBuffers.push_back(cmdBuffer);
+		global->batchCmdBuffers.push_back(cmdBuffer);
 	}
 
 	void CmdSubmitLogic::EndSingleTime(Context *context, VkCommandBuffer &cmdBuffer)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+		auto &logicalQueue = global->logicalQueue;
+
 		auto endRet = vkEndCommandBuffer(cmdBuffer);
 		CheckRet(endRet, "vkEndCommandBuffer");
-
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
-		auto &logicalQueue = global->logicalQueue;
 
 		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -55,15 +57,13 @@ namespace Render
 		CmdPoolLogic::FreeBuffers(context, cmdBuffers);
 	}
 
-	// ==== ToSystem
 	void CmdSubmitLogic::UpdateBatch(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalQueue = global->logicalQueue;
 
-		auto &batchCmdBuffers = context->renderBatchCmdBuffers;
+		auto &batchCmdBuffers = global->batchCmdBuffers;
 		auto batchCmdBufferSize = static_cast<uint32_t>(batchCmdBuffers.size());
 
 		if (batchCmdBufferSize > 0u)

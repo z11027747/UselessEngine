@@ -19,9 +19,8 @@ namespace Render
 	void PipelineLogic::Create(Context *context,
 							   const std::string &name, std::shared_ptr<Pass> pass)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		auto graphicsPipeline = std::make_shared<GraphicsPipeline>();
@@ -68,15 +67,14 @@ namespace Render
 
 		graphicsPipeline->pipeline = vkPipeline;
 
-		context->renderPipelines[name] = graphicsPipeline;
+		global->pipelines.emplace(graphicsPipeline->name, graphicsPipeline);
 	}
 
 	void PipelineLogic::Destroy(Context *context,
 								std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		PipelineLayoutLogic::Destroy(context, graphicsPipeline);
@@ -92,8 +90,10 @@ namespace Render
 
 	void PipelineLogic::DestroyAll(Context *context)
 	{
-		auto &pipelines = context->renderPipelines;
-		for (const auto &kv : pipelines)
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+
+		for (const auto &kv : global->pipelines)
 		{
 			auto &pipeline = kv.second;
 			Destroy(context, pipeline);
@@ -103,9 +103,8 @@ namespace Render
 	void PipelineLogic::CreateShaderStage(Context *context,
 										  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		auto &name = graphicsPipeline->name;
@@ -192,9 +191,8 @@ namespace Render
 	void PipelineLogic::CreateViewportStage(Context *context,
 											std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
 		auto &stageInfo = graphicsPipeline->stageInfo;

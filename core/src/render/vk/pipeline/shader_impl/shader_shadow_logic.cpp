@@ -38,9 +38,8 @@ namespace Render
 	void ShaderShadowLogic::SetViewport(Context *context,
 										std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
 		auto &stageInfo = graphicsPipeline->stageInfo;

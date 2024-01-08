@@ -20,7 +20,7 @@
 #include "logic/camera/camera_logic.h"
 #include "logic/transform/transform_comp.h"
 #include "context.h"
-#include "editor/global.h"
+#include "editor/system.h"
 
 namespace Render
 {
@@ -28,11 +28,11 @@ namespace Render
 
 	void System::Create(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-		renderGlobalEO = std::make_shared<EngineObject>();
+		auto &globalEO = context->renderGlobalEO;
+		globalEO = std::make_shared<EngineObject>();
 
 		auto global = std::make_shared<Global>();
-		renderGlobalEO->AddComponent<Global>(global);
+		globalEO->AddComponent<Global>(global);
 
 		auto windowExtensions = GetWindowExtensions();
 
@@ -56,27 +56,29 @@ namespace Render
 		SwapchainLogic::CreateSemaphores(context);
 		SwapchainLogic::AllocateCmd(context);
 
-		PassLogic::CreateImGui(context);
-		PassLogic::CreateMain(context);
-		PassLogic::CreateShadow(context);
+		/*auto imGuiPass =*/PassLogic::CreateImGui(context);
+		auto mainPass = PassLogic::CreateMain(context);
+		auto shadowPass = PassLogic::CreateShadow(context);
 
-		PipelineLogic::Create(context, "shadow", context->renderShadowPass);
+		PipelineLogic::Create(context, Pipeline_Shadow, shadowPass);
+		PipelineLogic::Create(context, Pipeline_Skybox, mainPass);
+		PipelineLogic::Create(context, Pipeline_Bling_Phone, mainPass);
+		PipelineLogic::Create(context, Pipeline_Color, mainPass);
 
-		PipelineLogic::Create(context, "skybox", context->renderMainPass);
-		PipelineLogic::Create(context, "bling_phone", context->renderMainPass);
-		PipelineLogic::Create(context, "color", context->renderMainPass);
-
-		Editor::Global::Create(context);
+		Editor::System::Create(context);
 	}
 
 	void System::Update(Context *context)
 	{
-		CmdSubmitLogic::UpdateBatch(context);
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 
+		CmdSubmitLogic::UpdateBatch(context);
 		BufferLogic::DestroyAllTemps(context);
 		CmdPoolLogic::DestroyAllTempBuffers(context);
-
+		
 		SwapchainLogic::WaitFence(context);
+
 		auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
 		auto &vkCmdBuffer = SwapchainLogic::BeginCmd(context, imageIndex);
 
@@ -96,7 +98,7 @@ namespace Render
 				directionLight->params};
 		}
 
-		auto &mainCameraEO = context->mainCameraEO;
+		auto &mainCameraEO = context->logicMainCameraEO;
 		auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
 		auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
 
@@ -112,9 +114,9 @@ namespace Render
 
 		// shadow
 		{
-			auto &renderPass = directionLightCamera->renderPass;
+			auto &shadowPass = global->passes[Pass_Shadow];
 			FramebufferLogic::BeginRenderPass(context,
-											  imageIndex, vkCmdBuffer, renderPass);
+											  imageIndex, vkCmdBuffer, shadowPass);
 			if (directionLightEO->active && directionLight->hasShadow)
 			{
 				FramebufferLogic::RenderUnits(context,
@@ -126,9 +128,9 @@ namespace Render
 
 		// main
 		{
-			auto &renderPass = mainCamera->renderPass;
+			auto &mainPass = global->passes[Pass_Main];
 			FramebufferLogic::BeginRenderPass(context,
-											  imageIndex, vkCmdBuffer, renderPass);
+											  imageIndex, vkCmdBuffer, mainPass);
 			if (mainCameraEO->active)
 			{
 				FramebufferLogic::RenderUnits(context,
@@ -140,12 +142,12 @@ namespace Render
 
 		// imGui
 		{
-			auto &imGuiPass = context->renderImGuiPass;
+			auto &imGuiPass = global->passes[Pass_ImGui];
 			FramebufferLogic::BeginRenderPass(context, imageIndex, vkCmdBuffer, imGuiPass);
 
-			Editor::Global::NewFrame(context);
-			Editor::Global::Draw(context, imageIndex);
-			Editor::Global::Render(context, vkCmdBuffer);
+			Editor::System::NewFrame(context);
+			Editor::System::Draw(context, imageIndex);
+			Editor::System::Render(context, vkCmdBuffer);
 
 			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
 		}
@@ -158,7 +160,7 @@ namespace Render
 	{
 		LogicalDeviceLogic::WaitIdle(context);
 
-		Editor::Global::Destroy(context);
+		Editor::System::Destroy(context);
 
 		UnitLogic::Destroy(context);
 

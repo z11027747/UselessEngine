@@ -4,7 +4,7 @@
 #include <memory>
 #include "editor/imgui/imgui_impl_glfw.h"
 #include "editor/imgui/imgui_impl_vulkan.h"
-#include "editor/global.h"
+#include "editor/system.h"
 #include "editor/window.h"
 #include "editor/test.h"
 #include "render/vk/global/global_comp.h"
@@ -20,13 +20,12 @@
 
 namespace Editor
 {
-
-	void Global::Create(Context *context)
+	void System::Create(Context *context)
 	{
 		auto &window = context->window;
 
-		auto &renderGlobalEO = context->renderGlobalEO;
-		auto global = renderGlobalEO->GetComponent<Render::Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -58,19 +57,18 @@ namespace Editor
 		init_info.Allocator = nullptr;
 		init_info.CheckVkResultFn = nullptr;
 
-		ImGui_ImplVulkan_Init(&init_info, context->renderImGuiPass->renderPass);
+		ImGui_ImplVulkan_Init(&init_info, global->passes[Render::Pass_ImGui]->renderPass);
 
 		CreateDescriptors(context);
 	}
 
-	VkDescriptorSetLayout Global::descriptorSetLayout = nullptr;
-	std::vector<std::shared_ptr<Render::Descriptor>> Global::descriptors = {};
+	VkDescriptorSetLayout System::descriptorSetLayout = nullptr;
+	std::vector<std::shared_ptr<Render::Descriptor>> System::descriptors = {};
 
-	void Global::CreateDescriptors(Context *context)
+	void System::CreateDescriptors(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Render::Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 		auto swapchainImageCount = global->swapchainImageCount;
@@ -88,8 +86,7 @@ namespace Editor
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
-			auto &colorImage2d = context->renderMainPass->colorImage2ds[i];
-			// auto &colorImage2d = context->renderShadowPass->depthImage2ds[0];
+			auto &colorImage2d = global->passes[Render::Pass_Main]->colorImage2ds[i];
 
 			auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 			auto sampler = Render::SamplerLogic::Create(context);
@@ -115,7 +112,7 @@ namespace Editor
 		}
 	}
 
-	void Global::DestroyDescriptors(Context *context)
+	void System::DestroyDescriptors(Context *context)
 	{
 		Render::DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 		for (auto &descriptor : descriptors)
@@ -124,14 +121,14 @@ namespace Editor
 		}
 	}
 
-	void Global::NewFrame(Context *context)
+	void System::NewFrame(Context *context)
 	{
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
 
-	void Global::Draw(Context *context, uint32_t imageIndex)
+	void System::Draw(Context *context, uint32_t imageIndex)
 	{
 		static bool showDemoWindow = true;
 		if (showDemoWindow)
@@ -170,7 +167,7 @@ namespace Editor
 		ImGui::PopStyleVar(2);
 	}
 
-	void Global::Render(Context *context, VkCommandBuffer &vkCmdBuffer)
+	void System::Render(Context *context, VkCommandBuffer &vkCmdBuffer)
 	{
 		ImGui::Render();
 		auto *main_draw_data = ImGui::GetDrawData();
@@ -184,7 +181,7 @@ namespace Editor
 		}
 	}
 
-	void Global::Destroy(Context *context)
+	void System::Destroy(Context *context)
 	{
 		DestroyDescriptors(context);
 

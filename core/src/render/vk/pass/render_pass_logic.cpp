@@ -15,9 +15,8 @@ namespace Render
 												std::shared_ptr<Pass> pass,
 												VkImageLayout initLayout, VkImageLayout finalLayout)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto surfaceFormat = global->surfaceFormat;
 
 		VkAttachmentDescription colorAttachmentDescription = {};
@@ -42,9 +41,8 @@ namespace Render
 	void RenderPassLogic::CreateDepthAttachment(Context *context,
 												std::shared_ptr<Pass> pass, uint32_t index)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto depthFormat = global->depthFormat;
 
 		VkAttachmentDescription depthAttachmentDescription = {};
@@ -69,9 +67,8 @@ namespace Render
 	void RenderPassLogic::GetSwapchainImage2ds(Context *context,
 											   std::shared_ptr<Pass> pass)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto swapchainImageCount = global->swapchainImageCount;
 		auto &swapchainImages = global->swapchainImages;
@@ -86,9 +83,8 @@ namespace Render
 	void RenderPassLogic::CreateColorImage2ds(Context *context,
 											  std::shared_ptr<Pass> pass)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto surfaceFormat = global->surfaceFormat;
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
@@ -119,9 +115,8 @@ namespace Render
 	void RenderPassLogic::CreateDepthImage2ds(Context *context,
 											  std::shared_ptr<Pass> pass)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 		auto depthFormat = global->depthFormat;

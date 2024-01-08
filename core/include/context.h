@@ -7,9 +7,6 @@
 #include <memory>
 #include <string>
 #include "render/vk/global/global_comp.h"
-#include "render/vk/pipeline/pipeline_comp.h"
-#include "render/vk/buffer/buffer_comp.h"
-#include "render/vk/pass/pass_comp.h"
 #include "render/light/light_comp.h"
 #include "render/system.h"
 #include "logic/input/input_comp.h"
@@ -40,27 +37,12 @@ public:
 	float deltaTime;
 
 	// logic ====================
-	// render-global
 	std::shared_ptr<EngineObject> renderGlobalEO;
-	// render-pass
-	std::shared_ptr<Render::Pass> renderImGuiPass;
-	std::shared_ptr<Render::Pass> renderMainPass;
-	std::shared_ptr<Render::Pass> renderShadowPass;
-	// render-pipelines
-	std::unordered_map<std::string, std::shared_ptr<Render::GraphicsPipeline>> renderPipelines;
-	// render-cmd
-	std::vector<VkCommandBuffer> renderBatchCmdBuffers;
-	std::vector<VkCommandBuffer> renderTempCmdBuffers;
-	// render-buffer
-	std::vector<std::shared_ptr<Render::Buffer>> renderTempBuffers;
-	// render-light
 	std::vector<std::shared_ptr<EngineObject>> renderLightEOs;
-	// render-unit
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 
 	// logic ====================
-	// logic-camera
-	std::shared_ptr<EngineObject> mainCameraEO;
+	std::shared_ptr<EngineObject> logicMainCameraEO;
 
 	// all-engineObject
 	std::vector<std::shared_ptr<EngineObject>> allEOs;
@@ -68,8 +50,8 @@ public:
 
 	void AddEO(std::shared_ptr<EngineObject> eo)
 	{
-		allEOs.push_back(eo);
-		allEOMap.insert({eo->name, eo});
+		allEOs.emplace_back(eo);
+		allEOMap.emplace(eo->name, eo);
 
 		if (eo->HasComponent<Render::Unit>())
 		{

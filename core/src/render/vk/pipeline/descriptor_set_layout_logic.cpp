@@ -13,9 +13,8 @@ namespace Render
 	VkDescriptorSetLayout DescriptorSetLayoutLogic::Create(Context *context,
 														   std::vector<VkDescriptorSetLayoutBinding> &bindings)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		VkDescriptorSetLayoutCreateInfo createInfo = {};
@@ -33,9 +32,8 @@ namespace Render
 	void DescriptorSetLayoutLogic::Destroy(Context *context,
 										   VkDescriptorSetLayout descriptorSetLayout)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyDescriptorSetLayout(logicalDevice, descriptorSetLayout, nullptr);

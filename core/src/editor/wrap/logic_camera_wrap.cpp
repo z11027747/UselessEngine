@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "editor/wrap/component_wrap.h"
 #include "logic/camera/camera_logic.h"
-#include "editor/global.h"
+#include "editor/system.h"
 #include "context.h"
 
 namespace Editor
@@ -17,17 +17,23 @@ namespace Editor
 	void ComponentWrap<Logic::Camera>::Draw(Context *context,
 											std::shared_ptr<Logic::Camera> camera, bool isFirst)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto &renderPass = global->passes[camera->passName];
+
 		if (isFirst)
 		{
 			modeI = static_cast<int>(camera->mode);
-			auto &colors = camera->renderPass->clearColorValue.float32;
+			auto &colors = renderPass->clearColorValue.float32;
 			for (auto i = 0; i < 4; i++)
 			{
 				clearColors[i] = colors[i];
 			}
-			auto &depth = camera->renderPass->clearDepthValue.depth;
+			auto &depth = renderPass->clearDepthValue.depth;
 			clearDepth = depth;
 		}
+
+		ImGui::Text("=> PassName: %s", camera->passName.data());
 
 		if (ImGui::DragFloat("Near", &camera->near, 0.01f, 0.01f, 10.0f))
 		{
@@ -61,7 +67,7 @@ namespace Editor
 
 		if (ImGui::ColorEdit4("Color", clearColors))
 		{
-			auto &colors = camera->renderPass->clearColorValue.float32;
+			auto &colors = renderPass->clearColorValue.float32;
 			for (auto i = 0; i < 4; i++)
 			{
 				colors[i] = clearColors[i];
@@ -72,7 +78,7 @@ namespace Editor
 		{
 			clearDepth = std::clamp(clearDepth, 0.0f, 1.0f);
 
-			auto &depth = camera->renderPass->clearDepthValue.depth;
+			auto &depth = renderPass->clearDepthValue.depth;
 			depth = clearDepth;
 		}
 	}

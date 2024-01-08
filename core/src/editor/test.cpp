@@ -32,10 +32,10 @@ namespace Editor
 		mainCamera->mode = Logic::CameraMode::ePerspective;
 		mainCamera->fov = 50.0f;
 		mainCamera->size = 15.0f;
-		mainCamera->renderPass = context->renderMainPass;
+		mainCamera->passName = Render::Pass_Main;
 		mainCameraEO->AddComponent<Logic::Camera>(mainCamera);
 
-		context->mainCameraEO = mainCameraEO;
+		context->logicMainCameraEO = mainCameraEO;
 		context->AddEO(mainCameraEO);
 	}
 
@@ -61,7 +61,7 @@ namespace Editor
 		directionLightCamera->far = 50.0f;
 		directionLightCamera->mode = Logic::CameraMode::eOrtho;
 		directionLightCamera->size = 50.0f;
-		directionLightCamera->renderPass = context->renderShadowPass;
+		directionLightCamera->passName = Render::Pass_Shadow;
 		directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
 
 		auto directionLightUnit = std::make_shared<Render::Unit>();

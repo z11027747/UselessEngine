@@ -11,9 +11,8 @@ namespace Render
 
 	VkSampler SamplerLogic::Create(Context *context, bool forDepth)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		VkSamplerCreateInfo createInfo = {};
@@ -51,9 +50,8 @@ namespace Render
 
 	void SamplerLogic::Destroy(Context *context, VkSampler &sampler)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroySampler(logicalDevice, sampler, nullptr);

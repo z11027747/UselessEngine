@@ -13,9 +13,8 @@ namespace Render
 
 	VkDescriptorSet DescriptorSetLogic::AllocateOne(Context *context, VkDescriptorSetLayout descriptorSetLayout)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &descriptorPool = global->descriptorPool;
 
@@ -38,9 +37,8 @@ namespace Render
 	std::vector<VkDescriptorSet> DescriptorSetLogic::Allocate(Context *context,
 															  VkDescriptorSetLayout descriptorSetLayout, uint32_t count)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &descriptorPool = global->descriptorPool;
 

@@ -3,7 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/window.h"
-#include "editor/global.h"
+#include "editor/system.h"
 #include "context.h"
 #include "engine_object.h"
 

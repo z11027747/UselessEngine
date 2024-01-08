@@ -97,7 +97,10 @@ namespace Render
 	void ShaderBlingPhoneLogic::CreateUnitDescriptor(Context *context,
 													 std::shared_ptr<Unit> unit)
 	{
-		auto &graphicsPipeline = context->renderPipelines[unit->pipelineName];
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
+		auto &graphicsPipeline = global->pipelines[unit->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
@@ -114,8 +117,8 @@ namespace Render
 			unit->image0->layout};
 		descriptor->vkImage0Info = vkImage0Info;
 
-		auto &renderShadowPass = context->renderShadowPass;
-		auto depthImage2d = renderShadowPass->depthImage2ds[0];
+		auto &shadowPass = global->passes[Pass_Shadow];
+		auto depthImage2d = shadowPass->depthImage2ds[0];
 
 		VkDescriptorImageInfo vkImage1Info = {
 			samplerShadow1,

@@ -10,9 +10,8 @@ namespace Render
 {
 	bool PhysicalDeviceLogic::Find(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &instance = global->instance;
 
 		uint32_t tempPhysicalDeviceCount;
@@ -46,16 +45,15 @@ namespace Render
 
 	void PhysicalDeviceLogic::GetInfo(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		global->surfaceFormat = GetFormat(context);
 		global->surfacePresentMode = GetPresentMode(context);
 		global->surfaceCapabilities = GetCapbilities(context);
 
 		global->depthFormat = FindSupportedFormat(context,
 												  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
-												  VK_IMAGE_TILING_OPTIMAL,   VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+												  VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
 	bool PhysicalDeviceLogic::CheckType(
@@ -105,9 +103,8 @@ namespace Render
 	uint32_t PhysicalDeviceLogic::FindMemoryType(Context *context,
 												 uint32_t typeFilter, VkMemoryPropertyFlags propertiesFlags)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &physicalDevice = global->physicalDevice;
 
 		VkPhysicalDeviceMemoryProperties memProperties;
@@ -129,9 +126,8 @@ namespace Render
 													  const std::vector<VkFormat> &candidates,
 													  VkImageTiling tiling, VkFormatFeatureFlags features)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &physicalDevice = global->physicalDevice;
 
 		for (auto format : candidates)
@@ -155,9 +151,8 @@ namespace Render
 
 	VkSurfaceFormatKHR PhysicalDeviceLogic::GetFormat(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &physicalDevice = global->physicalDevice;
 		auto &surface = global->surface;
 
@@ -180,9 +175,8 @@ namespace Render
 
 	VkSurfaceCapabilitiesKHR PhysicalDeviceLogic::GetCapbilities(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &physicalDevice = global->physicalDevice;
 		auto &surface = global->surface;
 
@@ -194,9 +188,8 @@ namespace Render
 
 	VkPresentModeKHR PhysicalDeviceLogic::GetPresentMode(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &physicalDevice = global->physicalDevice;
 		auto &surface = global->surface;
 
@@ -209,9 +202,7 @@ namespace Render
 		for (auto &presentMode : presentModes)
 		{
 			if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR)
-			{
 				return presentMode;
-			}
 		}
 
 		return VK_PRESENT_MODE_FIFO_KHR;

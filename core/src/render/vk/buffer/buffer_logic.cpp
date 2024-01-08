@@ -7,17 +7,16 @@
 #include "render/vk/buffer/buffer_logic.h"
 #include "context.h"
 
-namespace Render {
-
-	std::shared_ptr<Buffer> BufferLogic::Create(Context* context,
-		VkDeviceSize size, VkBufferUsageFlags usageFlags,
-		VkMemoryPropertyFlags propertiesFlags
-	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& physicalDevice = global->physicalDevice;
-		auto& logicalDevice = global->logicalDevice;
+namespace Render
+{
+	std::shared_ptr<Buffer> BufferLogic::Create(Context *context,
+												VkDeviceSize size, VkBufferUsageFlags usageFlags,
+												VkMemoryPropertyFlags propertiesFlags)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+		auto &physicalDevice = global->physicalDevice;
+		auto &logicalDevice = global->logicalDevice;
 
 		VkBufferCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -33,11 +32,11 @@ namespace Render {
 		vkGetBufferMemoryRequirements(logicalDevice, vkBuffer, &memRequirements);
 
 		auto memoryTypeIndex = PhysicalDeviceLogic::FindMemoryType(context,
-			memRequirements.memoryTypeBits, propertiesFlags);
+																   memRequirements.memoryTypeBits, propertiesFlags);
 
 		VkMemoryAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocateInfo.allocationSize = memRequirements.size; //实际大小，内存对齐
+		allocateInfo.allocationSize = memRequirements.size; // 实际大小，内存对齐
 		allocateInfo.memoryTypeIndex = memoryTypeIndex;
 
 		VkDeviceMemory vkDeviceMemory;
@@ -54,35 +53,42 @@ namespace Render {
 		return buffer;
 	}
 
-	void BufferLogic::Destroy(Context* context,
-		std::shared_ptr<Buffer> buffer
-	) {
-		auto& renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
-		auto& logicalDevice = global->logicalDevice;
+	void BufferLogic::Destroy(Context *context,
+							  std::shared_ptr<Buffer> buffer)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyBuffer(logicalDevice, buffer->vkBuffer, nullptr);
 		vkFreeMemory(logicalDevice, buffer->vkDeviceMemory, nullptr);
 	}
 
-	std::shared_ptr<Buffer> BufferLogic::CreateTemp(Context* context,
-		VkDeviceSize size, VkBufferUsageFlags usageFlags,
-		VkMemoryPropertyFlags propertiesFlags
-	) {
-		auto buffer = Create(context,
-			size, usageFlags,
-			propertiesFlags);
+	std::shared_ptr<Buffer> BufferLogic::CreateTemp(Context *context,
+													VkDeviceSize size, VkBufferUsageFlags usageFlags,
+													VkMemoryPropertyFlags propertiesFlags)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 
-		context->renderTempBuffers.push_back(buffer);
+		auto buffer = Create(context,
+							 size, usageFlags,
+							 propertiesFlags);
+
+		global->tempBuffers.push_back(buffer);
 		return buffer;
 	}
 
-	void BufferLogic::DestroyAllTemps(Context* context) {
-		auto& tempBuffers = context->renderTempBuffers;
-		for (auto& tempBuffer : tempBuffers) {
+	void BufferLogic::DestroyAllTemps(Context *context)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
+		auto &tempBuffers = global->tempBuffers;
+		for (auto &tempBuffer : tempBuffers)
+		{
 			Destroy(context,
-				tempBuffer);
+					tempBuffer);
 		}
 		tempBuffers.clear();
 	}

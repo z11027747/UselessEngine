@@ -37,9 +37,8 @@ namespace Render
 	void ImageLogic::Create(Context *context,
 							std::shared_ptr<Image> image, ImageInfo &info)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		VkImageCreateInfo createInfo = {};
@@ -86,9 +85,8 @@ namespace Render
 	void ImageLogic::Destroy(Context *context,
 							 std::shared_ptr<Image> image)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyImage(logicalDevice, image->vkImage, nullptr);
@@ -104,9 +102,8 @@ namespace Render
 								std::shared_ptr<Image> image,
 								VkImageViewType viewType, VkImageAspectFlags aspectMask, uint32_t layerCount)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		auto format = image->fomat;
@@ -134,9 +131,8 @@ namespace Render
 	void ImageLogic::DestroyView(Context *context,
 								 std::shared_ptr<Image> image)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyImageView(logicalDevice, image->vkImageView, nullptr);

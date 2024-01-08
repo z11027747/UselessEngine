@@ -3,7 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/wrap/component_wrap.h"
-#include "editor/global.h"
+#include "editor/system.h"
 #include "context.h"
 
 namespace Editor

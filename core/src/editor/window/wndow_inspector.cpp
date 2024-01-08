@@ -5,7 +5,7 @@
 #include <string>
 #include <typeindex>
 #include "editor/wrap/component_wrap.h"
-#include "editor/global.h"
+#include "editor/system.h"
 #include "editor/window.h"
 #include "context.h"
 #include "engine_object.h"
@@ -68,7 +68,7 @@ namespace Editor
 			}
 			else
 			{
-				ImGui::Text("Select EngineObject: %s", selectEO->name.c_str());
+				ImGui::Text("Select EngineObject: %s", selectEO->name.data());
 				ImGui::SeparatorText("ComponentList Begin");
 
 				auto id = 0;

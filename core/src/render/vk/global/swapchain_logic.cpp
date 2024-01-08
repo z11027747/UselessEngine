@@ -12,9 +12,8 @@ namespace Render
 {
 	void SwapchainLogic::Create(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &surface = global->surface;
 		auto &surfaceCapabilities = global->surfaceCapabilities;
@@ -46,9 +45,8 @@ namespace Render
 
 	void SwapchainLogic::CreateImageViews(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &swapchain = global->swapchain;
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
@@ -81,9 +79,8 @@ namespace Render
 
 	void SwapchainLogic::DestroyImageViews(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &swapchainImages = global->swapchainImages;
 
@@ -96,9 +93,8 @@ namespace Render
 
 	void SwapchainLogic::Destroy(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		auto &swapchain = global->swapchain;
@@ -107,9 +103,8 @@ namespace Render
 
 	void SwapchainLogic::CreateFences(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto swapchainImageCount = global->swapchainImageCount;
 
@@ -131,9 +126,8 @@ namespace Render
 
 	void SwapchainLogic::DestroyFences(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		auto &inFlightFences = global->inFlightFences;
@@ -145,9 +139,8 @@ namespace Render
 
 	void SwapchainLogic::CreateSemaphores(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto swapchainImageCount = global->swapchainImageCount;
 
@@ -172,9 +165,8 @@ namespace Render
 
 	void SwapchainLogic::DestroySemaphores(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto maxFrameInFlight = global->maxFrameInFlight;
 
@@ -190,9 +182,8 @@ namespace Render
 
 	void SwapchainLogic::WaitFence(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto currFrame = global->currFrame;
 		auto &inFlightFence = global->inFlightFences[currFrame];
@@ -205,9 +196,8 @@ namespace Render
 
 	uint32_t SwapchainLogic::AcquireImageIndex(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &swapchain = global->swapchain;
 		auto currFrame = global->currFrame;
@@ -223,9 +213,8 @@ namespace Render
 
 	void SwapchainLogic::AllocateCmd(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto swapchainImageCount = global->swapchainImageCount;
 
 		global->swapchainCmdBuffers = CmdPoolLogic::CreateBuffers(context, swapchainImageCount);
@@ -233,9 +222,8 @@ namespace Render
 
 	VkCommandBuffer &SwapchainLogic::BeginCmd(Context *context, uint32_t imageIndex)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &swapchainCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
 		vkResetCommandBuffer(swapchainCmdBuffer, 0);
@@ -252,9 +240,8 @@ namespace Render
 
 	void SwapchainLogic::EndAndSubmitCmd(Context *context, uint32_t imageIndex)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalQueue = global->logicalQueue;
 
 		auto &swapchainCmdBuffer = global->swapchainCmdBuffers[imageIndex];
@@ -284,9 +271,8 @@ namespace Render
 
 	void SwapchainLogic::Present(Context *context, uint32_t imageIndex)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalQueue = global->logicalQueue;
 		auto &swapchain = global->swapchain;
 		auto &currFrame = global->currFrame;

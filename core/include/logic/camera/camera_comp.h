@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <memory>
-#include "render/vk/pass/pass_comp.h"
+#include <string>
 
 namespace Logic
 {
@@ -25,6 +25,6 @@ namespace Logic
 		float fov;
 		float size;
 
-		std::shared_ptr<Render::Pass> renderPass;
+		std::string passName;
 	};
 }

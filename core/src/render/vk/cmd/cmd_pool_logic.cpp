@@ -8,12 +8,10 @@
 
 namespace Render
 {
-
 	void CmdPoolLogic::Create(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto physicalQueueFamilyIndex = global->physicalQueueFamilyIndex;
 
@@ -31,9 +29,8 @@ namespace Render
 
 	void CmdPoolLogic::Destroy(Context *context)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyCommandPool(logicalDevice, global->vkPool, nullptr);
@@ -42,9 +39,8 @@ namespace Render
 	std::vector<VkCommandBuffer> CmdPoolLogic::CreateBuffers(Context *context,
 															 uint32_t count)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &vkPool = global->vkPool;
 
@@ -68,14 +64,20 @@ namespace Render
 
 	VkCommandBuffer CmdPoolLogic::CreateTempBuffer(Context *context)
 	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
 		auto cmdBuffer = CreateBuffer(context);
-		context->renderTempCmdBuffers.push_back(cmdBuffer);
+		global->tempCmdBuffers.push_back(cmdBuffer);
 		return cmdBuffer;
 	}
 
 	void CmdPoolLogic::DestroyAllTempBuffers(Context *context)
 	{
-		auto &tempCmdBuffers = context->renderTempCmdBuffers;
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+
+		auto &tempCmdBuffers = global->tempCmdBuffers;
 		if (tempCmdBuffers.size() > 0)
 		{
 			FreeBuffers(context, tempCmdBuffers);
@@ -85,9 +87,8 @@ namespace Render
 
 	void CmdPoolLogic::FreeBuffers(Context *context, std::vector<VkCommandBuffer> &cmdBuffers)
 	{
-		auto &renderGlobalEO = context->renderGlobalEO;
-
-		auto global = renderGlobalEO->GetComponent<Global>();
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &vkPool = global->vkPool;
 

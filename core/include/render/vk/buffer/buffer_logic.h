@@ -38,9 +38,8 @@ namespace Render
 						   std::shared_ptr<Buffer> buffer,
 						   T *value, size_t size)
 		{
-			auto &renderGlobalEO = context->renderGlobalEO;
-
-			auto global = renderGlobalEO->GetComponent<Global>();
+			auto &globalEO = context->renderGlobalEO;
+			auto global = globalEO->GetComponent<Global>();
 			auto &logicalDevice = global->logicalDevice;
 
 			void *data;
@@ -57,9 +56,8 @@ namespace Render
 								 std::shared_ptr<Buffer> buffer,
 								 std::vector<T *> values, size_t size)
 		{
-			auto &renderGlobalEO = context->renderGlobalEO;
-
-			auto global = renderGlobalEO->GetComponent<Global>();
+			auto &globalEO = context->renderGlobalEO;
+			auto global = globalEO->GetComponent<Global>();
 			auto &logicalDevice = global->logicalDevice;
 
 			void *data;
@@ -85,9 +83,8 @@ namespace Render
 						std::shared_ptr<Buffer> buffer,
 						T &value)
 		{
-			auto &renderGlobalEO = context->renderGlobalEO;
-
-			auto global = renderGlobalEO->GetComponent<Global>();
+			auto &globalEO = context->renderGlobalEO;
+			auto global = globalEO->GetComponent<Global>();
 			auto &logicalDevice = global->logicalDevice;
 
 			auto size = sizeof(T);
@@ -106,9 +103,8 @@ namespace Render
 							  std::shared_ptr<Buffer> buffer,
 							  std::vector<T> &values)
 		{
-			auto &renderGlobalEO = context->renderGlobalEO;
-
-			auto global = renderGlobalEO->GetComponent<Global>();
+			auto &globalEO = context->renderGlobalEO;
+			auto global = globalEO->GetComponent<Global>();
 			auto &logicalDevice = global->logicalDevice;
 
 			auto size = static_cast<size_t>(sizeof(T) * values.size());

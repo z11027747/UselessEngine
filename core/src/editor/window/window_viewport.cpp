@@ -3,7 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/window.h"
-#include "editor/global.h"
+#include "editor/system.h"
 #include "context.h"
 #include "engine_object.h"
 
@@ -14,7 +14,7 @@ namespace Editor
         if (ImGui::Begin("Scene", NULL))
         {
             auto viewportPanelSize = ImGui::GetContentRegionAvail();
-            ImGui::Image(Global::descriptors[imageIndex]->set,
+            ImGui::Image(System::descriptors[imageIndex]->set,
                          ImVec2{viewportPanelSize.x, viewportPanelSize.y});
 
             // ImGui::SetWindowFontScale(1.2f);

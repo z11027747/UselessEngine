@@ -21,9 +21,8 @@ namespace Render
 		static void Update(Context *context,
 						   std::function<void(std::vector<VkWriteDescriptorSet> &)> func)
 		{
-			auto &renderGlobalEO = context->renderGlobalEO;
-
-			auto global = renderGlobalEO->GetComponent<Global>();
+			auto &globalEO = context->renderGlobalEO;
+			auto global = globalEO->GetComponent<Global>();
 			auto &logicalDevice = global->logicalDevice;
 
 			std::vector<VkWriteDescriptorSet> writes;
