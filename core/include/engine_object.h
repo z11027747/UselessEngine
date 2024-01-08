@@ -20,7 +20,8 @@ public:
 
 	uint32_t id;
 	std::string name;
-	bool active;
+	bool active{true};
+	bool hideInHierarchy{false};
 
 	std::unordered_map<std::type_index, std::shared_ptr<void>> componentMap;
 

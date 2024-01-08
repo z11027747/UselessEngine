@@ -2,6 +2,7 @@
 #include <imgui/imgui.h>
 #include <memory>
 #include <iostream>
+#include "logic/transform/transform_comp.h"
 #include "editor/window.h"
 #include "editor/system.h"
 #include "context.h"
@@ -11,6 +12,23 @@ namespace Editor
 {
 	static char addEOName[16] = "";
 	static int selectEOIndex = -1;
+
+	void DrawEO(Context *context,
+				std::shared_ptr<EngineObject> eo, int index)
+	{
+		ImGui::PushID(index);
+
+		ImGui::Checkbox("##active", &eo->active);
+		ImGui::SameLine();
+
+		if (ImGui::Selectable(eo->name.data(), selectEOIndex == index))
+		{
+			selectEOIndex = index;
+			Window::SetSelectEO(context, eo);
+		}
+
+		ImGui::PopID();
+	}
 
 	void Window::DrawHierachy(Context *context)
 	{
@@ -22,31 +40,42 @@ namespace Editor
 			ImGui::SeparatorText("EngineObjectList Begin");
 
 			auto &eos = context->allEOs;
-			auto eoSize = eos.size();
+			auto eoSize = static_cast<int>(eos.size());
 			for (auto i = 0; i < eoSize; i++)
 			{
-				ImGui::PushID(i);
-
 				auto &eo = eos[i];
-				ImGui::Checkbox("##active", &eo->active);
-				ImGui::SameLine();
+				if (eo->hideInHierarchy)
+					continue;
 
-				if (ImGui::Selectable(eo->name.data(), selectEOIndex == i))
-				{
-					selectEOIndex = i;
-					Window::SetSelectEO(context, eo);
-				}
+				auto transform = eo->GetComponent<Logic::Transform>();
 
-				if (ImGui::BeginPopupContextItem("Hierarchy"))
+				auto &parentEO = transform->parentEO;
+				if (parentEO != nullptr)
+					continue;
+
+				DrawEO(context, eo, i);
+
+				auto &childEOs = transform->childEOs;
+				auto childEOCount = static_cast<int>(childEOs.size());
+				if (childEOCount > 0)
 				{
-					if (ImGui::Button("Delete"))
+					ImGui::Indent();
+					auto childIBegin = i * 100;
+					for (auto childI = childIBegin; childI < childIBegin + childEOCount; childI++)
 					{
-						std::cout << "Delete Click!" << std::endl;
+						DrawEO(context, childEOs[childI - childIBegin], childI);
 					}
-					ImGui::EndPopup();
+					ImGui::Unindent();
 				}
+			}
 
-				ImGui::PopID();
+			if (ImGui::BeginPopupContextItem("Hierarchy"))
+			{
+				if (ImGui::Button("Delete"))
+				{
+					std::cout << "Delete Click!" << std::endl;
+				}
+				ImGui::EndPopup();
 			}
 
 			ImGui::SeparatorText("End");

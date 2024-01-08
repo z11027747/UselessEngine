@@ -33,7 +33,7 @@ namespace Editor
 			clearDepth = depth;
 		}
 
-		ImGui::Text("=> PassName: %s", camera->passName.data());
+		ImGui::Text("PassName: %s", camera->passName.data());
 
 		if (ImGui::DragFloat("Near", &camera->near, 0.01f, 0.01f, 10.0f))
 		{

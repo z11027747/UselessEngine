@@ -19,9 +19,9 @@ namespace Render
 
 		static void CreateGlobalDescriptorSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void DestroyGlobalDescriptorSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
-		static void CreateGlobalDescriptors(Context *, std::shared_ptr<GraphicsPipeline>);
-		static void DestroyGlobalDescriptors(Context *, std::shared_ptr<GraphicsPipeline>);
-		static void UpdateGlobalDescriptors(Context *, std::shared_ptr<GraphicsPipeline>);
+		static void CreateGlobalDescriptor(Context *, std::shared_ptr<GraphicsPipeline>);
+		static void DestroyGlobalDescriptor(Context *, std::shared_ptr<GraphicsPipeline>);
+		static void UpdateGlobalDescriptor(Context *, std::shared_ptr<GraphicsPipeline>);
 
 		static void CreateDescriptorSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void DestroyDescriptorSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);

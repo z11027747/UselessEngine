@@ -8,24 +8,15 @@
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
+#include "render/mesh/mesh_comp.h"
 
 namespace Render
 {
-	struct Vertex final
-	{
-		alignas(16) glm::vec3 positionOS;
-		alignas(16) glm::vec3 normalOS;
-		alignas(16) glm::vec3 color;
-		alignas(8) glm::vec2 uv0;
-
-		bool operator==(const Vertex &other) const
-		{
-			return positionOS == other.positionOS && normalOS == other.normalOS && color == other.color && uv0 == other.uv0;
-		}
-	};
-
 	struct Unit final
 	{
+		// std::shared_ptr<Mesh> mesh;
+		// std::shared_ptr<Material> matrial;
+
 		// shader
 		std::string pipelineName;
 
@@ -44,20 +35,5 @@ namespace Render
 		std::shared_ptr<Descriptor> descriptor;
 
 		bool castShadow;
-	};
-}
-
-namespace std
-{
-	template <>
-	struct hash<Render::Vertex>
-	{
-		size_t operator()(Render::Vertex const &vertex) const
-		{
-			return (((((hash<glm::vec3>()(vertex.positionOS) 
-           	 	^ (hash<glm::vec3>()(vertex.color) << 1)) >> 1) 
-           		 ^ (hash<glm::vec2>()(vertex.uv0) << 1)) 
-           		 ^ (hash<glm::vec3>()(vertex.normalOS) << 1)));
-		}
 	};
 }

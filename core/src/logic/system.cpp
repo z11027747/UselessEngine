@@ -2,6 +2,7 @@
 
 #include "logic/camera/camera_system.h"
 #include "logic/transform/transform_system.h"
+#include "logic/move/move_system.h"
 #include "context.h"
 #include "engine_object.h"
 
@@ -17,6 +18,7 @@ namespace Logic
 		TransformUpdateMSystem::Update(context);
 		CameraUpdateVPSystem::Update(context);
 		CameraMoveSystem::Update(context);
+		MoveFollowSystem::Update(context);
 	}
 	void System::Destroy(Context *context)
 	{

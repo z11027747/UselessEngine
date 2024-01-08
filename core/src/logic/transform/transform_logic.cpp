@@ -31,11 +31,27 @@ namespace Logic
 		auto scale = glm::scale(glm::mat4(1.0f), transform->scale);
 
 		auto model = translation * rotation * scale;
-		transform->model = model;
 
+		if (transform->parentEO != nullptr)
+		{
+			auto parentTransform = transform->parentEO->GetComponent<Logic::Transform>();
+			model = parentTransform->model * model;
+		}
+
+		transform->model = model;
 		transform->forward = rotation * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 		transform->right = rotation * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		transform->up = rotation * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	}
+
+	void TransformLogic::SetParent(std::shared_ptr<EngineObject> childEO,
+								   std::shared_ptr<EngineObject> parentEO)
+	{
+		auto childTransform = childEO->GetComponent<Logic::Transform>();
+		childTransform->parentEO = parentEO;
+
+		auto parentTransform = parentEO->GetComponent<Logic::Transform>();
+		parentTransform->childEOs.emplace_back(childEO);
 	}
 
 }

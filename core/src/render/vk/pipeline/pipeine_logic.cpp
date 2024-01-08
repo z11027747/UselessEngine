@@ -50,8 +50,8 @@ namespace Render
 		pipelineCreateInfo.pColorBlendState = &stageInfo.colorBlendingStateCreateInfo;
 
 		ShaderLogic::CreateGlobalDescriptorSetLayout(context, graphicsPipeline);
-		ShaderLogic::CreateGlobalDescriptors(context, graphicsPipeline);
-		ShaderLogic::UpdateGlobalDescriptors(context, graphicsPipeline);
+		ShaderLogic::CreateGlobalDescriptor(context, graphicsPipeline);
+		ShaderLogic::UpdateGlobalDescriptor(context, graphicsPipeline);
 		ShaderLogic::CreateDescriptorSetLayout(context, graphicsPipeline);
 		PipelineLayoutLogic::Create(context, graphicsPipeline);
 
@@ -79,7 +79,7 @@ namespace Render
 
 		PipelineLayoutLogic::Destroy(context, graphicsPipeline);
 		ShaderLogic::DestroyDescriptorSetLayout(context, graphicsPipeline);
-		ShaderLogic::DestroyGlobalDescriptors(context, graphicsPipeline);
+		ShaderLogic::DestroyGlobalDescriptor(context, graphicsPipeline);
 		ShaderLogic::DestroyGlobalDescriptorSetLayout(context, graphicsPipeline);
 
 		DestroyShaderStage(context, graphicsPipeline);

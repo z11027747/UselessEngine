@@ -15,8 +15,10 @@
 #include "editor/test.h"
 #include "engine_object.h"
 
-const std::string G_MainCamera = "MainCamera";
-const std::string G_ShadowCamera = "ShadowCamera";
+const std::string Name_MainCamera = "MainCamera";
+const std::string Name_DirectionLight = "DirectionLight";
+const std::string Name_Skybox = "Skybox";
+const std::string Name_Axis = "Axis";
 
 class Context final
 {
@@ -36,13 +38,14 @@ public:
 	float currTime;
 	float deltaTime;
 
-	// logic ====================
+	// render
 	std::shared_ptr<EngineObject> renderGlobalEO;
 	std::vector<std::shared_ptr<EngineObject>> renderLightEOs;
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
 
-	// logic ====================
+	// logic
 	std::shared_ptr<EngineObject> logicMainCameraEO;
+	std::vector<std::shared_ptr<EngineObject>> logicMoveEOs;
 
 	// all-engineObject
 	std::vector<std::shared_ptr<EngineObject>> allEOs;
@@ -77,7 +80,9 @@ public:
 		Editor::Test::CreateMainCamera(this);
 		Editor::Test::CreateLight(this);
 		Editor::Test::CreateSkybox(this);
+		Editor::Test::CreateCube(this);
 		Editor::Test::CreateModel(this);
+		Editor::Test::CreateAxis(this);
 	}
 
 	void Update()

@@ -19,7 +19,7 @@ namespace Editor
 	void Test::CreateMainCamera(Context *context)
 	{
 		auto mainCameraEO = std::make_shared<EngineObject>();
-		mainCameraEO->name = G_MainCamera;
+		mainCameraEO->name = Name_MainCamera;
 
 		Logic::TransformLogic::Add(mainCameraEO,
 								   glm::vec3(0.0f, 3.8f, -10.0f),
@@ -42,7 +42,7 @@ namespace Editor
 	void Test::CreateLight(Context *context)
 	{
 		auto directionLightEO = std::make_shared<EngineObject>();
-		directionLightEO->name = "DirectionLight";
+		directionLightEO->name = Name_DirectionLight;
 
 		Logic::TransformLogic::Add(directionLightEO,
 								   glm::vec3(-5.0f, 5.0f, 0.0f),
@@ -66,19 +66,13 @@ namespace Editor
 
 		auto directionLightUnit = std::make_shared<Render::Unit>();
 
-		Render::UnitLogic::SetPipelineName(context, directionLightUnit, "color");
-		Render::UnitLogic::SetObj(context, directionLightUnit,
-								  "resource/model/ef_wt_001_az5.obj", directionLight->color);
-
-		directionLightEO->AddComponent<Render::Unit>(directionLightUnit);
-
 		context->AddEO(directionLightEO);
 	}
 
 	void Test::CreateSkybox(Context *context)
 	{
 		auto skyboxEO = std::make_shared<EngineObject>();
-		skyboxEO->name = "Skybox";
+		skyboxEO->name = Name_Skybox;
 
 		Logic::TransformLogic::Add(skyboxEO,
 								   glm::vec3(0.0f, 0.0f, 0.0f),
@@ -91,7 +85,7 @@ namespace Editor
 		std::vector<uint16_t> indices;
 		MakeSkybox(vertices, indices);
 
-		Render::UnitLogic::SetPipelineName(context, skyboxUnit, "skybox");
+		Render::UnitLogic::SetPipelineName(context, skyboxUnit, Render::Pipeline_Skybox);
 		Render::UnitLogic::SetVertices(context, skyboxUnit, vertices);
 		Render::UnitLogic::SetIndices(context, skyboxUnit, indices);
 
@@ -109,6 +103,60 @@ namespace Editor
 		context->AddEO(skyboxEO);
 	}
 
+	void Test::CreateCube(Context *context)
+	{
+		// Cube1
+		{
+			auto cubeEO = std::make_shared<EngineObject>();
+			cubeEO->name = "Cube1";
+
+			Logic::TransformLogic::Add(cubeEO,
+									   glm::vec3(-7.0f, 0.0f, 5.0f),
+									   glm::vec3(10.0f, 20.0f, 0.0f),
+									   glm::vec3(1.0f, 1.0f, 1.0f));
+
+			auto cubeUnit = std::make_shared<Render::Unit>();
+
+			std::vector<Render::Vertex> vertices;
+			std::vector<uint16_t> indices;
+			MakeCube(vertices, indices);
+
+			Render::UnitLogic::SetPipelineName(context, cubeUnit, Render::Pipeline_Bling_Phone);
+			Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
+			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
+			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/container2.png");
+
+			cubeEO->AddComponent<Render::Unit>(cubeUnit);
+
+			context->AddEO(cubeEO);
+		}
+		// Cube2
+		{
+			auto cubeEO = std::make_shared<EngineObject>();
+			cubeEO->name = "Cube2";
+
+			Logic::TransformLogic::Add(cubeEO,
+									   glm::vec3(5.7f, 0.0f, 0.0f),
+									   glm::vec3(0.0f, 0.0f, 0.0f),
+									   glm::vec3(1.0f, 1.0f, 1.0f));
+
+			auto cubeUnit = std::make_shared<Render::Unit>();
+
+			std::vector<Render::Vertex> vertices;
+			std::vector<uint16_t> indices;
+			MakeCube(vertices, indices);
+
+			Render::UnitLogic::SetPipelineName(context, cubeUnit, Render::Pipeline_Bling_Phone);
+			Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
+			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
+			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/Wall03_Diffuse.jpg");
+
+			cubeEO->AddComponent<Render::Unit>(cubeUnit);
+
+			context->AddEO(cubeEO);
+		}
+	}
+
 	void Test::CreateModel(Context *context)
 	{
 		auto modelEO = std::make_shared<EngineObject>();
@@ -122,90 +170,99 @@ namespace Editor
 		auto modelUnit = std::make_shared<Render::Unit>();
 		modelUnit->castShadow = true;
 
-		Render::UnitLogic::SetPipelineName(context, modelUnit, "bling_phone");
-		Render::UnitLogic::SetObj(context, modelUnit, "resource/model/viking_room/viking_room.obj");
-		Render::UnitLogic::SetImage(context, modelUnit, "resource/model/viking_room/viking_room.png");
+		Render::UnitLogic::SetPipelineName(context, modelUnit, Render::Pipeline_Bling_Phone);
+		Render::UnitLogic::SetObj(context, modelUnit, "resource/obj/viking_room/viking_room.obj");
+		Render::UnitLogic::SetImage(context, modelUnit, "resource/obj/viking_room/viking_room.png");
 
 		modelEO->AddComponent<Render::Unit>(modelUnit);
 
 		context->AddEO(modelEO);
 	}
 
-	void Test::MakeCube(
-		std::vector<Render::Vertex> &vertices,
-		std::vector<uint16_t> &indices)
+	void Test::CreateAxis(Context *context)
 	{
-		vertices = {
-			{{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{0.5f, -0.5f, 0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, -0.5f, 0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{-0.5f, -0.5f, 0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{-0.5f, 0.5f, 0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{-0.5f, 0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{0.5f, 0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-			{{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}};
+		auto modelParentEO = std::make_shared<EngineObject>();
+		modelParentEO->name = Name_Axis;
+		modelParentEO->active = false;
+		modelParentEO->hideInHierarchy = true;
 
-		indices = {
-			0, 2, 3,
-			0, 3, 1,
-			8, 4, 5,
-			8, 5, 9,
-			10, 6, 7,
-			10, 7, 11,
-			12, 13, 14,
-			12, 14, 15,
-			16, 17, 18,
-			16, 18, 19,
-			20, 21, 22,
-			20, 22, 23};
-	}
+		Logic::TransformLogic::Add(modelParentEO,
+								   glm::vec3(1.0f, 0.0f, 0.0f),
+								   glm::vec3(0.0f, 0.0f, 0.0f),
+								   glm::vec3(0.5f, 0.5f, 0.5f));
 
-	void Test::MakeSkybox(
-		std::vector<Render::Vertex> &vertices,
-		std::vector<uint16_t> &indices)
-	{
-		vertices = {
-			Render::Vertex{{-1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{-1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{-1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			Render::Vertex{{1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}};
+		context->AddEO(modelParentEO);
 
-		indices = {
-			0, 1, 2,
-			2, 3, 0,
-			4, 1, 0,
-			0, 5, 4,
-			6, 7, 8,
-			8, 9, 6,
-			4, 5, 10,
-			10, 11, 4,
-			0, 3, 10,
-			10, 5, 0,
-			1, 4, 2,
-			2, 4, 11};
+		{
+			auto modelEO = std::make_shared<EngineObject>();
+			modelEO->name = "X";
+			modelEO->hideInHierarchy = true;
+
+			Logic::TransformLogic::Add(modelEO,
+									   glm::vec3(1.0f, 0.0f, 0.0f),
+									   glm::vec3(0.0f, 90.0f, 0.0f),
+									   glm::vec3(1.0f, 1.0f, 1.0f));
+			Logic::TransformLogic::SetParent(modelEO, modelParentEO);
+
+			auto modelUnit = std::make_shared<Render::Unit>();
+			modelUnit->castShadow = false;
+
+			Render::UnitLogic::SetPipelineName(context, modelUnit, Render::Pipeline_Color);
+			Render::UnitLogic::SetObj(context, modelUnit,
+									  "resource/obj/basic/axis.obj", glm::vec3(1.0f, 0.0f, 0.0f));
+			Render::UnitLogic::SetImage(context, modelUnit, "resource/texture/white.png");
+
+			modelEO->AddComponent<Render::Unit>(modelUnit);
+
+			context->AddEO(modelEO);
+		}
+
+		{
+			auto modelEO = std::make_shared<EngineObject>();
+			modelEO->name = "Y";
+			modelEO->hideInHierarchy = true;
+
+			Logic::TransformLogic::Add(modelEO,
+									   glm::vec3(0.0f, 1.0f, 0.0f),
+									   glm::vec3(-90.0f, 0.0f, 0.0f),
+									   glm::vec3(1.0f, 1.0f, 1.0f));
+			Logic::TransformLogic::SetParent(modelEO, modelParentEO);
+
+			auto modelUnit = std::make_shared<Render::Unit>();
+			modelUnit->castShadow = false;
+
+			Render::UnitLogic::SetPipelineName(context, modelUnit, Render::Pipeline_Color);
+			Render::UnitLogic::SetObj(context, modelUnit,
+									  "resource/obj/basic/axis.obj", glm::vec3(0.0f, 1.0f, 0.0f));
+			Render::UnitLogic::SetImage(context, modelUnit, "resource/texture/white.png");
+
+			modelEO->AddComponent<Render::Unit>(modelUnit);
+
+			context->AddEO(modelEO);
+		}
+
+		{
+			auto modelEO = std::make_shared<EngineObject>();
+			modelEO->name = "Z";
+			modelEO->hideInHierarchy = true;
+
+			Logic::TransformLogic::Add(modelEO,
+									   glm::vec3(0.0f, 0.0f, 1.0f),
+									   glm::vec3(0.0f, 0.0f, 0.0f),
+									   glm::vec3(1.0f, 1.0f, 1.0f));
+			Logic::TransformLogic::SetParent(modelEO, modelParentEO);
+
+			auto modelUnit = std::make_shared<Render::Unit>();
+			modelUnit->castShadow = false;
+
+			Render::UnitLogic::SetPipelineName(context, modelUnit, Render::Pipeline_Color);
+			Render::UnitLogic::SetObj(context, modelUnit,
+									  "resource/obj/basic/axis.obj", glm::vec3(0.0f, 0.0f, 1.0f));
+			Render::UnitLogic::SetImage(context, modelUnit, "resource/texture/white.png");
+
+			modelEO->AddComponent<Render::Unit>(modelUnit);
+
+			context->AddEO(modelEO);
+		}
 	}
 }

@@ -19,11 +19,11 @@ namespace Render
 		VkDescriptorPoolCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		createInfo.maxSets = 20;
+		createInfo.maxSets = 40;
 
 		std::vector<VkDescriptorPoolSize> sizes = {
 			{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10},
-			{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 5},
+			{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10},
 		};
 		createInfo.poolSizeCount = static_cast<uint32_t>(sizes.size());
 		createInfo.pPoolSizes = sizes.data();

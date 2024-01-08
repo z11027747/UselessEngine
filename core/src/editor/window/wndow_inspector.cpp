@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <typeindex>
+#include "logic/move/move_logic.h"
 #include "editor/wrap/component_wrap.h"
 #include "editor/system.h"
 #include "editor/window.h"
@@ -47,6 +48,14 @@ namespace Editor
 	void Window::SetSelectEO(Context *context, std::shared_ptr<EngineObject> eo)
 	{
 		selectEO = eo;
+
+		auto axisEO = context->GetEO(Name_Axis);
+		axisEO->active = true;
+
+		Logic::MoveLogic::BeginFollow(context,
+									  axisEO,
+									  eo, glm::vec3(0.0f));
+
 		auto &componentMap = selectEO->componentMap;
 		for (const auto &kv : componentMap)
 		{

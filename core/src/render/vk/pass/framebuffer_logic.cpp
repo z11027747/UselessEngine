@@ -121,8 +121,12 @@ namespace Render
 			if (!unitEO->active)
 				continue;
 
-			auto unit = unitEO->GetComponent<Render::Unit>();
+			auto unitTransform = unitEO->GetComponent<Logic::Transform>();
+			auto &unitParentEO = unitTransform->parentEO;
+			if (unitParentEO != nullptr && !unitParentEO->active)
+				continue;
 
+			auto unit = unitEO->GetComponent<Render::Unit>();
 			if (isShadow && !unit->castShadow)
 				continue;
 
@@ -143,8 +147,8 @@ namespace Render
 			auto &indexBuffer = unit->indexBuffer;
 			vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-			auto &globalDescriptor = graphicsPipeline->globalDescriptors[imageIndex];
-			auto &globalBuffer = graphicsPipeline->globalBuffers[imageIndex];
+			auto &globalDescriptor = graphicsPipeline->globalDescriptor;
+			auto &globalBuffer = graphicsPipeline->globalBuffer;
 
 			BufferSetLogic::Set(context,
 								globalBuffer,
@@ -153,7 +157,6 @@ namespace Render
 			ShaderLogic::UpdateUnitDescriptor(context,
 											  unit, imageIndex);
 
-			auto unitTransform = unitEO->GetComponent<Logic::Transform>();
 			auto &model = unitTransform->model;
 			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 

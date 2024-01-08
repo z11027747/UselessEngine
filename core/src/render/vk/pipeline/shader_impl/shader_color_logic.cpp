@@ -48,7 +48,18 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
-		// rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+	}
+
+	void ShaderColorLogic::SetDepthStencilCreateInfo(Context *context,
+													 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+		auto &stageInfo = graphicsPipeline->stageInfo;
+
+		auto &depthStencilStateCreateInfo = stageInfo.depthStencilStateCreateInfo;
+		depthStencilStateCreateInfo.depthTestEnable = true;
+		depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+		depthStencilStateCreateInfo.depthWriteEnable = false;
 	}
 
 }
