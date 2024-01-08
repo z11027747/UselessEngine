@@ -5,8 +5,8 @@
 
 void size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
-void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
 
 constexpr int width = 1920;
 constexpr int height = 1080;
@@ -23,6 +23,8 @@ int main()
 	auto window = glfwCreateWindow(width, height, "UselessEngine", nullptr, nullptr);
 
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, cursor_pos_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetFramebufferSizeCallback(window, size_callback);
 
 	context = std::make_unique<Context>(window, aspect);
@@ -34,6 +36,9 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
+
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			glfwSetWindowShouldClose(window, true);
 
 		auto width = 0, height = 0;
 		glfwGetFramebufferSize(context->window, &width, &height);
@@ -62,13 +67,16 @@ int main()
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-
-	context->OnKeyCallback(key, action, mode);
 }
 
 void size_callback(GLFWwindow *window, int width, int height)
 {
-	context->OnSizeCallback();
+}
+
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
+{
+}
+
+void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos)
+{
 }

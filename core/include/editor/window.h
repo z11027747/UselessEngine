@@ -20,8 +20,10 @@ namespace Editor
 		static void DrawMenuBar(Context *);
 		static void DrawHierachy(Context *);
 		static void DrawInspector(Context *);
-		static void DrawViewport(Context *, uint32_t);
 		static void DrawProject(Context *);
+
+		static bool IsInViewport(Context *);
+		static void DrawViewport(Context *, uint32_t);
 
 		static std::shared_ptr<EngineObject> selectEO;
 		static void SetSelectEO(Context *, std::shared_ptr<EngineObject> eo);

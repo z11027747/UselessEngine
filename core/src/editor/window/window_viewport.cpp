@@ -9,10 +9,19 @@
 
 namespace Editor
 {
+    static bool isFocuesd;
+
+    bool Window::IsInViewport(Context *context)
+    {
+        return isFocuesd;
+    }
+
     void Window::DrawViewport(Context *context, uint32_t imageIndex)
     {
         if (ImGui::Begin("Scene", NULL))
         {
+            isFocuesd = ImGui::IsWindowFocused();
+
             auto viewportPanelSize = ImGui::GetContentRegionAvail();
             ImGui::Image(System::descriptors[imageIndex]->set,
                          ImVec2{viewportPanelSize.x, viewportPanelSize.y});

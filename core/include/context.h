@@ -77,7 +77,6 @@ public:
 		Editor::Test::CreateMainCamera(this);
 		Editor::Test::CreateLight(this);
 		Editor::Test::CreateSkybox(this);
-		// Editor::Test::CreateCube(this);
 		Editor::Test::CreateModel(this);
 	}
 
@@ -91,16 +90,5 @@ public:
 	{
 		Render::System::Destroy(this);
 		Logic::System::Destroy(this);
-	}
-
-	void OnSizeCallback()
-	{
-	}
-
-	void OnKeyCallback(int key, int action, int mode)
-	{
-		std::cout << "key : " << key
-				  << ", action: " << action
-				  << ", mode: " << mode << std::endl;
 	}
 };
