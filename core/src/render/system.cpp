@@ -85,22 +85,20 @@ namespace Render
 		auto directionLightCamera = directionLightEO->GetComponent<Logic::Camera>();
 		auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
 
-		DirectionLightUBO directionLightUBO = {
-			directionLightCamera->view,
-			directionLightCamera->projection,
-			-directionLightTransform->forward,
-			directionLight->color,
-			directionLight->params};
+		DirectionLightUBO directionLightUBO = {};
+		if (directionLightEO->active)
+		{
+			directionLightUBO = {
+				directionLightCamera->view,
+				directionLightCamera->projection,
+				-directionLightTransform->forward,
+				directionLight->color,
+				directionLight->params};
+		}
 
 		auto &mainCameraEO = context->mainCameraEO;
 		auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
 		auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
-
-		//TODO
-		Logic::CameraLogic::UpdateView(directionLightEO);
-		Logic::CameraLogic::UpdateProjection(context, directionLightCamera);
-		Logic::CameraLogic::UpdateView(mainCameraEO);
-		Logic::CameraLogic::UpdateProjection(context, mainCamera);
 
 		CameraUBO cameraUBO = {
 			mainCameraTransform->position,
@@ -117,11 +115,11 @@ namespace Render
 			auto &renderPass = directionLightCamera->renderPass;
 			FramebufferLogic::BeginRenderPass(context,
 											  imageIndex, vkCmdBuffer, renderPass);
-			if (directionLightEO->active)
+			if (directionLightEO->active && directionLight->hasShadow)
 			{
 				FramebufferLogic::RenderUnits(context,
-											  imageIndex, vkCmdBuffer, renderPass,
-											  globalUBO);
+											  imageIndex, vkCmdBuffer,
+											  globalUBO, true);
 			}
 			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
 		}
@@ -134,7 +132,7 @@ namespace Render
 			if (mainCameraEO->active)
 			{
 				FramebufferLogic::RenderUnits(context,
-											  imageIndex, vkCmdBuffer, renderPass,
+											  imageIndex, vkCmdBuffer,
 											  globalUBO);
 			}
 			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);

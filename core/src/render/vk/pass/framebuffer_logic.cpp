@@ -111,8 +111,8 @@ namespace Render
 	}
 
 	void FramebufferLogic::RenderUnits(Context *context,
-									   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer, std::shared_ptr<Pass> pass,
-									   GlobalUBO &globalUBO)
+									   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer,
+									   GlobalUBO &globalUBO, bool isShadow)
 	{
 		auto &unitEOs = context->renderUnitEOs;
 		for (const auto &unitEO : unitEOs)
@@ -122,13 +122,10 @@ namespace Render
 
 			auto unit = unitEO->GetComponent<Render::Unit>();
 
-			auto pipelineName = unit->pipelineName;
-
-			// TODO
-			if (pass->name == "shadow")
-				pipelineName = "shadow";
-			if (pass->name == "shadow" && unitEO->name != "Model-VikingRoom")
+			if (isShadow && !unit->castShadow)
 				continue;
+
+			auto pipelineName = !isShadow ? unit->pipelineName : "shadow";
 
 			auto &graphicsPipeline = context->renderPipelines[pipelineName];
 			auto &pipeline = graphicsPipeline->pipeline;
@@ -162,8 +159,7 @@ namespace Render
 			std::vector<VkDescriptorSet> descriptorSets;
 			descriptorSets.push_back(globalDescriptor->set);
 
-			// TODO
-			if (pass->name != "shadow")
+			if (!isShadow)
 			{
 				if (unit->descriptor != nullptr)
 					descriptorSets.push_back(unit->descriptor->set);

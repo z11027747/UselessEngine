@@ -8,5 +8,7 @@ namespace Render
     {
         glm::vec3 color;
         glm::vec4 params;
+        
+        bool hasShadow;
     };
 }

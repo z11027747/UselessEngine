@@ -13,7 +13,6 @@ namespace Editor
 		static void CreateMainCamera(Context *);
 		static void CreateLight(Context *);
 		static void CreateSkybox(Context *);
-		static void CreateCube(Context *);
 		static void CreateModel(Context *);
 
 		static void MakeCube(

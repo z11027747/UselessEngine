@@ -42,6 +42,8 @@ namespace Render
 
 		// descriptor
 		std::shared_ptr<Descriptor> descriptor;
+
+		bool castShadow;
 	};
 }
 

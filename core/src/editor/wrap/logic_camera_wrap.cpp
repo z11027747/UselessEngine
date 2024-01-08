@@ -3,62 +3,69 @@
 #include <memory>
 #include <iostream>
 #include <algorithm>
+#include "editor/wrap/component_wrap.h"
 #include "logic/camera/camera_logic.h"
-#include "editor/wrap/logic_component_wrap.h"
 #include "editor/global.h"
 #include "context.h"
 
 namespace Editor
 {
-	void LogicComponentWrap::DrawCamera(Context *context,
-										std::shared_ptr<Logic::Camera> camera)
+	static int modeI = 0;
+	static float clearColors[4] = {0.1f, 0.1f, 0.1f, 1.0f};
+	static float clearDepth = 1.0f;
+
+	void ComponentWrap<Logic::Camera>::Draw(Context *context,
+											std::shared_ptr<Logic::Camera> camera, bool isFirst)
 	{
+		if (isFirst)
+		{
+			modeI = static_cast<int>(camera->mode);
+			auto &colors = camera->renderPass->clearColorValue.float32;
+			for (auto i = 0; i < 4; i++)
+			{
+				clearColors[i] = colors[i];
+			}
+			auto &depth = camera->renderPass->clearDepthValue.depth;
+			clearDepth = depth;
+		}
+
 		if (ImGui::DragFloat("Near", &camera->near, 0.01f, 0.01f, 10.0f))
 		{
 			camera->far = std::max(camera->far, camera->near + 0.01f);
-			Logic::CameraLogic::UpdateProjection(context, camera);
 		}
 
 		if (ImGui::DragFloat("Far", &camera->far, 0.02f, camera->near + 0.01f, 100.0f))
 		{
-			Logic::CameraLogic::UpdateProjection(context, camera);
 		}
 
-		static int mode = 0;
-		if (ImGui::Combo("Mode", &mode, "Perspective\0Ortho\0"))
+		if (ImGui::Combo("Mode", &modeI, "Perspective\0Ortho\0"))
 		{
-			camera->mode = static_cast<Logic::CameraMode>(mode);
-			Logic::CameraLogic::UpdateProjection(context, camera);
+			camera->mode = static_cast<Logic::CameraMode>(modeI);
 		}
 
 		if (camera->mode == Logic::CameraMode::ePerspective)
 		{
 			if (ImGui::DragFloat("fov", &camera->fov, 0.02f, 10.0f, 90.0f))
 			{
-				Logic::CameraLogic::UpdateProjection(context, camera);
 			}
 		}
 		if (camera->mode == Logic::CameraMode::eOrtho)
 		{
 			if (ImGui::DragFloat("Size", &camera->size, 0.02f))
 			{
-				Logic::CameraLogic::UpdateProjection(context, camera);
 			}
 		}
 
 		ImGui::Spacing();
 		ImGui::Text("Clear Values");
 
-		static float clearColor[4] = {0.1f, 0.1f, 0.1f, 1.0f};
-		static float clearDepth = 1.0f;
-
-		if (ImGui::ColorEdit4("Color", clearColor))
+		if (ImGui::ColorEdit4("Color", clearColors))
 		{
 			auto &colors = camera->renderPass->clearColorValue.float32;
-			colors[0] = clearColor[0];
-			colors[1] = clearColor[1];
-			colors[2] = clearColor[2];
-			colors[3] = clearColor[3];
+			for (auto i = 0; i < 4; i++)
+			{
+				colors[i] = clearColors[i];
+			}
 		}
 
 		if (ImGui::InputFloat("Depth", &clearDepth))

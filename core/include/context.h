@@ -10,6 +10,7 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/pass/pass_comp.h"
+#include "render/light/light_comp.h"
 #include "render/system.h"
 #include "logic/input/input_comp.h"
 #include "logic/camera/camera_comp.h"
@@ -73,6 +74,10 @@ public:
 		if (eo->HasComponent<Render::Unit>())
 		{
 			renderUnitEOs.push_back(eo);
+		}
+		if (eo->HasComponent<Render::DirectionLight>())
+		{
+			renderLightEOs.push_back(eo);
 		}
 	}
 

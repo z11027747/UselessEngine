@@ -28,17 +28,16 @@ namespace Editor
 				ImGui::PushID(i);
 
 				auto &eo = eos[i];
-
 				ImGui::Checkbox("##active", &eo->active);
 				ImGui::SameLine();
 
 				if (ImGui::Selectable(eo->name.data(), selectEOIndex == i))
 				{
 					selectEOIndex = i;
-					Window::selectEO = eo;
+					Window::SetSelectEO(context, eo);
 				}
 
-				if (ImGui::BeginPopupContextItem())
+				if (ImGui::BeginPopupContextItem("Hierarchy"))
 				{
 					if (ImGui::Button("Delete"))
 					{
@@ -58,15 +57,14 @@ namespace Editor
 
 			if (ImGui::Button("Add EnginObject"))
 			{
-				std::cout << "Add EngineObject Click!" << std::endl;
+				// std::cout << "Add EngineObject Click!" << std::endl;
 
 				auto name = std::string(addEOName);
 				memset(addEOName, 0, sizeof(addEOName));
 
 				auto eo = std::make_shared<EngineObject>();
 				eo->name = name;
-				context->allEOs.emplace_back(eo);
-				context->allEOMap.emplace(name, eo);
+				context->AddEO(eo);
 			}
 		}
 		ImGui::End();

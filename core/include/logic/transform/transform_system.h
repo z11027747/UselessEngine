@@ -4,7 +4,7 @@ class Context;
 
 namespace Logic
 {
-    class TransformUpdateModelSystem final
+    class TransformUpdateMSystem final
     {
     public:
         static void Update(Context *);

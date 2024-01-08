@@ -14,8 +14,8 @@ namespace Logic
 	}
 	void System::Update(Context *context)
 	{
-		TransformUpdateModelSystem::Update(context);
-		CameraUpdateViewSystem::Update(context);
+		TransformUpdateMSystem::Update(context);
+		CameraUpdateVPSystem::Update(context);
 		CameraMoveSystem::Update(context);
 	}
 	void System::Destroy(Context *context)

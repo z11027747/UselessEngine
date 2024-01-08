@@ -24,5 +24,6 @@ namespace Editor
 		static void DrawProject(Context *);
 
 		static std::shared_ptr<EngineObject> selectEO;
+		static void SetSelectEO(Context *, std::shared_ptr<EngineObject> eo);
 	};
 }

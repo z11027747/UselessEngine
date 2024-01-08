@@ -52,6 +52,7 @@ namespace Editor
 		auto directionLight = std::make_shared<Render::DirectionLight>();
 		directionLight->color = glm::vec3(1.0f, 0.9568627f, 0.8392157f);
 		directionLight->params = glm::vec4(0.4f, 10.0f, 0.5f, 0.0f);
+		directionLight->hasShadow = true;
 
 		directionLightEO->AddComponent(directionLight);
 
@@ -62,8 +63,6 @@ namespace Editor
 		directionLightCamera->size = 50.0f;
 		directionLightCamera->renderPass = context->renderShadowPass;
 		directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
-
-		context->renderLightEOs.push_back(directionLightEO);
 
 		auto directionLightUnit = std::make_shared<Render::Unit>();
 
@@ -110,60 +109,6 @@ namespace Editor
 		context->AddEO(skyboxEO);
 	}
 
-	void Test::CreateCube(Context *context)
-	{
-		// Cube1
-		{
-			auto cubeEO = std::make_shared<EngineObject>();
-			cubeEO->name = "Cube1";
-
-			Logic::TransformLogic::Add(cubeEO,
-									   glm::vec3(0.0f, 0.0f, 0.0f),
-									   glm::vec3(10.0f, 20.0f, 0.0f),
-									   glm::vec3(1.0f, 1.0f, 1.0f));
-
-			auto cubeUnit = std::make_shared<Render::Unit>();
-
-			std::vector<Render::Vertex> vertices;
-			std::vector<uint16_t> indices;
-			MakeCube(vertices, indices);
-
-			Render::UnitLogic::SetPipelineName(context, cubeUnit, "bling_phone");
-			Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
-			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
-			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/container2.png");
-
-			cubeEO->AddComponent<Render::Unit>(cubeUnit);
-
-			context->AddEO(cubeEO);
-		}
-		// Cube2
-		{
-			auto cubeEO = std::make_shared<EngineObject>();
-			cubeEO->name = "Cube2";
-
-			Logic::TransformLogic::Add(cubeEO,
-									   glm::vec3(0.0f, -0.5f, 0.0f),
-									   glm::vec3(0.0f, 0.0f, 0.0f),
-									   glm::vec3(10.0f, 0.1f, 10.0f));
-
-			auto cubeUnit = std::make_shared<Render::Unit>();
-
-			std::vector<Render::Vertex> vertices;
-			std::vector<uint16_t> indices;
-			MakeCube(vertices, indices);
-
-			Render::UnitLogic::SetPipelineName(context, cubeUnit, "bling_phone");
-			Render::UnitLogic::SetVertices(context, cubeUnit, vertices);
-			Render::UnitLogic::SetIndices(context, cubeUnit, indices);
-			Render::UnitLogic::SetImage(context, cubeUnit, "resource/texture/Wall03_Diffuse.jpg");
-
-			cubeEO->AddComponent<Render::Unit>(cubeUnit);
-
-			context->AddEO(cubeEO);
-		}
-	}
-
 	void Test::CreateModel(Context *context)
 	{
 		auto modelEO = std::make_shared<EngineObject>();
@@ -175,6 +120,7 @@ namespace Editor
 								   glm::vec3(4.0f, 4.0f, 4.0f));
 
 		auto modelUnit = std::make_shared<Render::Unit>();
+		modelUnit->castShadow = true;
 
 		Render::UnitLogic::SetPipelineName(context, modelUnit, "bling_phone");
 		Render::UnitLogic::SetObj(context, modelUnit, "resource/model/viking_room/viking_room.obj");

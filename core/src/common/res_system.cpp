@@ -5,7 +5,6 @@
 
 namespace Common
 {
-
 	std::vector<char> ResSystem::ReadFile(const std::string &fileName)
 	{
 		std::ifstream file(fileName, std::ios::ate | std::ios::binary);

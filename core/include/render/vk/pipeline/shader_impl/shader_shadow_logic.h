@@ -15,6 +15,5 @@ namespace Render
 		static void CreateVertexAttrDescriptions(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void SetViewport(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void SetRasterizationCreateInfo(Context *, std::shared_ptr<GraphicsPipeline>);
-		static void SetDepthStencilCreateInfo(Context *, std::shared_ptr<GraphicsPipeline>);
 	};
 }

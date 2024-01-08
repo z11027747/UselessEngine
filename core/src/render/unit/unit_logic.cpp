@@ -115,6 +115,7 @@ namespace Render
 
 		Common::ResSystem::FreeImg(data);
 
+		unit->textureName = name;
 		unit->image0 = image2d;
 
 		ShaderLogic::CreateUnitDescriptor(context,
@@ -186,8 +187,8 @@ namespace Render
 	}
 
 	void UnitLogic::SetObj(Context *context,
-						   std::shared_ptr<Unit> unit,
-						   const std::string &name, glm::vec3 &defaultColor)
+						   std::shared_ptr<Unit> unit, const std::string &name,
+						   glm::vec3 &defaultColor)
 	{
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;
@@ -236,5 +237,7 @@ namespace Render
 
 		Render::UnitLogic::SetVertices(context, unit, vertices);
 		Render::UnitLogic::SetIndices(context, unit, indices);
+
+		unit->objName = name;
 	}
 }

@@ -5,7 +5,7 @@ class EngineObject;
 
 namespace Logic
 {
-    class CameraUpdateViewSystem final
+    class CameraUpdateVPSystem final
     {
     public:
         static void Update(Context *);

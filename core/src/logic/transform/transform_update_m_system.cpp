@@ -7,7 +7,7 @@
 
 namespace Logic
 {
-    void TransformUpdateModelSystem::Update(Context *context)
+    void TransformUpdateMSystem::Update(Context *context)
     {
         auto &allEOs = context->allEOs;
         for (const auto &eo : allEOs)

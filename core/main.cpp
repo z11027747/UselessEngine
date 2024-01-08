@@ -6,8 +6,8 @@
 void size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
-constexpr int width = 1280;
-constexpr int height = 720;
+constexpr int width = 1920;
+constexpr int height = 1080;
 static float aspect = (width * 1.0f) / height;
 
 std::unique_ptr<Context> context;
