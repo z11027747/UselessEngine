@@ -1,11 +1,7 @@
 
 #include <imgui/imgui.h>
-#include <memory>
-#include <iostream>
 #include "editor/window.h"
-#include "editor/system.h"
 #include "context.h"
-#include "engine_object.h"
 
 namespace Editor
 {

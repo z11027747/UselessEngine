@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include "render/vk/image/image_comp.h"
 
 class Context;
 

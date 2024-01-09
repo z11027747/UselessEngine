@@ -1,9 +1,7 @@
 
 #include "render/vk/global/global_comp.h"
-#include "render/vk/global/global_system.h"
-#include "render/vk/global/logical_device_logic.h"
-#include "render/vk/global/physical_device_logic.h"
-#include "render/vk/global/swapchain_logic.h"
+#include "render/vk/global/global_logic.h"
+#include "render/vk/logic.h"
 #include "render/vk/image/image_logic.h"
 #include "render/vk/cmd/cmd_logic.h"
 #include "context.h"

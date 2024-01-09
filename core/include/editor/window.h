@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <stdint.h>
+
 class Context;
 class EngineObject;
 

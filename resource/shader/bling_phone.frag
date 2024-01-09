@@ -38,41 +38,13 @@ float CalcShadow()
     shadowUVW.xy = shadowUVW.xy * 0.5 + 0.5;
 
     float shadowCmp = texture(shadowSampler, shadowUVW);
-    return shadowCmp;
-}
-
-float CalcShadow_PCF()
-{
-    ivec2 texSize = textureSize(shadowSampler, 0);
-    float scale = 1;
-    float dx = scale * 1.0 / float(texSize.x);
-    float dy = scale * 1.0 / float(texSize.y);
-
-    float shadowFactor = 0.0;
-    int count = 0;
-    int range = 1;
-	
-    vec3 shadowUVW = inPositionLS.xyz / inPositionLS.w;
-    shadowUVW.xy = shadowUVW.xy * 0.5 + 0.5;
-
-	for (int x = -range; x <= range; x++)
-	{
-		for (int y = -range; y <= range; y++)
-		{
-            shadowUVW.xy += vec2(dx*x, dy*y);
-
-            float shadowCmp = texture(shadowSampler, shadowUVW);
-            shadowFactor += shadowCmp;
-			count++;
-		}
-	}
-
-	return shadowFactor / count;
+    //  step(shadowUVW.z, shadowCmp);
+    return mix(1, 0.2, shadowUVW.z-shadowCmp);
 }
 
 vec3 CalcDirectionLight()
 {
-    vec3 ambient = vec3(0.4);
+    vec3 ambient = vec3(0.2);
 
     float diffuseIntensity = globalUBO.directionLight.params.x;
 
@@ -95,6 +67,5 @@ vec3 CalcDirectionLight()
 void main() {
     vec3 baseCol = texture(baseSampler, inUV).rgb;
     vec3 directionLightCol = CalcDirectionLight();
-    float shadowAtten = CalcShadow();
-    outColor = vec4(inColor * baseCol * directionLightCol * shadowAtten, 1.0);
+    outColor = vec4(inColor * baseCol * directionLightCol, 1.0);
 }

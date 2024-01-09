@@ -3,19 +3,10 @@
 #include <vector>
 #include <array>
 #include "render/vk/global/global_comp.h"
-#include "render/vk/global/global_system.h"
-#include "render/vk/global/logical_device_logic.h"
-#include "render/vk/buffer/buffer_comp.h"
-#include "render/vk/buffer/buffer_logic.h"
-#include "render/vk/image/image_comp.h"
-#include "render/vk/cmd/cmd_logic.h"
-#include "render/vk/pipeline/pipeline_comp.h"
+#include "render/vk/global/global_logic.h"
+#include "render/vk/logic.h"
 #include "render/vk/pass/pass_logic.h"
-#include "render/mesh/mesh_comp.h"
-#include "render/material/material_logic.h"
 #include "render/unit/unit_comp.h"
-#include "logic/transform/transform_comp.h"
-#include "logic/transform/transform_logic.h"
 #include "context.h"
 
 namespace Render
@@ -67,12 +58,12 @@ namespace Render
 	}
 
 	void FramebufferLogic::BeginRenderPass(Context *context,
-										   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer,
-										   std::shared_ptr<Pass> pass)
+										   uint32_t imageIndex, std::shared_ptr<Pass> pass)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 		auto &surfaceCapabilities = global->surfaceCapabilities;
+		auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
 		auto &renderPass = pass->renderPass;
 		auto &frameBuffer = pass->frameBuffers[imageIndex];
@@ -104,68 +95,12 @@ namespace Render
 	}
 
 	void FramebufferLogic::EndRenderPass(Context *context,
-										 uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer)
-	{
-		vkCmdEndRenderPass(vkCmdBuffer);
-	}
-
-	void FramebufferLogic::RenderUnits(Context *context,
-									   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer,
-									   bool isShadow)
+										 uint32_t imageIndex)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
+		auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
-		auto &unitEOs = context->renderUnitEOs;
-		for (const auto &unitEO : unitEOs)
-		{
-			if (!unitEO->active)
-				continue;
-
-			auto unitTransform = unitEO->GetComponent<Logic::Transform>();
-			auto &unitParentEO = unitTransform->parentEO;
-			if (unitParentEO != nullptr && !unitParentEO->active)
-				continue;
-
-			auto mesh = unitEO->GetComponent<Render::Mesh>();
-			auto material = unitEO->GetComponent<Render::Material>();
-			if (isShadow && !material->castShadow)
-				continue;
-
-			auto pipelineName = !isShadow ? material->pipelineName : "shadow";
-
-			auto &graphicsPipeline = global->pipelines[pipelineName];
-			auto &pipeline = graphicsPipeline->pipeline;
-			auto &pipelineLayout = graphicsPipeline->pipelineLayout;
-
-			vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-
-			auto &vertexBuffer = mesh->vertexBuffer;
-			VkBuffer vertexBuffers[] = {vertexBuffer->vkBuffer};
-			VkDeviceSize offsets[] = {0};
-			vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, vertexBuffers, offsets);
-
-			auto &indices = mesh->indices;
-			auto &indexBuffer = mesh->indexBuffer;
-			vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
-
-			auto &model = unitTransform->model;
-			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
-
-			std::vector<VkDescriptorSet> descriptorSets;
-			descriptorSets.push_back(global->globalDescriptor->set);
-
-			if (!isShadow)
-			{
-				if (material->descriptor != nullptr)
-					descriptorSets.push_back(material->descriptor->set);
-			}
-
-			vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-									pipelineLayout, 0, static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
-
-			vkCmdDrawIndexed(vkCmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
-		}
+		vkCmdEndRenderPass(vkCmdBuffer);
 	}
-
 }

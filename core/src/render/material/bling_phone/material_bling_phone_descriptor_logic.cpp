@@ -1,5 +1,7 @@
 
 #include <vulkan/vulkan.h>
+#include "render/vk/global/global_comp.h"
+#include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "render/vk/image/image_logic.h"
@@ -82,7 +84,6 @@ namespace Render
 													std::shared_ptr<Material> material)
 	{
 		auto &descriptor = material->descriptor;
-		ImageLogic::Destroy(context, material->image0);
 		SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
 		SamplerLogic::Destroy(context, descriptor->image1Info.sampler);
 	}

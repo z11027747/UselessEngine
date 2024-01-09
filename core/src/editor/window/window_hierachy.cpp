@@ -4,7 +4,6 @@
 #include <iostream>
 #include "logic/transform/transform_comp.h"
 #include "editor/window.h"
-#include "editor/system.h"
 #include "context.h"
 #include "engine_object.h"
 

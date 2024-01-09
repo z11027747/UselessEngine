@@ -11,5 +11,4 @@ namespace Logic
 		static void Update(Context *);
 		static void Destroy(Context *);
 	};
-
 }

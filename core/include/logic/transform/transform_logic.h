@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <memory>
+#include "logic/transform/transform_comp.h"
 
 class EngineObject;
 

@@ -3,12 +3,11 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <functional>
-#include "render/vk/pipeline/pipeline_comp.h"
+#include "render/vk/pipeline/descriptor_comp.h"
 #include "context.h"
 
 namespace Render
 {
-
 	class DescriptorSetLogic final
 	{
 	public:
@@ -80,5 +79,4 @@ namespace Render
 			}
 		}
 	};
-
 }

@@ -2,9 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <image/stb_image.h>
 #include <obj/tiny_obj_loader.h>
 
 namespace Common
@@ -21,5 +18,4 @@ namespace Common
 		static bool LoadObjShapes(const std::string &,
 								  tinyobj::attrib_t &, std::vector<tinyobj::shape_t> &);
 	};
-
 }

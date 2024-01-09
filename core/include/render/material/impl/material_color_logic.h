@@ -1,10 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <vector>
-#include <array>
 #include <memory>
-#include <string>
 #include "render/material/material_comp.h"
 
 class Context;

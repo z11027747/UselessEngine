@@ -1,18 +1,14 @@
 
 #include <vector>
 #include <string>
-#include "logic/transform/transform_comp.h"
-#include "logic/transform/transform_logic.h"
-#include "logic/camera/camera_comp.h"
-#include "logic/camera/camera_logic.h"
-#include "render/vk/buffer/buffer_comp.h"
+#include "render/vk/global/global_comp.h"
 #include "render/vk/buffer/buffer_logic.h"
-#include "render/mesh/mesh_comp.h"
 #include "render/mesh/mesh_logic.h"
-#include "render/material/material_comp.h"
 #include "render/material/material_logic.h"
 #include "render/unit/unit_comp.h"
 #include "render/light/light_comp.h"
+#include "logic/transform/transform_logic.h"
+#include "logic/camera/camera_logic.h"
 #include "context.h"
 #include "engine_object.h"
 #include "editor/test.h"
@@ -54,7 +50,7 @@ namespace Editor
 
 		auto directionLight = std::make_shared<Render::DirectionLight>();
 		directionLight->color = glm::vec3(1.0f, 0.9568627f, 0.8392157f);
-		directionLight->params = glm::vec4(0.4f, 10.0f, 0.5f, 0.0f);
+		directionLight->params = glm::vec4(1.0f, 15.0f, 1.0f, 0.0f);
 		directionLight->hasShadow = true;
 
 		directionLightEO->AddComponent(directionLight);
@@ -70,6 +66,7 @@ namespace Editor
 		auto directionLightUnit = std::make_shared<Render::Unit>();
 
 		context->AddEO(directionLightEO);
+		context->renderLightEOs.emplace_back(directionLightEO);
 	}
 
 	void Test::CreateSkybox(Context *context)
@@ -97,6 +94,7 @@ namespace Editor
 		skyboxEO->AddComponent(skyboxUnit);
 
 		context->AddEO(skyboxEO);
+		context->renderUnitEOs.emplace_back(skyboxEO);
 	}
 
 	void Test::CreateModel(Context *context)
@@ -119,6 +117,7 @@ namespace Editor
 		modelEO->AddComponent(modelUnit);
 
 		context->AddEO(modelEO);
+		context->renderUnitEOs.emplace_back(modelEO);
 	}
 
 	void Test::CreateAxis(Context *context)
@@ -155,6 +154,7 @@ namespace Editor
 			modelEO->AddComponent(modelUnit);
 
 			context->AddEO(modelEO);
+			context->renderUnitEOs.emplace_back(modelEO);
 		}
 
 		{
@@ -177,6 +177,7 @@ namespace Editor
 			modelEO->AddComponent(modelUnit);
 
 			context->AddEO(modelEO);
+			context->renderUnitEOs.emplace_back(modelEO);
 		}
 
 		{
@@ -199,6 +200,7 @@ namespace Editor
 			modelEO->AddComponent(modelUnit);
 
 			context->AddEO(modelEO);
+			context->renderUnitEOs.emplace_back(modelEO);
 		}
 	}
 }

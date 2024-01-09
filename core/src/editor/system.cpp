@@ -7,14 +7,13 @@
 #include "editor/system.h"
 #include "editor/window.h"
 #include "editor/test.h"
+#include "render/vk/logic.h"
 #include "render/vk/global/global_comp.h"
-#include "render/vk/pipeline/pipeline_comp.h"
-#include "render/vk/image/image_comp.h"
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
+#include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
-#include "render/vk/cmd/cmd_logic.h"
 #include "context.h"
 #include "engine_object.h"
 
@@ -55,7 +54,7 @@ namespace Editor
 		init_info.ImageCount = global->swapchainImageCount;
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 		init_info.Allocator = nullptr;
-		init_info.CheckVkResultFn = nullptr;
+		init_info.CheckVkResultFn = Render::CheckRet;
 
 		ImGui_ImplVulkan_Init(&init_info, global->passes[Render::Pass_ImGui]->renderPass);
 
@@ -91,14 +90,12 @@ namespace Editor
 			auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 			auto sampler = Render::SamplerLogic::Create(context);
 
-			VkDescriptorImageInfo imageInfo = {
+			auto descriptor = std::make_shared<Render::Descriptor>();
+			descriptor->set = descriptorSet;
+			descriptor->image0Info = {
 				sampler,
 				colorImage2d->vkImageView,
 				colorImage2d->layout};
-
-			auto descriptor = std::make_shared<Render::Descriptor>();
-			descriptor->set = descriptorSet;
-			descriptor->image0Info = imageInfo;
 
 			Render::DescriptorSetLogic::Update(context,
 											   [&](std::vector<VkWriteDescriptorSet> &writes)
@@ -128,7 +125,7 @@ namespace Editor
 		ImGui::NewFrame();
 	}
 
-	void System::Draw(Context *context, uint32_t imageIndex)
+	void System::Render(Context *context, uint32_t imageIndex)
 	{
 		static bool showDemoWindow = true;
 		if (showDemoWindow)
@@ -165,10 +162,11 @@ namespace Editor
 		}
 
 		ImGui::PopStyleVar(2);
-	}
 
-	void System::Render(Context *context, VkCommandBuffer &vkCmdBuffer)
-	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+
 		ImGui::Render();
 		auto *main_draw_data = ImGui::GetDrawData();
 		ImGui_ImplVulkan_RenderDrawData(main_draw_data, vkCmdBuffer);

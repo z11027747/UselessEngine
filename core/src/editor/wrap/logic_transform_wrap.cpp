@@ -4,6 +4,7 @@
 #include <iostream>
 #include "editor/wrap/component_wrap.h"
 #include "editor/system.h"
+#include "editor/logic.h"
 #include "context.h"
 
 namespace Editor

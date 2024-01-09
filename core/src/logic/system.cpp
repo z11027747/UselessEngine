@@ -4,7 +4,6 @@
 #include "logic/transform/transform_system.h"
 #include "logic/move/move_system.h"
 #include "context.h"
-#include "engine_object.h"
 
 class Context;
 

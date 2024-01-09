@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 #include "render/vk/pass/pass_comp.h"
-#include "render/vk/pipeline/pipeline_comp.h"
 
 class Context;
 
@@ -54,9 +53,7 @@ namespace Render
 		static void Create(Context *, std::shared_ptr<Pass>);
 		static void Destroy(Context *, std::shared_ptr<Pass>);
 
-		static void BeginRenderPass(Context *, uint32_t, VkCommandBuffer &, std::shared_ptr<Pass>);
-		static void EndRenderPass(Context *, uint32_t, VkCommandBuffer &);
-
-		static void RenderUnits(Context *, uint32_t, VkCommandBuffer &, bool isShadow = false);
+		static void BeginRenderPass(Context *, uint32_t, std::shared_ptr<Pass>);
+		static void EndRenderPass(Context *, uint32_t);
 	};
 }

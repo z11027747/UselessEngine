@@ -1,12 +1,9 @@
 #pragma once
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
 #include "render/vk/buffer/buffer_comp.h"
-#include "render/vk/pipeline/pipeline_comp.h"
 
 namespace Render
 {
@@ -33,20 +30,5 @@ namespace Render
         std::vector<uint16_t> indices;
         std::shared_ptr<Buffer> vertexBuffer;
         std::shared_ptr<Buffer> indexBuffer;
-    };
-}
-
-namespace std
-{
-    template <>
-    struct hash<Render::Vertex>
-    {
-        size_t operator()(Render::Vertex const &vertex) const
-        {
-            return hash<glm::vec3>()(vertex.positionOS) ^
-                   hash<glm::vec3>()(vertex.normalOS) ^
-                   hash<glm::vec3>()(vertex.color) ^
-                   hash<glm::vec2>()(vertex.uv0);
-        }
     };
 }

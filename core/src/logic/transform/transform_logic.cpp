@@ -5,7 +5,6 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <memory>
-#include "logic/transform/transform_comp.h"
 #include "logic/transform/transform_logic.h"
 #include "engine_object.h"
 

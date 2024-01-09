@@ -1,10 +1,7 @@
 
 #include "render/vk/global/global_comp.h"
-#include "render/vk/global/global_system.h"
-#include "render/vk/global/logical_device_logic.h"
-#include "render/vk/pipeline/pipeline_comp.h"
-#include "render/vk/pipeline/pipeline_logic.h"
-#include "render/vk/pipeline/pipeline_layout_logic.h"
+#include "render/vk/global/global_logic.h"
+#include "render/vk/logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "context.h"
 

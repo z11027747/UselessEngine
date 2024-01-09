@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <render/unit/unit_comp.h>
-
 class Context;
 
 namespace Editor

@@ -2,9 +2,7 @@
 #include <imgui/imgui.h>
 #include <memory>
 #include <iostream>
-#include <algorithm>
 #include "editor/wrap/component_wrap.h"
-#include "editor/system.h"
 #include "context.h"
 
 namespace Editor

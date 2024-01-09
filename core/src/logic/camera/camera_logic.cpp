@@ -5,11 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include "render/vk/pass/pass_comp.h"
 #include "render/vk/pass/pass_logic.h"
-#include "logic/transform/transform_comp.h"
 #include "logic/transform/transform_logic.h"
-#include "logic/camera/camera_comp.h"
 #include "logic/camera/camera_logic.h"
 #include "context.h"
 #include "engine_object.h"

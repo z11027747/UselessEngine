@@ -6,7 +6,6 @@
 #include <typeindex>
 #include "logic/move/move_logic.h"
 #include "editor/wrap/component_wrap.h"
-#include "editor/system.h"
 #include "editor/window.h"
 #include "context.h"
 #include "engine_object.h"
@@ -118,5 +117,4 @@ namespace Editor
 
 		ImGui::End();
 	}
-
 }

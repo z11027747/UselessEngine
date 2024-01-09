@@ -6,11 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include "render/vk/global/global_comp.h"
-#include "render/light/light_comp.h"
 #include "render/system.h"
-#include "logic/input/input_comp.h"
-#include "logic/camera/camera_comp.h"
 #include "logic/system.h"
 #include "editor/test.h"
 #include "engine_object.h"
@@ -55,15 +51,6 @@ public:
 	{
 		allEOs.emplace_back(eo);
 		allEOMap.emplace(eo->name, eo);
-
-		if (eo->HasComponent<Render::Unit>())
-		{
-			renderUnitEOs.push_back(eo);
-		}
-		if (eo->HasComponent<Render::DirectionLight>())
-		{
-			renderLightEOs.push_back(eo);
-		}
 	}
 
 	std::shared_ptr<EngineObject> GetEO(const std::string &name)

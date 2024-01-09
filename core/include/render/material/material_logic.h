@@ -5,6 +5,7 @@
 #include <array>
 #include <memory>
 #include <string>
+#include "render/vk/pipeline/pipeline_comp.h"
 #include "render/material/material_comp.h"
 
 class Context;

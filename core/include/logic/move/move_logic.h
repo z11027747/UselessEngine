@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <memory>
+#include "logic/move/move_comp.h"
 
 class Context;
 class EngineObject;

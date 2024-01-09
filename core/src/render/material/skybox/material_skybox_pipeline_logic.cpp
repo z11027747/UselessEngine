@@ -1,5 +1,6 @@
 
 #include <vulkan/vulkan.h>
+#include "render/vk/pipeline/pipeline_comp.h"
 #include "render/mesh/mesh_comp.h"
 #include "render/material/impl/material_skybox_logic.h"
 #include "engine_object.h"

@@ -1,8 +1,7 @@
 
-#include "render/material/material_comp.h"
 #include "render/material/material_logic.h"
-#include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/buffer/buffer_logic.h"
+#include "render/vk/buffer/buffer_set_logic.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
@@ -34,6 +33,7 @@ namespace Render
     void MaterialLogic::Destroy(Context *context,
                                 std::shared_ptr<Material> material)
     {
+		ImageLogic::Destroy(context, material->image0);
         MaterialDescriptorLogic::Destroy(context, material);
     }
 

@@ -1,7 +1,6 @@
 
 #include <GLFW/glfw3.h>
 #include "logic/transform/transform_comp.h"
-#include "logic/camera/camera_comp.h"
 #include "logic/camera/camera_logic.h"
 #include "logic/camera/camera_system.h"
 #include "editor/window.h"
@@ -12,7 +11,8 @@ namespace Logic
 {
     static float moveSpeed = 5.0f;
 
-    void UpdatePos(Context *context, std::shared_ptr<Transform> transform)
+    static void UpdatePos(Context *context,
+                          std::shared_ptr<Transform> transform)
     {
         auto &window = context->window;
         auto deltaTime = context->deltaTime;
@@ -47,7 +47,8 @@ namespace Logic
     static float rotateSpeed = 100.0f;
     static float rotateLastX, rotateLastY;
 
-    void UpdateRot(Context *context, std::shared_ptr<Transform> transform)
+    static void UpdateRot(Context *context,
+                          std::shared_ptr<Transform> transform)
     {
         auto &window = context->window;
         auto deltaTime = context->deltaTime;

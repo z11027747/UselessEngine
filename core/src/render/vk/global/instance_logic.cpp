@@ -1,7 +1,8 @@
 
 #include "render/vk/global/global_comp.h"
-#include "render/vk/global/global_system.h"
-#include "render/vk/global/instance_logic.h"
+#include "render/vk/global/global_logic.h"
+#include "render/vk/logic.h"
+#include "render/vk/logic.h"
 #include "context.h"
 
 namespace Render

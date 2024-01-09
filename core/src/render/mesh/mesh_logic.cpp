@@ -1,15 +1,30 @@
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 #include <vulkan/vulkan.h>
-#include "render/mesh/mesh_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/vk/buffer/buffer_logic.h"
+#include "render/vk/buffer/buffer_set_logic.h"
 #include "common/res_system.h"
-#include "engine_object.h"
 #include "context.h"
+
+namespace std
+{
+    template <>
+    struct hash<Render::Vertex>
+    {
+        size_t operator()(Render::Vertex const &vertex) const
+        {
+            return hash<glm::vec3>()(vertex.positionOS) ^
+                   hash<glm::vec3>()(vertex.normalOS) ^
+                   hash<glm::vec3>()(vertex.color) ^
+                   hash<glm::vec2>()(vertex.uv0);
+        }
+    };
+}
 
 namespace Render
 {
-
     std::shared_ptr<Mesh> MeshLogic::CreateByObj(Context *context,
                                                  const std::string &name, glm::vec3 &defaultColor)
     {

@@ -1,26 +1,20 @@
 ﻿
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_system.h"
-#include "render/vk/global/instance_logic.h"
-#include "render/vk/global/surface_logic.h"
-#include "render/vk/global/physical_device_logic.h"
-#include "render/vk/global/logical_device_logic.h"
-#include "render/vk/global/swapchain_logic.h"
-#include "render/vk/global/descriptor_logic.h"
-#include "render/vk/global/descriptor_pool_logic.h"
+#include "render/vk/global/global_logic.h"
+#include "render/vk/logic.h"
 #include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/buffer/buffer_logic.h"
-#include "render/vk/pass/pass_comp.h"
 #include "render/vk/pass/pass_logic.h"
-#include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/pipeline_logic.h"
 #include "render/light/light_comp.h"
+#include "render/unit/unit_comp.h"
+#include "render/unit/unit_system.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
-#include "logic/camera/camera_logic.h"
 #include "logic/transform/transform_comp.h"
-#include "context.h"
 #include "editor/system.h"
+#include "context.h"
 
 namespace Render
 {
@@ -82,82 +76,13 @@ namespace Render
 		SwapchainLogic::WaitFence(context);
 
 		auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
-		auto &vkCmdBuffer = SwapchainLogic::BeginCmd(context, imageIndex);
+		SwapchainLogic::BeginCmd(context, imageIndex);
 
-		auto &directionLightEO = context->renderLightEOs[0];
-		auto directionLightTransform = directionLightEO->GetComponent<Logic::Transform>();
-		auto directionLightCamera = directionLightEO->GetComponent<Logic::Camera>();
-		auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
+		GlobalUBOUpdateSystem::Update(context);
 
-		DirectionLightUBO directionLightUBO = {};
-		if (directionLightEO->active)
-		{
-			directionLightUBO = {
-				directionLightCamera->view,
-				directionLightCamera->projection,
-				-directionLightTransform->forward,
-				directionLight->color,
-				directionLight->params};
-		}
-
-		auto &mainCameraEO = context->logicMainCameraEO;
-		auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
-		auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
-
-		CameraUBO cameraUBO = {
-			mainCameraTransform->position,
-			mainCamera->view,
-			mainCamera->projection,
-		};
-
-		GlobalUBO globalUBO = {
-			cameraUBO,
-			directionLightUBO};
-
-		auto &globalDescriptor = global->globalDescriptor;
-		auto &globalBuffer = global->globalBuffer;
-
-		BufferSetLogic::Set(context,
-							globalBuffer,
-							globalUBO);
-
-		// shadow
-		{
-			auto &shadowPass = global->passes[Pass_Shadow];
-			FramebufferLogic::BeginRenderPass(context,
-											  imageIndex, vkCmdBuffer, shadowPass);
-			if (directionLightEO->active && directionLight->hasShadow)
-			{
-				FramebufferLogic::RenderUnits(context,
-											  imageIndex, vkCmdBuffer, true);
-			}
-			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
-		}
-
-		// main
-		{
-			auto &mainPass = global->passes[Pass_Main];
-			FramebufferLogic::BeginRenderPass(context,
-											  imageIndex, vkCmdBuffer, mainPass);
-			if (mainCameraEO->active)
-			{
-				FramebufferLogic::RenderUnits(context,
-											  imageIndex, vkCmdBuffer);
-			}
-			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
-		}
-
-		// imGui
-		{
-			auto &imGuiPass = global->passes[Pass_ImGui];
-			FramebufferLogic::BeginRenderPass(context, imageIndex, vkCmdBuffer, imGuiPass);
-
-			Editor::System::NewFrame(context);
-			Editor::System::Draw(context, imageIndex);
-			Editor::System::Render(context, vkCmdBuffer);
-
-			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
-		}
+		GlobalShadowPassRenderSystem::Update(context, imageIndex);
+		GlobalMainPassRenderSystem::Update(context, imageIndex);
+		GlobalImGuiPassRenderSystem::Update(context, imageIndex);
 
 		SwapchainLogic::EndAndSubmitCmd(context, imageIndex);
 		SwapchainLogic::Present(context, imageIndex);
@@ -169,7 +94,7 @@ namespace Render
 
 		Editor::System::Destroy(context);
 
-		//TODO Destroy All Unit
+		UnitDestroySystem::Destroy(context);
 
 		PipelineLogic::DestroyAll(context);
 		PassLogic::DestroyAll(context);

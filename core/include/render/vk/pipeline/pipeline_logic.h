@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <array>
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pass/pass_comp.h"
 
@@ -27,5 +26,4 @@ namespace Render
 
 		static void DestroyShaderStage(Context *, std::shared_ptr<GraphicsPipeline>);
 	};
-
 }

@@ -13,7 +13,7 @@ namespace Editor
 
     bool Window::IsInViewport(Context *context)
     {
-        return false;
+        return isFocuesd;
     }
 
     void Window::DrawViewport(Context *context, uint32_t imageIndex)

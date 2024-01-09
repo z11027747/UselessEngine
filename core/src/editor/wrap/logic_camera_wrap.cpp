@@ -3,9 +3,9 @@
 #include <memory>
 #include <iostream>
 #include <algorithm>
+#include "render/vk/global/global_comp.h"
 #include "editor/wrap/component_wrap.h"
 #include "logic/camera/camera_logic.h"
-#include "editor/system.h"
 #include "context.h"
 
 namespace Editor

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <array>
 #include <memory>
 #include "render/vk/pipeline/pipeline_comp.h"
 
