@@ -10,7 +10,6 @@
 
 namespace Render
 {
-
 	VkDescriptorSet DescriptorSetLogic::AllocateOne(Context *context, VkDescriptorSetLayout descriptorSetLayout)
 	{
 		auto &globalEO = context->renderGlobalEO;
@@ -27,9 +26,6 @@ namespace Render
 		VkDescriptorSet descriptorSet;
 		auto ret = vkAllocateDescriptorSets(logicalDevice, &allocateInfo, &descriptorSet);
 		CheckRet(ret, "vkAllocateDescriptorSets");
-
-		// static int allocateCount = 0;
-		// Common::LogSystem::Info("Allocate VkDescriptorSet count: " + std::to_string(allocateCount++));
 
 		return descriptorSet;
 	}
@@ -56,5 +52,4 @@ namespace Render
 
 		return descriptorSets;
 	}
-
 }

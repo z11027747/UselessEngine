@@ -59,5 +59,9 @@ namespace Render
 		std::vector<VkCommandBuffer> tempCmdBuffers;
 
 		std::vector<std::shared_ptr<Render::Buffer>> tempBuffers;
+		
+		VkDescriptorSetLayout globalDescriptorSetLayout;
+		std::shared_ptr<Descriptor> globalDescriptor;
+		std::shared_ptr<Buffer> globalBuffer;
 	};
 }

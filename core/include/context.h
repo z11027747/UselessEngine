@@ -80,7 +80,6 @@ public:
 		Editor::Test::CreateMainCamera(this);
 		Editor::Test::CreateLight(this);
 		Editor::Test::CreateSkybox(this);
-		Editor::Test::CreateCube(this);
 		Editor::Test::CreateModel(this);
 		Editor::Test::CreateAxis(this);
 	}

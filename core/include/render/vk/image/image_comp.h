@@ -6,11 +6,10 @@ namespace Render
 {
 	struct ImageInfo final
 	{
+		// info
 		VkFormat format;
 		VkExtent3D extent;
 		VkImageAspectFlags aspectMask;
-
-		// image
 		VkImageTiling tiling;
 		VkImageUsageFlags usage;
 		VkImageCreateFlags flags;

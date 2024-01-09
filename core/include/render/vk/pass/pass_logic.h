@@ -57,6 +57,6 @@ namespace Render
 		static void BeginRenderPass(Context *, uint32_t, VkCommandBuffer &, std::shared_ptr<Pass>);
 		static void EndRenderPass(Context *, uint32_t, VkCommandBuffer &);
 
-		static void RenderUnits(Context *, uint32_t, VkCommandBuffer &, GlobalUBO &, bool isShadow = false);
+		static void RenderUnits(Context *, uint32_t, VkCommandBuffer &, bool isShadow = false);
 	};
 }

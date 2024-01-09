@@ -61,11 +61,11 @@ namespace Render
 			write0.dstArrayElement = 0;
 			write0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 			write0.descriptorCount = 1;
-			write0.pImageInfo = &descriptor->vkImage0Info;
+			write0.pImageInfo = &descriptor->image0Info;
 
 			writes.push_back(write0);
 
-			if (descriptor->vkImage1Info.imageView != nullptr)
+			if (descriptor->image1Info.imageView != nullptr)
 			{
 				VkWriteDescriptorSet write1 = {};
 				write1.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -74,7 +74,7 @@ namespace Render
 				write1.dstArrayElement = 0;
 				write1.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 				write1.descriptorCount = 1;
-				write1.pImageInfo = &descriptor->vkImage1Info;
+				write1.pImageInfo = &descriptor->image1Info;
 
 				writes.push_back(write1);
 			}

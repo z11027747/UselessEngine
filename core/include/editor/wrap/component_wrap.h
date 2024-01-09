@@ -5,7 +5,8 @@
 #include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "render/light/light_comp.h"
-#include "render/unit/unit_comp.h"
+#include "render/mesh/mesh_comp.h"
+#include "render/material/material_comp.h"
 
 class Context;
 
@@ -40,10 +41,17 @@ namespace Editor
 	};
 
 	template <>
-	class ComponentWrap<Render::Unit>
+	class ComponentWrap<Render::Mesh>
 	{
 	public:
-		static void Draw(Context *, std::shared_ptr<Render::Unit>, bool);
+		static void Draw(Context *, std::shared_ptr<Render::Mesh>, bool);
+	};
+
+	template <>
+	class ComponentWrap<Render::Material>
+	{
+	public:
+		static void Draw(Context *, std::shared_ptr<Render::Material>, bool);
 	};
 
 }

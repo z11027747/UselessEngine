@@ -38,5 +38,4 @@ namespace Render
 
 		vkDestroyDescriptorSetLayout(logicalDevice, descriptorSetLayout, nullptr);
 	}
-
 }

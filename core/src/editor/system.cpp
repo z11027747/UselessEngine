@@ -91,14 +91,14 @@ namespace Editor
 			auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 			auto sampler = Render::SamplerLogic::Create(context);
 
-			VkDescriptorImageInfo vkImageInfo = {
+			VkDescriptorImageInfo imageInfo = {
 				sampler,
 				colorImage2d->vkImageView,
 				colorImage2d->layout};
 
 			auto descriptor = std::make_shared<Render::Descriptor>();
 			descriptor->set = descriptorSet;
-			descriptor->vkImage0Info = vkImageInfo;
+			descriptor->image0Info = imageInfo;
 
 			Render::DescriptorSetLogic::Update(context,
 											   [&](std::vector<VkWriteDescriptorSet> &writes)
@@ -117,7 +117,7 @@ namespace Editor
 		Render::DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 		for (auto &descriptor : descriptors)
 		{
-			Render::SamplerLogic::Destroy(context, descriptor->vkImage0Info.sampler);
+			Render::SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
 		}
 	}
 

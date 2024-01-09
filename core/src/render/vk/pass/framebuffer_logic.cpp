@@ -10,8 +10,9 @@
 #include "render/vk/image/image_comp.h"
 #include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
-#include "render/vk/pipeline/shader_logic.h"
 #include "render/vk/pass/pass_logic.h"
+#include "render/mesh/mesh_comp.h"
+#include "render/material/material_logic.h"
 #include "render/unit/unit_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/transform/transform_logic.h"
@@ -110,7 +111,7 @@ namespace Render
 
 	void FramebufferLogic::RenderUnits(Context *context,
 									   uint32_t imageIndex, VkCommandBuffer &vkCmdBuffer,
-									   GlobalUBO &globalUBO, bool isShadow)
+									   bool isShadow)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -126,11 +127,12 @@ namespace Render
 			if (unitParentEO != nullptr && !unitParentEO->active)
 				continue;
 
-			auto unit = unitEO->GetComponent<Render::Unit>();
-			if (isShadow && !unit->castShadow)
+			auto mesh = unitEO->GetComponent<Render::Mesh>();
+			auto material = unitEO->GetComponent<Render::Material>();
+			if (isShadow && !material->castShadow)
 				continue;
 
-			auto pipelineName = !isShadow ? unit->pipelineName : "shadow";
+			auto pipelineName = !isShadow ? material->pipelineName : "shadow";
 
 			auto &graphicsPipeline = global->pipelines[pipelineName];
 			auto &pipeline = graphicsPipeline->pipeline;
@@ -138,35 +140,25 @@ namespace Render
 
 			vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-			auto &vertexBuffer = unit->vertexBuffer;
+			auto &vertexBuffer = mesh->vertexBuffer;
 			VkBuffer vertexBuffers[] = {vertexBuffer->vkBuffer};
 			VkDeviceSize offsets[] = {0};
 			vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, vertexBuffers, offsets);
 
-			auto &indices = unit->indices;
-			auto &indexBuffer = unit->indexBuffer;
+			auto &indices = mesh->indices;
+			auto &indexBuffer = mesh->indexBuffer;
 			vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
-
-			auto &globalDescriptor = graphicsPipeline->globalDescriptor;
-			auto &globalBuffer = graphicsPipeline->globalBuffer;
-
-			BufferSetLogic::Set(context,
-								globalBuffer,
-								globalUBO);
-
-			ShaderLogic::UpdateUnitDescriptor(context,
-											  unit, imageIndex);
 
 			auto &model = unitTransform->model;
 			vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 
 			std::vector<VkDescriptorSet> descriptorSets;
-			descriptorSets.push_back(globalDescriptor->set);
+			descriptorSets.push_back(global->globalDescriptor->set);
 
 			if (!isShadow)
 			{
-				if (unit->descriptor != nullptr)
-					descriptorSets.push_back(unit->descriptor->set);
+				if (material->descriptor != nullptr)
+					descriptorSets.push_back(material->descriptor->set);
 			}
 
 			vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,

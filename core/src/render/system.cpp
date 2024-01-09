@@ -6,6 +6,7 @@
 #include "render/vk/global/physical_device_logic.h"
 #include "render/vk/global/logical_device_logic.h"
 #include "render/vk/global/swapchain_logic.h"
+#include "render/vk/global/descriptor_logic.h"
 #include "render/vk/global/descriptor_pool_logic.h"
 #include "render/vk/cmd/cmd_logic.h"
 #include "render/vk/buffer/buffer_logic.h"
@@ -13,7 +14,6 @@
 #include "render/vk/pass/pass_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/pipeline_logic.h"
-#include "render/unit/unit_logic.h"
 #include "render/light/light_comp.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
@@ -56,6 +56,8 @@ namespace Render
 		SwapchainLogic::CreateSemaphores(context);
 		SwapchainLogic::AllocateCmd(context);
 
+		DescriptorLogic::CreateGlobal(context);
+
 		/*auto imGuiPass =*/PassLogic::CreateImGui(context);
 		auto mainPass = PassLogic::CreateMain(context);
 		auto shadowPass = PassLogic::CreateShadow(context);
@@ -76,7 +78,7 @@ namespace Render
 		CmdSubmitLogic::UpdateBatch(context);
 		BufferLogic::DestroyAllTemps(context);
 		CmdPoolLogic::DestroyAllTempBuffers(context);
-		
+
 		SwapchainLogic::WaitFence(context);
 
 		auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
@@ -112,6 +114,13 @@ namespace Render
 			cameraUBO,
 			directionLightUBO};
 
+		auto &globalDescriptor = global->globalDescriptor;
+		auto &globalBuffer = global->globalBuffer;
+
+		BufferSetLogic::Set(context,
+							globalBuffer,
+							globalUBO);
+
 		// shadow
 		{
 			auto &shadowPass = global->passes[Pass_Shadow];
@@ -120,8 +129,7 @@ namespace Render
 			if (directionLightEO->active && directionLight->hasShadow)
 			{
 				FramebufferLogic::RenderUnits(context,
-											  imageIndex, vkCmdBuffer,
-											  globalUBO, true);
+											  imageIndex, vkCmdBuffer, true);
 			}
 			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
 		}
@@ -134,8 +142,7 @@ namespace Render
 			if (mainCameraEO->active)
 			{
 				FramebufferLogic::RenderUnits(context,
-											  imageIndex, vkCmdBuffer,
-											  globalUBO);
+											  imageIndex, vkCmdBuffer);
 			}
 			FramebufferLogic::EndRenderPass(context, imageIndex, vkCmdBuffer);
 		}
@@ -162,10 +169,12 @@ namespace Render
 
 		Editor::System::Destroy(context);
 
-		UnitLogic::Destroy(context);
+		//TODO Destroy All Unit
 
 		PipelineLogic::DestroyAll(context);
 		PassLogic::DestroyAll(context);
+
+		DescriptorLogic::DestroyGlobal(context);
 
 		SwapchainLogic::DestroyImageViews(context);
 		SwapchainLogic::DestroySemaphores(context);

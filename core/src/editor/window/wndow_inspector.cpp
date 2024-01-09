@@ -35,11 +35,17 @@ namespace Editor
 			ComponentWrap<Render::DirectionLight>::Draw(context,
 														directionLight, isFirst);
 		}
-		else if (typeId == typeid(Render::Unit))
+		else if (typeId == typeid(Render::Mesh))
 		{
-			auto unit = std::static_pointer_cast<Render::Unit>(component);
-			ComponentWrap<Render::Unit>::Draw(context,
-											  unit, isFirst);
+			auto mesh = std::static_pointer_cast<Render::Mesh>(component);
+			ComponentWrap<Render::Mesh>::Draw(context,
+											  mesh, isFirst);
+		}
+		else if (typeId == typeid(Render::Material))
+		{
+			auto material = std::static_pointer_cast<Render::Material>(component);
+			ComponentWrap<Render::Material>::Draw(context,
+												  material, isFirst);
 		}
 	}
 

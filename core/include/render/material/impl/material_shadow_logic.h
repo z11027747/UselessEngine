@@ -11,24 +11,7 @@ class Context;
 
 namespace Render
 {
-    class MaterialLogic final
-    {
-    public:
-        static std::shared_ptr<Material> CreateByImage(Context *,
-                                                       const std::string &, const std::string &);
-        static std::shared_ptr<Material> CreateByImageCube(Context *,
-                                                           const std::string &, const std::array<std::string, 6> &);
-
-        static void Destroy(Context *, std::shared_ptr<Material>);
-
-        static void SetPipeline(Context *, std::shared_ptr<Material>, const std::string &);
-        static void SetImage(Context *, std::shared_ptr<Material>, const std::string &);
-        static void SetImageCube(Context *, std::shared_ptr<Material>, const std::array<std::string, 6> &);
-
-        static void CreateDescriptor(Context *, std::shared_ptr<Material>);
-    };
-
-    class MaterialPipelineLogic final
+    class MaterialShadowPipelineLogic final
     {
     public:
         static void SetVertexAttrDescriptions(Context *, std::shared_ptr<GraphicsPipeline>);
@@ -38,7 +21,7 @@ namespace Render
         static void SetColorBlendStage(Context *, std::shared_ptr<GraphicsPipeline>);
     };
 
-    class MaterialDescriptorLogic final
+    class MaterialShadowDescriptorLogic final
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);

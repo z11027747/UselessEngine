@@ -8,8 +8,10 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/pipeline_logic.h"
 #include "render/vk/pipeline/pipeline_layout_logic.h"
-#include "render/vk/pipeline/shader_logic.h"
 #include "render/unit/unit_comp.h"
+#include "render/mesh/mesh_comp.h"
+#include "render/material/material_comp.h"
+#include "render/material/material_logic.h"
 #include "common/res_system.h"
 #include "context.h"
 #include "engine_object.h"
@@ -49,10 +51,7 @@ namespace Render
 		pipelineCreateInfo.pDepthStencilState = &stageInfo.depthStencilStateCreateInfo;
 		pipelineCreateInfo.pColorBlendState = &stageInfo.colorBlendingStateCreateInfo;
 
-		ShaderLogic::CreateGlobalDescriptorSetLayout(context, graphicsPipeline);
-		ShaderLogic::CreateGlobalDescriptor(context, graphicsPipeline);
-		ShaderLogic::UpdateGlobalDescriptor(context, graphicsPipeline);
-		ShaderLogic::CreateDescriptorSetLayout(context, graphicsPipeline);
+		MaterialDescriptorLogic::CreateSetLayout(context, graphicsPipeline);
 		PipelineLayoutLogic::Create(context, graphicsPipeline);
 
 		auto &pipelineLayout = graphicsPipeline->pipelineLayout;
@@ -78,9 +77,7 @@ namespace Render
 		auto &logicalDevice = global->logicalDevice;
 
 		PipelineLayoutLogic::Destroy(context, graphicsPipeline);
-		ShaderLogic::DestroyDescriptorSetLayout(context, graphicsPipeline);
-		ShaderLogic::DestroyGlobalDescriptor(context, graphicsPipeline);
-		ShaderLogic::DestroyGlobalDescriptorSetLayout(context, graphicsPipeline);
+		MaterialDescriptorLogic::DestroySetLayout(context, graphicsPipeline);
 
 		DestroyShaderStage(context, graphicsPipeline);
 
@@ -162,7 +159,7 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &vertexInputAttributeDescriptions = stageInfo.vertexInputAttributeDescriptions;
-		ShaderLogic::CreateVertexAttrDescriptions(context, graphicsPipeline);
+		MaterialPipelineLogic::SetVertexAttrDescriptions(context, graphicsPipeline);
 
 		auto &vertexBindingDescription = stageInfo.vertexBindingDescription;
 		vertexBindingDescription.binding = 0;
@@ -205,7 +202,7 @@ namespace Render
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 
-		ShaderLogic::SetViewport(context, graphicsPipeline);
+		MaterialPipelineLogic::SetViewport(context, graphicsPipeline);
 
 		auto &scissor = stageInfo.scissor;
 		scissor.offset = {0, 0};
@@ -234,7 +231,7 @@ namespace Render
 		rasterizationStateCreateInfo.depthClampEnable = false;
 		rasterizationStateCreateInfo.depthBiasEnable = false;
 
-		ShaderLogic::SetRasterizationCreateInfo(context, graphicsPipeline);
+		MaterialPipelineLogic::SetRasterizationCreateInfo(context, graphicsPipeline);
 	}
 
 	void PipelineLogic::CreateMultisampleStage(Context *context,
@@ -263,7 +260,7 @@ namespace Render
 		depthStencilStateCreateInfo.minDepthBounds = 0.0f;
 		depthStencilStateCreateInfo.maxDepthBounds = 1.0f;
 
-		ShaderLogic::SetDepthStencilCreateInfo(context, graphicsPipeline);
+		MaterialPipelineLogic::SetDepthStencilCreateInfo(context, graphicsPipeline);
 	}
 
 	void PipelineLogic::CreateColorBlendStage(Context *context,
@@ -282,6 +279,8 @@ namespace Render
 		colorBlendingStateCreateInfo.logicOp = VK_LOGIC_OP_COPY;
 		colorBlendingStateCreateInfo.attachmentCount = 1;
 		colorBlendingStateCreateInfo.pAttachments = &colorBlendAttachmentState;
+
+		MaterialPipelineLogic::SetColorBlendStage(context, graphicsPipeline);
 	}
 
 }
