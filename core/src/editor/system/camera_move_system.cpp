@@ -63,8 +63,8 @@ namespace Editor
 
         if (rotateEnabled)
         {
-            float offsetX = (float)currX - rotateLastX;
-            float offsetY = (float)currY - rotateLastY;
+            auto offsetX = (float)currX - rotateLastX;
+            auto offsetY = (float)currY - rotateLastY;
 
             transform->localEulerAngles.y += offsetX * rotateSpeed * deltaTime;
             transform->localEulerAngles.x += offsetY * rotateSpeed * deltaTime;

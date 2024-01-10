@@ -2,7 +2,7 @@
 #include <string>
 #include "render/mesh/mesh_comp.h"
 #include "logic/hit/hit_ray_logic.h"
-#include "logic/camera/camera_comp.h"
+#include "logic/camera/camera_logic.h"
 #include "common/log_system.h"
 #include "engine_object.h"
 #include "context.h"
@@ -12,19 +12,8 @@ namespace Logic
     std::shared_ptr<EngineObject> HitRayCheckLogic::FromNdc(Context *context,
                                                             float ndcX, float ndcY)
     {
-        auto &mainCameraEO = context->logicMainCameraEO;
-        auto mainCamera = mainCameraEO->GetComponent<Camera>();
-        auto transform = mainCameraEO->GetComponent<Transform>();
-
-        auto inverseVP = glm::inverse(mainCamera->projection * mainCamera->view);
-
-        auto ndcPos_near = glm::vec4(ndcX, ndcY, 0.0f, 1.0f);
-        auto worldPos_near = inverseVP * ndcPos_near;
-        worldPos_near /= worldPos_near.w;
-        
-        auto ndcPos_far = glm::vec4(ndcX, ndcY, 1.0f, 1.0f);
-        auto worldPos_far = inverseVP * ndcPos_far;
-        worldPos_far /= worldPos_far.w;
+        auto worldPos_near = CameraLogic::TransformNdcToWorld(context, glm::vec3(ndcX, ndcY, 0.0f));
+        auto worldPos_far = CameraLogic::TransformNdcToWorld(context, glm::vec3(ndcX, ndcY, 1.0f));
 
         HitRay ray = {};
         ray.origin = worldPos_near;
@@ -33,11 +22,13 @@ namespace Logic
         auto &logicHitEOs = context->logicHitEOs;
         for (const auto &hitEO : logicHitEOs)
         {
+            if (!hitEO->active)
+                continue;
             auto result = Test(context,
                                ray, hitEO);
             if (result)
             {
-                Common::LogSystem::Info("Ray Check Target. Name:", hitEO->name);
+                // Common::LogSystem::Info("Ray Check Target. Name:", hitEO->name);
                 return hitEO;
             }
         }
@@ -49,22 +40,22 @@ namespace Logic
                                 HitRay &ray, std::shared_ptr<EngineObject> hitEO)
     {
         auto hitTransform = hitEO->GetComponent<Transform>();
-        auto &worldPosition = hitTransform->worldPosition;
-
         auto hitMesh = hitEO->GetComponent<Render::Mesh>();
+
         auto &bound = hitMesh->bound;
+        auto position = bound.center + hitTransform->worldPosition;
         auto radius = bound.radius * hitTransform->localScale.x;
 
         auto &origin = ray.origin;
         auto &direction = ray.direction;
 
-        auto distPO = glm::distance(worldPosition, origin);
+        auto distPO = glm::distance(position, origin);
         if (distPO <= radius)
         {
             return true;
         }
 
-        auto to = worldPosition - origin;
+        auto to = position - origin;
         auto dot = glm::dot(to, direction);
         if (dot < 0.0f)
         {

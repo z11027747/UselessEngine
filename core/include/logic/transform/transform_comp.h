@@ -24,5 +24,6 @@ namespace Logic
 		std::vector<std::shared_ptr<EngineObject>> childEOs;
 		
 		glm::vec3 worldPosition;
+		glm::vec3 worldScale;
 	};
 }

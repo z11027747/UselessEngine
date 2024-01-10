@@ -46,8 +46,8 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &depthStencilStateCreateInfo = stageInfo.depthStencilStateCreateInfo;
-		depthStencilStateCreateInfo.depthTestEnable = true;
-		depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+		depthStencilStateCreateInfo.depthTestEnable = false;
+		// depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
 		depthStencilStateCreateInfo.depthWriteEnable = false;
 	}
 	void MaterialColorPipelineLogic::SetColorBlendStage(Context *context,

@@ -254,6 +254,8 @@ namespace Editor
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
             auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(1.0f, 0.0f, 0.0f));
+            modelMesh->bound.center = glm::vec3(-0.2f, 0.0f, 0.0f);
+            modelMesh->bound.radius = 0.2f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
             auto modelUnit = std::make_shared<Render::Unit>();
 
@@ -278,6 +280,8 @@ namespace Editor
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
             auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(0.0f, 1.0f, 0.0f));
+            modelMesh->bound.center = glm::vec3(0.0f, -0.2f, 0.0f);
+            modelMesh->bound.radius = 0.2f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
             auto modelUnit = std::make_shared<Render::Unit>();
 
@@ -302,6 +306,8 @@ namespace Editor
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
             auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(0.0f, 0.0f, 1.0f));
+            modelMesh->bound.center = glm::vec3(0.0f, 0.0f, -0.2f);
+            modelMesh->bound.radius = 0.2f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
             auto modelUnit = std::make_shared<Render::Unit>();
 

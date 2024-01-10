@@ -14,5 +14,4 @@ namespace Render
 		static void Create(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void Destroy(Context *, std::shared_ptr<GraphicsPipeline>);
 	};
-
 }

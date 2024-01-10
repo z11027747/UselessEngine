@@ -11,7 +11,7 @@
 namespace Logic
 {
 	void TransformLogic::Add(std::shared_ptr<EngineObject> eo,
-							 glm::vec3 p, glm::vec3 ea, glm::vec3 s)
+							 const glm::vec3 &p, const glm::vec3 &ea, const glm::vec3 &s)
 	{
 		auto transform = std::make_shared<Transform>();
 		transform->localPosition = p;
@@ -19,6 +19,26 @@ namespace Logic
 		transform->localScale = s;
 
 		eo->AddComponent<Transform>(transform);
+	}
+
+	void TransformLogic::SetScale(std::shared_ptr<EngineObject> eo, const glm::vec3 &s)
+	{
+		auto transform = eo->GetComponent<Logic::Transform>();
+		transform->localScale = s;
+	}
+
+	void TransformLogic::SetScale(std::shared_ptr<EngineObject> eo, float s)
+	{
+		auto transform = eo->GetComponent<Logic::Transform>();
+		transform->localScale = glm::vec3(s);
+	}
+
+	void TransformLogic::ResetAll(std::shared_ptr<EngineObject> eo)
+	{
+		auto transform = eo->GetComponent<Logic::Transform>();
+		transform->localPosition = glm::vec3(0.0f);
+		transform->localEulerAngles = glm::vec3(0.0f);
+		transform->localScale = glm::vec3(1.0f);
 	}
 
 	void TransformLogic::UpdateModel(std::shared_ptr<EngineObject> eo)
@@ -37,10 +57,12 @@ namespace Logic
 			model = parentTransform->model * model;
 
 			transform->worldPosition = transform->localPosition + parentTransform->localPosition;
+			transform->worldScale = transform->localScale * parentTransform->localScale;
 		}
 		else
 		{
 			transform->worldPosition = transform->localPosition;
+			transform->worldScale = transform->localScale;
 		}
 
 		transform->model = model;

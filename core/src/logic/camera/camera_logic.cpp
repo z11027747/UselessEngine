@@ -37,7 +37,7 @@ namespace Logic
 		view[3][1] = -glm::dot(u, p);
 		view[3][2] = glm::dot(f, p);
 		camera->view = view;
-		// camera->inverseView = glm::inverse(view);
+		camera->inverseView = glm::inverse(view);
 	}
 
 	void CameraLogic::UpdateProjection(Context *context,
@@ -62,6 +62,21 @@ namespace Logic
 		}
 
 		camera->projection = projection;
-		// camera->inverseProjection = glm::inverse(projection);
+		camera->inverseProjection = glm::inverse(projection);
+	}
+
+	glm::vec3 CameraLogic::TransformNdcToWorld(Context *context,
+											   const glm::vec3 &ndcPos)
+	{
+		auto &mainCameraEO = context->logicMainCameraEO;
+		auto mainCamera = mainCameraEO->GetComponent<Camera>();
+
+		auto inverseVP = mainCamera->inverseView * mainCamera->inverseProjection;
+
+		auto ndcPos4 = glm::vec4(ndcPos, 1.0f);
+		auto worldPos = inverseVP * ndcPos4;
+		worldPos /= worldPos.w;
+
+		return worldPos;
 	}
 }

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <typeindex>
+#include "logic/transform/transform_logic.h"
 #include "logic/move/move_logic.h"
 #include "editor/wrap/component_wrap.h"
 #include "editor/window.h"
