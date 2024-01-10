@@ -35,6 +35,7 @@ namespace Render
 
 			global->physicalDevice = physicalDevice;
 			global->physicalQueueFamilyIndex = queueFamilyIndex;
+			
 			return true;
 		}
 

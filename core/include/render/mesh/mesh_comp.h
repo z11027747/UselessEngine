@@ -23,6 +23,12 @@ namespace Render
         }
     };
 
+    struct BoundingSphere final
+    {
+        glm::vec3 center;
+        float radius;
+    };
+
     struct Mesh final
     {
         std::string objName;
@@ -30,5 +36,7 @@ namespace Render
         std::vector<uint16_t> indices;
         std::shared_ptr<Buffer> vertexBuffer;
         std::shared_ptr<Buffer> indexBuffer;
+
+        BoundingSphere bound;
     };
 }

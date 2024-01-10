@@ -14,9 +14,9 @@ namespace Logic
 							 glm::vec3 p, glm::vec3 ea, glm::vec3 s)
 	{
 		auto transform = std::make_shared<Transform>();
-		transform->position = p;
-		transform->eulerAngles = ea;
-		transform->scale = s;
+		transform->localPosition = p;
+		transform->localEulerAngles = ea;
+		transform->localScale = s;
 
 		eo->AddComponent<Transform>(transform);
 	}
@@ -25,9 +25,9 @@ namespace Logic
 	{
 		auto transform = eo->GetComponent<Logic::Transform>();
 
-		auto translation = glm::translate(glm::mat4(1.0f), transform->position);
-		auto rotation = glm::toMat4(glm::quat(glm::radians(transform->eulerAngles)));
-		auto scale = glm::scale(glm::mat4(1.0f), transform->scale);
+		auto translation = glm::translate(glm::mat4(1.0f), transform->localPosition);
+		auto rotation = glm::toMat4(glm::quat(glm::radians(transform->localEulerAngles)));
+		auto scale = glm::scale(glm::mat4(1.0f), transform->localScale);
 
 		auto model = translation * rotation * scale;
 
@@ -35,6 +35,12 @@ namespace Logic
 		{
 			auto parentTransform = transform->parentEO->GetComponent<Logic::Transform>();
 			model = parentTransform->model * model;
+
+			transform->worldPosition = transform->localPosition + parentTransform->localPosition;
+		}
+		else
+		{
+			transform->worldPosition = transform->localPosition;
 		}
 
 		transform->model = model;

@@ -3,8 +3,26 @@
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 
+class Context;
+
 namespace Editor
 {
+    class TestLogic final
+    {
+    public:
+        static void CreateImGui(Context *);
+        static void DestroyImGui(Context *);
+
+        static void CreateDescriptor(Context *);
+        static void DestroyDescriptor(Context *);
+
+        static void CreateMainCamera(Context *);
+        static void CreateLight(Context *);
+        static void CreateSkybox(Context *);
+        static void CreateModel(Context *);
+        static void CreateAxis(Context *);
+    };
+
     inline static bool ImGui_ButtonWithColor(const char *label, ImVec4 color, bool cond = true)
     {
         if (cond)

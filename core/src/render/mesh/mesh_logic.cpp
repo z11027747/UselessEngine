@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 #include <vulkan/vulkan.h>
@@ -31,6 +32,7 @@ namespace Render
         auto mesh = std::make_shared<Mesh>();
         LoadObj(context, mesh, name, defaultColor);
         CreateBuffer(context, mesh);
+        CalcBoundingSphere(context, mesh);
         return mesh;
     }
 
@@ -116,5 +118,28 @@ namespace Render
         BufferSetLogic::SetVector(context,
                                   mesh->indexBuffer,
                                   indices);
+    }
+
+    void MeshLogic::CalcBoundingSphere(Context *context,
+                                       std::shared_ptr<Mesh> mesh)
+    {
+        glm::vec3 sumPositionOS = glm::vec3(0.0f);
+        float maxDistance = 0.0f;
+
+        auto &vertices = mesh->vertices;
+        for (const auto &vertex : vertices)
+        {
+            auto &positionOS = vertex.positionOS;
+            auto distance = glm::length(positionOS);
+
+            sumPositionOS += positionOS;
+            maxDistance = std::max(distance, maxDistance);
+        }
+
+        BoundingSphere boundingSphere = {};
+        boundingSphere.center = sumPositionOS / static_cast<float>(vertices.size());
+        boundingSphere.radius = maxDistance;
+
+        mesh->bound = boundingSphere;
     }
 }

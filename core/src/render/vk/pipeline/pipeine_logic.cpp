@@ -222,6 +222,8 @@ namespace Render
 		rasterizationStateCreateInfo.rasterizerDiscardEnable = false;
 		rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
 		rasterizationStateCreateInfo.lineWidth = 1.0f;
+		// rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_LINE;
+		// rasterizationStateCreateInfo.lineWidth = 2.0f;
 		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;
 		rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		rasterizationStateCreateInfo.depthClampEnable = false;

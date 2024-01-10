@@ -10,6 +10,7 @@
 #include "render/light/light_comp.h"
 #include "render/unit/unit_comp.h"
 #include "render/unit/unit_system.h"
+#include "render/material/material_system.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
@@ -78,11 +79,11 @@ namespace Render
 		auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
 		SwapchainLogic::BeginCmd(context, imageIndex);
 
-		GlobalUBOUpdateSystem::Update(context);
+		MaterialGlobalUBOUpdateSystem::Update(context);
 
-		GlobalShadowPassRenderSystem::Update(context, imageIndex);
-		GlobalMainPassRenderSystem::Update(context, imageIndex);
-		GlobalImGuiPassRenderSystem::Update(context, imageIndex);
+		ShadowPassRenderSystem::Update(context, imageIndex);
+		MainPassRenderSystem::Update(context, imageIndex);
+		ImGuiPassRenderSystem::Update(context, imageIndex);
 
 		SwapchainLogic::EndAndSubmitCmd(context, imageIndex);
 		SwapchainLogic::Present(context, imageIndex);

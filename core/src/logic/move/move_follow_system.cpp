@@ -17,7 +17,7 @@ namespace Logic
         auto transform = eo->GetComponent<Transform>();
         auto targetTransform = targetEO->GetComponent<Transform>();
 
-        transform->position = targetTransform->position + offset;
+        transform->localPosition = targetTransform->localPosition + offset;
     }
 
     void MoveFollowSystem::Update(Context *context)

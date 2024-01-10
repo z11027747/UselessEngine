@@ -12,9 +12,9 @@
 
 namespace Editor
 {
-	void DrawComponent(Context *context,
-					   std::type_index typeId, std::shared_ptr<void> component,
-					   bool isFirst)
+	static void DrawComponent(Context *context,
+							  std::type_index typeId, std::shared_ptr<void> component,
+							  bool isFirst)
 	{
 		if (typeId == typeid(Logic::Transform))
 		{
@@ -54,12 +54,19 @@ namespace Editor
 	{
 		selectEO = eo;
 
-		auto axisEO = context->GetEO(Name_Axis);
-		axisEO->active = true;
+		if (eo->name != Name_MainCamera &&
+			eo->name != Name_Axis &&
+			eo->name != "X" &&
+			eo->name != "Y" &&
+			eo->name != "Z")
+		{
+			auto axisEO = context->GetEO(Name_Axis);
+			axisEO->active = true;
 
-		Logic::MoveLogic::BeginFollow(context,
-									  axisEO,
-									  eo, glm::vec3(0.0f));
+			Logic::MoveLogic::BeginFollow(context,
+										  axisEO,
+										  eo, glm::vec3(0.0f));
+		}
 
 		auto &componentMap = selectEO->componentMap;
 		for (const auto &kv : componentMap)

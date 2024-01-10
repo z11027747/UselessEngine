@@ -18,7 +18,7 @@ namespace Logic
 		auto camera = eo->GetComponent<Camera>();
 
 		auto transform = eo->GetComponent<Transform>();
-		auto &position = transform->position;
+		auto &p = transform->localPosition;
 		auto &r = transform->right;
 		auto &u = transform->up;
 		auto &f = transform->forward;
@@ -33,10 +33,11 @@ namespace Logic
 		view[0][2] = -f.x;
 		view[1][2] = -f.y;
 		view[2][2] = -f.z;
-		view[3][0] = -glm::dot(r, position);
-		view[3][1] = -glm::dot(u, position);
-		view[3][2] = glm::dot(f, position);
+		view[3][0] = -glm::dot(r, p);
+		view[3][1] = -glm::dot(u, p);
+		view[3][2] = glm::dot(f, p);
 		camera->view = view;
+		// camera->inverseView = glm::inverse(view);
 	}
 
 	void CameraLogic::UpdateProjection(Context *context,
@@ -47,16 +48,20 @@ namespace Logic
 		auto near = camera->near;
 		auto far = camera->far;
 
+		auto projection = glm::mat4(1.0f);
 		if (camera->mode == CameraMode::ePerspective)
 		{
-			auto fov = camera->fov;
-			camera->projection = glm::perspective(glm::radians(fov), aspect, near, far);
+			auto fov = glm::radians(camera->fov);
+			projection = glm::perspective(fov, aspect, near, far);
 		}
 		else if (camera->mode == CameraMode::eOrtho)
 		{
 			float halfWidth = camera->size * 0.5f;
 			float halfHeight = halfWidth / aspect;
-			camera->projection = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, near, far);
+			projection = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, near, far);
 		}
+
+		camera->projection = projection;
+		// camera->inverseProjection = glm::inverse(projection);
 	}
 }

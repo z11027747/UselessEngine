@@ -1,13 +1,12 @@
 #pragma once
 
 class Context;
-class EngineObject;
 
-namespace Logic
+namespace Render
 {
-    class CameraUpdateVPSystem final
+    class MaterialGlobalUBOUpdateSystem final
     {
     public:
         static void Update(Context *);
     };
-}
+};

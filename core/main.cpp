@@ -27,7 +27,7 @@ int main()
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetFramebufferSizeCallback(window, size_callback);
 
-	context = std::make_unique<Context>(window, aspect);
+	context = std::make_unique<Context>(window, width, height, aspect);
 	context->Create();
 
 	auto deltaTime = 0.0f;

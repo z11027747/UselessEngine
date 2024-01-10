@@ -34,6 +34,11 @@ namespace Render
 
 		deviceCreateInfo.enabledLayerCount = 0;
 
+		VkPhysicalDeviceFeatures feature = {};
+		feature.fillModeNonSolid = VK_TRUE;
+		feature.wideLines = true;
+		deviceCreateInfo.pEnabledFeatures = &feature;
+
 		VkDevice logicalDevice;
 		auto ret = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice);
 		CheckRet(ret, "vkCreateDevice");

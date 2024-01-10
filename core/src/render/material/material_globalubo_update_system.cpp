@@ -1,8 +1,9 @@
 
 #include "render/vk/global/global_comp.h"
-#include "render/vk/global/global_system.h"
 #include "render/vk/buffer/buffer_set_logic.h"
 #include "render/light/light_comp.h"
+#include "render/material/material_comp.h"
+#include "render/material/material_system.h"
 #include "logic/camera/camera_logic.h"
 #include "logic/transform/transform_comp.h"
 #include "engine_object.h"
@@ -12,7 +13,7 @@ class Context;
 
 namespace Render
 {
-    void GlobalUBOUpdateSystem::Update(Context *context)
+    void MaterialGlobalUBOUpdateSystem::Update(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -38,7 +39,7 @@ namespace Render
         auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
 
         CameraUBO cameraUBO = {
-            mainCameraTransform->position,
+            mainCameraTransform->localPosition,
             mainCamera->view,
             mainCamera->projection,
         };

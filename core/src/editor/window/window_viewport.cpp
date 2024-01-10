@@ -9,26 +9,41 @@
 
 namespace Editor
 {
-    static bool isFocuesd;
+    static bool focuesd;
+    static ImVec2 pos;
+    static ImVec2 size;
 
     bool Window::IsInViewport(Context *context)
     {
-        return isFocuesd;
+        return focuesd;
+    }
+    void Window::ToViewportNdcXY(Context *context,
+                                 float &x, float &y)
+    {
+        auto &style = ImGui::GetStyle();
+
+        // viewport space
+        x = x - pos.x - style.WindowPadding.x;
+        y = (size.y + pos.y) - y - style.WindowPadding.y;
+
+        // ndc space
+        x = 2.0f * x / size.x - 1.0f;
+        y = 2.0f * y / (size.y - pos.y) - 1.0f;
     }
 
-    void Window::DrawViewport(Context *context, uint32_t imageIndex)
+    void Window::DrawViewport(Context *context)
     {
         if (ImGui::Begin("Scene", NULL))
         {
-            isFocuesd = ImGui::IsWindowFocused();
+            focuesd = ImGui::IsWindowFocused();
+            pos = ImGui::GetWindowPos();
+            size = ImGui::GetWindowSize();
 
-            auto viewportPanelSize = ImGui::GetContentRegionAvail();
-            ImGui::Image(System::descriptors[imageIndex]->set,
-                         ImVec2{viewportPanelSize.x, viewportPanelSize.y});
+            ImGui::Image(System::descriptor->set, ImGui::GetContentRegionAvail());
 
             ImGui::SetItemAllowOverlap();
             ImGui::SetCursorPos(ImGui::GetWindowContentRegionMin());
-            ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Viewport Size: %.fx%.f", viewportPanelSize.x, viewportPanelSize.y);
+            ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Viewport Size: %.fx%.f", size.x, size.y);
         }
         ImGui::End();
 

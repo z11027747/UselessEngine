@@ -8,7 +8,8 @@
 #include <string>
 #include "render/system.h"
 #include "logic/system.h"
-#include "editor/test.h"
+#include "editor/system.h"
+#include "editor/test_logic.h"
 #include "engine_object.h"
 
 const std::string Name_MainCamera = "MainCamera";
@@ -20,11 +21,15 @@ class Context final
 {
 public:
 	GLFWwindow *window;
+	int width;
+	int height;
 	float aspect;
 
-	Context(GLFWwindow *w, float asp)
+	Context(GLFWwindow *win, int w, int h, float asp)
 	{
-		window = w;
+		window = win;
+		width = w;
+		height = h;
 		aspect = asp;
 		currTime = 0.0f;
 		deltaTime = 0.0f;
@@ -42,6 +47,7 @@ public:
 	// logic
 	std::shared_ptr<EngineObject> logicMainCameraEO;
 	std::vector<std::shared_ptr<EngineObject>> logicMoveEOs;
+	std::vector<std::shared_ptr<EngineObject>> logicHitEOs;
 
 	// all-engineObject
 	std::vector<std::shared_ptr<EngineObject>> allEOs;
@@ -64,17 +70,18 @@ public:
 		Logic::System::Create(this);
 
 		// Test
-		Editor::Test::CreateMainCamera(this);
-		Editor::Test::CreateLight(this);
-		Editor::Test::CreateSkybox(this);
-		Editor::Test::CreateModel(this);
-		Editor::Test::CreateAxis(this);
+		Editor::TestLogic::CreateMainCamera(this);
+		Editor::TestLogic::CreateLight(this);
+		Editor::TestLogic::CreateSkybox(this);
+		Editor::TestLogic::CreateModel(this);
+		Editor::TestLogic::CreateAxis(this);
 	}
 
 	void Update()
 	{
 		Render::System::Update(this);
 		Logic::System::Update(this);
+		Editor::System::Update(this);
 	}
 
 	void Destroy()

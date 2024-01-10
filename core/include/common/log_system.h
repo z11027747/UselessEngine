@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <ctime>
 #include <stdexcept>
@@ -10,8 +11,19 @@ namespace Common
 	class LogSystem final
 	{
 	public:
-		static void Debug(const std::string &message)
+		template <typename... Args>
+		static std::string ConcatenateArgs(Args &&...args)
 		{
+			std::ostringstream oss;
+			(oss << ... << std::forward<Args>(args));
+			return oss.str();
+		}
+
+		template <typename... Args>
+		static void Debug(Args &&...args)
+		{
+			auto message = ConcatenateArgs(std::forward<Args>(args)...);
+
 			auto now = std::time(nullptr);
 			std::tm local_time = {};
 			localtime_s(&local_time, &now);
@@ -22,8 +34,11 @@ namespace Common
 			std::cout << std::endl;
 		}
 
-		static void Info(const std::string &message)
+		template <typename... Args>
+		static void Info(Args &&...args)
 		{
+			auto message = ConcatenateArgs(std::forward<Args>(args)...);
+
 			auto now = std::time(nullptr);
 			std::tm local_time = {};
 			localtime_s(&local_time, &now);
@@ -34,8 +49,11 @@ namespace Common
 			std::cout << std::endl;
 		}
 
-		static void Error(const std::string &message)
+		template <typename... Args>
+		static void Error(Args &&...args)
 		{
+			auto message = ConcatenateArgs(std::forward<Args>(args)...);
+
 			auto now = std::time(nullptr);
 			std::tm local_time = {};
 			localtime_s(&local_time, &now);
@@ -46,9 +64,10 @@ namespace Common
 			std::cout << std::endl;
 		}
 
-		static void Exception(const std::string &message)
+		template <typename... Args>
+		static void Exception(Args &&...args)
 		{
-			Error(message);
+			auto message = ConcatenateArgs(std::forward<Args>(args)...);
 			throw std::runtime_error(message);
 		}
 	};

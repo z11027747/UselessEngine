@@ -59,7 +59,7 @@ namespace Render
     {
         if (ret != VK_SUCCESS)
         {
-            Common::LogSystem::Exception(std::string("imgui: ") + ToString(ret));
+            Common::LogSystem::Exception("imgui: ", ToString(ret));
         }
     }
 
@@ -67,7 +67,7 @@ namespace Render
     {
         if (ret != VK_SUCCESS)
         {
-            Common::LogSystem::Exception(info + std::string(": ") + ToString(ret));
+            Common::LogSystem::Exception(info, ": ", ToString(ret));
         }
     }
 
@@ -79,11 +79,11 @@ namespace Render
     {
         if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         {
-            Common::LogSystem::Exception("Vk userCallback: " + std::string(pCallbackData->pMessage));
+            Common::LogSystem::Exception("Vk userCallback: ", pCallbackData->pMessage);
         }
         else
         {
-            Common::LogSystem::Debug("Vk userCallback: " + std::string(pCallbackData->pMessage));
+            Common::LogSystem::Debug("Vk userCallback: ", pCallbackData->pMessage);
         }
 
         return VK_FALSE;

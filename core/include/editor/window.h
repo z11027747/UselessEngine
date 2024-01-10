@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <memory>
 #include <stdint.h>
 
@@ -11,12 +12,12 @@ namespace Editor
 	class Window final
 	{
 	public:
-		static void Draw(Context *context, uint32_t imageIndex)
+		static void Draw(Context *context)
 		{
 			DrawMenuBar(context);
 			DrawHierachy(context);
 			DrawInspector(context);
-			DrawViewport(context, imageIndex);
+			DrawViewport(context);
 			DrawProject(context);
 		}
 
@@ -26,7 +27,8 @@ namespace Editor
 		static void DrawProject(Context *);
 
 		static bool IsInViewport(Context *);
-		static void DrawViewport(Context *, uint32_t);
+		static void ToViewportNdcXY(Context *, float &, float &);
+		static void DrawViewport(Context *);
 
 		static std::shared_ptr<EngineObject> selectEO;
 		static void SetSelectEO(Context *, std::shared_ptr<EngineObject> eo);

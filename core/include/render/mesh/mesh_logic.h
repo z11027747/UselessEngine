@@ -21,5 +21,7 @@ namespace Render
                             const std::string &, glm::vec3 & = glm::vec3(1.0f, 1.0f, 1.0f));
 
         static void CreateBuffer(Context *, std::shared_ptr<Mesh>);
+
+        static void CalcBoundingSphere(Context *, std::shared_ptr<Mesh>);
     };
 }

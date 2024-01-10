@@ -1,18 +1,18 @@
 
 #include <GLFW/glfw3.h>
-#include "logic/transform/transform_comp.h"
 #include "logic/camera/camera_logic.h"
 #include "logic/camera/camera_system.h"
 #include "editor/window.h"
-#include "context.h"
+#include "editor/system.h"
 #include "engine_object.h"
+#include "context.h"
 
-namespace Logic
+namespace Editor
 {
     static float moveSpeed = 5.0f;
 
     static void UpdatePos(Context *context,
-                          std::shared_ptr<Transform> transform)
+                          std::shared_ptr<Logic::Transform> transform)
     {
         auto &window = context->window;
         auto deltaTime = context->deltaTime;
@@ -39,7 +39,7 @@ namespace Logic
 
         if (moveDir != glm::vec3(0.0f))
         {
-            transform->position += glm::normalize(moveDir) * moveSpeed * deltaTime;
+            transform->localPosition += glm::normalize(moveDir) * moveSpeed * deltaTime;
         }
     }
 
@@ -48,7 +48,7 @@ namespace Logic
     static float rotateLastX, rotateLastY;
 
     static void UpdateRot(Context *context,
-                          std::shared_ptr<Transform> transform)
+                          std::shared_ptr<Logic::Transform> transform)
     {
         auto &window = context->window;
         auto deltaTime = context->deltaTime;
@@ -66,8 +66,8 @@ namespace Logic
             float offsetX = (float)currX - rotateLastX;
             float offsetY = (float)currY - rotateLastY;
 
-            transform->eulerAngles.y += offsetX * rotateSpeed * deltaTime;
-            transform->eulerAngles.x += offsetY * rotateSpeed * deltaTime;
+            transform->localEulerAngles.y += offsetX * rotateSpeed * deltaTime;
+            transform->localEulerAngles.x += offsetY * rotateSpeed * deltaTime;
         }
 
         rotateLastX = (float)currX;
@@ -80,7 +80,7 @@ namespace Logic
             return;
 
         auto &mainCamera = context->logicMainCameraEO;
-        auto mainCameraTransform = mainCamera->GetComponent<Transform>();
+        auto mainCameraTransform = mainCamera->GetComponent<Logic::Transform>();
 
         UpdatePos(context, mainCameraTransform);
         UpdateRot(context, mainCameraTransform);
