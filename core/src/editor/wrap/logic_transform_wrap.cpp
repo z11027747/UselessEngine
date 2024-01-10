@@ -16,6 +16,11 @@ namespace Editor
 	void ComponentWrap<Logic::Transform>::Draw(Context *context,
 											   std::shared_ptr<Logic::Transform> transform, bool isFirst)
 	{
+		if (isFirst)
+		{
+			return;
+		}
+
 		ImGui_Drag_GlmVec3(transform->localPosition, pId, 0.02f);
 		ImGui::SameLine();
 		if (ImGui::Button("P", ImVec2(20, 20)))

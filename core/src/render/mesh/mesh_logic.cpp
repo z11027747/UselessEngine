@@ -138,7 +138,7 @@ namespace Render
 
         BoundingSphere boundingSphere = {};
         boundingSphere.center = sumPositionOS / static_cast<float>(vertices.size());
-        boundingSphere.radius = maxDistance;
+        boundingSphere.radius = maxDistance * 0.8f;
 
         mesh->bound = boundingSphere;
     }

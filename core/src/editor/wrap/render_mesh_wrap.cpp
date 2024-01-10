@@ -21,6 +21,7 @@ namespace Editor
 			boundCenter[1] = mesh->bound.center.y;
 			boundCenter[2] = mesh->bound.center.z;
 			boundRadius = mesh->bound.radius;
+			return;
 		}
 
 		if (ImGui::InputText("ObjName", objName, IM_ARRAYSIZE(objName)))

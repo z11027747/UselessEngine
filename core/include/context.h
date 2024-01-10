@@ -16,6 +16,9 @@ const std::string Name_MainCamera = "MainCamera";
 const std::string Name_DirectionLight = "DirectionLight";
 const std::string Name_Skybox = "Skybox";
 const std::string Name_Axis = "Axis";
+const std::string Name_AxisX = "X";
+const std::string Name_AxisY = "Y";
+const std::string Name_AxisZ = "Z";
 
 class Context final
 {
@@ -48,6 +51,7 @@ public:
 	std::shared_ptr<EngineObject> logicMainCameraEO;
 	std::vector<std::shared_ptr<EngineObject>> logicMoveEOs;
 	std::vector<std::shared_ptr<EngineObject>> logicHitEOs;
+	std::vector<std::shared_ptr<EngineObject>> logicAxisHitEOs;
 
 	// all-engineObject
 	std::vector<std::shared_ptr<EngineObject>> allEOs;

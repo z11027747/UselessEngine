@@ -18,7 +18,8 @@ namespace Editor
 	void System::Update(Context *context)
 	{
 		CameraMoveSystem::Update(context);
-		ViewportSelectSystem::Update(context);
+		AxisSelectSystem::Update(context);
+		EOSelectSystem::Update(context);
 	}
 
 	void System::Destroy(Context *context)

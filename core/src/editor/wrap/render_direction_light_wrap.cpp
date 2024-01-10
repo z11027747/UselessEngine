@@ -23,6 +23,7 @@ namespace Editor
 			diffuseIntensity = directionLight->params.x;
 			specualrShininess = directionLight->params.y;
 			specularIntensity = directionLight->params.z;
+			return;
 		}
 
 		if (ImGui::ColorEdit3("Color", color))

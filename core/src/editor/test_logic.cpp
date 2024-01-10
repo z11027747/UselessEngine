@@ -226,6 +226,7 @@ namespace Editor
 
         context->AddEO(modelEO);
         context->renderUnitEOs.emplace_back(modelEO);
+        context->logicHitEOs.emplace_back(modelEO);
     }
 
     void TestLogic::CreateAxis(Context *context)
@@ -233,7 +234,7 @@ namespace Editor
         auto modelParentEO = std::make_shared<EngineObject>();
         modelParentEO->name = Name_Axis;
         modelParentEO->active = false;
-        // modelParentEO->hideInHierarchy = true;
+        modelParentEO->hideInHierarchy = true;
 
         Logic::TransformLogic::Add(modelParentEO,
                                    glm::vec3(1.0f, 0.0f, 0.0f),
@@ -255,7 +256,7 @@ namespace Editor
 
             auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(1.0f, 0.0f, 0.0f));
             modelMesh->bound.center = glm::vec3(-0.2f, 0.0f, 0.0f);
-            modelMesh->bound.radius = 0.2f;
+            modelMesh->bound.radius = 0.3f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
             auto modelUnit = std::make_shared<Render::Unit>();
 
@@ -265,7 +266,7 @@ namespace Editor
 
             context->AddEO(modelEO);
             context->renderUnitEOs.emplace_back(modelEO);
-            context->logicHitEOs.emplace_back(modelEO);
+            context->logicAxisHitEOs.emplace_back(modelEO);
         }
 
         {
@@ -281,7 +282,7 @@ namespace Editor
 
             auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(0.0f, 1.0f, 0.0f));
             modelMesh->bound.center = glm::vec3(0.0f, -0.2f, 0.0f);
-            modelMesh->bound.radius = 0.2f;
+            modelMesh->bound.radius = 0.3f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
             auto modelUnit = std::make_shared<Render::Unit>();
 
@@ -291,7 +292,7 @@ namespace Editor
 
             context->AddEO(modelEO);
             context->renderUnitEOs.emplace_back(modelEO);
-            context->logicHitEOs.emplace_back(modelEO);
+            context->logicAxisHitEOs.emplace_back(modelEO);
         }
 
         {
@@ -307,7 +308,7 @@ namespace Editor
 
             auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(0.0f, 0.0f, 1.0f));
             modelMesh->bound.center = glm::vec3(0.0f, 0.0f, -0.2f);
-            modelMesh->bound.radius = 0.2f;
+            modelMesh->bound.radius = 0.3f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
             auto modelUnit = std::make_shared<Render::Unit>();
 
@@ -317,7 +318,7 @@ namespace Editor
 
             context->AddEO(modelEO);
             context->renderUnitEOs.emplace_back(modelEO);
-            context->logicHitEOs.emplace_back(modelEO);
+            context->logicAxisHitEOs.emplace_back(modelEO);
         }
     }
 }

@@ -56,10 +56,11 @@ namespace Editor
 		selectEO = eo;
 
 		if (eo->name != Name_MainCamera &&
+			eo->name != Name_Skybox &&
 			eo->name != Name_Axis &&
-			eo->name != "X" &&
-			eo->name != "Y" &&
-			eo->name != "Z")
+			eo->name != Name_AxisX &&
+			eo->name != Name_AxisY &&
+			eo->name != Name_AxisZ)
 		{
 			auto axisEO = context->GetEO(Name_Axis);
 			axisEO->active = true;

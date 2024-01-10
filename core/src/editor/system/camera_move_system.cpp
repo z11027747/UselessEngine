@@ -44,7 +44,7 @@ namespace Editor
     }
 
     static bool rotateEnabled = false;
-    static float rotateSpeed = 100.0f;
+    static float rotateSpeed = 50.0f;
     static float rotateLastX, rotateLastY;
 
     static void UpdateRot(Context *context,

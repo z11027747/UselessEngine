@@ -17,6 +17,7 @@ namespace Editor
 		{
 			memcpy(pipelineName, material->pipelineName.data(), material->pipelineName.size());
 			memcpy(image0Name, material->image0Name.data(), material->image0Name.size());
+			return;
 		}
 
 		if (ImGui::InputText("PipelineName", pipelineName, IM_ARRAYSIZE(pipelineName)))

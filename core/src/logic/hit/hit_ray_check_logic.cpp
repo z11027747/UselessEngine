@@ -9,8 +9,8 @@
 
 namespace Logic
 {
-    std::shared_ptr<EngineObject> HitRayCheckLogic::FromNdc(Context *context,
-                                                            float ndcX, float ndcY)
+    HitRay HitRayCheckLogic::CalcaRayFromNdc(Context *context,
+                                             float ndcX, float ndcY)
     {
         auto worldPos_near = CameraLogic::TransformNdcToWorld(context, glm::vec3(ndcX, ndcY, 0.0f));
         auto worldPos_far = CameraLogic::TransformNdcToWorld(context, glm::vec3(ndcX, ndcY, 1.0f));
@@ -18,6 +18,14 @@ namespace Logic
         HitRay ray = {};
         ray.origin = worldPos_near;
         ray.direction = glm::normalize(worldPos_far - worldPos_near);
+
+        return ray;
+    }
+
+    std::shared_ptr<EngineObject> HitRayCheckLogic::TestFromNdc(Context *context,
+                                                                float ndcX, float ndcY)
+    {
+        HitRay ray = CalcaRayFromNdc(context, ndcX, ndcY);
 
         auto &logicHitEOs = context->logicHitEOs;
         for (const auto &hitEO : logicHitEOs)

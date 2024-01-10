@@ -31,6 +31,7 @@ namespace Editor
 			}
 			auto &depth = renderPass->clearDepthValue.depth;
 			clearDepth = depth;
+			return;
 		}
 
 		ImGui::Text("PassName: %s", camera->passName.data());

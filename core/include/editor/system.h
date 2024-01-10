@@ -35,7 +35,13 @@ namespace Editor
 		static void Update(Context *);
 	};
 
-	class ViewportSelectSystem final
+	class AxisSelectSystem final
+	{
+	public:
+		static void Update(Context *);
+	};
+
+	class EOSelectSystem final
 	{
 	public:
 		static void Update(Context *);
