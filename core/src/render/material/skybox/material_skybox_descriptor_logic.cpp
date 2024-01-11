@@ -43,13 +43,12 @@ namespace Render
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
-		auto sampler = SamplerLogic::Create(context);
 
 		auto descriptor = std::make_shared<Descriptor>();
 		descriptor->set = descriptorSet;
 
 		descriptor->image0Info = {
-			sampler,
+			global->globalSampler,
 			material->image0->vkImageView,
 			material->image0->layout};
 
@@ -67,6 +66,6 @@ namespace Render
 												std::shared_ptr<Material> material)
 	{
 		auto &descriptor = material->descriptor;
-		SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
+		// SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
 	}
 }

@@ -10,6 +10,8 @@
 
 namespace Editor
 {
+    static bool lastMousePress = false;
+
     void EOSelectSystem::Update(Context *context)
     {
         if (!Window::IsInViewport(context))
@@ -22,7 +24,8 @@ namespace Editor
         glfwGetCursorPos(window, &currX, &currY);
 
         auto isMousePress = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS);
-        if (isMousePress)
+
+        if (!lastMousePress && isMousePress)
         {
             auto ndcX = (float)currX;
             auto ndcY = (float)currY;
@@ -34,5 +37,7 @@ namespace Editor
                 Window::SetSelectEO(context, tempHitEO);
             }
         }
+
+        lastMousePress = isMousePress;
     }
 }

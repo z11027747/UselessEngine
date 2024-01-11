@@ -51,19 +51,18 @@ namespace Render
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 
-		auto sampler0 = SamplerLogic::Create(context);
-		auto samplerShadow1 = SamplerLogic::Create(context, true);
-
 		auto descriptor = std::make_shared<Descriptor>();
 		descriptor->set = descriptorSet;
 
 		descriptor->image0Info = {
-			sampler0,
+			global->globalSampler,
 			material->image0->vkImageView,
 			material->image0->layout};
 
 		auto &shadowPass = global->passes[Pass_Shadow];
 		auto depthImage2d = shadowPass->depthImage2ds[0];
+
+		auto samplerShadow1 = SamplerLogic::Create(context, true);
 
 		descriptor->image1Info = {
 			samplerShadow1,
@@ -84,7 +83,7 @@ namespace Render
 													std::shared_ptr<Material> material)
 	{
 		auto &descriptor = material->descriptor;
-		SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
+		// SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
 		SamplerLogic::Destroy(context, descriptor->image1Info.sampler);
 	}
 }

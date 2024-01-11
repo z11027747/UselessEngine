@@ -9,7 +9,7 @@
 
 namespace Editor
 {
-    static float rotateSpeed = 100.0f;
+    static float rotateSpeed = 50.0f;
     static float rotateLastX, rotateLastY;
 
     void CameraRotateSystem::Update(Context *context)

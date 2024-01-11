@@ -17,6 +17,7 @@ namespace Editor
     {
         return focuesd;
     }
+
     void Window::ToViewportNdcXY(Context *context,
                                  float &x, float &y)
     {

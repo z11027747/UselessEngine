@@ -33,7 +33,7 @@ namespace Render
     void MaterialLogic::Destroy(Context *context,
                                 std::shared_ptr<Material> material)
     {
-		ImageLogic::Destroy(context, material->image0);
+        ImageLogic::Destroy(context, material->image0);
         MaterialDescriptorLogic::Destroy(context, material);
     }
 
@@ -48,11 +48,10 @@ namespace Render
                                  std::shared_ptr<Material> material,
                                  const std::string &imageName)
     {
-        int w, h;
-        auto *data = Common::ResSystem::LoadImg(imageName, w, h);
+        auto &resImg = Common::ResSystem::LoadImg(imageName);
 
-        auto imageW = static_cast<uint32_t>(w);
-        auto imageH = static_cast<uint32_t>(h);
+        auto imageW = static_cast<uint32_t>(resImg.width);
+        auto imageH = static_cast<uint32_t>(resImg.height);
         auto imageSize = static_cast<VkDeviceSize>(imageW * imageH * 4);
 
         auto tempBuffer = BufferLogic::CreateTemp(context,
@@ -61,7 +60,7 @@ namespace Render
 
         BufferSetLogic::SetPtr(context,
                                tempBuffer,
-                               data, static_cast<size_t>(imageSize));
+                               resImg.data, static_cast<size_t>(imageSize));
 
         ImageInfo image2dInfo = {
             VK_FORMAT_R8G8B8A8_UNORM, {imageW, imageH, 1}, VK_IMAGE_ASPECT_COLOR_BIT,
@@ -86,8 +85,6 @@ namespace Render
                                      image2d,
                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-        Common::ResSystem::FreeImg(data);
-
         material->image0Name = imageName;
         material->image0 = image2d;
     }
@@ -102,13 +99,12 @@ namespace Render
 
         for (auto i = 0; i < 6; i++)
         {
-            int w, h;
-            unsigned char *data = Common::ResSystem::LoadImg(imageCubeNames[i], w, h);
+            auto &resImg = Common::ResSystem::LoadImg(imageCubeNames[i]);
 
-            imageCubeW = static_cast<uint32_t>(w);
-            imageCubeH = static_cast<uint32_t>(h);
+            imageCubeW = static_cast<uint32_t>(resImg.width);
+            imageCubeH = static_cast<uint32_t>(resImg.height);
 
-            datas[i] = data;
+            datas[i] = resImg.data;
         }
 
         auto imageCubeSizeOne = static_cast<VkDeviceSize>(imageCubeW * imageCubeH * 4);
@@ -144,11 +140,6 @@ namespace Render
         ImageLogic::TransitionLayout(context,
                                      imageCube,
                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-        for (auto i = 0; i < 6; i++)
-        {
-            Common::ResSystem::FreeImg(datas[i]);
-        }
 
         material->image0Name = imageCubeNames[0];
         material->image0 = imageCube;

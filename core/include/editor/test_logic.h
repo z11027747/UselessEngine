@@ -2,6 +2,7 @@
 
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
+#include <string>
 
 class Context;
 
@@ -19,7 +20,8 @@ namespace Editor
         static void CreateMainCamera(Context *);
         static void CreateLight(Context *);
         static void CreateSkybox(Context *);
-        static void CreateModel(Context *);
+        static void CreateCubes(Context *);
+        static void CreateCube(Context *, const glm::vec3 &, float, const std::string &);
         static void CreateAxis(Context *);
     };
 

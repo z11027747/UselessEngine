@@ -64,5 +64,7 @@ namespace Render
 		VkDescriptorSetLayout globalDescriptorSetLayout;
 		std::shared_ptr<Descriptor> globalDescriptor;
 		std::shared_ptr<Buffer> globalBuffer;
+
+		VkSampler globalSampler;
 	};
 }

@@ -77,7 +77,7 @@ public:
 		Editor::TestLogic::CreateMainCamera(this);
 		Editor::TestLogic::CreateLight(this);
 		Editor::TestLogic::CreateSkybox(this);
-		Editor::TestLogic::CreateModel(this);
+		Editor::TestLogic::CreateCubes(this);
 		Editor::TestLogic::CreateAxis(this);
 	}
 

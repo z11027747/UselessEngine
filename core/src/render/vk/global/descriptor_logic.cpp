@@ -4,6 +4,7 @@
 #include "render/vk/global/global_logic.h"
 #include "render/vk/logic.h"
 #include "render/vk/buffer/buffer_logic.h"
+#include "render/vk/image/sampler_logic.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "render/material/material_comp.h"
@@ -58,6 +59,8 @@ namespace Render
                                                                        writes,
                                                                        global->globalDescriptor);
                                    });
+
+        global->globalSampler = SamplerLogic::Create(context);
     }
 
     void DescriptorLogic::DestroyGlobal(Context *context)
@@ -67,6 +70,8 @@ namespace Render
 
         DescriptorSetLayoutLogic::Destroy(context, global->globalDescriptorSetLayout);
         BufferLogic::Destroy(context, global->globalBuffer);
+
+        SamplerLogic::Destroy(context, global->globalSampler);
     }
 
 }

@@ -5,6 +5,7 @@
 #include <image/stb_image.h>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "common/res_system.h"
+#include "common/log_system.h"
 
 namespace Common
 {
@@ -29,34 +30,52 @@ namespace Common
 		outputFile.close();
 	}
 
-	unsigned char *ResSystem::LoadImg(const std::string &fileName, int &w, int &h)
+	std::unordered_map<std::string, ResImage> ResSystem::imgMap = {};
+	std::unordered_map<std::string, ResObj> ResSystem::objMap = {};
+
+	ResImage &ResSystem::LoadImg(const std::string &fileName)
 	{
-		int comp;
-		auto data = stbi_load(fileName.data(), &w, &h, &comp, STBI_rgb_alpha);
-		if (!data)
+		auto it = imgMap.find(fileName);
+		if (it == imgMap.end())
 		{
-			throw std::runtime_error("failed to load texture image!");
+			int w, h, comp;
+			auto data = stbi_load(fileName.data(), &w, &h, &comp, STBI_rgb_alpha);
+			if (!data)
+			{
+				LogSystem::Exception("failed to load texture image!");
+			}
+
+			ResImage img = {};
+			img.width = w;
+			img.height = h;
+			img.data = data;
+			imgMap.emplace(fileName, img);
 		}
 
-		return data;
+		return imgMap[fileName];
 	}
 
-	void ResSystem::FreeImg(unsigned char *data)
+	ResObj &ResSystem::LoadObj(const std::string &fileName)
 	{
-		stbi_image_free(data);
-	}
-
-	bool ResSystem::LoadObjShapes(const std::string &fileName,
-								  tinyobj::attrib_t &attrib, std::vector<tinyobj::shape_t> &shapes)
-	{
-		std::vector<tinyobj::material_t> materials;
-		std::string err;
-
-		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.data()))
+		auto it = imgMap.find(fileName);
+		if (it == imgMap.end())
 		{
-			throw std::runtime_error(err);
+			tinyobj::attrib_t attrib;
+			std::vector<tinyobj::shape_t> shapes;
+			std::vector<tinyobj::material_t> materials;
+			std::string err;
+
+			if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.data()))
+			{
+				LogSystem::Exception(err);
+			}
+
+			ResObj obj = {};
+			obj.attrib = attrib;
+			obj.shapes = shapes;
+			objMap.emplace(fileName, obj);
 		}
 
-		return true;
+		return objMap[fileName];
 	}
 }

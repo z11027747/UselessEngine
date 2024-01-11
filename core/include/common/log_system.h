@@ -68,6 +68,16 @@ namespace Common
 		static void Exception(Args &&...args)
 		{
 			auto message = ConcatenateArgs(std::forward<Args>(args)...);
+
+			auto now = std::time(nullptr);
+			std::tm local_time = {};
+			localtime_s(&local_time, &now);
+			std::cout << "[" << std::put_time(&local_time, "%Y-%m-%d %H:%M:%S") << "]";
+			std::cout << "[Exception]";
+			std::cerr << "\033[1;31m" << message << "\033[0m";
+			std::cout << "\n";
+			std::cout << std::endl;
+
 			throw std::runtime_error(message);
 		}
 	};

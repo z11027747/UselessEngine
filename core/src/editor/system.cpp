@@ -7,7 +7,6 @@
 namespace Editor
 {
 	VkDescriptorSetLayout System::descriptorSetLayout = nullptr;
-	VkSampler System::sampler = nullptr;
 	std::shared_ptr<Render::Descriptor> System::descriptor = nullptr;
 
 	void System::Create(Context *context)

@@ -91,14 +91,14 @@ namespace Editor
         auto descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
 
         auto &colorImage2d = global->passes[Render::Pass_Main]->colorImage2ds[0];
+        // auto &colorImage2d = global->passes[Render::Pass_Shadow]->depthImage2ds[0];
 
         auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
-        auto sampler = Render::SamplerLogic::Create(context);
 
         auto descriptor = std::make_shared<Render::Descriptor>();
         descriptor->set = descriptorSet;
         descriptor->image0Info = {
-            sampler,
+            global->globalSampler,
             colorImage2d->vkImageView,
             colorImage2d->layout};
 
@@ -111,7 +111,6 @@ namespace Editor
                                            });
 
         System::descriptorSetLayout = descriptorSetLayout;
-        System::sampler = sampler;
         System::descriptor = descriptor;
     }
 
@@ -121,7 +120,6 @@ namespace Editor
         auto &descriptor = System::descriptor;
 
         Render::DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
-        Render::SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
     }
 
     void TestLogic::CreateMainCamera(Context *context)
@@ -130,8 +128,8 @@ namespace Editor
         mainCameraEO->name = Name_MainCamera;
 
         Logic::TransformLogic::Add(mainCameraEO,
-                                   glm::vec3(0.0f, 3.8f, -10.0f),
-                                   glm::vec3(15.0f, 0.0f, 0.0f),
+                                   glm::vec3(7.68f, 5.77f, -3.12f),
+                                   glm::vec3(26.41f, -55.35f, 0.0f),
                                    glm::vec3(1.0f, 1.0f, 1.0f));
 
         auto mainCamera = std::make_shared<Logic::Camera>();
@@ -154,7 +152,7 @@ namespace Editor
 
         Logic::TransformLogic::Add(directionLightEO,
                                    glm::vec3(-5.0f, 5.0f, 0.0f),
-                                   glm::vec3(45.0f, 90.0f, 0.0f),
+                                   glm::vec3(45.0f, 45.0f, 0.0f),
                                    glm::vec3(1.0f, 1.0f, 1.0f));
 
         auto directionLight = std::make_shared<Render::DirectionLight>();
@@ -168,7 +166,7 @@ namespace Editor
         directionLightCamera->near = 0.1f;
         directionLightCamera->far = 50.0f;
         directionLightCamera->mode = Logic::CameraMode::eOrtho;
-        directionLightCamera->size = 50.0f;
+        directionLightCamera->size = 30.0f;
         directionLightCamera->passName = Render::Pass_Shadow;
         directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
 
@@ -188,7 +186,7 @@ namespace Editor
                                    glm::vec3(0.0f, -100.0f, 0.0f),
                                    glm::vec3(50.0f, 50.0f, 50.0f));
 
-        auto skyboxMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/sphere.obj");
+        auto skyboxMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/sphere.obj", 1.0f);
         auto skyboxMaterial = Render::MaterialLogic::CreateByImageCube(context, Render::Pipeline_Skybox,
                                                                        {"resource/texture/skybox2/sky_left_lnitial.png",
                                                                         "resource/texture/skybox2/sky_right_lnitial.png",
@@ -206,18 +204,101 @@ namespace Editor
         context->renderUnitEOs.emplace_back(skyboxEO);
     }
 
-    void TestLogic::CreateModel(Context *context)
+    void TestLogic::CreateCubes(Context *context)
+    {
+        CreateCube(context, glm::vec3(-4.0f, 0.0f, 0.0f), -90.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-1.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 0.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
+
+        CreateCube(context, glm::vec3(-4.0f, 0.0f, 1.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 1.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+        CreateCube(context, glm::vec3(-2.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(1.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(2.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(3.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 1.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 2.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+        CreateCube(context, glm::vec3(-2.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(1.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(2.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(3.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 2.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 1.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 1.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 3.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 3.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 3.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 1.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/SoilWGrass_6_D.jpg");
+        CreateCube(context, glm::vec3(-1.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 4.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 4.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 5.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 5.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 5.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+
+        CreateCube(context, glm::vec3(-4.0f, 0.0f, 6.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(-2.0f, -0.5f, 6.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 6.0f), 0.0f, "resource/texture/cube_world/Water.png");
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+
+        CreateCube(context, glm::vec3(-4.0f, 0.0f, 7.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-1.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+    }
+
+    void TestLogic::CreateCube(Context *context,
+                               const glm::vec3 &pos, float eulerAngleY, const std::string &imageName)
     {
         auto modelEO = std::make_shared<EngineObject>();
-        modelEO->name = "Model-VikingRoom";
+        modelEO->name = "Cube";
 
         Logic::TransformLogic::Add(modelEO,
-                                   glm::vec3(0.0f, -0.5f, 0.0f),
-                                   glm::vec3(-90.0f, -45.0f, 0.0f),
-                                   glm::vec3(4.0f, 4.0f, 4.0f));
+                                   pos,
+                                   glm::vec3(0.0f, eulerAngleY, 0.0f),
+                                   glm::vec3(1.0f, 1.0f, 1.0f));
 
-        auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/viking_room/viking_room.obj");
-        auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Bling_Phone, "resource/obj/viking_room/viking_room.png");
+        auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/cube_world/cube.obj", 0.01f);
+        auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Bling_Phone, imageName);
         modelMaterial->castShadow = true;
         auto modelUnit = std::make_shared<Render::Unit>();
 
@@ -255,7 +336,7 @@ namespace Editor
                                        glm::vec3(1.0f, 1.0f, 1.0f));
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
-            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(1.0f, 0.0f, 0.0f));
+            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
             modelMesh->bound.center = glm::vec3(-0.2f, 0.0f, 0.0f);
             modelMesh->bound.radius = 0.3f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
@@ -281,7 +362,7 @@ namespace Editor
                                        glm::vec3(1.0f, 1.0f, 1.0f));
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
-            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(0.0f, 1.0f, 0.0f));
+            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
             modelMesh->bound.center = glm::vec3(0.0f, -0.2f, 0.0f);
             modelMesh->bound.radius = 0.3f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
@@ -307,7 +388,7 @@ namespace Editor
                                        glm::vec3(1.0f, 1.0f, 1.0f));
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
-            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", glm::vec3(0.0f, 0.0f, 1.0f));
+            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", 1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
             modelMesh->bound.center = glm::vec3(0.0f, 0.0f, -0.2f);
             modelMesh->bound.radius = 0.3f;
             auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");

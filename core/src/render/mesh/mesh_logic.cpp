@@ -27,10 +27,10 @@ namespace std
 namespace Render
 {
     std::shared_ptr<Mesh> MeshLogic::CreateByObj(Context *context,
-                                                 const std::string &name, glm::vec3 &defaultColor)
+                                                 const std::string &name, float scaler, glm::vec3 &defaultColor)
     {
         auto mesh = std::make_shared<Mesh>();
-        LoadObj(context, mesh, name, defaultColor);
+        SetObj(context, mesh, name, scaler, defaultColor);
         CreateBuffer(context, mesh);
         CalcBoundingSphere(context, mesh);
         return mesh;
@@ -43,14 +43,13 @@ namespace Render
         BufferLogic::Destroy(context, mesh->indexBuffer);
     }
 
-    void MeshLogic::LoadObj(Context *context,
-                            std::shared_ptr<Mesh> mesh,
-                            const std::string &objName, glm::vec3 &defaultColor)
+    void MeshLogic::SetObj(Context *context,
+                           std::shared_ptr<Mesh> mesh,
+                           const std::string &objName, float scaler, glm::vec3 &defaultColor)
     {
-        tinyobj::attrib_t attrib;
-        std::vector<tinyobj::shape_t> shapes;
-
-        Common::ResSystem::LoadObjShapes(objName, attrib, shapes);
+        auto &resObj = Common::ResSystem::LoadObj(objName);
+        auto &attrib = resObj.attrib;
+        auto &shapes = resObj.shapes;
 
         std::vector<Render::Vertex> vertices;
         std::vector<uint16_t> indices;
@@ -64,13 +63,15 @@ namespace Render
                 auto ni = index.normal_index;
 
                 Render::Vertex vertex = {};
-                vertex.positionOS = {-attrib.vertices[3 * vi + 0],
-                                     attrib.vertices[3 * vi + 1],
-                                     attrib.vertices[3 * vi + 2]};
-                vertex.normalOS = {-attrib.normals[3 * ni + 0],
-                                   attrib.normals[3 * ni + 1],
-                                   attrib.normals[3 * ni + 2]};
+                vertex.positionOS = {attrib.vertices[3 * vi + 0], attrib.vertices[3 * vi + 1], attrib.vertices[3 * vi + 2]};
+                vertex.positionOS *= scaler;
+                vertex.positionOS.x *= -1;
+
+                vertex.normalOS = {attrib.normals[3 * ni + 0], attrib.normals[3 * ni + 1], attrib.normals[3 * ni + 2]};
+                vertex.normalOS.x *= -1;
+
                 vertex.color = defaultColor;
+
                 if (attrib.texcoords.size() > 0)
                 {
                     auto ui = index.texcoord_index;

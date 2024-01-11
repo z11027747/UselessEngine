@@ -13,12 +13,12 @@ namespace Render
     {
     public:
         static std::shared_ptr<Mesh> CreateByObj(Context *,
-                                                 const std::string &, glm::vec3 & = glm::vec3(1.0f, 1.0f, 1.0f));
+                                                 const std::string &, float, glm::vec3 & = glm::vec3(1.0f, 1.0f, 1.0f));
 
         static void Destroy(Context *, std::shared_ptr<Mesh>);
 
-        static void LoadObj(Context *, std::shared_ptr<Mesh>,
-                            const std::string &, glm::vec3 & = glm::vec3(1.0f, 1.0f, 1.0f));
+        static void SetObj(Context *, std::shared_ptr<Mesh>,
+                           const std::string &, float, glm::vec3 & = glm::vec3(1.0f, 1.0f, 1.0f));
 
         static void CreateBuffer(Context *, std::shared_ptr<Mesh>);
 
