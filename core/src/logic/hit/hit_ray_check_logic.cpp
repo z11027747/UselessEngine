@@ -1,5 +1,6 @@
 
 #include <string>
+#include <limits>
 #include "render/mesh/mesh_comp.h"
 #include "logic/hit/hit_ray_logic.h"
 #include "logic/camera/camera_logic.h"
@@ -25,23 +26,43 @@ namespace Logic
     std::shared_ptr<EngineObject> HitRayCheckLogic::TestFromNdc(Context *context,
                                                                 float ndcX, float ndcY)
     {
-        HitRay ray = CalcaRayFromNdc(context, ndcX, ndcY);
+        auto ray = CalcaRayFromNdc(context, ndcX, ndcY);
+
+        std::vector<std::shared_ptr<EngineObject>> tempHitEOs = {};
 
         auto &logicHitEOs = context->logicHitEOs;
         for (const auto &hitEO : logicHitEOs)
         {
             if (!hitEO->active)
                 continue;
+
             auto result = Test(context,
                                ray, hitEO);
             if (result)
+                tempHitEOs.push_back(hitEO);
+        }
+
+        if (tempHitEOs.size() == 0)
+            return nullptr;
+
+        std::shared_ptr<EngineObject> minDistHitEO = nullptr;
+        auto minDist = 99999.0f;
+
+        for (const auto &hitEO : tempHitEOs)
+        {
+            auto hitTransform = hitEO->GetComponent<Transform>();
+            auto position = hitTransform->worldPosition;
+            auto &origin = ray.origin;
+
+            auto dist = glm::distance(position, origin);
+            if (minDist > dist)
             {
-                // Common::LogSystem::Info("Ray Check Target. Name:", hitEO->name);
-                return hitEO;
+                minDist = dist;
+                minDistHitEO = hitEO;
             }
         }
 
-        return nullptr;
+        return minDistHitEO;
     }
 
     bool HitRayCheckLogic::Test(Context *context,
@@ -57,8 +78,8 @@ namespace Logic
         auto &origin = ray.origin;
         auto &direction = ray.direction;
 
-        auto distPO = glm::distance(position, origin);
-        if (distPO <= radius)
+        auto dist = glm::distance(position, origin);
+        if (dist <= radius)
         {
             return true;
         }
@@ -70,7 +91,7 @@ namespace Logic
             return false;
         }
 
-        auto distSq = distPO * distPO - dot * dot;
+        auto distSq = dist * dist - dot * dot;
         if (distSq > radius * radius)
         {
             return false;

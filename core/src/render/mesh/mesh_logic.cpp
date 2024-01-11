@@ -124,22 +124,32 @@ namespace Render
     void MeshLogic::CalcBoundingSphere(Context *context,
                                        std::shared_ptr<Mesh> mesh)
     {
-        glm::vec3 sumPositionOS = glm::vec3(0.0f);
-        float maxDistance = 0.0f;
+        glm::vec3 minPos = glm::vec3(99999.0f);
+        glm::vec3 maxPos = glm::vec3(-99999.0f);
 
         auto &vertices = mesh->vertices;
         for (const auto &vertex : vertices)
         {
-            auto &positionOS = vertex.positionOS;
-            auto distance = glm::length(positionOS);
+            auto &position = vertex.positionOS;
 
-            sumPositionOS += positionOS;
-            maxDistance = std::max(distance, maxDistance);
+            if (minPos.x > position.x)
+                minPos.x = position.x;
+            if (minPos.y > position.y)
+                minPos.y = position.y;
+            if (minPos.z > position.z)
+                minPos.z = position.z;
+
+            if (maxPos.x < position.x)
+                maxPos.x = position.x;
+            if (maxPos.y < position.y)
+                maxPos.y = position.y;
+            if (maxPos.z < position.z)
+                maxPos.z = position.z;
         }
 
         BoundingSphere boundingSphere = {};
-        boundingSphere.center = sumPositionOS / static_cast<float>(vertices.size());
-        boundingSphere.radius = maxDistance * 0.8f;
+        boundingSphere.center = (minPos + maxPos) * 0.5f;
+        boundingSphere.radius = glm::distance(minPos, maxPos) * 0.5f * 0.8f;
 
         mesh->bound = boundingSphere;
     }

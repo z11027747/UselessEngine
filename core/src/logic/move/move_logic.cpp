@@ -9,11 +9,19 @@ namespace Logic
                                 std::shared_ptr<EngineObject> selfEO,
                                 std::shared_ptr<EngineObject> targetEO, glm::vec3 &offset)
     {
-        auto moveFollow = std::make_shared<MoveFollow>();
+        std::shared_ptr<MoveFollow> moveFollow;
+        if (selfEO->HasComponent<MoveFollow>())
+        {
+            moveFollow = selfEO->GetComponent<MoveFollow>();
+        }
+        else
+        {
+            moveFollow = std::make_shared<MoveFollow>();
+            selfEO->AddComponent(moveFollow);
+            context->logicMoveEOs.emplace_back(selfEO);
+        }
+
         moveFollow->targetEO = targetEO;
         moveFollow->offset = offset;
-
-        selfEO->AddComponent(moveFollow);
-        context->logicMoveEOs.emplace_back(selfEO);
     }
 }

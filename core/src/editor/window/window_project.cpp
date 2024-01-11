@@ -112,7 +112,7 @@ namespace Editor
             if (ImGui::Button("Refresh"))
             {
             }
-            Imgui::SameLine();
+            ImGui::SameLine();
             if (ImGui::Button("Save All"))
             {
             }
