@@ -20,6 +20,7 @@ namespace Editor
 		static void Destroy(Context *);
 
 		static VkDescriptorSetLayout descriptorSetLayout;
+		static VkSampler sampler;
 		static std::shared_ptr<Render::Descriptor> descriptor;
 	};
 
@@ -30,6 +31,12 @@ namespace Editor
 	};
 
 	class CameraMoveSystem final
+	{
+	public:
+		static void Update(Context *);
+	};
+
+	class CameraRotateSystem final
 	{
 	public:
 		static void Update(Context *);

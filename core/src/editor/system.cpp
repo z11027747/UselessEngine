@@ -7,6 +7,7 @@
 namespace Editor
 {
 	VkDescriptorSetLayout System::descriptorSetLayout = nullptr;
+	VkSampler System::sampler = nullptr;
 	std::shared_ptr<Render::Descriptor> System::descriptor = nullptr;
 
 	void System::Create(Context *context)
@@ -18,6 +19,7 @@ namespace Editor
 	void System::Update(Context *context)
 	{
 		CameraMoveSystem::Update(context);
+		CameraRotateSystem::Update(context);
 		AxisSelectSystem::Update(context);
 		EOSelectSystem::Update(context);
 	}

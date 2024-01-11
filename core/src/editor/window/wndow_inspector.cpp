@@ -94,14 +94,14 @@ namespace Editor
 				ImGui::Text("Select EngineObject: %s", selectEO->name.data());
 				ImGui::SeparatorText("ComponentList Begin");
 
-				auto id = 0;
 				auto &componentMap = selectEO->componentMap;
 				for (const auto &kv : componentMap)
 				{
 					auto typeId = kv.first;
-					ImGui::PushID(id++);
+					auto typeName = typeId.name();
+					ImGui::PushID(typeName);
 					ImGui::SetNextItemOpen(true);
-					if (ImGui::TreeNode("Comp: &s", typeId.name()))
+					if (ImGui::TreeNode("Comp: &s", typeName))
 					{
 						auto &component = kv.second;
 						DrawComponent(context, typeId, component, false);

@@ -18,12 +18,14 @@ namespace Editor
 			DrawHierachy(context);
 			DrawInspector(context);
 			DrawViewport(context);
+			DrawConsole(context);
 			DrawProject(context);
 		}
 
 		static void DrawMenuBar(Context *);
 		static void DrawHierachy(Context *);
 		static void DrawInspector(Context *);
+		static void DrawConsole(Context *);
 		static void DrawProject(Context *);
 
 		static bool IsInViewport(Context *);

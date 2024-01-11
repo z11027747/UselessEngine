@@ -69,6 +69,13 @@
         "xlocmes": "cpp",
         "xtree": "cpp",
         "unordered_set": "cpp",
-        "transform_update_model_system": "cpp"
+        "transform_update_model_system": "cpp",
+        "chrono": "cpp",
+        "filesystem": "cpp",
+        "forward_list": "cpp",
+        "mutex": "cpp",
+        "ratio": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     }
 }

@@ -111,6 +111,7 @@ namespace Editor
                                            });
 
         System::descriptorSetLayout = descriptorSetLayout;
+        System::sampler = sampler;
         System::descriptor = descriptor;
     }
 
@@ -245,7 +246,7 @@ namespace Editor
 
         {
             auto modelEO = std::make_shared<EngineObject>();
-            modelEO->name = "X";
+            modelEO->name = Name_AxisX;
             modelEO->hideInHierarchy = true;
 
             Logic::TransformLogic::Add(modelEO,
@@ -271,7 +272,7 @@ namespace Editor
 
         {
             auto modelEO = std::make_shared<EngineObject>();
-            modelEO->name = "Y";
+            modelEO->name = Name_AxisY;
             modelEO->hideInHierarchy = true;
 
             Logic::TransformLogic::Add(modelEO,
@@ -297,7 +298,7 @@ namespace Editor
 
         {
             auto modelEO = std::make_shared<EngineObject>();
-            modelEO->name = "Z";
+            modelEO->name = Name_AxisZ;
             modelEO->hideInHierarchy = true;
 
             Logic::TransformLogic::Add(modelEO,
