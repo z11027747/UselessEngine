@@ -4,9 +4,11 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <functional>
 #include <imgui/imgui.h>
 #include <json/json11.hpp>
 #include "editor/window.h"
+#include "editor/json/component_json.h"
 #include "common/log_system.h"
 #include "context.h"
 
@@ -101,6 +103,16 @@ namespace Editor
         }
     }
 
+    template <typename T>
+    static json11::Json ComponentToJson(Context *context, std::shared_ptr<void> component)
+    {
+        return ComponentJson<T>::To(context, std::static_pointer_cast<T>(component));
+    }
+
+    static std::unordered_map<std::type_index, std::function<json11::Json(Context *, std::shared_ptr<void>)>> toJsonFuncMap{
+        {typeid(Logic::Transform), ComponentToJson<Logic::Transform>},
+    };
+
     void Window::DrawProject(Context *context)
     {
         if (ImGui::Begin("Project", NULL))
@@ -117,20 +129,38 @@ namespace Editor
             ImGui::SameLine();
             if (ImGui::Button("Save All"))
             {
-                json11::Json j = json11::Json::object{
-                    {"code", 0},
-                    {"flag", true},
-                    {"msg", "success"},
-                    {"data", json11::Json::array{"aa", "bb", "cc"}}};
-
-                Common::LogSystem::Info(j.dump());
+                std::string sceneJson = "\n";
 
                 auto &allEOs = context->allEOs;
                 for (const auto &eo : allEOs)
                 {
-                }
-            }
+                    json11::Json::array componentJObjArr = {};
+                    auto &componentMap = eo->componentMap;
+                    for (const auto &kv : componentMap)
+                    {
+                        auto typeId = kv.first;
+                        auto &component = kv.second;
 
+                        auto it = toJsonFuncMap.find(typeId);
+                        if (it == toJsonFuncMap.end())
+                            continue;
+
+                        auto componentJObj = toJsonFuncMap[typeId](context, component);
+                        componentJObjArr.push_back(componentJObj);
+                    }
+
+                    json11::Json::object eoJObj = {
+                        {"name", eo->name},
+                        {"active", eo->active},
+                        {"hideInHierarchy", eo->hideInHierarchy},
+                        {"components", componentJObjArr}};
+
+                    sceneJson += json11::Json(eoJObj).dump();
+                    sceneJson += "\n";
+                }
+
+                Common::LogSystem::Info(sceneJson);
+            }
             if (ImGui::IsMouseClicked(0))
             {
                 selectFileName = "";

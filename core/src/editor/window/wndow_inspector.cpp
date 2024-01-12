@@ -20,18 +20,17 @@
 namespace Editor
 {
 	template <typename T>
-	static void DrawComponent(Context *context, std::shared_ptr<void> component, bool isFirst)
+	static void ComponentDraw(Context *context, std::shared_ptr<void> component, bool isFirst)
 	{
-		auto concreteComponent = std::static_pointer_cast<T>(component);
-		ComponentWrap<T>::Draw(context, concreteComponent, isFirst);
+		ComponentWrap<T>::Draw(context, std::static_pointer_cast<T>(component), isFirst);
 	}
 
-	static std::unordered_map<std::type_index, std::function<void(Context *, std::shared_ptr<void>, bool)>> drawComponentFuncMap{
-		{typeid(Logic::Transform), DrawComponent<Logic::Transform>},
-		{typeid(Logic::Camera), DrawComponent<Logic::Camera>},
-		{typeid(Render::DirectionLight), DrawComponent<Render::DirectionLight>},
-		{typeid(Render::Mesh), DrawComponent<Render::Mesh>},
-		{typeid(Render::Material), DrawComponent<Render::Material>},
+	static std::unordered_map<std::type_index, std::function<void(Context *, std::shared_ptr<void>, bool)>> drawFuncMap{
+		{typeid(Logic::Transform), ComponentDraw<Logic::Transform>},
+		{typeid(Logic::Camera), ComponentDraw<Logic::Camera>},
+		{typeid(Render::DirectionLight), ComponentDraw<Render::DirectionLight>},
+		{typeid(Render::Mesh), ComponentDraw<Render::Mesh>},
+		{typeid(Render::Material), ComponentDraw<Render::Material>},
 	};
 
 	std::shared_ptr<EngineObject> Window::selectEO = nullptr;
@@ -56,12 +55,12 @@ namespace Editor
 		{
 			auto typeId = kv.first;
 
-			auto it = drawComponentFuncMap.find(typeId);
-			if (it == drawComponentFuncMap.end())
+			auto it = drawFuncMap.find(typeId);
+			if (it == drawFuncMap.end())
 				continue;
 
 			auto &component = kv.second;
-			drawComponentFuncMap[typeId](context, component, true);
+			drawFuncMap[typeId](context, component, true);
 		}
 	}
 
@@ -85,8 +84,8 @@ namespace Editor
 				{
 					auto typeId = kv.first;
 
-					auto it = drawComponentFuncMap.find(typeId);
-					if (it == drawComponentFuncMap.end())
+					auto it = drawFuncMap.find(typeId);
+					if (it == drawFuncMap.end())
 						continue;
 
 					auto typeName = typeId.name();
@@ -95,7 +94,7 @@ namespace Editor
 					if (ImGui::TreeNode("Comp: &s", typeName))
 					{
 						auto &component = kv.second;
-						drawComponentFuncMap[typeId](context, component, false);
+						drawFuncMap[typeId](context, component, false);
 
 						ImGui::TreePop();
 					}
