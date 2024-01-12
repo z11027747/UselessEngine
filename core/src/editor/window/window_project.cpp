@@ -5,7 +5,9 @@
 #include <unordered_map>
 #include <string>
 #include <imgui/imgui.h>
+#include "nlohmann/json.hpp"
 #include "editor/window.h"
+#include "common/log_system.h"
 #include "context.h"
 
 namespace Editor
@@ -115,6 +117,17 @@ namespace Editor
             ImGui::SameLine();
             if (ImGui::Button("Save All"))
             {
+                nlohmann::json json;
+                json["pi"] = 3.141;
+                json["happy"] = true;
+                json["answer"]["everything"] = 42;
+                json["list"] = {1, 0, 2};
+                json["object"] = {{"currency", "USD"}, {"value", 42.99}};
+                auto jsonContext = json.dump();
+                auto jsonContext2 = json.dump(2);
+
+                Common::LogSystem::Info(jsonContext);
+                Common::LogSystem::Info(jsonContext2);
             }
 
             if (ImGui::IsMouseClicked(0))
