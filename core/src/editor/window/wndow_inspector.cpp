@@ -4,50 +4,35 @@
 #include <iostream>
 #include <string>
 #include <typeindex>
+#include <functional>
 #include "logic/transform/transform_logic.h"
 #include "logic/move/move_logic.h"
 #include "editor/wrap/component_wrap.h"
+#include "logic/camera/camera_comp.h"
+#include "logic/transform/transform_comp.h"
+#include "render/light/light_comp.h"
+#include "render/material/material_comp.h"
+#include "render/mesh/mesh_comp.h"
 #include "editor/window.h"
 #include "context.h"
 #include "engine_object.h"
 
 namespace Editor
 {
-	static void DrawComponent(Context *context,
-							  std::type_index typeId, std::shared_ptr<void> component,
-							  bool isFirst)
+	template <typename T>
+	static void DrawComponent(Context *context, std::shared_ptr<void> component, bool isFirst)
 	{
-		if (typeId == typeid(Logic::Transform))
-		{
-			auto transform = std::static_pointer_cast<Logic::Transform>(component);
-			ComponentWrap<Logic::Transform>::Draw(context,
-												  transform, isFirst);
-		}
-		else if (typeId == typeid(Logic::Camera))
-		{
-			auto camera = std::static_pointer_cast<Logic::Camera>(component);
-			ComponentWrap<Logic::Camera>::Draw(context,
-											   camera, isFirst);
-		}
-		else if (typeId == typeid(Render::DirectionLight))
-		{
-			auto directionLight = std::static_pointer_cast<Render::DirectionLight>(component);
-			ComponentWrap<Render::DirectionLight>::Draw(context,
-														directionLight, isFirst);
-		}
-		else if (typeId == typeid(Render::Mesh))
-		{
-			auto mesh = std::static_pointer_cast<Render::Mesh>(component);
-			ComponentWrap<Render::Mesh>::Draw(context,
-											  mesh, isFirst);
-		}
-		else if (typeId == typeid(Render::Material))
-		{
-			auto material = std::static_pointer_cast<Render::Material>(component);
-			ComponentWrap<Render::Material>::Draw(context,
-												  material, isFirst);
-		}
+		auto concreteComponent = std::static_pointer_cast<T>(component);
+		ComponentWrap<T>::Draw(context, concreteComponent, isFirst);
 	}
+
+	static std::unordered_map<std::type_index, std::function<void(Context *, std::shared_ptr<void>, bool)>> drawComponentFuncMap{
+		{typeid(Logic::Transform), DrawComponent<Logic::Transform>},
+		{typeid(Logic::Camera), DrawComponent<Logic::Camera>},
+		{typeid(Render::DirectionLight), DrawComponent<Render::DirectionLight>},
+		{typeid(Render::Mesh), DrawComponent<Render::Mesh>},
+		{typeid(Render::Material), DrawComponent<Render::Material>},
+	};
 
 	std::shared_ptr<EngineObject> Window::selectEO = nullptr;
 
@@ -55,12 +40,8 @@ namespace Editor
 	{
 		selectEO = eo;
 
-		if (eo->name != Name_MainCamera &&
-			eo->name != Name_Skybox &&
-			eo->name != Name_Axis &&
-			eo->name != Name_AxisX &&
-			eo->name != Name_AxisY &&
-			eo->name != Name_AxisZ)
+		if (eo->name != Name_MainCamera && eo->name != Name_Skybox &&
+			eo->name != Name_AxisX && eo->name != Name_AxisY && eo->name != Name_AxisZ)
 		{
 			auto axisEO = context->GetEO(Name_Axis);
 			axisEO->active = true;
@@ -74,8 +55,13 @@ namespace Editor
 		for (const auto &kv : componentMap)
 		{
 			auto typeId = kv.first;
+
+			auto it = drawComponentFuncMap.find(typeId);
+			if (it == drawComponentFuncMap.end())
+				continue;
+
 			auto &component = kv.second;
-			DrawComponent(context, typeId, component, true);
+			drawComponentFuncMap[typeId](context, component, true);
 		}
 	}
 
@@ -98,13 +84,19 @@ namespace Editor
 				for (const auto &kv : componentMap)
 				{
 					auto typeId = kv.first;
+
+					auto it = drawComponentFuncMap.find(typeId);
+					if (it == drawComponentFuncMap.end())
+						continue;
+
 					auto typeName = typeId.name();
 					ImGui::PushID(typeName);
 					ImGui::SetNextItemOpen(true);
 					if (ImGui::TreeNode("Comp: &s", typeName))
 					{
 						auto &component = kv.second;
-						DrawComponent(context, typeId, component, false);
+						drawComponentFuncMap[typeId](context, component, false);
+
 						ImGui::TreePop();
 					}
 					ImGui::PopID();

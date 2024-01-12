@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/wrap/component_wrap.h"
+#include "logic/transform/transform_comp.h"
 #include "editor/system.h"
 #include "editor/test_logic.h"
 #include "context.h"
@@ -13,6 +14,7 @@ namespace Editor
 	static int eId = 1;
 	static int sId = 2;
 
+	template <>
 	void ComponentWrap<Logic::Transform>::Draw(Context *context,
 											   std::shared_ptr<Logic::Transform> transform, bool isFirst)
 	{

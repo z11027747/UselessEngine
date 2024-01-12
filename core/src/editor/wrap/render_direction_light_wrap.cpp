@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/wrap/component_wrap.h"
+#include "render/light/light_comp.h"
 #include "context.h"
 
 namespace Editor
@@ -12,6 +13,7 @@ namespace Editor
 	static float specualrShininess = 10.0f;
 	static float specularIntensity = 0.5f;
 
+	template <>
 	void ComponentWrap<Render::DirectionLight>::Draw(Context *context,
 													 std::shared_ptr<Render::DirectionLight> directionLight, bool isFirst)
 	{

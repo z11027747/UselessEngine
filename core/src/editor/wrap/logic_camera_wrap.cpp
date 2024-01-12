@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "render/vk/global/global_comp.h"
 #include "editor/wrap/component_wrap.h"
+#include "logic/camera/camera_comp.h"
 #include "logic/camera/camera_logic.h"
 #include "context.h"
 
@@ -14,6 +15,7 @@ namespace Editor
 	static float clearColors[4] = {0.1f, 0.1f, 0.1f, 1.0f};
 	static float clearDepth = 1.0f;
 
+	template <>
 	void ComponentWrap<Logic::Camera>::Draw(Context *context,
 											std::shared_ptr<Logic::Camera> camera, bool isFirst)
 	{

@@ -17,8 +17,8 @@
 #include "logic/camera/camera_logic.h"
 #include "editor/test_logic.h"
 #include "editor/system.h"
-#include "editor/imgui/imgui_impl_glfw.h"
-#include "editor/imgui/imgui_impl_vulkan.h"
+#include "editor/imgui_demo/imgui_impl_glfw.h"
+#include "editor/imgui_demo/imgui_impl_vulkan.h"
 #include "context.h"
 #include "engine_object.h"
 

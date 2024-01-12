@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/wrap/component_wrap.h"
+#include "render/mesh/mesh_comp.h"
 #include "context.h"
 
 namespace Editor
@@ -11,6 +12,7 @@ namespace Editor
 	static float boundCenter[3] = {0.0f, 0.0f, 0.0f};
 	static float boundRadius = 1.0f;
 
+	template <>
 	void ComponentWrap<Render::Mesh>::Draw(Context *context,
 										   std::shared_ptr<Render::Mesh> mesh, bool isFirst)
 	{

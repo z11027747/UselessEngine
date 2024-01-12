@@ -14,8 +14,8 @@
 // Read comments in imgui_impl_vulkan.h.
 
 #include "imgui/imgui.h"
-#include "editor/imgui/imgui_impl_glfw.h"
-#include "editor/imgui/imgui_impl_vulkan.h"
+#include "editor/imgui_demo/imgui_impl_glfw.h"
+#include "editor/imgui_demo/imgui_impl_vulkan.h"
 #include <stdio.h>          // printf, fprintf
 #include <stdlib.h>         // abort
 #define GLFW_INCLUDE_NONE

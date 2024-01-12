@@ -10,19 +10,18 @@ class EngineObject final
 public:
 	inline static uint32_t beginId = 0;
 
+	uint32_t id;
+
 	EngineObject()
 	{
 		id = beginId++;
-		name = "";
-		active = true;
 	}
 
-	uint32_t id;
-	std::string name;
+	std::string name{""};
 	bool active{true};
 	bool hideInHierarchy{false};
 
-	std::unordered_map<std::type_index, std::shared_ptr<void>> componentMap;
+	std::unordered_map<std::type_index, std::shared_ptr<void>> componentMap{};
 
 	template <typename T>
 	bool HasComponent() const

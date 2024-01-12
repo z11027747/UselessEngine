@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "editor/wrap/component_wrap.h"
+#include "render/material/material_comp.h"
 #include "context.h"
 
 namespace Editor
@@ -10,6 +11,7 @@ namespace Editor
 	static char pipelineName[32] = "";
 	static char image0Name[32] = "";
 
+	template <>
 	void ComponentWrap<Render::Material>::Draw(Context *context,
 											   std::shared_ptr<Render::Material> material, bool isFirst)
 	{

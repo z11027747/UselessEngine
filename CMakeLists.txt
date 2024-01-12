@@ -11,9 +11,9 @@ include_directories(${PROJECT_SOURCE_DIR}/3rd)
 include_directories(${PROJECT_SOURCE_DIR}/core/include)
 
 file(GLOB_RECURSE SRC_LIST
-	"${PROJECT_SOURCE_DIR}/core/src/*.c" 
+	"${PROJECT_SOURCE_DIR}/3rd/*.cpp" 
 	"${PROJECT_SOURCE_DIR}/core/src/*.cpp")
-	
+
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/out)
 add_executable(${PROJ} ${SRC_LIST} "core/main.cpp")
 

@@ -76,6 +76,10 @@
         "mutex": "cpp",
         "ratio": "cpp",
         "stop_token": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "any": "cpp",
+        "numeric": "cpp",
+        "ranges": "cpp",
+        "valarray": "cpp"
     }
 }
