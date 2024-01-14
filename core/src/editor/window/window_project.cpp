@@ -7,9 +7,14 @@
 #include <functional>
 #include <imgui/imgui.h>
 #include <json/json11.hpp>
+#include "render/light/light_comp.h"
+#include "render/material/material_comp.h"
+#include "render/mesh/mesh_comp.h"
+#include "logic/camera/camera_comp.h"
 #include "editor/window.h"
 #include "editor/json/component_json.h"
 #include "common/log_system.h"
+#include "common/res_system.h"
 #include "context.h"
 
 namespace Editor
@@ -110,8 +115,11 @@ namespace Editor
     }
 
     static std::unordered_map<std::type_index, std::function<json11::Json(Context *, std::shared_ptr<void>)>> toJsonFuncMap{
+        {typeid(Logic::Camera), ComponentToJson<Logic::Camera>},
         {typeid(Logic::Transform), ComponentToJson<Logic::Transform>},
-    };
+        {typeid(Render::DirectionLight), ComponentToJson<Render::DirectionLight>},
+        {typeid(Render::Material), ComponentToJson<Render::Material>},
+        {typeid(Render::Mesh), ComponentToJson<Render::Mesh>}};
 
     void Window::DrawProject(Context *context)
     {
@@ -127,9 +135,10 @@ namespace Editor
             {
             }
             ImGui::SameLine();
+
             if (ImGui::Button("Save All"))
             {
-                std::string sceneJson = "\n";
+                std::string sceneJson = "";
 
                 auto &allEOs = context->allEOs;
                 for (const auto &eo : allEOs)
@@ -160,7 +169,9 @@ namespace Editor
                 }
 
                 Common::LogSystem::Info(sceneJson);
+                Common::ResSystem::WriteFile("test.scene", sceneJson);
             }
+
             if (ImGui::IsMouseClicked(0))
             {
                 selectFileName = "";

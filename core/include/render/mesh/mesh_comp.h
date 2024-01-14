@@ -32,6 +32,7 @@ namespace Render
     struct Mesh final
     {
         std::string objName;
+        
         std::vector<Vertex> vertices;
         std::vector<uint16_t> indices;
         std::shared_ptr<Buffer> vertexBuffer;
