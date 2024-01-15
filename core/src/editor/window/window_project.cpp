@@ -71,6 +71,8 @@ namespace Editor
                     if (ImGui::Selectable(id, (selectFileName == fileName)))
                     {
                         selectFileName = fileName;
+                        memcpy(sceneName, fileName.c_str(), fileName.size());
+
                         ImGui::OpenPopup(id);
                     }
 
