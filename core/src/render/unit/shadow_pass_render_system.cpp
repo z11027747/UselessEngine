@@ -15,17 +15,20 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        auto &directionLightEO = context->renderLightEOs[0];
-        auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
-
         auto &shadowPass = global->passes[Pass_Shadow];
         FramebufferLogic::BeginRenderPass(context, imageIndex, shadowPass);
 
-        if (directionLightEO->active && directionLight->hasShadow)
+        if (context->renderLightEOs.size() > 0)
         {
-            UnitRenderSystem::Update(context, imageIndex, true);
+            auto &directionLightEO = context->renderLightEOs[0];
+            auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
+
+            if (directionLightEO->active && directionLight->hasShadow)
+            {
+                UnitRenderSystem::Update(context, imageIndex, true);
+            }
         }
-        
+
         FramebufferLogic::EndRenderPass(context, imageIndex);
     }
 }

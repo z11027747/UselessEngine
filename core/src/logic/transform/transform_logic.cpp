@@ -7,6 +7,7 @@
 #include <memory>
 #include "logic/transform/transform_logic.h"
 #include "engine_object.h"
+#include "context.h"
 
 namespace Logic
 {
@@ -41,7 +42,7 @@ namespace Logic
 		transform->localScale = glm::vec3(1.0f);
 	}
 
-	void TransformLogic::UpdateModel(std::shared_ptr<EngineObject> eo)
+	void TransformLogic::UpdateModel(Context *context, std::shared_ptr<EngineObject> eo)
 	{
 		auto transform = eo->GetComponent<Logic::Transform>();
 
@@ -51,9 +52,11 @@ namespace Logic
 
 		auto model = translation * rotation * scale;
 
-		if (transform->parentEO != nullptr)
+		auto &parentEOName = transform->parentEOName;
+		if (!parentEOName.empty())
 		{
-			auto parentTransform = transform->parentEO->GetComponent<Logic::Transform>();
+			auto &parentEO = context->GetEO(parentEOName);
+			auto parentTransform = parentEO->GetComponent<Logic::Transform>();
 			model = parentTransform->model * model;
 
 			transform->worldPosition = transform->localPosition + parentTransform->localPosition;
@@ -75,10 +78,10 @@ namespace Logic
 								   std::shared_ptr<EngineObject> parentEO)
 	{
 		auto childTransform = childEO->GetComponent<Logic::Transform>();
-		childTransform->parentEO = parentEO;
+		childTransform->parentEOName = parentEO->name;
 
 		auto parentTransform = parentEO->GetComponent<Logic::Transform>();
-		parentTransform->childEOs.emplace_back(childEO);
+		parentTransform->childEONames.push_back(childEO->name);
 	}
 
 }

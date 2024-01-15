@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
+#include <string>
 #include "render/vk/buffer/buffer_comp.h"
 
 namespace Render
@@ -32,7 +33,10 @@ namespace Render
     struct Mesh final
     {
         std::string objName;
-        
+        glm::vec3 defaultColor{1.0f, 1.0f, 1.0f};
+        float scaler{1.0f};
+        bool checkHit;
+
         std::vector<Vertex> vertices;
         std::vector<uint16_t> indices;
         std::shared_ptr<Buffer> vertexBuffer;

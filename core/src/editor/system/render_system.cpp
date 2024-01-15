@@ -47,9 +47,8 @@ namespace Editor
             }
 
             Window::Draw(context);
-
-            ImGui::End();
         }
+        ImGui::End();
 
         ImGui::PopStyleVar(2);
 
@@ -60,13 +59,6 @@ namespace Editor
         ImGui::Render();
         auto *main_draw_data = ImGui::GetDrawData();
         ImGui_ImplVulkan_RenderDrawData(main_draw_data, vkCmdBuffer);
-
-        auto &io = ImGui::GetIO();
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-        }
     }
 
 }

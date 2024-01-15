@@ -3,6 +3,7 @@
 #include "render/vk/global/global_logic.h"
 #include "render/vk/logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
+#include "engine_object.h"
 #include "context.h"
 
 namespace Render

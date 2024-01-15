@@ -18,31 +18,40 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        auto &directionLightEO = context->renderLightEOs[0];
-        auto directionLightTransform = directionLightEO->GetComponent<Logic::Transform>();
-        auto directionLightCamera = directionLightEO->GetComponent<Logic::Camera>();
-        auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
-
         DirectionLightUBO directionLightUBO = {};
-        if (directionLightEO->active)
+
+        if (context->renderLightEOs.size() > 0)
         {
-            directionLightUBO = {
-                directionLightCamera->view,
-                directionLightCamera->projection,
-                -directionLightTransform->forward,
-                directionLight->color,
-                directionLight->params};
+            auto &directionLightEO = context->renderLightEOs[0];
+            if (directionLightEO->active)
+            {
+                auto directionLightTransform = directionLightEO->GetComponent<Logic::Transform>();
+                auto directionLightCamera = directionLightEO->GetComponent<Logic::Camera>();
+                auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
+
+                directionLightUBO = {
+                    directionLightCamera->view,
+                    directionLightCamera->projection,
+                    -directionLightTransform->forward,
+                    directionLight->color,
+                    directionLight->params};
+            }
         }
 
-        auto &mainCameraEO = context->logicMainCameraEO;
-        auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
-        auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
+        CameraUBO cameraUBO = {};
 
-        CameraUBO cameraUBO = {
-            mainCameraTransform->localPosition,
-            mainCamera->view,
-            mainCamera->projection,
-        };
+        auto &mainCameraEO = context->logicMainCameraEO;
+        if (mainCameraEO != nullptr)
+        {
+            auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
+            auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
+
+            cameraUBO = {
+                mainCameraTransform->localPosition,
+                mainCamera->view,
+                mainCamera->projection,
+            };
+        }
 
         GlobalUBO globalUBO = {
             cameraUBO,

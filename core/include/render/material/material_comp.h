@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/image/image_comp.h"
 
@@ -10,8 +11,7 @@ namespace Render
 	struct Material final
 	{
 		std::string pipelineName;
-		std::string image0Name;
-
+		std::vector<std::string> image0Names;
 		bool castShadow;
 
 		std::shared_ptr<Image> image0;

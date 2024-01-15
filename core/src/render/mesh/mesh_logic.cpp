@@ -26,14 +26,12 @@ namespace std
 
 namespace Render
 {
-    std::shared_ptr<Mesh> MeshLogic::CreateByObj(Context *context,
-                                                 const std::string &name, float scaler, glm::vec3 &defaultColor)
+    void MeshLogic::Create(Context *context,
+                           std::shared_ptr<Mesh> mesh)
     {
-        auto mesh = std::make_shared<Mesh>();
-        SetObj(context, mesh, name, scaler, defaultColor);
+        LoadObj(context, mesh);
         CreateBuffer(context, mesh);
         CalcBoundingSphere(context, mesh);
-        return mesh;
     }
 
     void MeshLogic::Destroy(Context *context,
@@ -43,11 +41,10 @@ namespace Render
         BufferLogic::Destroy(context, mesh->indexBuffer);
     }
 
-    void MeshLogic::SetObj(Context *context,
-                           std::shared_ptr<Mesh> mesh,
-                           const std::string &objName, float scaler, glm::vec3 &defaultColor)
+    void MeshLogic::LoadObj(Context *context,
+                            std::shared_ptr<Mesh> mesh)
     {
-        auto &resObj = Common::ResSystem::LoadObj(objName);
+        auto &resObj = Common::ResSystem::LoadObj(mesh->objName);
         auto &attrib = resObj.attrib;
         auto &shapes = resObj.shapes;
 
@@ -64,13 +61,13 @@ namespace Render
 
                 Render::Vertex vertex = {};
                 vertex.positionOS = {attrib.vertices[3 * vi + 0], attrib.vertices[3 * vi + 1], attrib.vertices[3 * vi + 2]};
-                vertex.positionOS *= scaler;
+                vertex.positionOS *= mesh->scaler;
                 vertex.positionOS.x *= -1;
 
                 vertex.normalOS = {attrib.normals[3 * ni + 0], attrib.normals[3 * ni + 1], attrib.normals[3 * ni + 2]};
                 vertex.normalOS.x *= -1;
 
-                vertex.color = defaultColor;
+                vertex.color = mesh->defaultColor;
 
                 if (attrib.texcoords.size() > 0)
                 {
@@ -92,7 +89,6 @@ namespace Render
             }
         }
 
-        mesh->objName = objName;
         mesh->vertices = vertices;
         mesh->indices = indices;
     }

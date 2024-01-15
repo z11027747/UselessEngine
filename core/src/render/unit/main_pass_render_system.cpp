@@ -15,15 +15,17 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        auto &mainCameraEO = context->logicMainCameraEO;
-        auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
-
         auto &mainPass = global->passes[Pass_Main];
         FramebufferLogic::BeginRenderPass(context, imageIndex, mainPass);
 
-        if (mainCameraEO->active)
+        auto &mainCameraEO = context->logicMainCameraEO;
+        if (mainCameraEO != nullptr)
         {
-            UnitRenderSystem::Update(context, imageIndex, false);
+            auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
+            if (mainCameraEO->active)
+            {
+                UnitRenderSystem::Update(context, imageIndex, false);
+            }
         }
 
         FramebufferLogic::EndRenderPass(context, imageIndex);

@@ -15,6 +15,7 @@
 #include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "editor/system.h"
+#include "engine_object.h"
 #include "context.h"
 
 namespace Render

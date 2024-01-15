@@ -7,6 +7,7 @@
 #include "editor/wrap/component_wrap.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/camera/camera_logic.h"
+#include "engine_object.h"
 #include "context.h"
 
 namespace Editor

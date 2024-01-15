@@ -5,16 +5,17 @@
 #include "logic/camera/camera_logic.h"
 #include "editor/system.h"
 #include "editor/window.h"
+#include "common/log_system.h"
 #include "engine_object.h"
 #include "context.h"
 
 namespace Editor
 {
-    static std::shared_ptr<EngineObject> hitEO = nullptr;
+    static std::shared_ptr<EngineObject> lastAxisEO = nullptr;
     static float lastX, lastY = 0.0f;
-    static float moveSpeed = 10.0f;
+    // static float moveSpeed = 10.0f;
 
-    void AxisSelectSystem::Update(Context *context)
+    bool AxisSelectSystem::Update(Context *context)
     {
         auto &window = context->window;
         auto deltaTime = context->deltaTime;
@@ -22,7 +23,9 @@ namespace Editor
         double currX, currY;
         glfwGetCursorPos(window, &currX, &currY);
 
-        if (Window::IsInViewport(context) && Window::selectEO != nullptr)
+        auto &selectEO = Window::selectEO;
+
+        if (Window::IsInViewport(context) && selectEO != nullptr)
         {
             auto isMousePress = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS);
             auto isMouseRelease = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_RELEASE);
@@ -32,58 +35,59 @@ namespace Editor
             Window::ToViewportNdcXY(context, ndcX, ndcY);
 
             auto ray = Logic::HitRayCheckLogic::CalcaRayFromNdc(context, ndcX, ndcY);
-            std::shared_ptr<EngineObject> tempHitEO = nullptr;
+            std::shared_ptr<EngineObject> currAxisHitEO = nullptr;
 
-            auto &axisHitEOs = context->logicAxisHitEOs;
-            for (const auto &axisHitEO : axisHitEOs)
+            auto &axisEOs = context->editorAxisEOs;
+            for (const auto &axisEO : axisEOs)
             {
                 auto result = Logic::HitRayCheckLogic::Test(context,
-                                                            ray, axisHitEO);
+                                                            ray, axisEO);
                 if (result)
                 {
-                    tempHitEO = axisHitEO;
+                    currAxisHitEO = axisEO;
                     break;
                 }
             }
 
-            if (hitEO == nullptr && tempHitEO != hitEO)
+            if (lastAxisEO == nullptr && currAxisHitEO != nullptr)
             {
-                hitEO = tempHitEO;
-                Logic::TransformLogic::SetScale(tempHitEO, 1.2f);
+                lastAxisEO = currAxisHitEO;
+                Logic::TransformLogic::SetScale(currAxisHitEO, 1.2f);
             }
-            if (tempHitEO == nullptr && tempHitEO != hitEO && isMouseRelease)
+            if (lastAxisEO != nullptr && currAxisHitEO == nullptr && isMouseRelease)
             {
-                Logic::TransformLogic::SetScale(hitEO, 1.0f);
-                hitEO = nullptr;
+                Logic::TransformLogic::SetScale(lastAxisEO, 1.0f);
+                lastAxisEO = nullptr;
             }
 
-            if (hitEO != nullptr && isMousePress)
+            if (lastAxisEO != nullptr && isMousePress)
             {
-                auto mainCamera = context->logicMainCameraEO->GetComponent<Logic::Camera>();
-                auto &view = mainCamera->view;
+                auto mainCameraEO = context->logicMainCameraEO;
+                auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
 
-                auto selectTransform = Window::selectEO->GetComponent<Logic::Transform>();
+                auto selectTransform = selectEO->GetComponent<Logic::Transform>();
+
+                auto distance = glm::distance(mainCameraTransform->worldPosition, selectTransform->worldPosition);
+                auto moveSpeed = distance * 0.6f;
+                // Common::LogSystem::Debug(moveSpeed);
 
                 auto offsetX = (float)currX - lastX;
                 auto offsetY = lastY - (float)currY;
                 auto offset = glm::vec3(offsetX, offsetY, 0.0f);
 
-                if (hitEO->name == Name_AxisX)
+                if (lastAxisEO->name == Name_AxisX)
                 {
-                    auto viewXDir = view * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-                    auto dotX = glm::dot(offset, glm::vec3(viewXDir));
+                    auto dotX = glm::dot(offset, mainCameraTransform->right);
                     selectTransform->localPosition.x += dotX * moveSpeed * deltaTime;
                 }
-                else if (hitEO->name == Name_AxisY)
+                else if (lastAxisEO->name == Name_AxisY)
                 {
-                    auto viewYDir = view * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-                    auto dotY = glm::dot(offset, glm::vec3(viewYDir));
+                    auto dotY = glm::dot(offset, mainCameraTransform->up);
                     selectTransform->localPosition.y += dotY * moveSpeed * deltaTime;
                 }
-                else if (hitEO->name == Name_AxisZ)
+                else if (lastAxisEO->name == Name_AxisZ)
                 {
-                    auto viewZDir = view * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-                    auto dotZ = glm::dot(offset, glm::vec3(viewZDir));
+                    auto dotZ = glm::dot(offset, -mainCameraTransform->forward);
                     selectTransform->localPosition.z += dotZ * moveSpeed * deltaTime;
                 }
             }
@@ -91,5 +95,7 @@ namespace Editor
 
         lastX = (float)currX;
         lastY = (float)currY;
+
+        return (lastAxisEO != nullptr);
     }
 }

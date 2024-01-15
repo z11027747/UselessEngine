@@ -9,7 +9,7 @@
 namespace Editor
 {
 	static char pipelineName[32] = "";
-	static char image0Name[32] = "";
+	// static char image0Name[32] = "";
 
 	template <>
 	void ComponentWrap<Render::Material>::Draw(Context *context,
@@ -18,7 +18,7 @@ namespace Editor
 		if (isFirst)
 		{
 			memcpy(pipelineName, material->pipelineName.data(), material->pipelineName.size());
-			memcpy(image0Name, material->image0Name.data(), material->image0Name.size());
+			// memcpy(image0Name, material->image0Name.data(), material->image0Name.size());
 			return;
 		}
 
@@ -26,9 +26,9 @@ namespace Editor
 		{
 		}
 
-		if (ImGui::InputText("Image0Name", image0Name, IM_ARRAYSIZE(image0Name)))
-		{
-		}
+		// if (ImGui::InputText("Image0Name", image0Name, IM_ARRAYSIZE(image0Name)))
+		// {
+		// }
 
 		ImGui::Checkbox("CastShadow", &material->castShadow);
 	}

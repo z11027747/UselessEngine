@@ -11,23 +11,16 @@
 
 namespace Render
 {
-    std::shared_ptr<Material> MaterialLogic::CreateByImage(Context *context,
-                                                           const std::string &pipelineName, const std::string &imageName)
+
+    void MaterialLogic::Create(Context *context,
+                               std::shared_ptr<Material> material)
     {
-        auto material = std::make_shared<Render::Material>();
-        SetPipeline(context, material, pipelineName);
-        SetImage(context, material, imageName);
+        if (material->image0Names.size() == 1)
+            CreateImage(context, material);
+        else if (material->image0Names.size() == 6)
+            CreateImageCube(context, material);
+
         CreateDescriptor(context, material);
-        return material;
-    }
-    std::shared_ptr<Material> MaterialLogic::CreateByImageCube(Context *context,
-                                                               const std::string &pipelineName, const std::array<std::string, 6> &imageCubeNames)
-    {
-        auto material = std::make_shared<Render::Material>();
-        SetPipeline(context, material, pipelineName);
-        SetImageCube(context, material, imageCubeNames);
-        CreateDescriptor(context, material);
-        return material;
     }
 
     void MaterialLogic::Destroy(Context *context,
@@ -37,18 +30,10 @@ namespace Render
         MaterialDescriptorLogic::Destroy(context, material);
     }
 
-    void MaterialLogic::SetPipeline(Context *context,
-                                    std::shared_ptr<Material> material,
-                                    const std::string &pipelineName)
+    void MaterialLogic::CreateImage(Context *context,
+                                    std::shared_ptr<Material> material)
     {
-        material->pipelineName = pipelineName;
-    }
-
-    void MaterialLogic::SetImage(Context *context,
-                                 std::shared_ptr<Material> material,
-                                 const std::string &imageName)
-    {
-        auto &resImg = Common::ResSystem::LoadImg(imageName);
+        auto &resImg = Common::ResSystem::LoadImg(material->image0Names[0]);
 
         auto imageW = static_cast<uint32_t>(resImg.width);
         auto imageH = static_cast<uint32_t>(resImg.height);
@@ -85,13 +70,11 @@ namespace Render
                                      image2d,
                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-        material->image0Name = imageName;
         material->image0 = image2d;
     }
 
-    void MaterialLogic::SetImageCube(Context *context,
-                                     std::shared_ptr<Material> material,
-                                     const std::array<std::string, 6> &imageCubeNames)
+    void MaterialLogic::CreateImageCube(Context *context,
+                                        std::shared_ptr<Material> material)
     {
         uint32_t imageCubeW, imageCubeH = 0;
 
@@ -99,7 +82,7 @@ namespace Render
 
         for (auto i = 0; i < 6; i++)
         {
-            auto &resImg = Common::ResSystem::LoadImg(imageCubeNames[i]);
+            auto &resImg = Common::ResSystem::LoadImg(material->image0Names[i]);
 
             imageCubeW = static_cast<uint32_t>(resImg.width);
             imageCubeH = static_cast<uint32_t>(resImg.height);
@@ -141,7 +124,6 @@ namespace Render
                                      imageCube,
                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-        material->image0Name = imageCubeNames[0];
         material->image0 = imageCube;
     }
 

@@ -1,0 +1,29 @@
+#pragma once
+
+#include <unordered_map>
+#include <typeindex>
+#include <functional>
+#include "render/light/light_comp.h"
+#include "render/material/material_comp.h"
+#include "render/mesh/mesh_comp.h"
+#include "render/unit/unit_comp.h"
+#include "logic/transform/transform_comp.h"
+#include "logic/camera/camera_comp.h"
+
+class Context;
+
+namespace Editor
+{
+    template <typename T>
+    static void ComponentDraw(Context *context, std::shared_ptr<void> component, bool isFirst)
+    {
+        ComponentWrap<T>::Draw(context, std::static_pointer_cast<T>(component), isFirst);
+    }
+
+    static std::unordered_map<std::type_index, std::function<void(Context *, std::shared_ptr<void>, bool)>> drawFuncMap{
+        {typeid(Logic::Transform), ComponentDraw<Logic::Transform>},
+        {typeid(Logic::Camera), ComponentDraw<Logic::Camera>},
+        {typeid(Render::DirectionLight), ComponentDraw<Render::DirectionLight>},
+        {typeid(Render::Mesh), ComponentDraw<Render::Mesh>},
+        {typeid(Render::Material), ComponentDraw<Render::Material>}};
+}

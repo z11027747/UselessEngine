@@ -6,11 +6,6 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include "render/system.h"
-#include "logic/system.h"
-#include "editor/system.h"
-#include "editor/test_logic.h"
-#include "engine_object.h"
 
 const std::string Name_MainCamera = "MainCamera";
 const std::string Name_DirectionLight = "DirectionLight";
@@ -19,6 +14,8 @@ const std::string Name_Axis = "Axis";
 const std::string Name_AxisX = "X";
 const std::string Name_AxisY = "Y";
 const std::string Name_AxisZ = "Z";
+
+class EngineObject;
 
 class Context final
 {
@@ -38,6 +35,10 @@ public:
 		deltaTime = 0.0f;
 	}
 
+	void Create();
+	void Update();
+	void Destroy();
+
 	// time
 	float currTime;
 	float deltaTime;
@@ -50,47 +51,20 @@ public:
 	// logic
 	std::shared_ptr<EngineObject> logicMainCameraEO;
 	std::vector<std::shared_ptr<EngineObject>> logicMoveEOs;
-	std::vector<std::shared_ptr<EngineObject>> logicHitEOs;
-	std::vector<std::shared_ptr<EngineObject>> logicAxisHitEOs;
+	std::vector<std::shared_ptr<EngineObject>> logicHitCheckEOs;
+
+	// editor
+	std::vector<std::shared_ptr<EngineObject>> editorAxisEOs;
 
 	// all-engineObject
 	std::vector<std::shared_ptr<EngineObject>> allEOs;
 	std::unordered_map<std::string, std::shared_ptr<EngineObject>> allEOMap;
 
-	void AddEO(std::shared_ptr<EngineObject> eo)
-	{
-		allEOs.emplace_back(eo);
-		allEOMap.emplace(eo->name, eo);
-	}
+	void AddEO(std::shared_ptr<EngineObject>);
+	std::shared_ptr<EngineObject> GetEO(const std::string &);
+	void DestroyEO(std::shared_ptr<EngineObject>, bool = true);
+	void DestroyAllEOs();
 
-	std::shared_ptr<EngineObject> GetEO(const std::string &name)
-	{
-		return allEOMap[name];
-	}
-
-	void Create()
-	{
-		Render::System::Create(this);
-		Logic::System::Create(this);
-
-		// Test
-		Editor::TestLogic::CreateMainCamera(this);
-		Editor::TestLogic::CreateLight(this);
-		Editor::TestLogic::CreateSkybox(this);
-		Editor::TestLogic::CreateCubes(this);
-		Editor::TestLogic::CreateAxis(this);
-	}
-
-	void Update()
-	{
-		Render::System::Update(this);
-		Logic::System::Update(this);
-		Editor::System::Update(this);
-	}
-
-	void Destroy()
-	{
-		Render::System::Destroy(this);
-		Logic::System::Destroy(this);
-	}
+	// scene
+	std::string newSceneName{""};
 };

@@ -10,6 +10,9 @@ namespace Logic
     void CameraUpdateVPSystem::Update(Context *context)
     {
         auto &mainCameraEO = context->logicMainCameraEO;
+        if (mainCameraEO == nullptr)
+            return;
+
         auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
 
         Logic::CameraLogic::UpdateView(mainCameraEO);

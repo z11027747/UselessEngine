@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include "render/vk/pipeline/descriptor_comp.h"
+#include "engine_object.h"
 #include "context.h"
 
 namespace Render

@@ -4,17 +4,14 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
-#include <functional>
 #include <imgui/imgui.h>
 #include <json/json11.hpp>
-#include "render/light/light_comp.h"
-#include "render/material/material_comp.h"
-#include "render/mesh/mesh_comp.h"
-#include "logic/camera/camera_comp.h"
 #include "editor/window.h"
 #include "editor/json/component_json.h"
+#include "editor/json/component_json_mapping.h"
 #include "common/log_system.h"
 #include "common/res_system.h"
+#include "engine_object.h"
 #include "context.h"
 
 namespace Editor
@@ -45,21 +42,7 @@ namespace Editor
     }
 
     static std::string selectFileName = "";
-
-    template <typename T>
-    static void ComponentFromJson(Context *context,
-                                  std::shared_ptr<EngineObject> eo, const json11::Json &j)
-    {
-        auto component = ComponentJson<T>::From(context, j);
-        eo->AddComponent<T>(component);
-    }
-
-    static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<EngineObject>, const json11::Json &)>> fromJsonFuncMap{
-        {"Logic::Camera", ComponentFromJson<Logic::Camera>},
-        {"Logic::Transform", ComponentFromJson<Logic::Transform>},
-        {"Render::DirectionLight", ComponentFromJson<Render::DirectionLight>},
-        {"Render::Material", ComponentFromJson<Render::Material>},
-        {"Render::Mesh", ComponentFromJson<Render::Mesh>}};
+    static char sceneName[16] = "new.scene";
 
     static void DrawDirectory(Context *context,
                               const std::string &directoryName, const std::string &directoryFullName)
@@ -95,36 +78,16 @@ namespace Editor
                     {
                         ImGui::SeparatorText(id);
 
-                        if (ImGui::Button("Open (Only For Scene)"))
+                        if (fileName.find(".scene") != std::string::npos)
                         {
-                            auto lines = Common::ResSystem::ReadAllLines("resource/scene/" + fileName);
-                            for (const auto &line : lines)
+                            if (ImGui::Button("Open Scene"))
                             {
-                                std::string err;
-                                auto jObj = json11::Json::parse(line, err);
-
-                                auto eo = std::make_shared<EngineObject>();
-                                eo->name = jObj["name"].string_value();
-                                eo->active = jObj["active"].bool_value();
-                                eo->hideInHierarchy = jObj["hideInHierarchy"].bool_value();
-
-                                auto &components = jObj["components"].array_items();
-                                for (const auto &component : components)
-                                {
-                                    auto &componentType = component["type"].string_value();
-
-                                    auto it = fromJsonFuncMap.find(componentType);
-                                    if (it == fromJsonFuncMap.end())
-                                        continue;
-
-                                    fromJsonFuncMap[componentType](context, eo, component);
-                                }
-
-                                context->AddEO(eo);
+                                context->newSceneName = fileName;
+                                ImGui::CloseCurrentPopup();
                             }
-
-                            ImGui::CloseCurrentPopup();
+                            ImGui::Separator();
                         }
+
                         if (ImGui::Button("Reimport"))
                         {
                             ImGui::CloseCurrentPopup();
@@ -151,21 +114,6 @@ namespace Editor
         }
     }
 
-    static char sceneName[16] = "test";
-
-    template <typename T>
-    static json11::Json ComponentToJson(Context *context, std::shared_ptr<void> component)
-    {
-        return ComponentJson<T>::To(context, std::static_pointer_cast<T>(component));
-    }
-
-    static std::unordered_map<std::type_index, std::function<json11::Json(Context *, std::shared_ptr<void>)>> toJsonFuncMap{
-        {typeid(Logic::Camera), ComponentToJson<Logic::Camera>},
-        {typeid(Logic::Transform), ComponentToJson<Logic::Transform>},
-        {typeid(Render::DirectionLight), ComponentToJson<Render::DirectionLight>},
-        {typeid(Render::Material), ComponentToJson<Render::Material>},
-        {typeid(Render::Mesh), ComponentToJson<Render::Mesh>}};
-
     void Window::DrawProject(Context *context)
     {
         if (ImGui::Begin("Project", NULL))
@@ -184,45 +132,31 @@ namespace Editor
             ImGui::SetNextItemWidth(200.0f);
             ImGui::InputText("##sceneName", sceneName, IM_ARRAYSIZE(sceneName));
             ImGui::SameLine();
+
             if (ImGui::Button("SaveScene"))
             {
                 std::string sceneJson = "";
 
                 auto &allEOs = context->allEOs;
-                for (const auto &eo : allEOs)
+                auto allEOSize = allEOs.size();
+                for (auto i = 0; i < allEOSize; i++)
                 {
-                    json11::Json::array componentJObjArr = {};
-                    auto &componentMap = eo->componentMap;
-                    for (const auto &kv : componentMap)
-                    {
-                        auto typeId = kv.first;
-                        auto &component = kv.second;
+                    auto &eo = allEOs[i];
 
-                        auto it = toJsonFuncMap.find(typeId);
-                        if (it == toJsonFuncMap.end())
-                            continue;
+                    auto eoJson = EOToJson(context, eo);
+                    sceneJson += eoJson;
 
-                        auto componentJObj = toJsonFuncMap[typeId](context, component);
-                        componentJObjArr.push_back(componentJObj);
-                    }
-
-                    json11::Json::object eoJObj = {
-                        {"name", eo->name},
-                        {"active", eo->active},
-                        {"hideInHierarchy", eo->hideInHierarchy},
-                        {"components", componentJObjArr}};
-
-                    sceneJson += json11::Json(eoJObj).dump();
-                    sceneJson += "\n";
+                    if (i != allEOSize - 1)
+                        sceneJson += "\n";
                 }
 
                 // Common::LogSystem::Info(sceneJson);
-                Common::ResSystem::WriteFile("resource/scene/" + std::string(sceneName) + ".scene", sceneJson);
+                Common::ResSystem::WriteFile("resource/scene/" + std::string(sceneName), sceneJson);
             }
 
             if (ImGui::IsMouseClicked(0))
             {
-                selectFileName = "";
+                selectFileName.clear();
             }
 
             ImGui::SetNextItemOpen(true);

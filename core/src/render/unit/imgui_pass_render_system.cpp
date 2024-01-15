@@ -16,12 +16,11 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        auto &directionLightEO = context->renderLightEOs[0];
-        auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
-
         auto &imGuiPass = global->passes[Pass_ImGui];
         FramebufferLogic::BeginRenderPass(context, imageIndex, imGuiPass);
+
         Editor::RenderSystem::Update(context, imageIndex);
+
         FramebufferLogic::EndRenderPass(context, imageIndex);
     }
 }

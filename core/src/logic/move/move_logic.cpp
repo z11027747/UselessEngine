@@ -18,7 +18,7 @@ namespace Logic
         {
             moveFollow = std::make_shared<MoveFollow>();
             selfEO->AddComponent(moveFollow);
-            context->logicMoveEOs.emplace_back(selfEO);
+            context->logicMoveEOs.push_back(selfEO);
         }
 
         moveFollow->targetEO = targetEO;

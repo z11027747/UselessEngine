@@ -4,6 +4,7 @@
 #include "render/material/material_logic.h"
 #include "render/unit/unit_comp.h"
 #include "render/unit/unit_system.h"
+#include "engine_object.h"
 #include "context.h"
 
 namespace Render

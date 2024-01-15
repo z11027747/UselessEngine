@@ -48,21 +48,24 @@ namespace Editor
 
 				auto transform = eo->GetComponent<Logic::Transform>();
 
-				auto &parentEO = transform->parentEO;
+				auto &parentEOName = transform->parentEOName;
+				auto &parentEO = context->GetEO(parentEOName);
 				if (parentEO != nullptr)
 					continue;
 
 				DrawEO(context, eo, i);
 
-				auto &childEOs = transform->childEOs;
-				auto childEOCount = static_cast<int>(childEOs.size());
+				auto &childEONames = transform->childEONames;
+				auto childEOCount = static_cast<int>(childEONames.size());
 				if (childEOCount > 0)
 				{
 					ImGui::Indent();
 					auto childIBegin = i * 100;
 					for (auto childI = childIBegin; childI < childIBegin + childEOCount; childI++)
 					{
-						DrawEO(context, childEOs[childI - childIBegin], childI);
+						auto &childEOName = childEONames[childI - childIBegin];
+						auto &childEO = context->GetEO(childEOName);
+						DrawEO(context, childEO, childI);
 					}
 					ImGui::Unindent();
 				}

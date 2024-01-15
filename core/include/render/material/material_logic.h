@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include <array>
 #include <memory>
 #include <string>
 #include "render/vk/pipeline/pipeline_comp.h"
@@ -15,17 +14,11 @@ namespace Render
     class MaterialLogic final
     {
     public:
-        static std::shared_ptr<Material> CreateByImage(Context *,
-                                                       const std::string &, const std::string &);
-        static std::shared_ptr<Material> CreateByImageCube(Context *,
-                                                           const std::string &, const std::array<std::string, 6> &);
-
+        static void Create(Context *, std::shared_ptr<Material>);
         static void Destroy(Context *, std::shared_ptr<Material>);
 
-        static void SetPipeline(Context *, std::shared_ptr<Material>, const std::string &);
-        static void SetImage(Context *, std::shared_ptr<Material>, const std::string &);
-        static void SetImageCube(Context *, std::shared_ptr<Material>, const std::array<std::string, 6> &);
-
+        static void CreateImage(Context *, std::shared_ptr<Material>);
+        static void CreateImageCube(Context *, std::shared_ptr<Material>);
         static void CreateDescriptor(Context *, std::shared_ptr<Material>);
     };
 

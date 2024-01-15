@@ -45,7 +45,7 @@ namespace Editor
 	class AxisSelectSystem final
 	{
 	public:
-		static void Update(Context *);
+		static bool Update(Context *);
 	};
 
 	class EOSelectSystem final

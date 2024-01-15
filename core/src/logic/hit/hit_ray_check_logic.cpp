@@ -2,6 +2,7 @@
 #include <string>
 #include <limits>
 #include "render/mesh/mesh_comp.h"
+#include "logic/transform/transform_logic.h"
 #include "logic/hit/hit_ray_logic.h"
 #include "logic/camera/camera_logic.h"
 #include "common/log_system.h"
@@ -30,16 +31,16 @@ namespace Logic
 
         std::vector<std::shared_ptr<EngineObject>> tempHitEOs = {};
 
-        auto &logicHitEOs = context->logicHitEOs;
-        for (const auto &hitEO : logicHitEOs)
+        auto &logicHitCheckEOs = context->logicHitCheckEOs;
+        for (const auto &hitCheckEO : logicHitCheckEOs)
         {
-            if (!hitEO->active)
+            if (!hitCheckEO->active)
                 continue;
 
             auto result = Test(context,
-                               ray, hitEO);
+                               ray, hitCheckEO);
             if (result)
-                tempHitEOs.push_back(hitEO);
+                tempHitEOs.push_back(hitCheckEO);
         }
 
         if (tempHitEOs.size() == 0)
@@ -73,7 +74,7 @@ namespace Logic
 
         auto &bound = hitMesh->bound;
         auto position = bound.center + hitTransform->worldPosition;
-        auto radius = bound.radius * hitTransform->localScale.x;
+        auto radius = bound.radius * hitTransform->worldScale.x;
 
         auto &origin = ray.origin;
         auto &direction = ray.direction;

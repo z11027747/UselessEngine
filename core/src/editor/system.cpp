@@ -19,8 +19,12 @@ namespace Editor
 	{
 		CameraMoveSystem::Update(context);
 		CameraRotateSystem::Update(context);
-		AxisSelectSystem::Update(context);
-		EOSelectSystem::Update(context);
+
+		auto result = AxisSelectSystem::Update(context);
+		if (!result)
+		{
+			EOSelectSystem::Update(context);
+		}
 	}
 
 	void System::Destroy(Context *context)

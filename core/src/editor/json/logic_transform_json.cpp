@@ -23,10 +23,17 @@ namespace Editor
         auto localScaleY = (float)localScaleJArr.at(1).number_value();
         auto localScaleZ = (float)localScaleJArr.at(2).number_value();
 
+        auto &childEONameJArr = j["childEONames"].array_items();
+
         auto transform = std::make_shared<Logic::Transform>();
         transform->localPosition = glm::vec3(localPositionX, localPositionY, localPositionZ);
         transform->localEulerAngles = glm::vec3(localEulerAnglesX, localEulerAnglesY, localEulerAnglesZ);
         transform->localScale = glm::vec3(localScaleX, localScaleY, localScaleZ);
+        transform->parentEOName = j["parentEOName"].string_value();
+        for (const auto &childEONameJObj : childEONameJArr)
+        {
+            transform->childEONames.push_back(childEONameJObj.string_value());
+        }
 
         return transform;
     }
@@ -48,7 +55,9 @@ namespace Editor
             {"type", "Logic::Transform"},
             {"localPosition", localPositionJArr},
             {"localEulerAngles", localEulerAnglesJArr},
-            {"localScale", localScaleJArr}};
+            {"localScale", localScaleJArr},
+            {"parentEOName", transform->parentEOName},
+            {"childEONames", transform->childEONames}};
 
         return jObj;
     }

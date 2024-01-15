@@ -3,6 +3,7 @@
 #include "logic/camera/camera_system.h"
 #include "logic/transform/transform_system.h"
 #include "logic/move/move_system.h"
+#include "logic/system.h"
 #include "context.h"
 
 class Context;

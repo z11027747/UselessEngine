@@ -7,6 +7,7 @@
 #include "render/unit/unit_comp.h"
 #include "render/unit/unit_system.h"
 #include "logic/transform/transform_comp.h"
+#include "engine_object.h"
 #include "context.h"
 
 namespace Render
@@ -25,11 +26,15 @@ namespace Render
                 continue;
 
             auto unitTransform = unitEO->GetComponent<Logic::Transform>();
-            auto &unitParentEO = unitTransform->parentEO;
             auto &model = unitTransform->model;
 
-            if (unitParentEO != nullptr && !unitParentEO->active)
-                continue;
+            auto &unitParentEOName = unitTransform->parentEOName;
+            if (!unitParentEOName.empty())
+            {
+                auto unitParentEO = context->GetEO(unitParentEOName);
+                if (!unitParentEO->active)
+                    continue;
+            }
 
             auto mesh = unitEO->GetComponent<Render::Mesh>();
             auto material = unitEO->GetComponent<Render::Material>();

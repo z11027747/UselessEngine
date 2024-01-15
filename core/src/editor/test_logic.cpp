@@ -9,10 +9,10 @@
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
-#include "render/mesh/mesh_logic.h"
-#include "render/material/material_logic.h"
 #include "render/unit/unit_comp.h"
 #include "render/light/light_comp.h"
+#include "render/material/material_comp.h"
+#include "render/mesh/mesh_comp.h"
 #include "logic/transform/transform_logic.h"
 #include "logic/camera/camera_logic.h"
 #include "editor/test_logic.h"
@@ -141,7 +141,6 @@ namespace Editor
         mainCamera->passName = Render::Pass_Main;
         mainCameraEO->AddComponent<Logic::Camera>(mainCamera);
 
-        context->logicMainCameraEO = mainCameraEO;
         context->AddEO(mainCameraEO);
     }
 
@@ -173,7 +172,6 @@ namespace Editor
         auto directionLightUnit = std::make_shared<Render::Unit>();
 
         context->AddEO(directionLightEO);
-        context->renderLightEOs.emplace_back(directionLightEO);
     }
 
     void TestLogic::CreateSkybox(Context *context)
@@ -186,14 +184,18 @@ namespace Editor
                                    glm::vec3(0.0f, -100.0f, 0.0f),
                                    glm::vec3(50.0f, 50.0f, 50.0f));
 
-        auto skyboxMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/sphere.obj", 1.0f);
-        auto skyboxMaterial = Render::MaterialLogic::CreateByImageCube(context, Render::Pipeline_Skybox,
-                                                                       {"resource/texture/skybox2/sky_left_lnitial.png",
-                                                                        "resource/texture/skybox2/sky_right_lnitial.png",
-                                                                        "resource/texture/skybox2/sky_up_lnitial.png",
-                                                                        "resource/texture/skybox2/sky_down_lnitial.png",
-                                                                        "resource/texture/skybox2/sky_front_lnitial.png",
-                                                                        "resource/texture/skybox2/sky_back_lnitial.png"});
+        auto skyboxMesh = std::make_shared<Render::Mesh>();
+        skyboxMesh->objName = "resource/obj/base/sphere.obj";
+
+        auto skyboxMaterial = std::make_shared<Render::Material>();
+        skyboxMaterial->pipelineName = Render::Pipeline_Skybox;
+        skyboxMaterial->image0Names = {"resource/texture/skybox2/sky_left_lnitial.png",
+                                       "resource/texture/skybox2/sky_right_lnitial.png",
+                                       "resource/texture/skybox2/sky_up_lnitial.png",
+                                       "resource/texture/skybox2/sky_down_lnitial.png",
+                                       "resource/texture/skybox2/sky_front_lnitial.png",
+                                       "resource/texture/skybox2/sky_back_lnitial.png"};
+
         auto skyboxUnit = std::make_shared<Render::Unit>();
 
         skyboxEO->AddComponent(skyboxMesh);
@@ -201,13 +203,10 @@ namespace Editor
         skyboxEO->AddComponent(skyboxUnit);
 
         context->AddEO(skyboxEO);
-        context->renderUnitEOs.emplace_back(skyboxEO);
     }
 
     void TestLogic::CreateCubes(Context *context)
     {
-        // return;
-
         CreateCube(context, glm::vec3(-4.0f, 0.0f, 0.0f), -90.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
         CreateCube(context, glm::vec3(-3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
         CreateCube(context, glm::vec3(-2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
@@ -299,18 +298,22 @@ namespace Editor
                                    glm::vec3(0.0f, eulerAngleY, 0.0f),
                                    glm::vec3(1.0f, 1.0f, 1.0f));
 
-        auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/cube_world/cube.obj", 0.01f);
-        auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Bling_Phone, imageName);
-        modelMaterial->castShadow = true;
-        auto modelUnit = std::make_shared<Render::Unit>();
+        auto modelMesh = std::make_shared<Render::Mesh>();
+        modelMesh->objName = "resource/obj/cube_world/cube.obj";
+        modelMesh->scaler = 0.01f;
+        modelMesh->checkHit = true;
 
+        auto modelMaterial = std::make_shared<Render::Material>();
+        modelMaterial->pipelineName = Render::Pipeline_Bling_Phone;
+        modelMaterial->image0Names = {imageName};
+        modelMaterial->castShadow = true;
+
+        auto modelUnit = std::make_shared<Render::Unit>();
         modelEO->AddComponent(modelMesh);
         modelEO->AddComponent(modelMaterial);
         modelEO->AddComponent(modelUnit);
 
         context->AddEO(modelEO);
-        context->renderUnitEOs.emplace_back(modelEO);
-        context->logicHitEOs.emplace_back(modelEO);
     }
 
     void TestLogic::CreateAxis(Context *context)
@@ -338,10 +341,15 @@ namespace Editor
                                        glm::vec3(1.0f, 1.0f, 1.0f));
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
-            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-            modelMesh->bound.center = glm::vec3(-0.2f, 0.0f, 0.0f);
-            modelMesh->bound.radius = 0.2f;
-            auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
+            auto modelMesh = std::make_shared<Render::Mesh>();
+            modelMesh->objName = "resource/obj/base/axis.obj";
+            modelMesh->defaultColor = glm::vec3(1.0f, 0.0f, 0.0f);
+            modelMesh->checkHit = true;
+
+            auto modelMaterial = std::make_shared<Render::Material>();
+            modelMaterial->pipelineName = Render::Pipeline_Color;
+            modelMaterial->image0Names = {"resource/texture/white.png"};
+
             auto modelUnit = std::make_shared<Render::Unit>();
 
             modelEO->AddComponent(modelMesh);
@@ -349,8 +357,9 @@ namespace Editor
             modelEO->AddComponent(modelUnit);
 
             context->AddEO(modelEO);
-            context->renderUnitEOs.emplace_back(modelEO);
-            context->logicAxisHitEOs.emplace_back(modelEO);
+
+            modelMesh->bound.center = glm::vec3(-0.2f, 0.0f, 0.0f);
+            modelMesh->bound.radius = 0.25f;
         }
 
         {
@@ -364,10 +373,15 @@ namespace Editor
                                        glm::vec3(1.0f, 1.0f, 1.0f));
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
-            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-            modelMesh->bound.center = glm::vec3(0.0f, -0.2f, 0.0f);
-            modelMesh->bound.radius = 0.2f;
-            auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
+            auto modelMesh = std::make_shared<Render::Mesh>();
+            modelMesh->objName = "resource/obj/base/axis.obj";
+            modelMesh->defaultColor = glm::vec3(0.0f, 1.0f, 0.0f);
+            modelMesh->checkHit = true;
+
+            auto modelMaterial = std::make_shared<Render::Material>();
+            modelMaterial->pipelineName = Render::Pipeline_Color;
+            modelMaterial->image0Names = {"resource/texture/white.png"};
+
             auto modelUnit = std::make_shared<Render::Unit>();
 
             modelEO->AddComponent(modelMesh);
@@ -375,8 +389,9 @@ namespace Editor
             modelEO->AddComponent(modelUnit);
 
             context->AddEO(modelEO);
-            context->renderUnitEOs.emplace_back(modelEO);
-            context->logicAxisHitEOs.emplace_back(modelEO);
+
+            modelMesh->bound.center = glm::vec3(0.0f, -0.2f, 0.0f);
+            modelMesh->bound.radius = 0.25f;
         }
 
         {
@@ -390,10 +405,15 @@ namespace Editor
                                        glm::vec3(1.0f, 1.0f, 1.0f));
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
-            auto modelMesh = Render::MeshLogic::CreateByObj(context, "resource/obj/base/axis.obj", 1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-            modelMesh->bound.center = glm::vec3(0.0f, 0.0f, -0.2f);
-            modelMesh->bound.radius = 0.2f;
-            auto modelMaterial = Render::MaterialLogic::CreateByImage(context, Render::Pipeline_Color, "resource/obj/viking_room/viking_room.png");
+            auto modelMesh = std::make_shared<Render::Mesh>();
+            modelMesh->objName = "resource/obj/base/axis.obj";
+            modelMesh->defaultColor = glm::vec3(0.0f, 0.0f, 1.0f);
+            modelMesh->checkHit = true;
+
+            auto modelMaterial = std::make_shared<Render::Material>();
+            modelMaterial->pipelineName = Render::Pipeline_Color;
+            modelMaterial->image0Names = {"resource/texture/white.png"};
+
             auto modelUnit = std::make_shared<Render::Unit>();
 
             modelEO->AddComponent(modelMesh);
@@ -401,8 +421,9 @@ namespace Editor
             modelEO->AddComponent(modelUnit);
 
             context->AddEO(modelEO);
-            context->renderUnitEOs.emplace_back(modelEO);
-            context->logicAxisHitEOs.emplace_back(modelEO);
+
+            modelMesh->bound.center = glm::vec3(0.0f, 0.0f, -0.2f);
+            modelMesh->bound.radius = 0.25f;
         }
     }
 }

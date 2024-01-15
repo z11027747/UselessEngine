@@ -13,7 +13,7 @@ namespace Logic
         {
             auto hasTransform = eo->HasComponent<Transform>();
             if (hasTransform)
-                TransformLogic::UpdateModel(eo);
+                TransformLogic::UpdateModel(context, eo);
         }
     }
 }

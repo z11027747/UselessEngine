@@ -42,7 +42,7 @@ namespace Common
 	void ResSystem::WriteFile(const std::string &fileName, const std::string &context)
 	{
 		std::ofstream outputFile(fileName);
-		outputFile << context << std::endl;
+		outputFile << context;
 		outputFile.close();
 	}
 

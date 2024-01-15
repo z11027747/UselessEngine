@@ -2,37 +2,15 @@
 #include <imgui/imgui.h>
 #include <memory>
 #include <iostream>
-#include <string>
-#include <typeindex>
-#include <functional>
-#include "logic/transform/transform_logic.h"
 #include "logic/move/move_logic.h"
 #include "editor/wrap/component_wrap.h"
-#include "logic/camera/camera_comp.h"
-#include "logic/transform/transform_comp.h"
-#include "render/light/light_comp.h"
-#include "render/material/material_comp.h"
-#include "render/mesh/mesh_comp.h"
+#include "editor/wrap/component_wrap_mapping.h"
 #include "editor/window.h"
-#include "context.h"
 #include "engine_object.h"
+#include "context.h"
 
 namespace Editor
 {
-	template <typename T>
-	static void ComponentDraw(Context *context, std::shared_ptr<void> component, bool isFirst)
-	{
-		ComponentWrap<T>::Draw(context, std::static_pointer_cast<T>(component), isFirst);
-	}
-
-	static std::unordered_map<std::type_index, std::function<void(Context *, std::shared_ptr<void>, bool)>> drawFuncMap{
-		{typeid(Logic::Transform), ComponentDraw<Logic::Transform>},
-		{typeid(Logic::Camera), ComponentDraw<Logic::Camera>},
-		{typeid(Render::DirectionLight), ComponentDraw<Render::DirectionLight>},
-		{typeid(Render::Mesh), ComponentDraw<Render::Mesh>},
-		{typeid(Render::Material), ComponentDraw<Render::Material>},
-	};
-
 	std::shared_ptr<EngineObject> Window::selectEO = nullptr;
 
 	void Window::SetSelectEO(Context *context, std::shared_ptr<EngineObject> eo)
