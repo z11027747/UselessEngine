@@ -23,7 +23,8 @@ namespace Common
 	class ResSystem final
 	{
 	public:
-		static std::vector<char> ReadFile(const std::string &);
+		static std::vector<char> ReadAllBytes(const std::string &);
+		static std::vector<std::string> ReadAllLines(const std::string &);
 		static void WriteFile(const std::string &, const std::string &);
 
 		static std::unordered_map<std::string, ResImage> imgMap;

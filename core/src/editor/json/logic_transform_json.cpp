@@ -6,6 +6,32 @@
 namespace Editor
 {
     template <>
+    std::shared_ptr<Logic::Transform> ComponentJson<Logic::Transform>::From(Context *context, const json11::Json &j)
+    {
+        auto &localPositionJArr = j["localPosition"].array_items();
+        auto localPositionX = (float)localPositionJArr.at(0).number_value();
+        auto localPositionY = (float)localPositionJArr.at(1).number_value();
+        auto localPositionZ = (float)localPositionJArr.at(2).number_value();
+
+        auto &localEulerAnglesJArr = j["localEulerAngles"].array_items();
+        auto localEulerAnglesX = (float)localEulerAnglesJArr.at(0).number_value();
+        auto localEulerAnglesY = (float)localEulerAnglesJArr.at(1).number_value();
+        auto localEulerAnglesZ = (float)localEulerAnglesJArr.at(2).number_value();
+
+        auto &localScaleJArr = j["localScale"].array_items();
+        auto localScaleX = (float)localScaleJArr.at(0).number_value();
+        auto localScaleY = (float)localScaleJArr.at(1).number_value();
+        auto localScaleZ = (float)localScaleJArr.at(2).number_value();
+
+        auto transform = std::make_shared<Logic::Transform>();
+        transform->localPosition = glm::vec3(localPositionX, localPositionY, localPositionZ);
+        transform->localEulerAngles = glm::vec3(localEulerAnglesX, localEulerAnglesY, localEulerAnglesZ);
+        transform->localScale = glm::vec3(localScaleX, localScaleY, localScaleZ);
+
+        return transform;
+    }
+
+    template <>
     json11::Json ComponentJson<Logic::Transform>::To(Context *context,
                                                      std::shared_ptr<Logic::Transform> transform)
 
@@ -14,10 +40,16 @@ namespace Editor
         auto &localEulerAngles = transform->localEulerAngles;
         auto &localScale = transform->localScale;
 
-        auto jObj = json11::Json::object{{"localPosition", json11::Json::array{localPosition.x, localPosition.y, localPosition.z}},
-                                         {"localEulerAngles", json11::Json::array{localEulerAngles.x, localEulerAngles.y, localEulerAngles.z}},
-                                         {"localScale", json11::Json::array{localScale.x, localScale.y, localScale.z}}};
+        auto localPositionJArr = json11::Json::array{localPosition.x, localPosition.y, localPosition.z};
+        auto localEulerAnglesJArr = json11::Json::array{localEulerAngles.x, localEulerAngles.y, localEulerAngles.z};
+        auto localScaleJArr = json11::Json::array{localScale.x, localScale.y, localScale.z};
 
-        return json11::Json::object{{"transform", jObj}};
+        auto jObj = json11::Json::object{
+            {"type", "Logic::Transform"},
+            {"localPosition", localPositionJArr},
+            {"localEulerAngles", localEulerAnglesJArr},
+            {"localScale", localScaleJArr}};
+
+        return jObj;
     }
 }

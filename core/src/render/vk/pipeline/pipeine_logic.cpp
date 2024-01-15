@@ -108,8 +108,8 @@ namespace Render
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::array<std::vector<char>, 2> codes = {
-			Common::ResSystem::ReadFile("resource/spv/" + name + ".vert.spv"),
-			Common::ResSystem::ReadFile("resource/spv/" + name + ".frag.spv")};
+			Common::ResSystem::ReadAllBytes("resource/spv/" + name + ".vert.spv"),
+			Common::ResSystem::ReadAllBytes("resource/spv/" + name + ".frag.spv")};
 
 		for (auto i = 0; i < 2; i++)
 		{

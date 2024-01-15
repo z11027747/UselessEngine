@@ -6,6 +6,17 @@
 namespace Editor
 {
     template <>
+    std::shared_ptr<Render::Material> ComponentJson<Render::Material>::From(Context *context, const json11::Json &j)
+    {
+        auto material = std::make_shared<Render::Material>();
+        material->pipelineName = j["pipelineName"].string_value();
+        material->image0Name = j["image0Name"].string_value();
+        material->castShadow = j["castShadow"].bool_value();
+
+        return material;
+    }
+
+    template <>
     json11::Json ComponentJson<Render::Material>::To(Context *context,
                                                      std::shared_ptr<Render::Material> material)
 
@@ -14,10 +25,12 @@ namespace Editor
         auto &image0Name = material->image0Name;
         auto castShadow = material->castShadow;
 
-        auto jObj = json11::Json::object{{"pipelineName", pipelineName},
-                                         {"image0Name", image0Name},
-                                         {"castShadow", castShadow}};
+        auto jObj = json11::Json::object{
+            {"type", "material"},
+            {"pipelineName", pipelineName},
+            {"image0Name", image0Name},
+            {"castShadow", castShadow}};
 
-        return json11::Json::object{{"material", jObj}};
+        return jObj;
     }
 }

@@ -46,7 +46,23 @@ namespace Editor
 
     static std::string selectFileName = "";
 
-    static void DrawDirectory(const std::string &directoryName, const std::string &directoryFullName)
+    template <typename T>
+    static void ComponentFromJson(Context *context,
+                                  std::shared_ptr<EngineObject> eo, const json11::Json &j)
+    {
+        auto component = ComponentJson<T>::From(context, j);
+        eo->AddComponent<T>(component);
+    }
+
+    static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<EngineObject>, const json11::Json &)>> fromJsonFuncMap{
+        {"Logic::Camera", ComponentFromJson<Logic::Camera>},
+        {"Logic::Transform", ComponentFromJson<Logic::Transform>},
+        {"Render::DirectionLight", ComponentFromJson<Render::DirectionLight>},
+        {"Render::Material", ComponentFromJson<Render::Material>},
+        {"Render::Mesh", ComponentFromJson<Render::Mesh>}};
+
+    static void DrawDirectory(Context *context,
+                              const std::string &directoryName, const std::string &directoryFullName)
     {
         if (ImGui::TreeNode(directoryName.c_str()))
         {
@@ -56,7 +72,8 @@ namespace Editor
                 for (auto const &directorySubName : directorySubs)
                 {
                     auto directorySubFullName = directoryFullName + "/" + directorySubName;
-                    DrawDirectory(directorySubName, directorySubFullName);
+                    DrawDirectory(context,
+                                  directorySubName, directorySubFullName);
                 }
             }
             else
@@ -80,6 +97,32 @@ namespace Editor
 
                         if (ImGui::Button("Open (Only For Scene)"))
                         {
+                            auto lines = Common::ResSystem::ReadAllLines("resource/scene/" + fileName);
+                            for (const auto &line : lines)
+                            {
+                                std::string err;
+                                auto jObj = json11::Json::parse(line, err);
+
+                                auto eo = std::make_shared<EngineObject>();
+                                eo->name = jObj["name"].string_value();
+                                eo->active = jObj["active"].bool_value();
+                                eo->hideInHierarchy = jObj["hideInHierarchy"].bool_value();
+
+                                auto &components = jObj["components"].array_items();
+                                for (const auto &component : components)
+                                {
+                                    auto &componentType = component["type"].string_value();
+
+                                    auto it = fromJsonFuncMap.find(componentType);
+                                    if (it == fromJsonFuncMap.end())
+                                        continue;
+
+                                    fromJsonFuncMap[componentType](context, eo, component);
+                                }
+
+                                context->AddEO(eo);
+                            }
+
                             ImGui::CloseCurrentPopup();
                         }
                         if (ImGui::Button("Reimport"))
@@ -107,6 +150,8 @@ namespace Editor
             ImGui::TreePop();
         }
     }
+
+    static char sceneName[16] = "test";
 
     template <typename T>
     static json11::Json ComponentToJson(Context *context, std::shared_ptr<void> component)
@@ -136,7 +181,10 @@ namespace Editor
             }
             ImGui::SameLine();
 
-            if (ImGui::Button("Save All"))
+            ImGui::SetNextItemWidth(200.0f);
+            ImGui::InputText("##sceneName", sceneName, IM_ARRAYSIZE(sceneName));
+            ImGui::SameLine();
+            if (ImGui::Button("SaveScene"))
             {
                 std::string sceneJson = "";
 
@@ -168,8 +216,8 @@ namespace Editor
                     sceneJson += "\n";
                 }
 
-                Common::LogSystem::Info(sceneJson);
-                Common::ResSystem::WriteFile("test.scene", sceneJson);
+                // Common::LogSystem::Info(sceneJson);
+                Common::ResSystem::WriteFile("resource/scene/" + std::string(sceneName) + ".scene", sceneJson);
             }
 
             if (ImGui::IsMouseClicked(0))
@@ -178,7 +226,7 @@ namespace Editor
             }
 
             ImGui::SetNextItemOpen(true);
-            DrawDirectory(resource, resource);
+            DrawDirectory(context, resource, resource);
         }
         ImGui::End();
     }

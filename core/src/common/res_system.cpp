@@ -9,7 +9,7 @@
 
 namespace Common
 {
-	std::vector<char> ResSystem::ReadFile(const std::string &fileName)
+	std::vector<char> ResSystem::ReadAllBytes(const std::string &fileName)
 	{
 		std::ifstream file(fileName, std::ios::ate | std::ios::binary);
 
@@ -21,6 +21,22 @@ namespace Common
 
 		file.close();
 		return buffer;
+	}
+
+	std::vector<std::string> ResSystem::ReadAllLines(const std::string &fileName)
+	{
+		std::ifstream file(fileName);
+
+		std::vector<std::string> lines;
+		std::string line;
+		while (std::getline(file, line))
+		{
+			if (!line.empty())
+				lines.push_back(line);
+		}
+
+		file.close();
+		return lines;
 	}
 
 	void ResSystem::WriteFile(const std::string &fileName, const std::string &context)

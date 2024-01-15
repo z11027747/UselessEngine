@@ -22,7 +22,6 @@ namespace Logic
 
 		float near;
 		float far;
-		float aspect;
 
 		CameraMode mode;
 		float fov;
