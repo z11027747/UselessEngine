@@ -26,7 +26,6 @@ namespace Render
                 continue;
 
             auto unitTransform = unitEO->GetComponent<Logic::Transform>();
-            auto &model = unitTransform->model;
 
             auto &unitParentEOName = unitTransform->parentEOName;
             if (!unitParentEOName.empty())
@@ -36,7 +35,6 @@ namespace Render
                     continue;
             }
 
-            auto mesh = unitEO->GetComponent<Render::Mesh>();
             auto material = unitEO->GetComponent<Render::Material>();
             if (isShadow && !material->castShadow)
                 continue;
@@ -49,15 +47,19 @@ namespace Render
 
             vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-            auto &vertexBuffer = mesh->vertexBuffer;
-            VkBuffer vertexBuffers[] = {vertexBuffer->vkBuffer};
+            auto mesh = unitEO->GetComponent<Render::Mesh>();
+            auto &meshInstance = mesh->instance;
+
+            VkBuffer vertexBuffer = meshInstance->vertexBuffer->vkBuffer;
+            VkBuffer indexBuffer = meshInstance->indexBuffer->vkBuffer;
+            uint32_t indexSize = static_cast<uint32_t>(meshInstance->indices.size());
+
+            VkBuffer vertexBuffers[] = {vertexBuffer};
             VkDeviceSize offsets[] = {0};
             vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, vertexBuffers, offsets);
+            vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-            auto &indices = mesh->indices;
-            auto &indexBuffer = mesh->indexBuffer;
-            vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
-
+            auto &model = unitTransform->model;
             vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 
             std::vector<VkDescriptorSet> descriptorSets;
@@ -72,7 +74,7 @@ namespace Render
             vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
                                     pipelineLayout, 0, static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
 
-            vkCmdDrawIndexed(vkCmdBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+            vkCmdDrawIndexed(vkCmdBuffer, indexSize, 1, 0, 0, 0);
         }
     }
 };

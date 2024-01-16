@@ -14,7 +14,12 @@
 
 namespace Editor
 {
-	std::shared_ptr<EngineObject> Window::selectEO = nullptr;
+	static std::shared_ptr<EngineObject> selectEO = nullptr;
+
+	std::shared_ptr<EngineObject> Window::GetSelectEO()
+	{
+		return selectEO;
+	}
 
 	void Window::SetSelectEO(Context *context, std::shared_ptr<EngineObject> eo)
 	{
@@ -25,9 +30,6 @@ namespace Editor
 		{
 			auto axisEO = context->GetEO(Name_Axis);
 			axisEO->active = true;
-
-			// auto mesh = eo->GetComponent<Render::Mesh>();
-			// auto &meshCenter = mesh->bound.center;
 
 			Logic::MoveLogic::BeginFollow(context,
 										  axisEO,
@@ -44,12 +46,12 @@ namespace Editor
 	}
 
 	static int addComponentTypeIndex = 0;
-	const char *addComponentTypes[] = {"",
-									   Type_Logic_Camera.c_str(),
-									   Type_Logic_Transform.c_str(),
-									   Type_Render_DirectionLight.c_str(),
-									   Type_Render_Material.c_str(),
-									   Type_Render_Mesh.c_str()};
+	static std::vector<const char *> addComponentTypes = {"",
+														  Type_Logic_Camera.c_str(),
+														  Type_Logic_Transform.c_str(),
+														  Type_Render_DirectionLight.c_str(),
+														  Type_Render_Material.c_str(),
+														  Type_Render_Mesh.c_str()};
 
 	void Window::DrawInspector(Context *context)
 	{
@@ -87,16 +89,19 @@ namespace Editor
 
 				ImGui::SeparatorText("End");
 
-				ImGui::SetNextItemWidth(150.0f);
-				ImGui::Combo("##addComponentTypes", &addComponentTypeIndex, addComponentTypes, IM_ARRAYSIZE(addComponentTypes));
+				ImGui::SetNextItemWidth(200.0f);
+				ImGui::Combo("##addComponentTypes", &addComponentTypeIndex,
+							 addComponentTypes.data(), static_cast<int>(addComponentTypes.size()));
 				ImGui::SameLine();
 
 				if (ImGui::Button("Add Component"))
 				{
 					// std::cout << "Add Component Click!" << std::endl;
 					auto componentType = std::string(addComponentTypes[addComponentTypeIndex]);
-
 					EOAddDefault(context, selectEO, componentType);
+
+					// for refresh
+					SetSelectEO(context, selectEO);
 				}
 			}
 		}

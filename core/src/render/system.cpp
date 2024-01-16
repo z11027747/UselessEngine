@@ -10,6 +10,8 @@
 #include "render/light/light_comp.h"
 #include "render/unit/unit_comp.h"
 #include "render/unit/unit_system.h"
+#include "render/mesh/mesh_logic.h"
+#include "render/mesh/mesh_system.h"
 #include "render/material/material_system.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
@@ -63,6 +65,11 @@ namespace Render
 		PipelineLogic::Create(context, Pipeline_Bling_Phone, mainPass);
 		PipelineLogic::Create(context, Pipeline_Color, mainPass);
 
+		auto &cacheEO = context->renderCacheEo;
+		cacheEO = std::make_shared<EngineObject>();
+
+		MeshInstanceLogic::CreateCache(context);
+
 		Editor::System::Create(context);
 	}
 
@@ -80,11 +87,14 @@ namespace Render
 		auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
 		SwapchainLogic::BeginCmd(context, imageIndex);
 
-		MaterialGlobalUBOUpdateSystem::Update(context);
+		{
+			MeshInstanceCreateSystem::Update(context);
+			MaterialGlobalUBOUpdateSystem::Update(context);
 
-		ShadowPassRenderSystem::Update(context, imageIndex);
-		MainPassRenderSystem::Update(context, imageIndex);
-		ImGuiPassRenderSystem::Update(context, imageIndex);
+			ShadowPassRenderSystem::Update(context, imageIndex);
+			MainPassRenderSystem::Update(context, imageIndex);
+			ImGuiPassRenderSystem::Update(context, imageIndex);
+		}
 
 		SwapchainLogic::EndAndSubmitCmd(context, imageIndex);
 		SwapchainLogic::Present(context, imageIndex);
@@ -96,7 +106,11 @@ namespace Render
 
 		Editor::System::Destroy(context);
 
-		UnitDestroySystem::Destroy(context);
+		{
+			MeshDestroySystem::Destroy(context);
+			MeshInstanceLogic::DestroyCache(context);
+			UnitDestroySystem::Destroy(context);
+		}
 
 		PipelineLogic::DestroyAll(context);
 		PassLogic::DestroyAll(context);

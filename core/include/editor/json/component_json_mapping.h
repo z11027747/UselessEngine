@@ -17,19 +17,19 @@
 namespace Editor
 {
     template <typename T>
-    static void ComponentAddDefault(Context *context,
-                                    std::shared_ptr<EngineObject> eo)
+    static void ComponentDefault(Context *context,
+                                 std::shared_ptr<EngineObject> eo)
     {
         eo->AddComponent<T>(std::make_shared<T>());
     }
 
     static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<EngineObject>)>> addDefaultFuncMap{
-        {Type_Logic_Camera, ComponentAddDefault<Logic::Camera>},
-        {Type_Logic_Transform, ComponentAddDefault<Logic::Transform>},
-        {Type_Render_DirectionLight, ComponentAddDefault<Render::DirectionLight>},
-        {Type_Render_Material, ComponentAddDefault<Render::Material>},
-        {Type_Render_Mesh, ComponentAddDefault<Render::Mesh>},
-        {Type_Render_Unit, ComponentAddDefault<Render::Unit>}};
+        {Type_Logic_Camera, ComponentDefault<Logic::Camera>},
+        {Type_Logic_Transform, ComponentDefault<Logic::Transform>},
+        {Type_Render_DirectionLight, ComponentDefault<Render::DirectionLight>},
+        {Type_Render_Material, ComponentDefault<Render::Material>},
+        {Type_Render_Mesh, ComponentDefault<Render::Mesh>},
+        {Type_Render_Unit, ComponentDefault<Render::Unit>}};
 
     static void EOAddDefault(Context *context,
                              std::shared_ptr<EngineObject> eo, std::string componentType)

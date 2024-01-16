@@ -4,9 +4,15 @@ class Context;
 
 namespace Render
 {
-    class MeshCreateObjSystem final
+    class MeshInstanceCreateSystem final
     {
     public:
-        void Update(Context *);
+        static void Update(Context *context);
+    };
+
+    class MeshDestroySystem final
+    {
+    public:
+        static void Destroy(Context *context);
     };
 }

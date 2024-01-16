@@ -1,9 +1,6 @@
 
 #include <iostream>
 #include <filesystem>
-#include <vector>
-#include <unordered_map>
-#include <string>
 #include <imgui/imgui.h>
 #include <json/json11.hpp>
 #include "editor/window.h"
@@ -16,11 +13,31 @@
 
 namespace Editor
 {
-    const std::string resource = "resource";
+    // resource -> obj|shader|spv|texture
+    static std::unordered_map<std::string, std::vector<std::string>> directory2subs = {};
+    // resource/obj -> xxxx.obj
+    static std::unordered_map<std::string, std::vector<std::string>> directory2files = {};
 
-    static bool isInited = false;
-    static std::unordered_map<std::string, std::vector<std::string>> directory2subs;  // resource -> obj/shader/spv/texture
-    static std::unordered_map<std::string, std::vector<std::string>> directory2files; // resource/obj -> xxxx.obj
+    void Window::GetDirectoryFiles(const std::string &directoryName, std::vector<std::string> &fileNames)
+    {
+        auto &subs = directory2subs[directoryName];
+        for (auto &sub : subs)
+        {
+            auto &subFiles = directory2files[directoryName + "/" + sub];
+            for (auto &subFile : subFiles)
+            {
+                auto subFileName = (directoryName + "/" + sub + "/" + subFile);
+                fileNames.push_back(subFileName);
+            }
+        }
+
+        auto &files = directory2files[directoryName];
+        for (auto &file : files)
+        {
+            auto fileName = (directoryName + "/" + file);
+            fileNames.push_back(fileName);
+        }
+    }
 
     static void RefreshDirectory(const std::string &directoryName)
     {
@@ -116,13 +133,15 @@ namespace Editor
         }
     }
 
+    static bool isInited = false;
+
     void Window::DrawProject(Context *context)
     {
         if (ImGui::Begin("Project", NULL))
         {
             if (!isInited)
             {
-                RefreshDirectory(resource);
+                RefreshDirectory("resource");
                 isInited = true;
             }
 
@@ -162,7 +181,7 @@ namespace Editor
             }
 
             ImGui::SetNextItemOpen(true);
-            DrawDirectory(context, resource, resource);
+            DrawDirectory(context, "resource", "resource");
         }
         ImGui::End();
     }

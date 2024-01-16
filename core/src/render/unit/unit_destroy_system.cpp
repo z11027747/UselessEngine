@@ -17,7 +17,7 @@ namespace Render
             auto mesh = unitEO->GetComponent<Mesh>();
             auto material = unitEO->GetComponent<Material>();
 
-            MeshLogic::Destroy(context, mesh);
+            // MeshLogic::Destroy(context, mesh);
             MaterialLogic::Destroy(context, material);
         }
         unitEOs.clear();

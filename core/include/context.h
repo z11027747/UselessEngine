@@ -46,12 +46,13 @@ public:
 	// render
 	std::shared_ptr<EngineObject> renderGlobalEO;
 	std::vector<std::shared_ptr<EngineObject>> renderLightEOs;
+	std::vector<std::shared_ptr<EngineObject>> renderMeshEOs;
 	std::vector<std::shared_ptr<EngineObject>> renderUnitEOs;
+	std::shared_ptr<EngineObject> renderCacheEo;
 
 	// logic
 	std::shared_ptr<EngineObject> logicMainCameraEO;
 	std::vector<std::shared_ptr<EngineObject>> logicMoveEOs;
-	std::vector<std::shared_ptr<EngineObject>> logicHitCheckEOs;
 
 	// editor
 	std::vector<std::shared_ptr<EngineObject>> editorAxisEOs;

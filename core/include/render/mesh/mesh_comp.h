@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 #include <string>
 #include "render/vk/buffer/buffer_comp.h"
 
@@ -30,18 +31,29 @@ namespace Render
         float radius;
     };
 
-    struct Mesh final
+    struct MeshInstance final
     {
         std::string objName;
-        glm::vec3 defaultColor{1.0f, 1.0f, 1.0f};
-        float scaler{1.0f};
-        bool checkHit;
-
         std::vector<Vertex> vertices;
         std::vector<uint16_t> indices;
         std::shared_ptr<Buffer> vertexBuffer;
         std::shared_ptr<Buffer> indexBuffer;
 
-        BoundingSphere bound;
+        BoundingSphere boundingSphere;
+    };
+
+    struct Mesh final
+    {
+        std::string objName;
+        glm::vec3 vertexColor{1.0f, 1.0f, 1.0f};
+        bool checkHit{false};
+
+        std::shared_ptr<MeshInstance> instance;
+    };
+
+    struct MeshInstanceCache final
+    {
+        std::unordered_map<std::string, std::shared_ptr<MeshInstance>> sharedMap{};
+        std::vector<std::shared_ptr<MeshInstance>> deleteVector{};
     };
 }

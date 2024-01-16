@@ -31,16 +31,20 @@ namespace Logic
 
         std::vector<std::shared_ptr<EngineObject>> tempHitEOs = {};
 
-        auto &logicHitCheckEOs = context->logicHitCheckEOs;
-        for (const auto &hitCheckEO : logicHitCheckEOs)
+        auto &meshEOs = context->renderMeshEOs;
+        for (const auto &meshEO : meshEOs)
         {
-            if (!hitCheckEO->active)
+            if (!meshEO->active)
+                continue;
+
+            auto mesh = meshEO->GetComponent<Render::Mesh>();
+            if (!mesh->checkHit)
                 continue;
 
             auto result = Test(context,
-                               ray, hitCheckEO);
+                               ray, meshEO);
             if (result)
-                tempHitEOs.push_back(hitCheckEO);
+                tempHitEOs.push_back(meshEO);
         }
 
         if (tempHitEOs.size() == 0)
@@ -72,9 +76,10 @@ namespace Logic
         auto hitTransform = hitEO->GetComponent<Transform>();
         auto hitMesh = hitEO->GetComponent<Render::Mesh>();
 
-        auto &bound = hitMesh->bound;
-        auto position = bound.center + hitTransform->worldPosition;
-        auto radius = bound.radius * hitTransform->worldScale.x;
+        auto &meshInstance = hitMesh->instance;
+        auto &boundingSphere = meshInstance->boundingSphere;
+        auto position = boundingSphere.center + hitTransform->worldPosition;
+        auto radius = boundingSphere.radius * hitTransform->worldScale.x;
 
         auto &origin = ray.origin;
         auto &direction = ray.direction;

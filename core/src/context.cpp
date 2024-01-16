@@ -23,9 +23,9 @@ void Context::Create()
 
     // Test
     Editor::TestLogic::CreateMainCamera(this);
-    // Editor::TestLogic::CreateLight(this);
+    Editor::TestLogic::CreateLight(this);
     // Editor::TestLogic::CreateSkybox(this);
-    // Editor::TestLogic::CreateCubes(this);
+    Editor::TestLogic::CreateCubes(this);
     Editor::TestLogic::CreateAxis(this);
 }
 
@@ -80,13 +80,7 @@ void Context::AddEO(std::shared_ptr<EngineObject> eo)
     }
     if (eo->HasComponent<Render::Mesh>())
     {
-        auto mesh = eo->GetComponent<Render::Mesh>();
-        Render::MeshLogic::Create(this, mesh);
-
-        if (mesh->checkHit)
-        {
-            logicHitCheckEOs.push_back(eo);
-        }
+        renderMeshEOs.push_back(eo);
     }
     if (eo->HasComponent<Render::Material>())
     {
@@ -103,6 +97,11 @@ std::shared_ptr<EngineObject> Context::GetEO(const std::string &name)
     return allEOMap[name];
 }
 
+void RemoveEoInVec(std::vector<std::shared_ptr<EngineObject>> &vec, std::shared_ptr<EngineObject> eo)
+{
+    vec.erase(std::remove(vec.begin(), vec.end(), eo), vec.end());
+}
+
 void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
 {
     if (eo->name == Name_MainCamera)
@@ -111,25 +110,19 @@ void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
     }
     if (eo->name == Name_AxisX || eo->name == Name_AxisY || eo->name == Name_AxisZ)
     {
-        editorAxisEOs.erase(std::remove(editorAxisEOs.begin(), editorAxisEOs.end(), eo), editorAxisEOs.end());
+        RemoveEoInVec(editorAxisEOs, eo);
     }
     if (eo->HasComponent<Render::DirectionLight>())
     {
-        renderLightEOs.erase(std::remove(renderLightEOs.begin(), renderLightEOs.end(), eo), renderLightEOs.end());
+        RemoveEoInVec(renderLightEOs, eo);
     }
     if (eo->HasComponent<Render::Unit>())
     {
-        renderUnitEOs.erase(std::remove(renderUnitEOs.begin(), renderUnitEOs.end(), eo), renderUnitEOs.end());
+        RemoveEoInVec(renderUnitEOs, eo);
     }
     if (eo->HasComponent<Render::Mesh>())
     {
-        auto mesh = eo->GetComponent<Render::Mesh>();
-        Render::MeshLogic::Destroy(this, mesh);
-
-        if (mesh->checkHit)
-        {
-            logicHitCheckEOs.erase(std::remove(logicHitCheckEOs.begin(), logicHitCheckEOs.end(), eo), logicHitCheckEOs.end());
-        }
+        RemoveEoInVec(renderMeshEOs, eo);
     }
     if (eo->HasComponent<Render::Material>())
     {
@@ -138,7 +131,7 @@ void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
     }
     if (eo->HasComponent<Logic::MoveFollow>())
     {
-        logicMoveEOs.erase(std::remove(logicMoveEOs.begin(), logicMoveEOs.end(), eo), logicMoveEOs.end());
+        RemoveEoInVec(logicMoveEOs, eo);
     }
 
     if (remove)

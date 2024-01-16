@@ -207,6 +207,9 @@ namespace Editor
 
     void TestLogic::CreateCubes(Context *context)
     {
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        return;
+
         CreateCube(context, glm::vec3(-4.0f, 0.0f, 0.0f), -90.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
         CreateCube(context, glm::vec3(-3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
         CreateCube(context, glm::vec3(-2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
@@ -300,7 +303,6 @@ namespace Editor
 
         auto modelMesh = std::make_shared<Render::Mesh>();
         modelMesh->objName = "resource/obj/cube_world/cube.obj";
-        modelMesh->scaler = 0.01f;
         modelMesh->checkHit = true;
 
         auto modelMaterial = std::make_shared<Render::Material>();
@@ -343,7 +345,7 @@ namespace Editor
 
             auto modelMesh = std::make_shared<Render::Mesh>();
             modelMesh->objName = "resource/obj/base/axis.obj";
-            modelMesh->defaultColor = glm::vec3(1.0f, 0.0f, 0.0f);
+            modelMesh->vertexColor = glm::vec3(1.0f, 0.0f, 0.0f);
             modelMesh->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
@@ -358,8 +360,8 @@ namespace Editor
 
             context->AddEO(modelEO);
 
-            modelMesh->bound.center = glm::vec3(-0.2f, 0.0f, 0.0f);
-            modelMesh->bound.radius = 0.25f;
+            // modelMesh->boundingSphere.center = glm::vec3(-0.2f, 0.0f, 0.0f);
+            // modelMesh->boundingSphere.radius = 0.25f;
         }
 
         {
@@ -375,7 +377,7 @@ namespace Editor
 
             auto modelMesh = std::make_shared<Render::Mesh>();
             modelMesh->objName = "resource/obj/base/axis.obj";
-            modelMesh->defaultColor = glm::vec3(0.0f, 1.0f, 0.0f);
+            modelMesh->vertexColor = glm::vec3(0.0f, 1.0f, 0.0f);
             modelMesh->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
@@ -390,8 +392,8 @@ namespace Editor
 
             context->AddEO(modelEO);
 
-            modelMesh->bound.center = glm::vec3(0.0f, -0.2f, 0.0f);
-            modelMesh->bound.radius = 0.25f;
+            // modelMesh->boundingSphere.center = glm::vec3(0.0f, -0.2f, 0.0f);
+            // modelMesh->boundingSphere.radius = 0.25f;
         }
 
         {
@@ -407,7 +409,7 @@ namespace Editor
 
             auto modelMesh = std::make_shared<Render::Mesh>();
             modelMesh->objName = "resource/obj/base/axis.obj";
-            modelMesh->defaultColor = glm::vec3(0.0f, 0.0f, 1.0f);
+            modelMesh->vertexColor = glm::vec3(0.0f, 0.0f, 1.0f);
             modelMesh->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
@@ -422,8 +424,8 @@ namespace Editor
 
             context->AddEO(modelEO);
 
-            modelMesh->bound.center = glm::vec3(0.0f, 0.0f, -0.2f);
-            modelMesh->bound.radius = 0.25f;
+            // modelMesh->boundingSphere.center = glm::vec3(0.0f, 0.0f, -0.2f);
+            // modelMesh->boundingSphere.radius = 0.25f;
         }
     }
 }

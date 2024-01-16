@@ -63,4 +63,22 @@ namespace Editor
         ImGui::PopItemWidth();
         ImGui::PopID();
     }
+
+    inline static void ImGui_Input_GlmVec3(glm::vec3 &v3, int id, float width = 60)
+    {
+        ImGui::PushID(id);
+        ImGui::PushItemWidth(width);
+
+        ImGui::InputFloat("##f0", &v3.x);
+        ImGui::SameLine();
+
+        ImGui::InputFloat("##f1", &v3.y);
+        ImGui::SameLine();
+
+        ImGui::InputFloat("##f2", &v3.z);
+        ImGui::SameLine();
+
+        ImGui::PopItemWidth();
+        ImGui::PopID();
+    }
 }

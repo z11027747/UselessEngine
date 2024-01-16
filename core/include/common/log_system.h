@@ -81,5 +81,4 @@ namespace Common
 			throw std::runtime_error(message);
 		}
 	};
-
 }

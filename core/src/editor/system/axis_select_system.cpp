@@ -23,7 +23,7 @@ namespace Editor
         double currX, currY;
         glfwGetCursorPos(window, &currX, &currY);
 
-        auto &selectEO = Window::selectEO;
+        auto selectEO = Window::GetSelectEO();
 
         if (Window::IsInViewport(context) && selectEO != nullptr)
         {
