@@ -39,7 +39,7 @@ namespace Editor
         auto paramsJArr = json11::Json::array{params.x, params.y, params.z, params.w};
 
         auto jObj = json11::Json::object{
-            {"type", "Render::DirectionLight"},
+            {"type", Type_Render_DirectionLight},
             {"color", colorJArr},
             {"params", paramsJArr},
             {"hasShadow", hasShadow}};

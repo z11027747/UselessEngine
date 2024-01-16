@@ -14,6 +14,6 @@ namespace Logic
     public:
         static void BeginFollow(Context *,
                                 std::shared_ptr<EngineObject>,
-                                std::shared_ptr<EngineObject>, glm::vec3 &);
+                                std::shared_ptr<EngineObject>, const glm::vec3 &);
     };
 }

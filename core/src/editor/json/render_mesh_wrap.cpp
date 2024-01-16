@@ -31,7 +31,7 @@ namespace Editor
         auto defaultColorJArr = json11::Json::array{defaultColor.r, defaultColor.g, defaultColor.b};
 
         auto jObj = json11::Json::object{
-            {"type", "Render::Mesh"},
+            {"type", Type_Render_Mesh},
             {"objName", mesh->objName},
             {"defaultColor", defaultColorJArr},
             {"scaler", mesh->scaler},

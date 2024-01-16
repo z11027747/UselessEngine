@@ -26,4 +26,23 @@ namespace Editor
         {typeid(Render::DirectionLight), ComponentDraw<Render::DirectionLight>},
         {typeid(Render::Mesh), ComponentDraw<Render::Mesh>},
         {typeid(Render::Material), ComponentDraw<Render::Material>}};
+
+    static bool HasWrap(Context *context, std::type_index typeId)
+    {
+        auto it = drawFuncMap.find(typeId);
+        if (it == drawFuncMap.end())
+            return false;
+
+        return true;
+    }
+
+    static void DrawWrap(Context *context,
+                         std::type_index typeId, std::shared_ptr<void> component, bool isFirst)
+    {
+        auto it = drawFuncMap.find(typeId);
+        if (it == drawFuncMap.end())
+            return;
+
+        drawFuncMap[typeId](context, component, isFirst);
+    }
 }

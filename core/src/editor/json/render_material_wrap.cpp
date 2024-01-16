@@ -30,7 +30,7 @@ namespace Editor
         auto castShadow = material->castShadow;
 
         auto jObj = json11::Json::object{
-            {"type", "Render::Material"},
+            {"type", Type_Render_Material},
             {"pipelineName", pipelineName},
             {"image0Names", image0Names},
             {"castShadow", castShadow}};

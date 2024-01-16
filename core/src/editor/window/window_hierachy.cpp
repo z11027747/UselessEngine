@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 #include "logic/transform/transform_comp.h"
+#include "logic/transform/transform_logic.h"
 #include "editor/window.h"
 #include "context.h"
 #include "engine_object.h"
@@ -89,12 +90,17 @@ namespace Editor
 			if (ImGui::Button("Add EnginObject"))
 			{
 				// std::cout << "Add EngineObject Click!" << std::endl;
-
 				auto name = std::string(addEOName);
 				memset(addEOName, 0, sizeof(addEOName));
 
 				auto eo = std::make_shared<EngineObject>();
 				eo->name = name;
+
+				Logic::TransformLogic::Add(eo,
+										   glm::vec3(0.0f, 0.0f, 0.0f),
+										   glm::vec3(0.0f, 0.0f, 0.0f),
+										   glm::vec3(1.0f, 1.0f, 1.0f));
+
 				context->AddEO(eo);
 			}
 		}

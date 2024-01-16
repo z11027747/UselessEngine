@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <unordered_map>
 #include <memory>
 #include <typeindex>
@@ -16,6 +17,10 @@ public:
 	{
 		id = beginId++;
 	}
+	// ~EngineObject()
+	// {
+	// 	std::cout << "eo: " << id << " destroy! " << std::endl;
+	// }
 
 	std::string name{""};
 	bool active{true};

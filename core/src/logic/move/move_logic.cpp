@@ -7,7 +7,7 @@ namespace Logic
 {
     void MoveLogic::BeginFollow(Context *context,
                                 std::shared_ptr<EngineObject> selfEO,
-                                std::shared_ptr<EngineObject> targetEO, glm::vec3 &offset)
+                                std::shared_ptr<EngineObject> targetEO, const glm::vec3 &offset)
     {
         std::shared_ptr<MoveFollow> moveFollow;
         if (selfEO->HasComponent<MoveFollow>())
@@ -18,6 +18,7 @@ namespace Logic
         {
             moveFollow = std::make_shared<MoveFollow>();
             selfEO->AddComponent(moveFollow);
+
             context->logicMoveEOs.push_back(selfEO);
         }
 

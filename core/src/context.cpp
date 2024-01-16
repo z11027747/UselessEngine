@@ -93,10 +93,6 @@ void Context::AddEO(std::shared_ptr<EngineObject> eo)
         auto material = eo->GetComponent<Render::Material>();
         Render::MaterialLogic::Create(this, material);
     }
-    if (eo->HasComponent<Logic::MoveFollow>())
-    {
-        logicMoveEOs.push_back(eo);
-    }
 
     allEOs.push_back(eo);
     allEOMap.emplace(eo->name, eo);

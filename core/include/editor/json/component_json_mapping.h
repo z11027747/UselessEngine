@@ -17,20 +17,40 @@
 namespace Editor
 {
     template <typename T>
+    static void ComponentAddDefault(Context *context,
+                                    std::shared_ptr<EngineObject> eo)
+    {
+        eo->AddComponent<T>(std::make_shared<T>());
+    }
+
+    static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<EngineObject>)>> addDefaultFuncMap{
+        {Type_Logic_Camera, ComponentAddDefault<Logic::Camera>},
+        {Type_Logic_Transform, ComponentAddDefault<Logic::Transform>},
+        {Type_Render_DirectionLight, ComponentAddDefault<Render::DirectionLight>},
+        {Type_Render_Material, ComponentAddDefault<Render::Material>},
+        {Type_Render_Mesh, ComponentAddDefault<Render::Mesh>},
+        {Type_Render_Unit, ComponentAddDefault<Render::Unit>}};
+
+    static void EOAddDefault(Context *context,
+                             std::shared_ptr<EngineObject> eo, std::string componentType)
+    {
+        addDefaultFuncMap[componentType](context, eo);
+    }
+
+    template <typename T>
     static void ComponentFromJson(Context *context,
                                   std::shared_ptr<EngineObject> eo, const json11::Json &j)
     {
-        auto component = ComponentJson<T>::From(context, j);
-        eo->AddComponent<T>(component);
+        eo->AddComponent<T>(ComponentJson<T>::From(context, j));
     }
 
     static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<EngineObject>, const json11::Json &)>> fromJsonFuncMap{
-        {"Logic::Camera", ComponentFromJson<Logic::Camera>},
-        {"Logic::Transform", ComponentFromJson<Logic::Transform>},
-        {"Render::DirectionLight", ComponentFromJson<Render::DirectionLight>},
-        {"Render::Material", ComponentFromJson<Render::Material>},
-        {"Render::Mesh", ComponentFromJson<Render::Mesh>},
-        {"Render::Unit", ComponentFromJson<Render::Unit>}};
+        {Type_Logic_Camera, ComponentFromJson<Logic::Camera>},
+        {Type_Logic_Transform, ComponentFromJson<Logic::Transform>},
+        {Type_Render_DirectionLight, ComponentFromJson<Render::DirectionLight>},
+        {Type_Render_Material, ComponentFromJson<Render::Material>},
+        {Type_Render_Mesh, ComponentFromJson<Render::Mesh>},
+        {Type_Render_Unit, ComponentFromJson<Render::Unit>}};
 
     static std::shared_ptr<EngineObject> EOFromJson(Context *context, const json11::Json &jObj)
     {
@@ -94,5 +114,4 @@ namespace Editor
         auto j = json11::Json(eoJObj);
         return j.dump();
     }
-
 }

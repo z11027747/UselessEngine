@@ -25,7 +25,7 @@ namespace Editor
                                                   std::shared_ptr<Logic::Camera> camera)
     {
         auto jObj = json11::Json::object{
-            {"type", "Logic::Camera"},
+            {"type", Type_Logic_Camera},
             {"near", camera->near},
             {"far", camera->far},
             {"mode", (int)camera->mode},

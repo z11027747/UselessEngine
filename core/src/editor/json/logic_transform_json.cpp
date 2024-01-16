@@ -52,7 +52,7 @@ namespace Editor
         auto localScaleJArr = json11::Json::array{localScale.x, localScale.y, localScale.z};
 
         auto jObj = json11::Json::object{
-            {"type", "Logic::Transform"},
+            {"type", Type_Logic_Transform},
             {"localPosition", localPositionJArr},
             {"localEulerAngles", localEulerAnglesJArr},
             {"localScale", localScaleJArr},
