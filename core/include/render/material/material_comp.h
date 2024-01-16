@@ -10,6 +10,11 @@
 
 namespace Render
 {
+	const std::string Pipeline_Skybox = "skybox";
+	const std::string Pipeline_Shadow = "shadow";
+	const std::string Pipeline_Bling_Phone = "bling_phone";
+	const std::string Pipeline_Color = "color";
+
 	struct CameraUBO final
 	{
 		alignas(16) glm::vec3 pos;
@@ -43,8 +48,8 @@ namespace Render
 
 	struct Material final
 	{
-		std::string pipelineName;
-		std::vector<std::string> image0Names;
+		std::string pipelineName{Pipeline_Bling_Phone};
+		std::vector<std::string> image0Names{"resource/texture/white.png"};
 		bool castShadow{false};
 
 		std::shared_ptr<MaterialInstance> instance;
@@ -53,7 +58,7 @@ namespace Render
 
 	struct MaterialInstanceCache final
 	{
-		std::unordered_map<std::string, std::shared_ptr<MaterialInstance>> sharedMap{};
+		std::unordered_map<std::string, std::vector<std::shared_ptr<MaterialInstance>>> sharedMap{};
 		std::vector<std::shared_ptr<MaterialInstance>> deletes{};
 	};
 }

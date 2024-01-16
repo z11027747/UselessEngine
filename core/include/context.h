@@ -61,6 +61,8 @@ public:
 	std::vector<std::shared_ptr<EngineObject>> allEOs;
 	std::unordered_map<std::string, std::shared_ptr<EngineObject>> allEOMap;
 
+	bool CheckEO(std::shared_ptr<EngineObject>, bool);
+
 	void AddEO(std::shared_ptr<EngineObject>);
 	std::shared_ptr<EngineObject> GetEO(const std::string &);
 	void DestroyEO(std::shared_ptr<EngineObject>, bool = true);

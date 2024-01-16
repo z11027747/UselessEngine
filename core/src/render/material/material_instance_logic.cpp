@@ -25,16 +25,19 @@ namespace Render
         auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
 
         auto &sharedMap = instanceCache->sharedMap;
-        for (const auto &kv : sharedMap)
+        for (auto &kv : sharedMap)
         {
-            auto &sharedInstance = kv.second;
-            Destroy(context, sharedInstance);
+            auto &instances = kv.second;
+            for (auto &instance : instances)
+            {
+                Destroy(context, instance);
+            }
         }
         sharedMap.clear();
 
         // TODO 没用的应该及时删除
         auto &deletes = instanceCache->deletes;
-        for (const auto &instance : deletes)
+        for (auto &instance : deletes)
         {
             Destroy(context, instance);
         }
@@ -48,12 +51,27 @@ namespace Render
         auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
 
         auto &sharedMap = instanceCache->sharedMap;
-        if (sharedMap.find(pipelineName) == sharedMap.end())
+        if (sharedMap.find(pipelineName) != sharedMap.end())
         {
-            sharedMap[pipelineName] = Create(context, pipelineName, image0Names);
+            auto instances = sharedMap[pipelineName];
+            for (auto &instance : instances)
+            {
+                auto image0NamesEqual = std::equal(image0Names.begin(), image0Names.end(), instance->image0Names.begin(),
+                                                   [](const std::string &str1, const std::string &str2)
+                                                   {
+                                                       return str1 == str2;
+                                                   });
+                if (image0NamesEqual)
+                {
+                    return instance;
+                }
+            }
         }
 
-        return sharedMap[pipelineName];
+        auto newInstance = Create(context, pipelineName, image0Names);
+        sharedMap[pipelineName].push_back(newInstance);
+
+        return newInstance;
     }
 
     std::shared_ptr<MaterialInstance> MaterialInstanceLogic::Create(Context *context,

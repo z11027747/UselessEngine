@@ -6,12 +6,15 @@
 #include "render/mesh/mesh_comp.h"
 
 class Context;
+class EngineObject;
 
 namespace Render
 {
     class MeshLogic final
     {
     public:
+        static bool IsShared(Context *, std::shared_ptr<Mesh>);
+        static void TryDestroyEO(Context *, std::shared_ptr<EngineObject>);
     };
 
     class MeshInstanceLogic final

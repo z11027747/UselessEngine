@@ -23,7 +23,7 @@ namespace Editor
 			return;
 		}
 
-		ImGui_Drag_GlmVec3(transform->localPosition, pId, 0.02f);
+		ImGui_Input_GlmVec3(transform->localPosition, pId);
 		ImGui::SameLine();
 		if (ImGui::Button("P", ImVec2(20, 20)))
 		{

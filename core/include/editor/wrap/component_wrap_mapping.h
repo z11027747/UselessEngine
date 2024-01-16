@@ -6,7 +6,6 @@
 #include "render/light/light_comp.h"
 #include "render/material/material_comp.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/unit/unit_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/camera/camera_comp.h"
 

@@ -14,6 +14,10 @@ namespace Render
         for (const auto &materialEO : materialEOs)
         {
             auto material = materialEO->GetComponent<Render::Material>();
+
+            if (material->pipelineName.empty())
+                continue;
+
             if (material->instance == nullptr)
             {
                 material->instance = MaterialInstanceLogic::Get(context,

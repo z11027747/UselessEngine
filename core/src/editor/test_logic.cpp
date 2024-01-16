@@ -9,10 +9,10 @@
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
-#include "render/unit/unit_comp.h"
 #include "render/light/light_comp.h"
 #include "render/material/material_comp.h"
 #include "render/mesh/mesh_comp.h"
+#include "render/render_pass/render_pass_comp.h"
 #include "logic/transform/transform_logic.h"
 #include "logic/camera/camera_logic.h"
 #include "editor/test_logic.h"
@@ -169,8 +169,6 @@ namespace Editor
         directionLightCamera->passName = Render::Pass_Shadow;
         directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
 
-        auto directionLightUnit = std::make_shared<Render::Unit>();
-
         context->AddEO(directionLightEO);
     }
 
@@ -196,21 +194,14 @@ namespace Editor
                                        "resource/texture/skybox2/sky_front_lnitial.png",
                                        "resource/texture/skybox2/sky_back_lnitial.png"};
 
-        auto skyboxUnit = std::make_shared<Render::Unit>();
-
         skyboxEO->AddComponent(skyboxMesh);
         skyboxEO->AddComponent(skyboxMaterial);
-        skyboxEO->AddComponent(skyboxUnit);
 
         context->AddEO(skyboxEO);
     }
 
     void TestLogic::CreateCubes(Context *context)
     {
-        CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        return;
-
         CreateCube(context, glm::vec3(-4.0f, 0.0f, 0.0f), -90.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
         CreateCube(context, glm::vec3(-3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
         CreateCube(context, glm::vec3(-2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
@@ -311,10 +302,8 @@ namespace Editor
         modelMaterial->image0Names = {imageName};
         modelMaterial->castShadow = true;
 
-        auto modelUnit = std::make_shared<Render::Unit>();
         modelEO->AddComponent(modelMesh);
         modelEO->AddComponent(modelMaterial);
-        modelEO->AddComponent(modelUnit);
 
         context->AddEO(modelEO);
     }
@@ -351,13 +340,9 @@ namespace Editor
 
             auto modelMaterial = std::make_shared<Render::Material>();
             modelMaterial->pipelineName = Render::Pipeline_Color;
-            modelMaterial->image0Names = {"resource/texture/white.png"};
-
-            auto modelUnit = std::make_shared<Render::Unit>();
 
             modelEO->AddComponent(modelMesh);
             modelEO->AddComponent(modelMaterial);
-            modelEO->AddComponent(modelUnit);
 
             context->AddEO(modelEO);
 
@@ -383,13 +368,9 @@ namespace Editor
 
             auto modelMaterial = std::make_shared<Render::Material>();
             modelMaterial->pipelineName = Render::Pipeline_Color;
-            modelMaterial->image0Names = {"resource/texture/white.png"};
-
-            auto modelUnit = std::make_shared<Render::Unit>();
 
             modelEO->AddComponent(modelMesh);
             modelEO->AddComponent(modelMaterial);
-            modelEO->AddComponent(modelUnit);
 
             context->AddEO(modelEO);
 
@@ -415,13 +396,9 @@ namespace Editor
 
             auto modelMaterial = std::make_shared<Render::Material>();
             modelMaterial->pipelineName = Render::Pipeline_Color;
-            modelMaterial->image0Names = {"resource/texture/white.png"};
-
-            auto modelUnit = std::make_shared<Render::Unit>();
 
             modelEO->AddComponent(modelMesh);
             modelEO->AddComponent(modelMaterial);
-            modelEO->AddComponent(modelUnit);
 
             context->AddEO(modelEO);
 

@@ -13,11 +13,7 @@ namespace Render
         auto &meshEOs = context->renderMeshEOs;
         for (const auto &meshEO : meshEOs)
         {
-            auto mesh = meshEO->GetComponent<Render::Mesh>();
-            if (mesh->vertexColor != glm::vec3(1.0f))
-            {
-                MeshInstanceLogic::SetDestroy(context, mesh->instance);
-            }
+            MeshLogic::TryDestroyEO(context, meshEO);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Editor
 
         auto material = std::make_shared<Render::Material>();
         material->pipelineName = j["pipelineName"].string_value();
+        material->image0Names.clear();
         for (const auto &image0NameJObj : image0NameJArr)
         {
             material->image0Names.push_back(image0NameJObj.string_value());

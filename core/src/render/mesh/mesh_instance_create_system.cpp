@@ -8,32 +8,42 @@
 
 namespace Render
 {
+    inline static void SetInstance(Context *context,
+                                   std::shared_ptr<Render::Mesh> mesh, bool isShared)
+    {
+        if (isShared)
+        {
+            mesh->instance = MeshInstanceLogic::Get(context,
+                                                    mesh->objName);
+        }
+        else
+        {
+            mesh->instance = MeshInstanceLogic::Create(context,
+                                                       mesh->objName, mesh->vertexColor);
+        }
+    }
+
     void MeshInstanceCreateSystem::Update(Context *context)
     {
         auto &meshEOs = context->renderMeshEOs;
         for (const auto &meshEO : meshEOs)
         {
             auto mesh = meshEO->GetComponent<Render::Mesh>();
+            if (mesh->objName.empty())
+                continue;
+
+            auto isShared = MeshLogic::IsShared(context, mesh);
+
             if (mesh->instance == nullptr)
             {
-                auto isShared = (mesh->vertexColor == glm::vec3(1.0f));
-                mesh->instance = isShared
-                                     ? MeshInstanceLogic::Get(context, mesh->objName)
-                                     : MeshInstanceLogic::Create(context, mesh->objName, mesh->vertexColor);
+                SetInstance(context, mesh, isShared);
             }
             else if (mesh->objName != mesh->instance->objName)
             {
-                auto isShared = (mesh->vertexColor == glm::vec3(1.0f));
                 if (!isShared)
-                {
                     MeshInstanceLogic::SetDestroy(context, mesh->instance);
 
-                    mesh->instance = MeshInstanceLogic::Create(context, mesh->objName, mesh->vertexColor);
-                }
-                else
-                {
-                    mesh->instance = MeshInstanceLogic::Get(context, mesh->objName);
-                }
+                SetInstance(context, mesh, isShared);
             }
         }
     }

@@ -10,7 +10,11 @@
 
 namespace Editor
 {
-	static char pipelineName[32] = "";
+	static int pipelineNameIndex = -1;
+	static const char *pipelineNames[] = {Render::Pipeline_Skybox.c_str(),
+										  Render::Pipeline_Shadow.c_str(),
+										  Render::Pipeline_Bling_Phone.c_str(),
+										  Render::Pipeline_Color.c_str()};
 
 	static int image0NameIndex = -1;
 	static std::vector<std::string> image0Names = {};
@@ -22,7 +26,15 @@ namespace Editor
 	{
 		if (isFirst)
 		{
-			memcpy(pipelineName, material->pipelineName.data(), material->pipelineName.size());
+			auto &pipelineName = material->pipelineName;
+			for (auto i = 0; i < 4; i++)
+			{
+				if (strcmp(pipelineNames[i], pipelineName.c_str()) == 0)
+				{
+					pipelineNameIndex = i;
+					break;
+				}
+			}
 
 			image0NameIndex = -1;
 			image0Names.clear();
@@ -45,9 +57,9 @@ namespace Editor
 			return;
 		}
 
-		if (ImGui::InputText("PipelineName", pipelineName, IM_ARRAYSIZE(pipelineName)))
+		if (ImGui::Combo("##pipelineNames",
+						 &pipelineNameIndex, pipelineNames, IM_ARRAYSIZE(pipelineNames)))
 		{
-			//  material->pipelineName = pipelineName;
 		}
 
 		if (ImGui::Combo("Image0Name", &image0NameIndex,

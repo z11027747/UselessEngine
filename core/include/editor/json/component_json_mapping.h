@@ -8,7 +8,6 @@
 #include "render/light/light_comp.h"
 #include "render/material/material_comp.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/unit/unit_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/camera/camera_comp.h"
 #include "engine_object.h"
@@ -21,6 +20,7 @@ namespace Editor
                                  std::shared_ptr<EngineObject> eo)
     {
         eo->AddComponent<T>(std::make_shared<T>());
+        context->CheckEO(eo, true);
     }
 
     static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<EngineObject>)>> addDefaultFuncMap{
@@ -28,8 +28,7 @@ namespace Editor
         {Type_Logic_Transform, ComponentDefault<Logic::Transform>},
         {Type_Render_DirectionLight, ComponentDefault<Render::DirectionLight>},
         {Type_Render_Material, ComponentDefault<Render::Material>},
-        {Type_Render_Mesh, ComponentDefault<Render::Mesh>},
-        {Type_Render_Unit, ComponentDefault<Render::Unit>}};
+        {Type_Render_Mesh, ComponentDefault<Render::Mesh>}};
 
     static void EOAddDefault(Context *context,
                              std::shared_ptr<EngineObject> eo, std::string componentType)
@@ -49,8 +48,7 @@ namespace Editor
         {Type_Logic_Transform, ComponentFromJson<Logic::Transform>},
         {Type_Render_DirectionLight, ComponentFromJson<Render::DirectionLight>},
         {Type_Render_Material, ComponentFromJson<Render::Material>},
-        {Type_Render_Mesh, ComponentFromJson<Render::Mesh>},
-        {Type_Render_Unit, ComponentFromJson<Render::Unit>}};
+        {Type_Render_Mesh, ComponentFromJson<Render::Mesh>}};
 
     static std::shared_ptr<EngineObject> EOFromJson(Context *context, const json11::Json &jObj)
     {
@@ -85,8 +83,7 @@ namespace Editor
         {typeid(Logic::Transform), ComponentToJson<Logic::Transform>},
         {typeid(Render::DirectionLight), ComponentToJson<Render::DirectionLight>},
         {typeid(Render::Material), ComponentToJson<Render::Material>},
-        {typeid(Render::Mesh), ComponentToJson<Render::Mesh>},
-        {typeid(Render::Unit), ComponentToJson<Render::Unit>}};
+        {typeid(Render::Mesh), ComponentToJson<Render::Mesh>}};
 
     static std::string EOToJson(Context *context, std::shared_ptr<EngineObject> eo)
     {

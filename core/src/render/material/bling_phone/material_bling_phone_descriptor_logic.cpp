@@ -8,6 +8,7 @@
 #include "render/vk/image/sampler_logic.h"
 #include "render/mesh/mesh_comp.h"
 #include "render/material/impl/material_bling_phone_logic.h"
+#include "render/render_pass/render_pass_comp.h"
 #include "engine_object.h"
 #include "context.h"
 

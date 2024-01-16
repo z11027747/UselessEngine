@@ -4,8 +4,8 @@
 #include "render/vk/global/global_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/material/material_logic.h"
-#include "render/unit/unit_comp.h"
-#include "render/unit/unit_system.h"
+#include "render/render_pass/render_pass_comp.h"
+#include "render/render_pass/render_pass_system.h"
 #include "logic/transform/transform_comp.h"
 #include "engine_object.h"
 #include "context.h"
@@ -26,6 +26,11 @@ namespace Render
                 continue;
 
             auto unitTransform = materialEO->GetComponent<Logic::Transform>();
+            auto mesh = materialEO->GetComponent<Render::Mesh>();
+            auto material = materialEO->GetComponent<Render::Material>();
+
+            if (material->pipelineName.empty())
+                continue;
 
             auto &unitParentEOName = unitTransform->parentEOName;
             if (!unitParentEOName.empty())
@@ -35,11 +40,10 @@ namespace Render
                     continue;
             }
 
-            auto material = materialEO->GetComponent<Render::Material>();
             if (isShadow && !material->castShadow)
                 continue;
 
-            auto pipelineName = !isShadow ? material->pipelineName : "shadow";
+            auto pipelineName = !isShadow ? material->pipelineName : Pipeline_Shadow;
 
             auto &graphicsPipeline = global->pipelines[pipelineName];
             auto &pipeline = graphicsPipeline->pipeline;
@@ -47,7 +51,6 @@ namespace Render
 
             vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-            auto mesh = materialEO->GetComponent<Render::Mesh>();
             auto &meshInstance = mesh->instance;
 
             VkBuffer vertexBuffer = meshInstance->vertexBuffer->vkBuffer;

@@ -2,7 +2,8 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pass/pass_logic.h"
 #include "render/light/light_comp.h"
-#include "render/unit/unit_system.h"
+#include "render/render_pass/render_pass_comp.h"
+#include "render/render_pass/render_pass_system.h"
 #include "engine_object.h"
 #include "context.h"
 

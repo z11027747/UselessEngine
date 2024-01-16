@@ -1,7 +1,5 @@
 
-#include "render/vk/global/global_logic.h"
 #include "render/light/light_comp.h"
-#include "render/unit/unit_comp.h"
 #include "render/mesh/mesh_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/material/material_logic.h"
@@ -25,7 +23,7 @@ void Context::Create()
     Editor::TestLogic::CreateMainCamera(this);
     Editor::TestLogic::CreateLight(this);
     // Editor::TestLogic::CreateSkybox(this);
-    Editor::TestLogic::CreateCubes(this);
+    // Editor::TestLogic::CreateCubes(this);
     Editor::TestLogic::CreateAxis(this);
 }
 
@@ -35,7 +33,6 @@ void Context::Update()
     //  TODO 先放这
     if (!newSceneName.empty())
     {
-        Render::LogicalDeviceLogic::WaitIdle(this);
         DestroyAllEOs();
 
         auto lines = Common::ResSystem::ReadAllLines("resource/scene/" + newSceneName);
@@ -60,28 +57,57 @@ void Context::Destroy()
     Logic::System::Destroy(this);
 }
 
-void Context::AddEO(std::shared_ptr<EngineObject> eo)
+void RemoveEoInVec(std::vector<std::shared_ptr<EngineObject>> &vec, std::shared_ptr<EngineObject> eo)
+{
+    vec.erase(std::remove(vec.begin(), vec.end(), eo), vec.end());
+}
+
+bool Context::CheckEO(std::shared_ptr<EngineObject> eo, bool add)
 {
     if (eo->name == Name_MainCamera)
     {
-        logicMainCameraEO = eo;
+        if (add)
+            logicMainCameraEO = eo;
+        else
+            logicMainCameraEO = nullptr;
     }
     if (eo->name == Name_AxisX || eo->name == Name_AxisY || eo->name == Name_AxisZ)
     {
-        editorAxisEOs.push_back(eo);
+        if (add)
+            editorAxisEOs.push_back(eo);
+        else
+            RemoveEoInVec(editorAxisEOs, eo);
     }
     if (eo->HasComponent<Render::DirectionLight>())
     {
-        renderLightEOs.push_back(eo);
+        if (add)
+            renderLightEOs.push_back(eo);
+        else
+            RemoveEoInVec(renderLightEOs, eo);
     }
     if (eo->HasComponent<Render::Mesh>())
     {
-        renderMeshEOs.push_back(eo);
+        if (add)
+            renderMeshEOs.push_back(eo);
+        else
+        {
+            Render::MeshLogic::TryDestroyEO(this, eo);
+            RemoveEoInVec(renderMeshEOs, eo);
+        }
     }
     if (eo->HasComponent<Render::Material>())
     {
-        renderMaterialEOs.push_back(eo);
+        if (add)
+            renderMaterialEOs.push_back(eo);
+        else
+            RemoveEoInVec(renderMaterialEOs, eo);
     }
+    return true;
+}
+
+void Context::AddEO(std::shared_ptr<EngineObject> eo)
+{
+    CheckEO(eo, true);
 
     allEOs.push_back(eo);
     allEOMap.emplace(eo->name, eo);
@@ -92,33 +118,9 @@ std::shared_ptr<EngineObject> Context::GetEO(const std::string &name)
     return allEOMap[name];
 }
 
-void RemoveEoInVec(std::vector<std::shared_ptr<EngineObject>> &vec, std::shared_ptr<EngineObject> eo)
-{
-    vec.erase(std::remove(vec.begin(), vec.end(), eo), vec.end());
-}
-
 void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
 {
-    if (eo->name == Name_MainCamera)
-    {
-        logicMainCameraEO = nullptr;
-    }
-    if (eo->name == Name_AxisX || eo->name == Name_AxisY || eo->name == Name_AxisZ)
-    {
-        RemoveEoInVec(editorAxisEOs, eo);
-    }
-    if (eo->HasComponent<Render::DirectionLight>())
-    {
-        RemoveEoInVec(renderLightEOs, eo);
-    }
-    if (eo->HasComponent<Render::Mesh>())
-    {
-        RemoveEoInVec(renderMeshEOs, eo);
-    }
-    if (eo->HasComponent<Render::Material>())
-    {
-        RemoveEoInVec(renderMaterialEOs, eo);
-    }
+    CheckEO(eo, false);
 
     if (remove)
     {

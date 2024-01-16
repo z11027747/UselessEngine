@@ -12,15 +12,6 @@
 
 namespace Render
 {
-	const std::string Pass_ImGui = "imGui";
-	const std::string Pass_Shadow = "Shadow";
-	const std::string Pass_Main = "main";
-
-	const std::string Pipeline_Skybox = "skybox";
-	const std::string Pipeline_Shadow = "shadow";
-	const std::string Pipeline_Bling_Phone = "bling_phone";
-	const std::string Pipeline_Color = "color";
-
 	struct Global final
 	{
 		VkInstance instance;
