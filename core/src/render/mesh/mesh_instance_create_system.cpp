@@ -14,7 +14,6 @@ namespace Render
         for (const auto &meshEO : meshEOs)
         {
             auto mesh = meshEO->GetComponent<Render::Mesh>();
-
             if (mesh->instance == nullptr)
             {
                 auto isShared = (mesh->vertexColor == glm::vec3(1.0f));

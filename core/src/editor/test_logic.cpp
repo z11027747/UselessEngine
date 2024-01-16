@@ -208,6 +208,7 @@ namespace Editor
     void TestLogic::CreateCubes(Context *context)
     {
         CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
         return;
 
         CreateCube(context, glm::vec3(-4.0f, 0.0f, 0.0f), -90.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");

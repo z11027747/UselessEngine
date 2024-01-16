@@ -4,6 +4,18 @@ class Context;
 
 namespace Render
 {
+    class MaterialInstanceCreateSystem final
+    {
+    public:
+        static void Update(Context *context);
+    };
+
+    class MaterialDestroySystem final
+    {
+    public:
+        static void Destroy(Context *context);
+    };
+
     class MaterialGlobalUBOUpdateSystem final
     {
     public:

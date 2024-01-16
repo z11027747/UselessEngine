@@ -34,12 +34,12 @@ namespace Render
 		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 	}
 	void MaterialSkyboxDescriptorLogic::AllocateAndUpdate(Context *context,
-														  std::shared_ptr<Material> material)
+														  std::shared_ptr<MaterialInstance> instance)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 
-		auto &graphicsPipeline = global->pipelines[material->pipelineName];
+		auto &graphicsPipeline = global->pipelines[instance->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
@@ -49,23 +49,23 @@ namespace Render
 
 		descriptor->image0Info = {
 			global->globalSampler,
-			material->image0->vkImageView,
-			material->image0->layout};
+			instance->image0->vkImageView,
+			instance->image0->layout};
 
-		material->descriptor = descriptor;
+		instance->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
 								   [&](std::vector<VkWriteDescriptorSet> &writes)
 								   {
 									   DescriptorSetLogic::WriteImage(context,
 																	  writes,
-																	  material->descriptor);
+																	  instance->descriptor);
 								   });
 	}
 	void MaterialSkyboxDescriptorLogic::Destroy(Context *context,
-												std::shared_ptr<Material> material)
+												std::shared_ptr<MaterialInstance> instance)
 	{
-		auto &descriptor = material->descriptor;
+		// auto &descriptor = instance->descriptor;
 		// SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
 	}
 }

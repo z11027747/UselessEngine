@@ -15,11 +15,11 @@ namespace Render
 	{
 	}
 	void MaterialColorDescriptorLogic::AllocateAndUpdate(Context *context,
-														 std::shared_ptr<Material> material)
+														 std::shared_ptr<MaterialInstance> instance)
 	{
 	}
 	void MaterialColorDescriptorLogic::Destroy(Context *context,
-											   std::shared_ptr<Material> material)
+											   std::shared_ptr<MaterialInstance> instance)
 	{
 	}
 }

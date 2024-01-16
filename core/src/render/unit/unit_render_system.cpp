@@ -19,13 +19,13 @@ namespace Render
         auto global = globalEO->GetComponent<Global>();
         auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
-        auto &unitEOs = context->renderUnitEOs;
-        for (const auto &unitEO : unitEOs)
+        auto &materialEOs = context->renderMaterialEOs;
+        for (const auto &materialEO : materialEOs)
         {
-            if (!unitEO->active)
+            if (!materialEO->active)
                 continue;
 
-            auto unitTransform = unitEO->GetComponent<Logic::Transform>();
+            auto unitTransform = materialEO->GetComponent<Logic::Transform>();
 
             auto &unitParentEOName = unitTransform->parentEOName;
             if (!unitParentEOName.empty())
@@ -35,7 +35,7 @@ namespace Render
                     continue;
             }
 
-            auto material = unitEO->GetComponent<Render::Material>();
+            auto material = materialEO->GetComponent<Render::Material>();
             if (isShadow && !material->castShadow)
                 continue;
 
@@ -47,7 +47,7 @@ namespace Render
 
             vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-            auto mesh = unitEO->GetComponent<Render::Mesh>();
+            auto mesh = materialEO->GetComponent<Render::Mesh>();
             auto &meshInstance = mesh->instance;
 
             VkBuffer vertexBuffer = meshInstance->vertexBuffer->vkBuffer;
@@ -67,8 +67,9 @@ namespace Render
 
             if (!isShadow)
             {
-                if (material->descriptor != nullptr)
-                    descriptorSets.push_back(material->descriptor->set);
+                auto &materialInstance = material->instance;
+                if (materialInstance->descriptor != nullptr)
+                    descriptorSets.push_back(materialInstance->descriptor->set);
             }
 
             vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,

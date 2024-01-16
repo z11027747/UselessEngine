@@ -12,6 +12,7 @@
 #include "render/unit/unit_system.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/mesh/mesh_system.h"
+#include "render/material/material_logic.h"
 #include "render/material/material_system.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
@@ -69,6 +70,7 @@ namespace Render
 		cacheEO = std::make_shared<EngineObject>();
 
 		MeshInstanceLogic::CreateCache(context);
+		MaterialInstanceLogic::CreateCache(context);
 
 		Editor::System::Create(context);
 	}
@@ -77,6 +79,11 @@ namespace Render
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
+
+		{
+			MeshInstanceCreateSystem::Update(context);
+			MaterialInstanceCreateSystem::Update(context);
+		}
 
 		CmdSubmitLogic::UpdateBatch(context);
 		BufferLogic::DestroyAllTemps(context);
@@ -88,7 +95,6 @@ namespace Render
 		SwapchainLogic::BeginCmd(context, imageIndex);
 
 		{
-			MeshInstanceCreateSystem::Update(context);
 			MaterialGlobalUBOUpdateSystem::Update(context);
 
 			ShadowPassRenderSystem::Update(context, imageIndex);
@@ -109,7 +115,8 @@ namespace Render
 		{
 			MeshDestroySystem::Destroy(context);
 			MeshInstanceLogic::DestroyCache(context);
-			UnitDestroySystem::Destroy(context);
+			MaterialDestroySystem::Destroy(context);
+			MaterialInstanceLogic::DestroyCache(context);
 		}
 
 		PipelineLogic::DestroyAll(context);

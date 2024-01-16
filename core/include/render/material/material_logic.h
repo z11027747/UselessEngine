@@ -14,12 +14,29 @@ namespace Render
     class MaterialLogic final
     {
     public:
-        static void Create(Context *, std::shared_ptr<Material>);
-        static void Destroy(Context *, std::shared_ptr<Material>);
+    };
 
-        static void CreateImage(Context *, std::shared_ptr<Material>);
-        static void CreateImageCube(Context *, std::shared_ptr<Material>);
-        static void CreateDescriptor(Context *, std::shared_ptr<Material>);
+    class MaterialInstanceLogic final
+    {
+    public:
+        static void CreateCache(Context *);
+        static void DestroyCache(Context *);
+
+        static std::shared_ptr<MaterialInstance> Get(Context *,
+                                                     const std::string &, const std::vector<std::string> & = {"resource/texture/white.png"});
+        static std::shared_ptr<MaterialInstance> Create(Context *,
+                                                        const std::string &, const std::vector<std::string> &);
+        static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
+        static void SetDestroy(Context *, std::shared_ptr<MaterialInstance>);
+
+        static void CreateImage(Context *,
+                                std::shared_ptr<MaterialInstance>,
+                                const std::string &);
+        static void CreateImageCube(Context *,
+                                    std::shared_ptr<MaterialInstance>,
+                                    const std::vector<std::string> &);
+        static void CreateDescriptor(Context *context,
+                                     std::shared_ptr<MaterialInstance>);
     };
 
     class MaterialPipelineLogic final
@@ -37,7 +54,7 @@ namespace Render
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
         static void DestroySetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
-        static void AllocateAndUpdate(Context *, std::shared_ptr<Material>);
-        static void Destroy(Context *, std::shared_ptr<Material>);
+        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
+        static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
     };
 }

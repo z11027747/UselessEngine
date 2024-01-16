@@ -49,12 +49,12 @@ namespace Render
         sharedMap.clear();
 
         // TODO 没用的应该及时删除
-        auto &deleteVector = instanceCache->deleteVector;
-        for (const auto &instance : deleteVector)
+        auto &deletes = instanceCache->deletes;
+        for (const auto &instance : deletes)
         {
             Destroy(context, instance);
         }
-        deleteVector.clear();
+        deletes.clear();
     }
 
     std::shared_ptr<MeshInstance> MeshInstanceLogic::Get(Context *context,
@@ -100,7 +100,7 @@ namespace Render
         auto &cacheEO = context->renderCacheEo;
         auto instanceCache = cacheEO->GetComponent<MeshInstanceCache>();
 
-        instanceCache->deleteVector.push_back(instance);
+        instanceCache->deletes.push_back(instance);
     }
 
     void MeshInstanceLogic::LoadObj(Context *context,

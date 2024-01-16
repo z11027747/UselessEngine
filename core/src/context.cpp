@@ -74,18 +74,13 @@ void Context::AddEO(std::shared_ptr<EngineObject> eo)
     {
         renderLightEOs.push_back(eo);
     }
-    if (eo->HasComponent<Render::Unit>())
-    {
-        renderUnitEOs.push_back(eo);
-    }
     if (eo->HasComponent<Render::Mesh>())
     {
         renderMeshEOs.push_back(eo);
     }
     if (eo->HasComponent<Render::Material>())
     {
-        auto material = eo->GetComponent<Render::Material>();
-        Render::MaterialLogic::Create(this, material);
+        renderMaterialEOs.push_back(eo);
     }
 
     allEOs.push_back(eo);
@@ -116,22 +111,13 @@ void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
     {
         RemoveEoInVec(renderLightEOs, eo);
     }
-    if (eo->HasComponent<Render::Unit>())
-    {
-        RemoveEoInVec(renderUnitEOs, eo);
-    }
     if (eo->HasComponent<Render::Mesh>())
     {
         RemoveEoInVec(renderMeshEOs, eo);
     }
     if (eo->HasComponent<Render::Material>())
     {
-        auto material = eo->GetComponent<Render::Material>();
-        Render::MaterialLogic::Destroy(this, material);
-    }
-    if (eo->HasComponent<Logic::MoveFollow>())
-    {
-        RemoveEoInVec(logicMoveEOs, eo);
+        RemoveEoInVec(renderMaterialEOs, eo);
     }
 
     if (remove)

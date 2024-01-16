@@ -29,10 +29,4 @@ namespace Render
     public:
         static void Update(Context *, uint32_t, bool);
     };
-
-    class UnitDestroySystem final
-    {
-    public:
-        static void Destroy(Context *);
-    };
 };

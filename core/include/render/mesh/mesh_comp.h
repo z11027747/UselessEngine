@@ -54,6 +54,6 @@ namespace Render
     struct MeshInstanceCache final
     {
         std::unordered_map<std::string, std::shared_ptr<MeshInstance>> sharedMap{};
-        std::vector<std::shared_ptr<MeshInstance>> deleteVector{};
+        std::vector<std::shared_ptr<MeshInstance>> deletes{};
     };
 }

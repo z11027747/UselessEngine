@@ -16,11 +16,11 @@ namespace Render
 	{
 	}
 	void MaterialShadowDescriptorLogic::AllocateAndUpdate(Context *context,
-														  std::shared_ptr<Material> material)
+														  std::shared_ptr<MaterialInstance> instance)
 	{
 	}
 	void MaterialShadowDescriptorLogic::Destroy(Context *context,
-												std::shared_ptr<Material> material)
+												std::shared_ptr<MaterialInstance> instance)
 	{
 	}
 }

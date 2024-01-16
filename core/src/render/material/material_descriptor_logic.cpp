@@ -41,33 +41,33 @@ namespace Render
         }
     }
     void MaterialDescriptorLogic::AllocateAndUpdate(Context *context,
-                                                    std::shared_ptr<Material> material)
+                                                    std::shared_ptr<MaterialInstance> instance)
     {
-        auto &name = material->pipelineName;
+        auto &name = instance->pipelineName;
         if (name == Pipeline_Bling_Phone)
         {
             MaterialBlingPhoneDescriptorLogic::AllocateAndUpdate(context,
-                                                                 material);
+                                                                 instance);
         }
         else if (name == Pipeline_Skybox)
         {
             MaterialSkyboxDescriptorLogic::AllocateAndUpdate(context,
-                                                             material);
+                                                             instance);
         }
     }
     void MaterialDescriptorLogic::Destroy(Context *context,
-                                          std::shared_ptr<Material> material)
+                                          std::shared_ptr<MaterialInstance> instance)
     {
-        auto &name = material->pipelineName;
+        auto &name = instance->pipelineName;
         if (name == Pipeline_Bling_Phone)
         {
             MaterialBlingPhoneDescriptorLogic::Destroy(context,
-                                                       material);
+                                                       instance);
         }
         else if (name == Pipeline_Skybox)
         {
             MaterialSkyboxDescriptorLogic::Destroy(context,
-                                                   material);
+                                                   instance);
         }
     }
 }
