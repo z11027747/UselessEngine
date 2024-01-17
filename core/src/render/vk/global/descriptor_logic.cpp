@@ -53,11 +53,10 @@ namespace Render
 
         // update
         DescriptorSetLogic::Update(context,
-                                   [&](std::vector<VkWriteDescriptorSet> &writes)
+                                   [&globalDescriptor](std::vector<VkWriteDescriptorSet> &writes)
                                    {
-                                       DescriptorSetLogic::WriteBuffer(context,
-                                                                       writes,
-                                                                       global->globalDescriptor);
+                                       DescriptorSetLogic::WriteBuffer(writes,
+                                                                       globalDescriptor->set, 0, globalDescriptor->bufferInfo);
                                    });
 
         global->globalSampler = SamplerLogic::Create(context);

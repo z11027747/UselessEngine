@@ -14,32 +14,33 @@ namespace Render
         for (const auto &materialEO : materialEOs)
         {
             auto material = materialEO->GetComponent<Render::Material>();
-
             if (material->pipelineName.empty())
                 continue;
 
             if (material->instance == nullptr)
             {
                 material->instance = MaterialInstanceLogic::Get(context,
-                                                                material->pipelineName, material->image0Names);
+                                                                material->pipelineName,
+                                                                material->imageNames, material->isImageCube);
             }
 
             if (material->hasChanged)
             {
                 auto newInstance = MaterialInstanceLogic::Create(context,
-                                                                 material->pipelineName, material->image0Names);
+                                                                 material->pipelineName,
+                                                                 material->imageNames, material->isImageCube);
 
                 auto &oldInstance = material->instance;
                 auto oldPipeline = oldInstance->pipelineName;
-                auto oldImage0 = oldInstance->image0;
+                auto oldImages = oldInstance->images;
                 auto oldDescriptor = oldInstance->descriptor;
 
                 oldInstance->pipelineName = newInstance->pipelineName;
-                oldInstance->image0 = newInstance->image0;
+                oldInstance->images = newInstance->images;
                 oldInstance->descriptor = newInstance->descriptor;
 
                 newInstance->pipelineName = oldPipeline;
-                newInstance->image0 = oldImage0;
+                newInstance->images = oldImages;
                 newInstance->descriptor = oldDescriptor;
 
                 MaterialInstanceLogic::SetDestroy(context, newInstance);
@@ -47,9 +48,9 @@ namespace Render
                 material->hasChanged = false;
             }
 
-            if (material->image0Names[0] != material->instance->image0Names[0])
+            if (material->imageNames[0] != material->instance->imageNames[0])
             {
-                material->image0Names = material->instance->image0Names;
+                material->imageNames = material->instance->imageNames;
             }
         }
     }

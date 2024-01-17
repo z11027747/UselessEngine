@@ -2,7 +2,7 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/material/material_logic.h"
-#include "render/material/impl/material_bling_phone_logic.h"
+#include "render/material/impl/material_light_mode_logic.h"
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
@@ -14,9 +14,9 @@ namespace Render
                                                   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Bling_Phone)
+        if (name == Pipeline_LightMode)
         {
-            MaterialBlingPhoneDescriptorLogic::CreateSetLayout(context,
+            MaterialLightModeDescriptorLogic::CreateSetLayout(context,
                                                                graphicsPipeline);
         }
         else if (name == Pipeline_Skybox)
@@ -29,9 +29,9 @@ namespace Render
                                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Bling_Phone)
+        if (name == Pipeline_LightMode)
         {
-            MaterialBlingPhoneDescriptorLogic::DestroySetLayout(context,
+            MaterialLightModeDescriptorLogic::DestroySetLayout(context,
                                                                 graphicsPipeline);
         }
         else if (name == Pipeline_Skybox)
@@ -44,9 +44,9 @@ namespace Render
                                                     std::shared_ptr<MaterialInstance> instance)
     {
         auto &name = instance->pipelineName;
-        if (name == Pipeline_Bling_Phone)
+        if (name == Pipeline_LightMode)
         {
-            MaterialBlingPhoneDescriptorLogic::AllocateAndUpdate(context,
+            MaterialLightModeDescriptorLogic::AllocateAndUpdate(context,
                                                                  instance);
         }
         else if (name == Pipeline_Skybox)
@@ -59,9 +59,9 @@ namespace Render
                                           std::shared_ptr<MaterialInstance> instance)
     {
         auto &name = instance->pipelineName;
-        if (name == Pipeline_Bling_Phone)
+        if (name == Pipeline_LightMode)
         {
-            MaterialBlingPhoneDescriptorLogic::Destroy(context,
+            MaterialLightModeDescriptorLogic::Destroy(context,
                                                        instance);
         }
         else if (name == Pipeline_Skybox)

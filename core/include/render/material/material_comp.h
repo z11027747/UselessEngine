@@ -12,7 +12,7 @@ namespace Render
 {
 	const std::string Pipeline_Skybox = "skybox";
 	const std::string Pipeline_Shadow = "shadow";
-	const std::string Pipeline_Bling_Phone = "bling_phone";
+	const std::string Pipeline_LightMode = "light_mode";
 	const std::string Pipeline_Color = "color";
 
 	struct CameraUBO final
@@ -24,9 +24,10 @@ namespace Render
 
 	struct DirectionLightUBO final
 	{
+		alignas(16) glm::vec3 dir;
 		alignas(16) glm::mat4 view;
 		alignas(16) glm::mat4 projection;
-		alignas(16) glm::vec3 dir;
+		alignas(16) glm::vec3 ambient;
 		alignas(16) glm::vec3 col;
 		alignas(16) glm::vec4 params;
 	};
@@ -40,16 +41,17 @@ namespace Render
 	struct MaterialInstance final
 	{
 		std::string pipelineName;
-		std::vector<std::string> image0Names;
+		std::vector<std::string> imageNames;
 
-		std::shared_ptr<Image> image0;
+		std::vector<std::shared_ptr<Image>> images;
 		std::shared_ptr<Descriptor> descriptor;
 	};
 
 	struct Material final
 	{
-		std::string pipelineName{Pipeline_Bling_Phone};
-		std::vector<std::string> image0Names{"resource/texture/white.png"};
+		std::string pipelineName{Pipeline_Color};
+		std::vector<std::string> imageNames{"resource/texture/white.png"};
+		bool isImageCube{false};
 		bool castShadow{false};
 
 		std::shared_ptr<MaterialInstance> instance;

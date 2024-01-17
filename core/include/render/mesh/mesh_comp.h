@@ -13,15 +13,13 @@ namespace Render
     {
         alignas(16) glm::vec3 positionOS;
         alignas(16) glm::vec3 normalOS;
+        alignas(16) glm::vec3 tangentOS;
         alignas(16) glm::vec3 color;
         alignas(8) glm::vec2 uv0;
 
         bool operator==(const Vertex &other) const
         {
-            return (positionOS == other.positionOS) &&
-                   (normalOS == other.normalOS) &&
-                   (color == other.color) &&
-                   (uv0 == other.uv0);
+            return (positionOS == other.positionOS);
         }
     };
 

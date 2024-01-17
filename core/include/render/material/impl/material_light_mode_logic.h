@@ -8,7 +8,7 @@ class Context;
 
 namespace Render
 {
-    class MaterialBlingPhonePipelineLogic final
+    class MaterialLightModePipelineLogic final
     {
     public:
         static void SetVertexAttrDescriptions(Context *, std::shared_ptr<GraphicsPipeline>);
@@ -18,7 +18,7 @@ namespace Render
         static void SetColorBlendStage(Context *, std::shared_ptr<GraphicsPipeline>);
     };
 
-    class MaterialBlingPhoneDescriptorLogic final
+    class MaterialLightModeDescriptorLogic final
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);

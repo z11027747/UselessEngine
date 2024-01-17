@@ -47,25 +47,23 @@ namespace Render
 		auto descriptor = std::make_shared<Descriptor>();
 		descriptor->set = descriptorSet;
 
-		descriptor->image0Info = {
+		VkDescriptorImageInfo imageInfo = {
 			global->globalSampler,
-			instance->image0->vkImageView,
-			instance->image0->layout};
+			instance->images[0]->vkImageView,
+			instance->images[0]->layout};
+		descriptor->imageInfos.push_back(imageInfo);
 
 		instance->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
-								   [&](std::vector<VkWriteDescriptorSet> &writes)
+								   [&descriptor](std::vector<VkWriteDescriptorSet> &writes)
 								   {
-									   DescriptorSetLogic::WriteImage(context,
-																	  writes,
-																	  instance->descriptor);
+									   DescriptorSetLogic::WriteImage(writes,
+																	  descriptor->set, 0, descriptor->imageInfos[0]);
 								   });
 	}
 	void MaterialSkyboxDescriptorLogic::Destroy(Context *context,
 												std::shared_ptr<MaterialInstance> instance)
 	{
-		// auto &descriptor = instance->descriptor;
-		// SamplerLogic::Destroy(context, descriptor->image0Info.sampler);
 	}
 }

@@ -21,7 +21,9 @@ namespace Editor
         static void CreateLight(Context *);
         static void CreateSkybox(Context *);
         static void CreateCubes(Context *);
-        static void CreateCube(Context *, const glm::vec3 &, float, const std::string &);
+        static void CreateCube(Context *, const glm::vec3 &, float,
+                               const std::string &, const std::string &, const std::string &,
+                               bool = true);
         static void CreateAxis(Context *);
     };
 
@@ -80,5 +82,19 @@ namespace Editor
 
         ImGui::PopItemWidth();
         ImGui::PopID();
+    }
+
+    inline static void FillFloat3(float *color, glm::vec3 &vec3)
+    {
+        color[0] = vec3.x;
+        color[1] = vec3.y;
+        color[2] = vec3.z;
+    }
+
+    inline static void FillGlmVec3(glm::vec3 &vec3, float *color)
+    {
+        vec3.x = color[0];
+        vec3.y = color[1];
+        vec3.z = color[2];
     }
 }

@@ -1,19 +1,18 @@
 #version 450
 
-struct CameraUBO
-{
+struct CameraUBO {
     vec3 pos;
     mat4 view;
     mat4 projection;
 };
 
-struct DirectionLightUBO 
-{
+struct DirectionLightUBO {
+    vec3 dir;
     mat4 view;
     mat4 projection;
-	vec3 dir;
-	vec3 col;
-	vec4 params;
+    vec3 ambient;
+    vec3 color;
+    vec4 params;
 };
 
 layout(set = 0, binding = 0) uniform GlobalUBO {
@@ -28,5 +27,6 @@ layout(push_constant) uniform Push {
 layout(location = 0) in vec3 inPositionOS;
 
 void main() {
-	gl_Position = globalUBO.directionLight.projection * globalUBO.directionLight.view * push.model * vec4(inPositionOS, 1.0);
+    DirectionLightUBO directionLight = globalUBO.directionLight;
+    gl_Position = directionLight.projection * directionLight.view * push.model * vec4(inPositionOS, 1.0);
 }

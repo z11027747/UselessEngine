@@ -6,9 +6,10 @@ namespace Render
 {
     struct DirectionLight final
     {
+        glm::vec3 ambient{0.1f, 0.1f, 0.1f};
         glm::vec3 color;
         glm::vec4 params;
-        
-        bool hasShadow;
+
+        bool hasShadow{true};
     };
 }

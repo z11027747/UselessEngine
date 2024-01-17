@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
+#include <vector>
 
 namespace Render
 {
@@ -9,7 +10,6 @@ namespace Render
 	{
 		VkDescriptorSet set;
 		VkDescriptorBufferInfo bufferInfo;
-		VkDescriptorImageInfo image0Info;
-		VkDescriptorImageInfo image1Info;
+		std::vector<VkDescriptorImageInfo> imageInfos;
 	};
 }

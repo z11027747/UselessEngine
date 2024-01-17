@@ -63,7 +63,7 @@ namespace Render
 
 		PipelineLogic::Create(context, Pipeline_Shadow, shadowPass);
 		PipelineLogic::Create(context, Pipeline_Skybox, mainPass);
-		PipelineLogic::Create(context, Pipeline_Bling_Phone, mainPass);
+		PipelineLogic::Create(context, Pipeline_LightMode, mainPass);
 		PipelineLogic::Create(context, Pipeline_Color, mainPass);
 
 		auto &cacheEO = context->renderCacheEo;

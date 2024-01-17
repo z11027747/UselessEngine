@@ -8,14 +8,14 @@ namespace Editor
     template <>
     std::shared_ptr<Render::Material> ComponentJson<Render::Material>::From(Context *context, const json11::Json &j)
     {
-        auto &image0NameJArr = j["image0Names"].array_items();
+        auto &imageNameJArr = j["imageNames"].array_items();
 
         auto material = std::make_shared<Render::Material>();
         material->pipelineName = j["pipelineName"].string_value();
-        material->image0Names.clear();
-        for (const auto &image0NameJObj : image0NameJArr)
+        material->imageNames.clear();
+        for (const auto &imageNameJObj : imageNameJArr)
         {
-            material->image0Names.push_back(image0NameJObj.string_value());
+            material->imageNames.push_back(imageNameJObj.string_value());
         }
         material->castShadow = j["castShadow"].bool_value();
 
@@ -27,13 +27,15 @@ namespace Editor
                                                      std::shared_ptr<Render::Material> material)
     {
         auto &pipelineName = material->pipelineName;
-        auto &image0Names = material->image0Names;
+        auto &imageNames = material->imageNames;
+        auto isImageCube = material->isImageCube;
         auto castShadow = material->castShadow;
 
         auto jObj = json11::Json::object{
             {"type", Type_Render_Material},
             {"pipelineName", pipelineName},
-            {"image0Names", image0Names},
+            {"imageNames", imageNames},
+            {"isImageCube", isImageCube},
             {"castShadow", castShadow}};
 
         return jObj;

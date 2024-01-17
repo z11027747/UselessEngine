@@ -2,7 +2,7 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/material/material_logic.h"
-#include "render/material/impl/material_bling_phone_logic.h"
+#include "render/material/impl/material_light_mode_logic.h"
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
@@ -14,9 +14,9 @@ namespace Render
                                                           std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Bling_Phone)
+        if (name == Pipeline_LightMode)
         {
-            MaterialBlingPhonePipelineLogic::SetVertexAttrDescriptions(context,
+            MaterialLightModePipelineLogic::SetVertexAttrDescriptions(context,
                                                                        graphicsPipeline);
         }
         else if (name == Pipeline_Color)
@@ -49,9 +49,9 @@ namespace Render
                                                            std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Bling_Phone)
+        if (name == Pipeline_LightMode)
         {
-            MaterialBlingPhonePipelineLogic::SetRasterizationCreateInfo(context,
+            MaterialLightModePipelineLogic::SetRasterizationCreateInfo(context,
                                                                         graphicsPipeline);
         }
         else if (name == Pipeline_Color)

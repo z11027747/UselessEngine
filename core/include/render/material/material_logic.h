@@ -23,9 +23,11 @@ namespace Render
         static void DestroyCache(Context *);
 
         static std::shared_ptr<MaterialInstance> Get(Context *,
-                                                     const std::string &, const std::vector<std::string> & = {"resource/texture/white.png"});
+                                                     const std::string &,
+                                                     const std::vector<std::string> &, bool);
         static std::shared_ptr<MaterialInstance> Create(Context *,
-                                                        const std::string &, const std::vector<std::string> &);
+                                                        const std::string &,
+                                                        const std::vector<std::string> &, bool);
         static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
         static void SetDestroy(Context *, std::shared_ptr<MaterialInstance>);
 

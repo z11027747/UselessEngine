@@ -17,10 +17,7 @@ namespace std
     {
         size_t operator()(Render::Vertex const &vertex) const
         {
-            return hash<glm::vec3>()(vertex.positionOS) ^
-                   hash<glm::vec3>()(vertex.normalOS) ^
-                   hash<glm::vec3>()(vertex.color) ^
-                   hash<glm::vec2>()(vertex.uv0);
+            return hash<glm::vec3>()(vertex.positionOS);
         }
     };
 }
@@ -113,6 +110,7 @@ namespace Render
 
         std::vector<Render::Vertex> vertices;
         std::vector<uint16_t> indices;
+
         std::unordered_map<Render::Vertex, uint16_t> uniqueVertices = {};
 
         for (const auto &shape : shapes)
@@ -125,41 +123,56 @@ namespace Render
                 Render::Vertex vertex = {};
                 vertex.positionOS = {attrib.vertices[3 * vi + 0], attrib.vertices[3 * vi + 1], attrib.vertices[3 * vi + 2]};
                 vertex.positionOS.x *= -1;
-
                 if (attrib.normals.size() > 0)
                 {
                     vertex.normalOS = {attrib.normals[3 * ni + 0], attrib.normals[3 * ni + 1], attrib.normals[3 * ni + 2]};
                     vertex.normalOS.x *= -1;
                 }
-                else
-                {
-                    vertex.normalOS = {0.0f, 0.0f, 0.0f};
-                }
-
                 vertex.color = vertexColor;
-
                 if (attrib.texcoords.size() > 0)
                 {
                     auto ui = index.texcoord_index;
                     vertex.uv0 = {attrib.texcoords[2 * ui + 0], 1.0f - attrib.texcoords[2 * ui + 1]};
                 }
-                else
-                {
-                    vertex.uv0 = {0.0f, 0.0f};
-                }
 
-                if (uniqueVertices.count(vertex) == 0)
-                {
-                    uniqueVertices[vertex] = static_cast<uint16_t>(vertices.size());
-                    vertices.push_back(vertex);
-                }
+                // 重复顶点，有BUG fuck！！！
+                // if (uniqueVertices.count(vertex) == 0)
+                // {
+                //     uniqueVertices[vertex] = static_cast<uint16_t>(vertices.size());
+                //     vertices.push_back(vertex);
+                // }
+                // indices.push_back(vertices.size());
 
-                indices.push_back(uniqueVertices[vertex]);
+                vertices.push_back(vertex);
+                indices.push_back(indices.size());
             }
         }
 
-        instance->vertices = vertices;
-        instance->indices = indices;
+        // calc tangent
+        auto vertexSize = static_cast<uint32_t>(vertices.size());
+        for (auto i = 0u; i < vertexSize - 2; i += 3)
+        {
+            auto &v1 = vertices[i + 0];
+            auto &v2 = vertices[i + 1];
+            auto &v3 = vertices[i + 2];
+
+            auto deltaPos1 = v2.positionOS - v1.positionOS;
+            auto deltaPos2 = v3.positionOS - v1.positionOS;
+            auto deltaUV1 = v2.uv0 - v1.uv0;
+            auto deltaUV2 = v3.uv0 - v1.uv0;
+
+            auto det = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+            if (det != 0.0f)
+            {
+                auto tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) / det;
+                v1.tangentOS = glm::normalize(tangent);
+                v2.tangentOS = v1.tangentOS;
+                v3.tangentOS = v1.tangentOS;
+            }
+        }
+
+        instance->vertices = std::move(vertices);
+        instance->indices = std::move(indices);
     }
 
     void MeshInstanceLogic::CalcBoundingSphere(Context *context,

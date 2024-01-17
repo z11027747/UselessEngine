@@ -2,12 +2,14 @@
 #include <imgui/imgui.h>
 #include <memory>
 #include <iostream>
-#include "editor/wrap/component_wrap.h"
 #include "render/light/light_comp.h"
+#include "editor/wrap/component_wrap.h"
+#include "editor/test_logic.h"
 #include "context.h"
 
 namespace Editor
 {
+	static float ambient[3] = {0.1f, 0.1f, 0.1f};
 	static float color[3] = {1.0f, 0.9568627f, 0.8392157f};
 	static float diffuseIntensity = 0.4f;
 	static float specualrShininess = 10.0f;
@@ -19,20 +21,21 @@ namespace Editor
 	{
 		if (isFirst)
 		{
-			color[0] = directionLight->color.r;
-			color[1] = directionLight->color.g;
-			color[2] = directionLight->color.b;
+			FillFloat3(color, directionLight->color);
 			diffuseIntensity = directionLight->params.x;
 			specualrShininess = directionLight->params.y;
 			specularIntensity = directionLight->params.z;
 			return;
 		}
 
+		if (ImGui::ColorEdit3("Ambient", ambient))
+		{
+			FillGlmVec3(directionLight->ambient, ambient);
+		}
+
 		if (ImGui::ColorEdit3("Color", color))
 		{
-			directionLight->color.r = color[0];
-			directionLight->color.g = color[1];
-			directionLight->color.b = color[2];
+			FillGlmVec3(directionLight->color, color);
 		}
 
 		ImGui::PushItemWidth(150);

@@ -45,7 +45,8 @@ namespace Render
     }
 
     std::shared_ptr<MaterialInstance> MaterialInstanceLogic::Get(Context *context,
-                                                                 const std::string &pipelineName, const std::vector<std::string> &image0Names)
+                                                                 const std::string &pipelineName,
+                                                                 const std::vector<std::string> &imageNames, bool isCube)
     {
         auto &cacheEO = context->renderCacheEo;
         auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
@@ -56,39 +57,44 @@ namespace Render
             auto instances = sharedMap[pipelineName];
             for (auto &instance : instances)
             {
-                auto image0NamesEqual = std::equal(image0Names.begin(), image0Names.end(), instance->image0Names.begin(),
-                                                   [](const std::string &str1, const std::string &str2)
-                                                   {
-                                                       return str1 == str2;
-                                                   });
-                if (image0NamesEqual)
+                auto equal = std::equal(imageNames.begin(), imageNames.end(), instance->imageNames.begin(),
+                                        [](const std::string &str1, const std::string &str2)
+                                        {
+                                            return str1 == str2;
+                                        });
+                if (equal)
                 {
                     return instance;
                 }
             }
         }
 
-        auto newInstance = Create(context, pipelineName, image0Names);
+        auto newInstance = Create(context, pipelineName, imageNames, isCube);
         sharedMap[pipelineName].push_back(newInstance);
 
         return newInstance;
     }
 
     std::shared_ptr<MaterialInstance> MaterialInstanceLogic::Create(Context *context,
-                                                                    const std::string &pipelineName, const std::vector<std::string> &image0Names)
+                                                                    const std::string &pipelineName,
+                                                                    const std::vector<std::string> &imageNames, bool isCube)
     {
         auto instance = std::make_shared<MaterialInstance>();
         instance->pipelineName = pipelineName;
-        instance->image0Names = image0Names;
+        instance->imageNames = imageNames;
 
-        if (image0Names.size() == 1)
+        if (isCube)
         {
-            CreateImage(context, instance, image0Names[0]);
+            CreateImageCube(context, instance, imageNames);
         }
-        else if (image0Names.size() == 6)
+        else
         {
-            CreateImageCube(context, instance, image0Names);
+            for (auto &imageName : imageNames)
+            {
+                CreateImage(context, instance, imageName);
+            }
         }
+
         CreateDescriptor(context, instance);
 
         return instance;
@@ -97,7 +103,10 @@ namespace Render
     void MaterialInstanceLogic::Destroy(Context *context,
                                         std::shared_ptr<MaterialInstance> instance)
     {
-        ImageLogic::Destroy(context, instance->image0);
+        for (auto &image : instance->images)
+        {
+            ImageLogic::Destroy(context, image);
+        }
         MaterialDescriptorLogic::Destroy(context, instance);
     }
 
@@ -112,9 +121,9 @@ namespace Render
 
     void MaterialInstanceLogic::CreateImage(Context *context,
                                             std::shared_ptr<MaterialInstance> instance,
-                                            const std::string &image0Name)
+                                            const std::string &imageName)
     {
-        auto &resImg = Common::ResSystem::LoadImg(image0Name);
+        auto &resImg = Common::ResSystem::LoadImg(imageName);
 
         auto imageW = static_cast<uint32_t>(resImg.width);
         auto imageH = static_cast<uint32_t>(resImg.height);
@@ -151,12 +160,12 @@ namespace Render
                                      image2d,
                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-        instance->image0 = image2d;
+        instance->images.push_back(image2d);
     }
 
     void MaterialInstanceLogic::CreateImageCube(Context *context,
                                                 std::shared_ptr<MaterialInstance> instance,
-                                                const std::vector<std::string> &image0Names)
+                                                const std::vector<std::string> &imageNames)
     {
         uint32_t imageCubeW, imageCubeH = 0;
 
@@ -164,7 +173,7 @@ namespace Render
 
         for (auto i = 0; i < 6; i++)
         {
-            auto &resImg = Common::ResSystem::LoadImg(image0Names[i]);
+            auto &resImg = Common::ResSystem::LoadImg(imageNames[i]);
 
             imageCubeW = static_cast<uint32_t>(resImg.width);
             imageCubeH = static_cast<uint32_t>(resImg.height);
@@ -206,7 +215,7 @@ namespace Render
                                      imageCube,
                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-        instance->image0 = imageCube;
+        instance->images = {imageCube};
     }
 
     void MaterialInstanceLogic::CreateDescriptor(Context *context,

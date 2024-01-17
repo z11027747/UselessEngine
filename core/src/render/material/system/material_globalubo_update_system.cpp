@@ -30,9 +30,10 @@ namespace Render
                 auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
 
                 directionLightUBO = {
+                    -directionLightTransform->forward,
                     directionLightCamera->view,
                     directionLightCamera->projection,
-                    -directionLightTransform->forward,
+                    directionLight->ambient,
                     directionLight->color,
                     directionLight->params};
             }

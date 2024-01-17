@@ -97,17 +97,19 @@ namespace Editor
 
         auto descriptor = std::make_shared<Render::Descriptor>();
         descriptor->set = descriptorSet;
-        descriptor->image0Info = {
+
+        VkDescriptorImageInfo imageInfo = {
             global->globalSampler,
             colorImage2d->vkImageView,
             colorImage2d->layout};
 
+        descriptor->imageInfos.push_back(imageInfo);
+
         Render::DescriptorSetLogic::Update(context,
-                                           [&](std::vector<VkWriteDescriptorSet> &writes)
+                                           [&descriptor](std::vector<VkWriteDescriptorSet> &writes)
                                            {
-                                               Render::DescriptorSetLogic::WriteImage(context,
-                                                                                      writes,
-                                                                                      descriptor);
+                                               Render::DescriptorSetLogic::WriteImage(writes,
+                                                                                      descriptor->set, 0, descriptor->imageInfos[0]);
                                            });
 
         System::descriptorSetLayout = descriptorSetLayout;
@@ -187,12 +189,13 @@ namespace Editor
 
         auto skyboxMaterial = std::make_shared<Render::Material>();
         skyboxMaterial->pipelineName = Render::Pipeline_Skybox;
-        skyboxMaterial->image0Names = {"resource/texture/skybox2/sky_left_lnitial.png",
-                                       "resource/texture/skybox2/sky_right_lnitial.png",
-                                       "resource/texture/skybox2/sky_up_lnitial.png",
-                                       "resource/texture/skybox2/sky_down_lnitial.png",
-                                       "resource/texture/skybox2/sky_front_lnitial.png",
-                                       "resource/texture/skybox2/sky_back_lnitial.png"};
+        skyboxMaterial->imageNames = {"resource/texture/skybox2/sky_left_lnitial.png",
+                                      "resource/texture/skybox2/sky_right_lnitial.png",
+                                      "resource/texture/skybox2/sky_up_lnitial.png",
+                                      "resource/texture/skybox2/sky_down_lnitial.png",
+                                      "resource/texture/skybox2/sky_front_lnitial.png",
+                                      "resource/texture/skybox2/sky_back_lnitial.png"};
+        skyboxMaterial->isImageCube = true;
 
         skyboxEO->AddComponent(skyboxMesh);
         skyboxEO->AddComponent(skyboxMaterial);
@@ -202,88 +205,94 @@ namespace Editor
 
     void TestLogic::CreateCubes(Context *context)
     {
-        CreateCube(context, glm::vec3(-4.0f, 0.0f, 0.0f), -90.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
-        CreateCube(context, glm::vec3(-3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(-2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(-1.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(1.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(4.0f, 0.0f, 0.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), 90.0f,
+                   "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        return;
 
-        CreateCube(context, glm::vec3(-4.0f, 0.0f, 1.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(-3.0f, 0.0f, 1.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
-        CreateCube(context, glm::vec3(-2.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(-1.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(0.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(1.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(2.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(3.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(4.0f, 0.0f, 1.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-4.0f, 0.0f, 0.0f), -90.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg", "resource/texture/cube_world/SoilWGrass_3_S.jpg", "resource/texture/cube_world/SoilWGrass_3_N.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(-1.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 0.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 0.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg", "resource/texture/cube_world/SoilWGrass_3_S.jpg", "resource/texture/cube_world/SoilWGrass_3_N.jpg");
 
-        CreateCube(context, glm::vec3(-3.0f, 0.0f, 2.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
-        CreateCube(context, glm::vec3(-2.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(-1.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(0.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(1.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(2.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(3.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(4.0f, 0.0f, 2.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-4.0f, 0.0f, 1.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 1.0f), 0.0f, "resource/texture/cube_world/Ground_D.png", "resource/texture/cube_world/Ground_S.png", "resource/texture/cube_world/Ground_N.png");
+        CreateCube(context, glm::vec3(-2.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(1.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(2.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(3.0f, -0.5f, 1.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 1.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
 
-        CreateCube(context, glm::vec3(-3.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-3.0f, 1.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-2.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-2.0f, 1.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-1.0f, -0.5f, 3.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(0.0f, -0.5f, 3.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(1.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(2.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(3.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(4.0f, 0.0f, 3.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 2.0f), 0.0f, "resource/texture/cube_world/Ground_D.png", "resource/texture/cube_world/Ground_S.png", "resource/texture/cube_world/Ground_N.png");
+        CreateCube(context, glm::vec3(-2.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(1.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(2.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(3.0f, -0.5f, 2.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 2.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
 
-        CreateCube(context, glm::vec3(-3.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-3.0f, 1.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-2.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/SoilWGrass_6_D.jpg");
-        CreateCube(context, glm::vec3(-1.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(0.0f, -0.5f, 4.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(1.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(2.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(3.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(4.0f, 0.0f, 4.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 1.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 1.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 3.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 3.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 3.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 3.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
 
-        CreateCube(context, glm::vec3(-3.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-2.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-1.0f, -0.5f, 5.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(0.0f, -0.5f, 5.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(1.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
-        CreateCube(context, glm::vec3(2.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
-        CreateCube(context, glm::vec3(3.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(4.0f, 0.0f, 5.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 1.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/SoilWGrass_6_D.jpg", "resource/texture/cube_world/SoilWGrass_6_S.jpg", "resource/texture/cube_world/SoilWGrass_6_N.jpg");
+        CreateCube(context, glm::vec3(-1.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 4.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 4.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 4.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
 
-        CreateCube(context, glm::vec3(-4.0f, 0.0f, 6.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(-3.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(-2.0f, -0.5f, 6.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(-1.0f, -0.5f, 6.0f), 0.0f, "resource/texture/cube_world/Water.png");
-        CreateCube(context, glm::vec3(0.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg");
-        CreateCube(context, glm::vec3(1.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
-        CreateCube(context, glm::vec3(2.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
-        CreateCube(context, glm::vec3(3.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg");
-        CreateCube(context, glm::vec3(4.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 5.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(0.0f, -0.5f, 5.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/Ground_D.png", "resource/texture/cube_world/Ground_S.png", "resource/texture/cube_world/Ground_N.png");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/Ground_D.png", "resource/texture/cube_world/Ground_S.png", "resource/texture/cube_world/Ground_N.png");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 5.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 5.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
 
-        CreateCube(context, glm::vec3(-4.0f, 0.0f, 7.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg");
-        CreateCube(context, glm::vec3(-3.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(-2.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(-1.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(0.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg");
-        CreateCube(context, glm::vec3(1.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg");
-        CreateCube(context, glm::vec3(2.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg");
-        CreateCube(context, glm::vec3(3.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg");
-        CreateCube(context, glm::vec3(4.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/Ground_D.png");
+        CreateCube(context, glm::vec3(-4.0f, 0.0f, 6.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(-2.0f, -0.5f, 6.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(-1.0f, -0.5f, 6.0f), 0.0f, "resource/texture/cube_world/Water.png", "resource/texture/white.png", "resource/texture/white.png", false);
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass_D.jpg", "resource/texture/cube_world/GroundWGrass_S.jpg", "resource/texture/cube_world/GroundWGrass_N.jpg");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png", "resource/texture/cube_world/Ground_S.png", "resource/texture/cube_world/Ground_N.png");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png", "resource/texture/cube_world/Ground_S.png", "resource/texture/cube_world/Ground_N.png");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg", "resource/texture/cube_world/GroundWGrass2_S.jpg", "resource/texture/cube_world/GroundWGrass2_N.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 6.0f), 0.0f, "resource/texture/cube_world/Ground_D.png", "resource/texture/cube_world/Ground_S.png", "resource/texture/cube_world/Ground_N.png");
+
+        CreateCube(context, glm::vec3(-4.0f, 0.0f, 7.0f), 180.0f, "resource/texture/cube_world/SoilWGrass_3_D.jpg", "resource/texture/cube_world/SoilWGrass_3_S.jpg", "resource/texture/cube_world/SoilWGrass_3_N.jpg");
+        CreateCube(context, glm::vec3(-3.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(-2.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(-1.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(0.0f, 0.0f, 7.0f), 90.0f, "resource/texture/cube_world/SoilWGrass_5_D.jpg", "resource/texture/cube_world/SoilWGrass_5_S.jpg", "resource/texture/cube_world/SoilWGrass_5_N.jpg");
+        CreateCube(context, glm::vec3(1.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg", "resource/texture/cube_world/GroundWGrass2_S.jpg", "resource/texture/cube_world/GroundWGrass2_N.jpg");
+        CreateCube(context, glm::vec3(2.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg", "resource/texture/cube_world/GroundWGrass2_S.jpg", "resource/texture/cube_world/GroundWGrass2_N.jpg");
+        CreateCube(context, glm::vec3(3.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/GroundWGrass2_D.jpg", "resource/texture/cube_world/GroundWGrass2_S.jpg", "resource/texture/cube_world/GroundWGrass2_N.jpg");
+        CreateCube(context, glm::vec3(4.0f, 0.0f, 7.0f), 0.0f, "resource/texture/cube_world/Ground_D.png", "resource/texture/cube_world/Ground_S.png", "resource/texture/cube_world/Ground_N.png");
     }
 
     void TestLogic::CreateCube(Context *context,
-                               const glm::vec3 &pos, float eulerAngleY, const std::string &imageName)
+                               const glm::vec3 &pos, float eulerAngleY,
+                               const std::string &imageAlbedoName, const std::string &imageSpecularName, const std::string &imageNormalMapName,
+                               bool castShadow)
     {
         auto modelEO = std::make_shared<EngineObject>();
         modelEO->name = "Cube";
@@ -298,9 +307,9 @@ namespace Editor
         modelMesh->checkHit = true;
 
         auto modelMaterial = std::make_shared<Render::Material>();
-        modelMaterial->pipelineName = Render::Pipeline_Bling_Phone;
-        modelMaterial->image0Names = {imageName};
-        modelMaterial->castShadow = true;
+        modelMaterial->pipelineName = Render::Pipeline_LightMode;
+        modelMaterial->imageNames = {imageAlbedoName, imageSpecularName, imageNormalMapName};
+        modelMaterial->castShadow = castShadow;
 
         modelEO->AddComponent(modelMesh);
         modelEO->AddComponent(modelMaterial);

@@ -13,12 +13,12 @@ namespace Editor
 	static int pipelineNameIndex = -1;
 	static const char *pipelineNames[] = {Render::Pipeline_Skybox.c_str(),
 										  Render::Pipeline_Shadow.c_str(),
-										  Render::Pipeline_Bling_Phone.c_str(),
+										  Render::Pipeline_LightMode.c_str(),
 										  Render::Pipeline_Color.c_str()};
 
-	static int image0NameIndex = -1;
-	static std::vector<std::string> image0Names = {};
-	static std::vector<const char *> image0NameCStrs = {};
+	static int imageNameIndex = -1;
+	static std::vector<std::string> imageNames = {};
+	static std::vector<const char *> imageNameCStrs = {};
 
 	template <>
 	void ComponentWrap<Render::Material>::Draw(Context *context,
@@ -36,22 +36,22 @@ namespace Editor
 				}
 			}
 
-			image0NameIndex = -1;
-			image0Names.clear();
-			Window::GetDirectoryFiles("resource/texture", image0Names);
+			imageNameIndex = -1;
+			imageNames.clear();
+			Window::GetDirectoryFiles("resource/texture", imageNames);
 
-			auto &image0Name = material->image0Names[0];
-			auto it = std::find(image0Names.begin(), image0Names.end(), image0Name);
-			if (it != image0Names.end())
+			auto &imageName = material->imageNames[0];
+			auto it = std::find(imageNames.begin(), imageNames.end(), imageName);
+			if (it != imageNames.end())
 			{
-				auto index = std::distance(image0Names.begin(), it);
-				image0NameIndex = static_cast<int>(index);
+				auto index = std::distance(imageNames.begin(), it);
+				imageNameIndex = static_cast<int>(index);
 			}
 
-			image0NameCStrs.clear();
-			for (auto &image0Name : image0Names)
+			imageNameCStrs.clear();
+			for (auto &imageName : imageNames)
 			{
-				image0NameCStrs.push_back(image0Name.c_str());
+				imageNameCStrs.push_back(imageName.c_str());
 			}
 
 			return;
@@ -62,10 +62,10 @@ namespace Editor
 		{
 		}
 
-		if (ImGui::Combo("Image0Name", &image0NameIndex,
-						 image0NameCStrs.data(), static_cast<int>(image0NameCStrs.size())))
+		if (ImGui::Combo("Image0Name", &imageNameIndex,
+						 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
 		{
-			material->image0Names[0] = image0Names[image0NameIndex];
+			material->imageNames[0] = imageNames[imageNameIndex];
 			material->hasChanged = true;
 		}
 

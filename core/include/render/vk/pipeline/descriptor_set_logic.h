@@ -34,50 +34,34 @@ namespace Render
 								   0, nullptr);
 		}
 
-		static void WriteBuffer(Context *,
-								std::vector<VkWriteDescriptorSet> &writes,
-								std::shared_ptr<Descriptor> descriptor, int binding = 0)
+		static void WriteBuffer(std::vector<VkWriteDescriptorSet> &writes,
+								VkDescriptorSet set, uint32_t binding, VkDescriptorBufferInfo &bufferInfo)
 		{
 			VkWriteDescriptorSet write = {};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstSet = descriptor->set;
+			write.dstSet = set;
 			write.dstBinding = binding;
 			write.dstArrayElement = 0;
 			write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			write.descriptorCount = 1;
-			write.pBufferInfo = &descriptor->bufferInfo;
+			write.pBufferInfo = &bufferInfo;
 
 			writes.push_back(write);
 		}
 
-		static void WriteImage(Context *,
-							   std::vector<VkWriteDescriptorSet> &writes,
-							   std::shared_ptr<Descriptor> descriptor)
+		static void WriteImage(std::vector<VkWriteDescriptorSet> &writes,
+							   VkDescriptorSet set, uint32_t binding, VkDescriptorImageInfo &imageInfo)
 		{
-			VkWriteDescriptorSet write0 = {};
-			write0.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write0.dstSet = descriptor->set;
-			write0.dstBinding = 0;
-			write0.dstArrayElement = 0;
-			write0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			write0.descriptorCount = 1;
-			write0.pImageInfo = &descriptor->image0Info;
+			VkWriteDescriptorSet write = {};
+			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write.dstSet = set;
+			write.dstBinding = binding;
+			write.dstArrayElement = 0;
+			write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			write.descriptorCount = 1;
+			write.pImageInfo = &imageInfo;
 
-			writes.push_back(write0);
-
-			if (descriptor->image1Info.imageView != nullptr)
-			{
-				VkWriteDescriptorSet write1 = {};
-				write1.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-				write1.dstSet = descriptor->set;
-				write1.dstBinding = 1;
-				write1.dstArrayElement = 0;
-				write1.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-				write1.descriptorCount = 1;
-				write1.pImageInfo = &descriptor->image1Info;
-
-				writes.push_back(write1);
-			}
+			writes.push_back(write);
 		}
 	};
 }
