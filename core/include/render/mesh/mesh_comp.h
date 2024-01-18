@@ -19,7 +19,11 @@ namespace Render
 
         bool operator==(const Vertex &other) const
         {
-            return (positionOS == other.positionOS);
+            return (positionOS == other.positionOS) &&
+                   (normalOS == other.normalOS) &&
+                   (tangentOS == other.tangentOS) &&
+                   (color == other.color) &&
+                   (uv0 == other.uv0);
         }
     };
 

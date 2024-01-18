@@ -17,7 +17,11 @@ namespace std
     {
         size_t operator()(Render::Vertex const &vertex) const
         {
-            return hash<glm::vec3>()(vertex.positionOS);
+            return hash<glm::vec3>()(vertex.positionOS) ^
+                   (hash<glm::vec3>()(vertex.normalOS) << 1) ^
+                   ((hash<glm::vec3>()(vertex.tangentOS) << 1) >> 1) ^
+                   ((hash<glm::vec3>()(vertex.color) << 2) >> 1) ^
+                   ((hash<glm::vec2>()(vertex.uv0) << 3) >> 1);
         }
     };
 }
@@ -108,10 +112,7 @@ namespace Render
         auto &attrib = resObj.attrib;
         auto &shapes = resObj.shapes;
 
-        std::vector<Render::Vertex> vertices;
-        std::vector<uint16_t> indices;
-
-        std::unordered_map<Render::Vertex, uint16_t> uniqueVertices = {};
+        std::vector<Render::Vertex> uniqueVertices;
 
         for (const auto &shape : shapes)
         {
@@ -119,6 +120,7 @@ namespace Render
             {
                 auto vi = index.vertex_index;
                 auto ni = index.normal_index;
+                auto ui = index.texcoord_index;
 
                 Render::Vertex vertex = {};
                 vertex.positionOS = {attrib.vertices[3 * vi + 0], attrib.vertices[3 * vi + 1], attrib.vertices[3 * vi + 2]};
@@ -131,30 +133,21 @@ namespace Render
                 vertex.color = vertexColor;
                 if (attrib.texcoords.size() > 0)
                 {
-                    auto ui = index.texcoord_index;
                     vertex.uv0 = {attrib.texcoords[2 * ui + 0], 1.0f - attrib.texcoords[2 * ui + 1]};
                 }
 
-                // 重复顶点，有BUG fuck！！！
-                // if (uniqueVertices.count(vertex) == 0)
-                // {
-                //     uniqueVertices[vertex] = static_cast<uint16_t>(vertices.size());
-                //     vertices.push_back(vertex);
-                // }
-                // indices.push_back(vertices.size());
-
-                vertices.push_back(vertex);
-                indices.push_back(indices.size());
+                uniqueVertices.push_back(vertex);
             }
         }
 
+        auto uniqueVertexSize = static_cast<uint32_t>(uniqueVertices.size());
+
         // calc tangent
-        auto vertexSize = static_cast<uint32_t>(vertices.size());
-        for (auto i = 0u; i < vertexSize - 2; i += 3)
+        for (auto i = 0u; i < uniqueVertexSize - 2; i += 3)
         {
-            auto &v1 = vertices[i + 0];
-            auto &v2 = vertices[i + 1];
-            auto &v3 = vertices[i + 2];
+            auto &v1 = uniqueVertices[i + 0];
+            auto &v2 = uniqueVertices[i + 1];
+            auto &v3 = uniqueVertices[i + 2];
 
             auto deltaPos1 = v2.positionOS - v1.positionOS;
             auto deltaPos2 = v3.positionOS - v1.positionOS;
@@ -169,6 +162,21 @@ namespace Render
                 v2.tangentOS = v1.tangentOS;
                 v3.tangentOS = v1.tangentOS;
             }
+        }
+
+        std::vector<Render::Vertex> vertices;
+        std::vector<uint16_t> indices;
+        std::unordered_map<Render::Vertex, uint16_t> uniqueVertexIndex = {};
+
+        for (auto i = 0u; i < uniqueVertexSize; i++)
+        {
+            auto &vertex = uniqueVertices[i];
+            if (uniqueVertexIndex.count(vertex) == 0)
+            {
+                uniqueVertexIndex[vertex] = static_cast<uint16_t>(vertices.size());
+                vertices.push_back(vertex);
+            }
+            indices.push_back(uniqueVertexIndex[vertex]);
         }
 
         instance->vertices = std::move(vertices);

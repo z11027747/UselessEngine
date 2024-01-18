@@ -51,13 +51,16 @@ vec3 CalcDirectionLight(float shadowAtten) {
 
     vec3 ambient = directionLight.ambient;
 
+    // vec3 fragNormalWS = normalize(normalWS);
+    vec3 calcNormalDir = texture(normalMapSampler, uv0).xyz * 2 - vec3(1.0);
+    vec3 fragNormalWS = vec3(dot(tangentMat0, calcNormalDir), dot(tangentMat1, calcNormalDir), dot(tangentMat2, calcNormalDir));
+
     float diffuseIntensity = directionLight.params.x;
 
     //lambert
     vec3 baseCol = texture(albedoSampler, uv0).rgb;
     vec3 lightDir = normalize(directionLight.dir);
-    vec3 normalDir = normalize(normalWS);
-    vec3 diffuse = baseCol * max(0.0, dot(normalDir, lightDir)) * diffuseIntensity * directionLight.color;
+    vec3 diffuse = baseCol * max(0.0, dot(fragNormalWS, lightDir)) * diffuseIntensity * directionLight.color;
 
     //bling-phone
     float specualrShininess = directionLight.params.y;
@@ -65,14 +68,12 @@ vec3 CalcDirectionLight(float shadowAtten) {
 
     vec3 viewDir = normalize(camera.pos - positionWS);
     vec3 halfDir = normalize(viewDir + lightDir);
-    vec3 specular = pow(max(0.0, dot(normalDir, halfDir)), specualrShininess) * specularIntensity * vec3(1.0);
+    vec3 specular = pow(max(0.0, dot(fragNormalWS, halfDir)), specualrShininess) * specularIntensity * vec3(1.0);
 
     return ambient + (diffuse + specular) * shadowAtten;
 }
 
 void main() {
-    outColor = vec4(tangentWS, 1.0);
-    return;
     float shadowAtten = CalcShadow();
     vec3 directionLightCol = CalcDirectionLight(shadowAtten);
     outColor = vec4(directionLightCol * color, 1.0);
