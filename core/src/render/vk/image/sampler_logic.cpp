@@ -8,8 +8,7 @@
 
 namespace Render
 {
-
-	VkSampler SamplerLogic::Create(Context *context, bool forDepth)
+	VkSampler SamplerLogic::Create(Context *context, bool isClamp, bool forDepth)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -19,9 +18,18 @@ namespace Render
 		createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 		createInfo.magFilter = VK_FILTER_LINEAR;
 		createInfo.minFilter = VK_FILTER_LINEAR;
-		createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		if (isClamp)
+		{
+			createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+			createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+			createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		}
+		else
+		{
+			createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+			createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+			createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		}
 		createInfo.anisotropyEnable = false;
 		createInfo.maxAnisotropy = 1;
 		createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_WHITE;

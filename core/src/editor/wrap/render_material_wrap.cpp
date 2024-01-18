@@ -13,7 +13,7 @@ namespace Editor
 	static int pipelineNameIndex = -1;
 	static const char *pipelineNames[] = {Render::Pipeline_Skybox.c_str(),
 										  Render::Pipeline_Shadow.c_str(),
-										  Render::Pipeline_LightMode.c_str(),
+										  Render::Pipeline_LightModel.c_str(),
 										  Render::Pipeline_Color.c_str()};
 
 	static int imageNameIndex = -1;
@@ -62,7 +62,7 @@ namespace Editor
 		{
 		}
 
-		if (ImGui::Combo("Image0Name", &imageNameIndex,
+		if (ImGui::Combo("ImageName", &imageNameIndex,
 						 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
 		{
 			material->imageNames[0] = imageNames[imageNameIndex];

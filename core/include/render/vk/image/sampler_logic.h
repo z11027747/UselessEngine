@@ -10,7 +10,7 @@ namespace Render
 	class SamplerLogic final
 	{
 	public:
-		static VkSampler Create(Context *, bool forDepth = false);
+		static VkSampler Create(Context *, bool, bool forDepth = false);
 		static void Destroy(Context *, VkSampler &);
 	};
 }

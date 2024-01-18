@@ -12,7 +12,7 @@ namespace Render
 {
 	const std::string Pipeline_Skybox = "skybox";
 	const std::string Pipeline_Shadow = "shadow";
-	const std::string Pipeline_LightMode = "light_mode";
+	const std::string Pipeline_LightModel = "light_model";
 	const std::string Pipeline_Color = "color";
 
 	struct CameraUBO final

@@ -59,7 +59,7 @@ namespace Render
                                                                        globalDescriptor->set, 0, globalDescriptor->bufferInfo);
                                    });
 
-        global->globalSampler = SamplerLogic::Create(context);
+        global->globalSampler = SamplerLogic::Create(context, false);
     }
 
     void DescriptorLogic::DestroyGlobal(Context *context)
