@@ -11,7 +11,6 @@
 namespace Editor
 {
 	static char addEOName[16] = "";
-	static int selectEOIndex = -1;
 
 	void DrawEO(Context *context,
 				std::shared_ptr<EngineObject> eo, int index)
@@ -21,9 +20,8 @@ namespace Editor
 		ImGui::Checkbox("##active", &eo->active);
 		ImGui::SameLine();
 
-		if (ImGui::Selectable(eo->name.data(), selectEOIndex == index))
+		if (ImGui::Selectable(eo->name.data(), Window::GetSelectEO() == eo))
 		{
-			selectEOIndex = index;
 			Window::SetSelectEO(context, eo);
 		}
 

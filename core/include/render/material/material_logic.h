@@ -37,6 +37,10 @@ namespace Render
         static void CreateImageCube(Context *,
                                     std::shared_ptr<MaterialInstance>,
                                     const std::vector<std::string> &);
+
+        static void CreateBuffer(Context *,
+                                 std::shared_ptr<MaterialInstance>);
+
         static void CreateDescriptor(Context *context,
                                      std::shared_ptr<MaterialInstance>);
     };
@@ -51,12 +55,20 @@ namespace Render
         static void SetColorBlendStage(Context *, std::shared_ptr<GraphicsPipeline>);
     };
 
+    class MaterialGlobalDescriptorLogic final
+    {
+    public:
+        static void Create(Context *);
+        static void Destroy(Context *);
+    };
+
     class MaterialDescriptorLogic final
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
         static void DestroySetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
         static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
+        static void Update(Context *, std::shared_ptr<MaterialInstance>);
         static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
     };
 }

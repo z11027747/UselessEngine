@@ -34,33 +34,16 @@ namespace Render
                 }
                 else
                 {
-                    auto newInstance = MaterialInstanceLogic::Create(context,
-                                                                     material->pipelineName,
-                                                                     material->imageNames, material->isImageCube);
-
+                    // TODO
                     auto &oldInstance = material->instance;
-                    auto oldPipeline = oldInstance->pipelineName;
-                    auto oldImages = oldInstance->images;
-                    auto oldDescriptor = oldInstance->descriptor;
+                    MaterialInstanceLogic::SetDestroy(context, oldInstance);
 
-                    oldInstance->pipelineName = newInstance->pipelineName;
-                    oldInstance->images = newInstance->images;
-                    oldInstance->descriptor = newInstance->descriptor;
-
-                    newInstance->pipelineName = oldPipeline;
-                    newInstance->images = oldImages;
-                    newInstance->descriptor = oldDescriptor;
-
-                    MaterialInstanceLogic::SetDestroy(context, newInstance);
+                    material->instance = MaterialInstanceLogic::Create(context,
+                                                                       material->pipelineName,
+                                                                       material->imageNames, material->isImageCube);
                 }
 
                 material->hasChanged = false;
-            }
-
-            if (material->imageNames.size() > 0 &&
-                material->imageNames[0] != material->instance->imageNames[0])
-            {
-                material->imageNames = material->instance->imageNames;
             }
         }
     }

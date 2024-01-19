@@ -16,6 +16,12 @@ namespace Render
         static void Destroy(Context *context);
     };
 
+    class MaterialUBOUpdateSystem final
+    {
+    public:
+        static void Update(Context *);
+    };
+
     class MaterialGlobalUBOUpdateSystem final
     {
     public:

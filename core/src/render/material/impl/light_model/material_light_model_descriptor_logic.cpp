@@ -4,6 +4,7 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
+#include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
 #include "render/mesh/mesh_comp.h"
@@ -17,35 +18,42 @@ namespace Render
 	void MaterialLightModelDescriptorLogic::CreateSetLayout(Context *context,
 															std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkDescriptorSetLayoutBinding samplerBinding0 = {
+		VkDescriptorSetLayoutBinding shadowSampler = {
 			0, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding samplerBinding1 = {
+		VkDescriptorSetLayoutBinding albedoSampler = {
 			1, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding samplerBinding2 = {
+		VkDescriptorSetLayoutBinding specularSampler = {
 			2, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding samplerBinding3 = {
+		VkDescriptorSetLayoutBinding normalMapSampler = {
 			3, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
+		VkDescriptorSetLayoutBinding lightModelUBO = {
+			4, // binding
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
-		bindings.push_back(samplerBinding0);
-		bindings.push_back(samplerBinding1);
-		bindings.push_back(samplerBinding2);
-		bindings.push_back(samplerBinding3);
+		bindings.push_back(shadowSampler);
+		bindings.push_back(albedoSampler);
+		bindings.push_back(specularSampler);
+		bindings.push_back(normalMapSampler);
+		bindings.push_back(lightModelUBO);
 
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
@@ -79,7 +87,7 @@ namespace Render
 
 		descriptor->imageInfos.push_back(shadowImageInfo);
 
-		static int imageSize = 1+3; // shadow + albedo+specular+normalMap
+		static int imageSize = 1 + 3; // shadow + albedo+specular+normalMap
 
 		for (auto i = 0; i < imageSize - 1; i++)
 		{
@@ -91,6 +99,13 @@ namespace Render
 			descriptor->imageInfos.push_back(imageInfo);
 		}
 
+		// buffer
+		VkDescriptorBufferInfo bufferInfo = {
+			instance->buffer->vkBuffer,
+			0,
+			instance->buffer->size};
+		descriptor->bufferInfos.push_back(bufferInfo);
+
 		instance->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
@@ -101,6 +116,9 @@ namespace Render
 										   DescriptorSetLogic::WriteImage(writes,
 																		  descriptor->set, i, descriptor->imageInfos[i]);
 									   }
+
+									   DescriptorSetLogic::WriteBuffer(writes,
+																	   descriptor->set, imageSize, descriptor->bufferInfos[0]);
 								   });
 	}
 	void MaterialLightModelDescriptorLogic::Destroy(Context *context,

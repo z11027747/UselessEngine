@@ -9,5 +9,6 @@ namespace Render
 		VkDeviceSize size;
 		VkBuffer vkBuffer;
 		VkDeviceMemory vkDeviceMemory;
+		VkDeviceSize memorySize;
 	};
 }

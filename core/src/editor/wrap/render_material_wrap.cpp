@@ -83,16 +83,17 @@ namespace Editor
 			material->pipelineName = pipelineNames[pipelineNameIndex];
 			material->hasChanged = true;
 
-			auto &imageNames = material->imageNames;
 			if (material->pipelineName == Render::Pipeline_Color)
 			{
-				imageNames = {};
+				material->imageNames = {};
+				material->params = {};
 			}
 			else if (material->pipelineName == Render::Pipeline_LightModel)
 			{
-				imageNames = {"resource/texture/white.png",
-							  "resource/texture/white.png",
-							  "resource/texture/white.png"};
+				material->imageNames = {"resource/texture/white.png",
+										"resource/texture/white.png",
+										"resource/texture/white.png"};
+				material->params = {glm::vec4(1.0f, 15.0f, 1.0f, 0.0f)};
 			}
 			FindImageNameIndexsByPipelineName(material);
 		}
@@ -105,23 +106,29 @@ namespace Editor
 			if (ImGui::Combo("Albedo", &imageNameIndexs[0],
 							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
 			{
-				material->imageNames[1] = imageNames[imageNameIndexs[0]];
+				material->imageNames[0] = imageNames[imageNameIndexs[0]];
 				material->hasChanged = true;
 			}
 
 			if (ImGui::Combo("Specular", &imageNameIndexs[1],
 							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
 			{
-				material->imageNames[2] = imageNames[imageNameIndexs[2]];
+				material->imageNames[1] = imageNames[imageNameIndexs[2]];
 				material->hasChanged = true;
 			}
 
 			if (ImGui::Combo("NomralMap", &imageNameIndexs[2],
 							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
 			{
-				material->imageNames[3] = imageNames[imageNameIndexs[2]];
+				material->imageNames[2] = imageNames[imageNameIndexs[2]];
 				material->hasChanged = true;
 			}
+
+			ImGui::PushItemWidth(150);
+			ImGui::DragFloat("DiffuseIntensity", &material->params[0].x, 0.01f);
+			ImGui::DragFloat("SpecualrShininess", &material->params[0].y, 0.1f);
+			ImGui::DragFloat("SpecularIntensity", &material->params[0].z, 0.01f);
+			ImGui::PopItemWidth();
 		}
 
 		ImGui::Checkbox("CastShadow", &material->castShadow);

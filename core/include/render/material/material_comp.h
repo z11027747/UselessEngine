@@ -1,10 +1,10 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <glm/glm.hpp>
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
@@ -30,7 +30,6 @@ namespace Render
 		alignas(16) glm::mat4 projection;
 		alignas(16) glm::vec3 ambient;
 		alignas(16) glm::vec3 col;
-		alignas(16) glm::vec4 params;
 	};
 
 	struct GlobalUBO final
@@ -39,13 +38,19 @@ namespace Render
 		alignas(16) DirectionLightUBO directionLight;
 	};
 
+	struct MaterialUBO final
+	{
+		alignas(16) glm::vec4 params;
+	};
+
 	struct MaterialInstance final
 	{
 		std::string pipelineName;
 		std::vector<std::string> imageNames;
+		std::vector<glm::vec4> params;
 
 		std::vector<std::shared_ptr<Image>> images;
-		// std::shared_ptr<Buffer> buffer;
+		std::shared_ptr<Buffer> buffer;
 		std::shared_ptr<Descriptor> descriptor;
 	};
 
@@ -53,6 +58,7 @@ namespace Render
 	{
 		std::string pipelineName{Pipeline_Color};
 		std::vector<std::string> imageNames{};
+		std::vector<glm::vec4> params{};
 		bool isImageCube{false};
 		bool castShadow{false};
 

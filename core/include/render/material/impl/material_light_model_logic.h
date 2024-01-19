@@ -24,6 +24,7 @@ namespace Render
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
         static void DestroySetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
         static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
+        static void Update(Context *, std::shared_ptr<MaterialInstance>);
         static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
     };
 }

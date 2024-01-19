@@ -13,15 +13,8 @@ namespace Editor
         auto colorG = (float)colorJArr.at(1).number_value();
         auto colorB = (float)colorJArr.at(2).number_value();
 
-        auto &paramsJArr = j["params"].array_items();
-        auto paramsX = (float)paramsJArr.at(0).number_value();
-        auto paramsY = (float)paramsJArr.at(1).number_value();
-        auto paramsZ = (float)paramsJArr.at(2).number_value();
-        auto paramsW = (float)paramsJArr.at(3).number_value();
-
         auto directionLight = std::make_shared<Render::DirectionLight>();
         directionLight->color = glm::vec3(colorR, colorG, colorB);
-        directionLight->params = glm::vec4(paramsX, paramsY, paramsZ, paramsW);
         directionLight->hasShadow = j["hasShadow"].bool_value();
 
         return directionLight;
@@ -32,16 +25,13 @@ namespace Editor
                                                            std::shared_ptr<Render::DirectionLight> directionLight)
     {
         auto &color = directionLight->color;
-        auto &params = directionLight->params;
         auto hasShadow = directionLight->hasShadow;
 
         auto colorJArr = json11::Json::array{color.x, color.y, color.z};
-        auto paramsJArr = json11::Json::array{params.x, params.y, params.z, params.w};
 
         auto jObj = json11::Json::object{
             {"type", Type_Render_DirectionLight},
             {"color", colorJArr},
-            {"params", paramsJArr},
             {"hasShadow", hasShadow}};
 
         return jObj;

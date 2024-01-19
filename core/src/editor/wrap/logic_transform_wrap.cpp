@@ -32,7 +32,8 @@ namespace Editor
 		ImGui::SameLine();
 		ImGui::Text("Position");
 
-		ImGui_Drag_GlmVec3(transform->localEulerAngles, eId, 0.05f);
+		ImGui_Input_GlmVec3(transform->localEulerAngles, pId);
+		// ImGui_Drag_GlmVec3(transform->localEulerAngles, eId, 0.05f);
 		ImGui::SameLine();
 		if (ImGui::Button("E", ImVec2(20, 20)))
 		{
@@ -41,7 +42,8 @@ namespace Editor
 		ImGui::SameLine();
 		ImGui::Text("EulerAngles");
 
-		ImGui_Drag_GlmVec3(transform->localScale, sId, 0.02f);
+		ImGui_Input_GlmVec3(transform->localScale, pId);
+		// ImGui_Drag_GlmVec3(transform->localScale, sId, 0.02f);
 		ImGui::SameLine();
 		if (ImGui::Button("S", ImVec2(20, 20)))
 		{

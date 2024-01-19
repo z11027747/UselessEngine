@@ -8,12 +8,13 @@
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "render/material/material_comp.h"
+#include "render/material/material_logic.h"
 #include "context.h"
 #include "engine_object.h"
 
 namespace Render
 {
-    void DescriptorLogic::CreateGlobal(Context *context)
+    void MaterialGlobalDescriptorLogic::Create(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
@@ -21,14 +22,14 @@ namespace Render
         auto swapchainImageCount = global->swapchainImageCount;
 
         // set layout
-        VkDescriptorSetLayoutBinding globalUniformBinding0 = {};
-        globalUniformBinding0.binding = 0;
-        globalUniformBinding0.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        globalUniformBinding0.descriptorCount = 1;
-        globalUniformBinding0.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+        VkDescriptorSetLayoutBinding globalUBO = {
+            0,
+            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            1,
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT};
 
         std::vector<VkDescriptorSetLayoutBinding> globalBindings;
-        globalBindings.push_back(globalUniformBinding0);
+        globalBindings.push_back(globalUBO);
 
         auto globalDescriptorSetLayout = DescriptorSetLayoutLogic::Create(context, globalBindings);
 
@@ -42,10 +43,12 @@ namespace Render
         auto globalBuffer = BufferLogic::Create(context,
                                                 globalUBOSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-        globalDescriptor->bufferInfo = {
+
+        VkDescriptorBufferInfo bufferInfo = {
             globalBuffer->vkBuffer,
             0,
-            globalUBOSize};
+            globalBuffer->size};
+        globalDescriptor->bufferInfos.push_back(bufferInfo);
 
         global->globalDescriptorSetLayout = globalDescriptorSetLayout;
         global->globalDescriptor = globalDescriptor;
@@ -56,14 +59,14 @@ namespace Render
                                    [&globalDescriptor](std::vector<VkWriteDescriptorSet> &writes)
                                    {
                                        DescriptorSetLogic::WriteBuffer(writes,
-                                                                       globalDescriptor->set, 0, globalDescriptor->bufferInfo);
+                                                                       globalDescriptor->set, 0, globalDescriptor->bufferInfos[0]);
                                    });
 
         global->globalSamplerRepeat = SamplerLogic::Create(context, false);
         global->globalSamplerClamp = SamplerLogic::Create(context, true);
     }
 
-    void DescriptorLogic::DestroyGlobal(Context *context)
+    void MaterialGlobalDescriptorLogic::Destroy(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
@@ -74,5 +77,4 @@ namespace Render
         SamplerLogic::Destroy(context, global->globalSamplerClamp);
         SamplerLogic::Destroy(context, global->globalSamplerRepeat);
     }
-
 }

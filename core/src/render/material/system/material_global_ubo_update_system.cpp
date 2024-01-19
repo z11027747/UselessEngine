@@ -34,8 +34,7 @@ namespace Render
                     directionLightCamera->view,
                     directionLightCamera->projection,
                     directionLight->ambient,
-                    directionLight->color,
-                    directionLight->params};
+                    directionLight->color};
             }
         }
 
@@ -58,9 +57,7 @@ namespace Render
             cameraUBO,
             directionLightUBO};
 
-        auto &globalDescriptor = global->globalDescriptor;
         auto &globalBuffer = global->globalBuffer;
-
         BufferSetLogic::Set(context,
                             globalBuffer,
                             globalUBO);

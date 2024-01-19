@@ -12,7 +12,6 @@ struct DirectionLightUBO {
     mat4 projection;
     vec3 ambient;
     vec3 color;
-    vec4 params;
 };
 
 layout(set = 0, binding = 0) uniform GlobalUBO {

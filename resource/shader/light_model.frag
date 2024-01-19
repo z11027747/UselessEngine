@@ -12,7 +12,6 @@ struct DirectionLightUBO {
     mat4 projection;
     vec3 ambient;
     vec3 color;
-    vec4 params;
 };
 
 layout(set = 0, binding = 0) uniform GlobalUBO {
@@ -24,6 +23,10 @@ layout(set = 1, binding = 0) uniform sampler2DShadow shadowSampler;
 layout(set = 1, binding = 1) uniform sampler2D albedoSampler;
 layout(set = 1, binding = 2) uniform sampler2D specularSampler;
 layout(set = 1, binding = 3) uniform sampler2D normalMapSampler;
+
+layout(set = 1, binding = 4) uniform LightModelUBO {
+    vec4 params;
+} lightModelUBO;
 
 layout(location = 0) in vec3 positionWS;
 layout(location = 1) in vec3 normalWS;
@@ -55,7 +58,7 @@ vec3 CalcDirectionLight(float shadowAtten) {
     vec3 calcNormalDir = texture(normalMapSampler, uv0).xyz * 2 - vec3(1.0);
     vec3 fragNormalWS = vec3(dot(tangentMat0, calcNormalDir), dot(tangentMat1, calcNormalDir), dot(tangentMat2, calcNormalDir));
 
-    float diffuseIntensity = directionLight.params.x;
+    float diffuseIntensity = lightModelUBO.params.x;
 
     //lambert
     vec3 baseCol = texture(albedoSampler, uv0).rgb;
@@ -63,8 +66,8 @@ vec3 CalcDirectionLight(float shadowAtten) {
     vec3 diffuse = baseCol * max(0.0, dot(fragNormalWS, lightDir)) * diffuseIntensity * directionLight.color;
 
     //bling-phone
-    float specualrShininess = directionLight.params.y;
-    float specularIntensity = directionLight.params.z;
+    float specualrShininess = lightModelUBO.params.y;
+    float specularIntensity = lightModelUBO.params.z;
 
     vec3 viewDir = normalize(camera.pos - positionWS);
     vec3 halfDir = normalize(viewDir + lightDir);

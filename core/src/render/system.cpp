@@ -55,7 +55,7 @@ namespace Render
 		SwapchainLogic::CreateSemaphores(context);
 		SwapchainLogic::AllocateCmd(context);
 
-		DescriptorLogic::CreateGlobal(context);
+		MaterialGlobalDescriptorLogic::Create(context);
 
 		/*auto imGuiPass =*/PassLogic::CreateImGui(context);
 		auto mainPass = PassLogic::CreateMain(context);
@@ -96,6 +96,7 @@ namespace Render
 
 		{
 			MaterialGlobalUBOUpdateSystem::Update(context);
+			MaterialUBOUpdateSystem::Update(context);
 
 			ShadowPassRenderSystem::Update(context, imageIndex);
 			MainPassRenderSystem::Update(context, imageIndex);
@@ -122,7 +123,7 @@ namespace Render
 		PipelineLogic::DestroyAll(context);
 		PassLogic::DestroyAll(context);
 
-		DescriptorLogic::DestroyGlobal(context);
+		MaterialGlobalDescriptorLogic::Destroy(context);
 
 		SwapchainLogic::DestroyImageViews(context);
 		SwapchainLogic::DestroySemaphores(context);

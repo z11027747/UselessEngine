@@ -157,7 +157,6 @@ namespace Editor
 
         auto directionLight = std::make_shared<Render::DirectionLight>();
         directionLight->color = glm::vec3(1.0f, 0.9568627f, 0.8392157f);
-        directionLight->params = glm::vec4(1.0f, 15.0f, 1.0f, 0.0f);
         directionLight->hasShadow = true;
 
         directionLightEO->AddComponent(directionLight);
@@ -231,6 +230,7 @@ namespace Editor
         auto modelMaterial = std::make_shared<Render::Material>();
         modelMaterial->pipelineName = Render::Pipeline_LightModel;
         modelMaterial->imageNames = {imageAlbedoName, imageSpecularName, imageNormalMapName};
+        modelMaterial->params = {glm::vec4(1.0f, 15.0f, 1.0f, 0.0f)};
         modelMaterial->castShadow = castShadow;
 
         modelEO->AddComponent(modelMesh);
@@ -276,9 +276,6 @@ namespace Editor
             modelEO->AddComponent(modelMaterial);
 
             context->AddEO(modelEO);
-
-            // modelMesh->boundingSphere.center = glm::vec3(-0.2f, 0.0f, 0.0f);
-            // modelMesh->boundingSphere.radius = 0.25f;
         }
 
         {
@@ -304,9 +301,6 @@ namespace Editor
             modelEO->AddComponent(modelMaterial);
 
             context->AddEO(modelEO);
-
-            // modelMesh->boundingSphere.center = glm::vec3(0.0f, -0.2f, 0.0f);
-            // modelMesh->boundingSphere.radius = 0.25f;
         }
 
         {
@@ -332,9 +326,6 @@ namespace Editor
             modelEO->AddComponent(modelMaterial);
 
             context->AddEO(modelEO);
-
-            // modelMesh->boundingSphere.center = glm::vec3(0.0f, 0.0f, -0.2f);
-            // modelMesh->boundingSphere.radius = 0.25f;
         }
     }
 }

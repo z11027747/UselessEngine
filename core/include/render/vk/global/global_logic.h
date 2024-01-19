@@ -94,13 +94,6 @@ namespace Render
         static void Present(Context *, uint32_t);
     };
 
-    class DescriptorLogic final
-    {
-    public:
-        static void CreateGlobal(Context *);
-        static void DestroyGlobal(Context *);
-    };
-
     class DescriptorPoolLogic final
     {
     public:

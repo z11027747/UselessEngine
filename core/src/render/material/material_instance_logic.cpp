@@ -98,6 +98,8 @@ namespace Render
             }
         }
 
+        CreateBuffer(context, instance);
+
         CreateDescriptor(context, instance);
 
         return instance;
@@ -106,10 +108,12 @@ namespace Render
     void MaterialInstanceLogic::Destroy(Context *context,
                                         std::shared_ptr<MaterialInstance> instance)
     {
+        BufferLogic::Destroy(context, instance->buffer);
         for (auto &image : instance->images)
         {
             ImageLogic::Destroy(context, image);
         }
+
         MaterialDescriptorLogic::Destroy(context, instance);
     }
 
@@ -219,6 +223,17 @@ namespace Render
                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
         instance->images = {imageCube};
+    }
+
+    void MaterialInstanceLogic::CreateBuffer(Context *context,
+                                             std::shared_ptr<MaterialInstance> instance)
+    {
+        auto uboSize = sizeof(MaterialUBO);
+        auto buffer = BufferLogic::Create(context,
+                                          uboSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+        instance->buffer = buffer;
     }
 
     void MaterialInstanceLogic::CreateDescriptor(Context *context,

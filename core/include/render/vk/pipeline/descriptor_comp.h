@@ -9,7 +9,7 @@ namespace Render
 	struct Descriptor final
 	{
 		VkDescriptorSet set;
-		VkDescriptorBufferInfo bufferInfo;
+		std::vector<VkDescriptorBufferInfo> bufferInfos;
 		std::vector<VkDescriptorImageInfo> imageInfos;
 	};
 }
