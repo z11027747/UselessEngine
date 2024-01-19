@@ -172,37 +172,10 @@ namespace Editor
         context->AddEO(directionLightEO);
     }
 
-    void TestLogic::CreateSkybox(Context *context)
-    {
-        auto skyboxEO = std::make_shared<EngineObject>();
-        skyboxEO->name = Name_Skybox;
-
-        Logic::TransformLogic::Add(skyboxEO,
-                                   glm::vec3(0.0f, 0.0f, 0.0f),
-                                   glm::vec3(0.0f, -100.0f, 0.0f),
-                                   glm::vec3(50.0f, 50.0f, 50.0f));
-
-        auto skyboxMesh = std::make_shared<Render::Mesh>();
-        skyboxMesh->objName = "resource/obj/base/sphere.obj";
-
-        auto skyboxMaterial = std::make_shared<Render::Material>();
-        skyboxMaterial->pipelineName = Render::Pipeline_Skybox;
-        skyboxMaterial->imageNames = {"resource/texture/arena/skybox/px.png",
-                                      "resource/texture/arena/skybox/nx.png",
-                                      "resource/texture/arena/skybox/py.png",
-                                      "resource/texture/arena/skybox/ny.png",
-                                      "resource/texture/arena/skybox/pz.png",
-                                      "resource/texture/arena/skybox/nz.png"};
-        skyboxMaterial->isImageCube = true;
-
-        skyboxEO->AddComponent(skyboxMesh);
-        skyboxEO->AddComponent(skyboxMaterial);
-
-        context->AddEO(skyboxEO);
-    }
-
     void TestLogic::CreateCubes(Context *context)
     {
+        return;
+
         CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), -90.0f,
                    "resource/texture/arena/ground01_arena_ds.tga", // albedo
                    "resource/texture/arena/ground01_arena_ds.tga", //
@@ -230,7 +203,7 @@ namespace Editor
         auto modelMaterial = std::make_shared<Render::Material>();
         modelMaterial->pipelineName = Render::Pipeline_LightModel;
         modelMaterial->imageNames = {imageAlbedoName, imageSpecularName, imageNormalMapName};
-        modelMaterial->params = {glm::vec4(1.0f, 15.0f, 1.0f, 0.0f)};
+        modelMaterial->params = {glm::vec4(1.0f, 100.0f, 1.0f, 0.0f)};
         modelMaterial->castShadow = castShadow;
 
         modelEO->AddComponent(modelMesh);

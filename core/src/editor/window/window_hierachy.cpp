@@ -10,7 +10,7 @@
 
 namespace Editor
 {
-	static char addEOName[16] = "";
+	static char addEOName[32] = "";
 
 	void DrawEO(Context *context,
 				std::shared_ptr<EngineObject> eo, int index)

@@ -28,6 +28,7 @@ namespace Editor
             auto paramsW = (float)paramsJObjArr.at(3).number_value();
             material->params.push_back(glm::vec4(paramsX, paramsY, paramsZ, paramsW));
         }
+        material->isImageCube = j["isImageCube"].bool_value();
         material->castShadow = j["castShadow"].bool_value();
 
         return material;

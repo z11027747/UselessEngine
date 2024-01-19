@@ -57,6 +57,7 @@ vec3 CalcDirectionLight(float shadowAtten) {
     // vec3 fragNormalWS = normalize(normalWS);
     vec3 calcNormalDir = texture(normalMapSampler, uv0).xyz * 2 - vec3(1.0);
     vec3 fragNormalWS = vec3(dot(tangentMat0, calcNormalDir), dot(tangentMat1, calcNormalDir), dot(tangentMat2, calcNormalDir));
+    fragNormalWS = normalize(fragNormalWS);
 
     float diffuseIntensity = lightModelUBO.params.x;
 

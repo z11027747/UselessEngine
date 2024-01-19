@@ -34,7 +34,15 @@ namespace Editor
 
 	static void FindImageNameIndexsByPipelineName(std::shared_ptr<Render::Material> material)
 	{
-		if (material->pipelineName == Render::Pipeline_Color)
+		if (material->pipelineName == Render::Pipeline_Skybox)
+		{
+			imageNameIndexs.resize(6);
+			for (auto i = 0; i < 6; i++)
+			{
+				imageNameIndexs[i] = FindImageNameIndex(material->imageNames[i]);
+			}
+		}
+		else if (material->pipelineName == Render::Pipeline_Color)
 		{
 		}
 		else if (material->pipelineName == Render::Pipeline_LightModel)
@@ -44,6 +52,17 @@ namespace Editor
 			{
 				imageNameIndexs[i] = FindImageNameIndex(material->imageNames[i]);
 			}
+		}
+	}
+
+	static void DrawImageByIndex(std::shared_ptr<Render::Material> material,
+								 const char *showName, int index)
+	{
+		if (ImGui::Combo(showName, &imageNameIndexs[index],
+						 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
+		{
+			material->imageNames[index] = imageNames[imageNameIndexs[index]];
+			material->hasChanged = true;
 		}
 	}
 
@@ -83,46 +102,41 @@ namespace Editor
 			material->pipelineName = pipelineNames[pipelineNameIndex];
 			material->hasChanged = true;
 
-			if (material->pipelineName == Render::Pipeline_Color)
+			if (material->pipelineName == Render::Pipeline_Skybox)
+			{
+				material->imageNames.resize(6, "resource/texture/white.png");
+				material->params = {};
+			}
+			else if (material->pipelineName == Render::Pipeline_Color)
 			{
 				material->imageNames = {};
 				material->params = {};
 			}
 			else if (material->pipelineName == Render::Pipeline_LightModel)
 			{
-				material->imageNames = {"resource/texture/white.png",
-										"resource/texture/white.png",
-										"resource/texture/white.png"};
-				material->params = {glm::vec4(1.0f, 15.0f, 1.0f, 0.0f)};
+				material->imageNames.resize(3, "resource/texture/white.png");
+				material->params = {glm::vec4(1.0f, 100.0f, 1.0f, 0.0f)};
 			}
 			FindImageNameIndexsByPipelineName(material);
 		}
 
-		if (material->pipelineName == Render::Pipeline_Color)
+		if (material->pipelineName == Render::Pipeline_Skybox)
+		{
+			DrawImageByIndex(material, "+x", 0);
+			DrawImageByIndex(material, "-x", 1);
+			DrawImageByIndex(material, "+y", 2);
+			DrawImageByIndex(material, "-y", 3);
+			DrawImageByIndex(material, "+z", 4);
+			DrawImageByIndex(material, "-z", 5);
+		}
+		else if (material->pipelineName == Render::Pipeline_Color)
 		{
 		}
 		else if (material->pipelineName == Render::Pipeline_LightModel)
 		{
-			if (ImGui::Combo("Albedo", &imageNameIndexs[0],
-							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
-			{
-				material->imageNames[0] = imageNames[imageNameIndexs[0]];
-				material->hasChanged = true;
-			}
-
-			if (ImGui::Combo("Specular", &imageNameIndexs[1],
-							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
-			{
-				material->imageNames[1] = imageNames[imageNameIndexs[2]];
-				material->hasChanged = true;
-			}
-
-			if (ImGui::Combo("NomralMap", &imageNameIndexs[2],
-							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
-			{
-				material->imageNames[2] = imageNames[imageNameIndexs[2]];
-				material->hasChanged = true;
-			}
+			DrawImageByIndex(material, "Albedo", 0);
+			DrawImageByIndex(material, "Specular", 1);
+			DrawImageByIndex(material, "NomralMap", 2);
 
 			ImGui::PushItemWidth(150);
 			ImGui::DragFloat("DiffuseIntensity", &material->params[0].x, 0.01f);
