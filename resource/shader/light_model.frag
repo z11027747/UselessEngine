@@ -61,10 +61,10 @@ vec3 CalcDirectionLight(float shadowAtten) {
 
     float diffuseIntensity = lightModelUBO.params.x;
 
-    //lambert
+    //half-lambert
     vec3 baseCol = texture(albedoSampler, uv0).rgb;
     vec3 lightDir = normalize(directionLight.dir);
-    vec3 diffuse = baseCol * max(0.0, dot(fragNormalWS, lightDir)) * diffuseIntensity * directionLight.color;
+    vec3 diffuse = baseCol * max(0.0, (dot(fragNormalWS, lightDir) * 0.5 + 0.5)) * diffuseIntensity * directionLight.color;
 
     //bling-phone
     float specualrShininess = lightModelUBO.params.y;

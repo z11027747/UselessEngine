@@ -44,11 +44,14 @@ void main() {
     DirectionLightUBO directionLight = globalUBO.directionLight;
 
     fragPositionWS = (push.model * vec4(positionOS, 1.0)).xyz;
-    fragNormalWS = (push.model * vec4(normalOS, 0.0)).xyz;
 
+    //TODO 懒得算M的逆矩阵的转置矩阵了
+    fragNormalWS = (push.model * vec4(normalOS, 0.0)).xyz;
     fragTangentWS = (push.model * vec4(tangentOS, 0.0)).xyz;
-    // vec3 fragBitangentWS = cross(fragNormalWS, fragTangentWS);
-    vec3 fragBitangentWS = cross(fragTangentWS, fragNormalWS);
+
+    float orient = sign(push.model[0][0] * push.model[1][1] * push.model[2][2]);
+
+    vec3 fragBitangentWS = cross(fragTangentWS, fragNormalWS) * orient;
     fragTangentMat0 = vec3(fragTangentWS.x, fragBitangentWS.x, fragNormalWS.x);
     fragTangentMat1 = vec3(fragTangentWS.y, fragBitangentWS.y, fragNormalWS.y);
     fragTangentMat2 = vec3(fragTangentWS.z, fragBitangentWS.z, fragNormalWS.z);
