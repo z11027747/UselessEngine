@@ -7,6 +7,7 @@
 #include <vector>
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/image/image_comp.h"
+#include "render/vk/buffer/buffer_comp.h"
 
 namespace Render
 {
@@ -44,13 +45,14 @@ namespace Render
 		std::vector<std::string> imageNames;
 
 		std::vector<std::shared_ptr<Image>> images;
+		// std::shared_ptr<Buffer> buffer;
 		std::shared_ptr<Descriptor> descriptor;
 	};
 
 	struct Material final
 	{
 		std::string pipelineName{Pipeline_Color};
-		std::vector<std::string> imageNames{"resource/texture/white.png"};
+		std::vector<std::string> imageNames{};
 		bool isImageCube{false};
 		bool castShadow{false};
 

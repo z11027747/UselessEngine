@@ -99,7 +99,7 @@ namespace Editor
         descriptor->set = descriptorSet;
 
         VkDescriptorImageInfo imageInfo = {
-            global->globalSampler,
+            global->globalSamplerClamp,
             colorImage2d->vkImageView,
             colorImage2d->layout};
 
@@ -130,16 +130,15 @@ namespace Editor
         mainCameraEO->name = Name_MainCamera;
 
         Logic::TransformLogic::Add(mainCameraEO,
-                                   glm::vec3(7.68f, 5.77f, -3.12f),
-                                   glm::vec3(26.41f, -55.35f, 0.0f),
+                                   glm::vec3(0.7f, 1.49743f, -3.979505f),
+                                   glm::vec3(-1.0f, 0.0f, 0.0f),
                                    glm::vec3(1.0f, 1.0f, 1.0f));
 
         auto mainCamera = std::make_shared<Logic::Camera>();
         mainCamera->near = 0.1f;
         mainCamera->far = 100.0f;
         mainCamera->mode = Logic::CameraMode::ePerspective;
-        mainCamera->fov = 50.0f;
-        mainCamera->size = 15.0f;
+        mainCamera->fov = 60.0f;
         mainCamera->passName = Render::Pass_Main;
         mainCameraEO->AddComponent<Logic::Camera>(mainCamera);
 
@@ -223,7 +222,7 @@ namespace Editor
         Logic::TransformLogic::Add(modelEO,
                                    pos,
                                    glm::vec3(0.0f, eulerAngleY, 0.0f),
-                                   glm::vec3(0.01f, 0.01f, 0.01f));
+                                   glm::vec3(1.0f, 1.0f, 1.0f));
 
         auto modelMesh = std::make_shared<Render::Mesh>();
         modelMesh->objName = "resource/obj/arena/ground01_arena.obj";

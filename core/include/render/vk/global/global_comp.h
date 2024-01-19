@@ -56,6 +56,7 @@ namespace Render
 		std::shared_ptr<Descriptor> globalDescriptor;
 		std::shared_ptr<Buffer> globalBuffer;
 
-		VkSampler globalSampler;
+		VkSampler globalSamplerRepeat;
+		VkSampler globalSamplerClamp;
 	};
 }

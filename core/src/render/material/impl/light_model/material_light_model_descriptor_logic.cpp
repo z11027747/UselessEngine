@@ -15,31 +15,31 @@
 namespace Render
 {
 	void MaterialLightModelDescriptorLogic::CreateSetLayout(Context *context,
-														   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+															std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkDescriptorSetLayoutBinding samplerBinding0 = {};
-		samplerBinding0.binding = 0;
-		samplerBinding0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerBinding0.descriptorCount = 1;
-		samplerBinding0.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		VkDescriptorSetLayoutBinding samplerBinding0 = {
+			0, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding samplerBinding1 = {};
-		samplerBinding1.binding = 1;
-		samplerBinding1.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerBinding1.descriptorCount = 1;
-		samplerBinding1.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		VkDescriptorSetLayoutBinding samplerBinding1 = {
+			1, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding samplerBinding2 = {};
-		samplerBinding2.binding = 2;
-		samplerBinding2.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerBinding2.descriptorCount = 1;
-		samplerBinding2.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		VkDescriptorSetLayoutBinding samplerBinding2 = {
+			2, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding samplerBinding3 = {};
-		samplerBinding3.binding = 3;
-		samplerBinding3.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerBinding3.descriptorCount = 1;
-		samplerBinding3.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		VkDescriptorSetLayoutBinding samplerBinding3 = {
+			3, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(samplerBinding0);
@@ -50,13 +50,13 @@ namespace Render
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 	void MaterialLightModelDescriptorLogic::DestroySetLayout(Context *context,
-															std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+															 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 	}
 	void MaterialLightModelDescriptorLogic::AllocateAndUpdate(Context *context,
-															 std::shared_ptr<MaterialInstance> instance)
+															  std::shared_ptr<MaterialInstance> instance)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -64,28 +64,28 @@ namespace Render
 		auto &graphicsPipeline = global->pipelines[instance->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
-		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
-
 		auto descriptor = std::make_shared<Descriptor>();
+
+		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
 		auto &shadowPass = global->passes[Pass_Shadow];
-
 		auto depthImageSampler = SamplerLogic::Create(context, true, true);
 
 		VkDescriptorImageInfo shadowImageInfo = {
 			depthImageSampler,
 			shadowPass->depthImage2ds[0]->vkImageView,
 			shadowPass->depthImage2ds[0]->layout};
+
 		descriptor->imageInfos.push_back(shadowImageInfo);
 
-		static int imageSize = 4; // shadow+albedo+specular+normalMap
+		static int imageSize = 1+3; // shadow + albedo+specular+normalMap
 
 		for (auto i = 0; i < imageSize - 1; i++)
 		{
 			auto &image = instance->images[i];
 			VkDescriptorImageInfo imageInfo = {
-				global->globalSampler,
+				global->globalSamplerRepeat,
 				instance->images[i]->vkImageView,
 				instance->images[i]->layout};
 			descriptor->imageInfos.push_back(imageInfo);
@@ -104,7 +104,7 @@ namespace Render
 								   });
 	}
 	void MaterialLightModelDescriptorLogic::Destroy(Context *context,
-												   std::shared_ptr<MaterialInstance> instance)
+													std::shared_ptr<MaterialInstance> instance)
 	{
 		auto &descriptor = instance->descriptor;
 		SamplerLogic::Destroy(context, descriptor->imageInfos[0].sampler);

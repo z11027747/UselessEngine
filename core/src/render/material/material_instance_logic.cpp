@@ -57,6 +57,9 @@ namespace Render
             auto instances = sharedMap[pipelineName];
             for (auto &instance : instances)
             {
+                if (imageNames.size() != instance->imageNames.size())
+                    continue;
+
                 auto equal = std::equal(imageNames.begin(), imageNames.end(), instance->imageNames.begin(),
                                         [](const std::string &str1, const std::string &str2)
                                         {

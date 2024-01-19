@@ -12,15 +12,15 @@ namespace Render
 	void MaterialShadowPipelineLogic::SetVertexAttrDescriptions(Context *context,
 																std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkVertexInputAttributeDescription positionOSDescription0 = {};
-		positionOSDescription0.location = 0;
-		positionOSDescription0.binding = 0;
-		positionOSDescription0.format = VK_FORMAT_R32G32B32_SFLOAT;
-		positionOSDescription0.offset = 0;
+		VkVertexInputAttributeDescription positionOSDescription = {
+			0, // location
+			0, // binding
+			VK_FORMAT_R32G32B32_SFLOAT,
+			0};
 
 		auto &stageInfo = graphicsPipeline->stageInfo;
 		stageInfo.vertexInputAttributeDescriptions = {
-			positionOSDescription0};
+			positionOSDescription};
 	}
 	void MaterialShadowPipelineLogic::SetViewport(Context *context,
 												  std::shared_ptr<GraphicsPipeline> graphicsPipeline)

@@ -16,11 +16,11 @@ namespace Render
 	void MaterialSkyboxDescriptorLogic::CreateSetLayout(Context *context,
 														std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkDescriptorSetLayoutBinding samplerBinding0 = {};
-		samplerBinding0.binding = 0;
-		samplerBinding0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerBinding0.descriptorCount = 1;
-		samplerBinding0.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		VkDescriptorSetLayoutBinding samplerBinding0 = {
+			0, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(samplerBinding0);
@@ -42,15 +42,16 @@ namespace Render
 		auto &graphicsPipeline = global->pipelines[instance->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
-		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
-
 		auto descriptor = std::make_shared<Descriptor>();
+
+		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
 		VkDescriptorImageInfo imageInfo = {
-			global->globalSampler,
+			global->globalSamplerClamp,
 			instance->images[0]->vkImageView,
 			instance->images[0]->layout};
+
 		descriptor->imageInfos.push_back(imageInfo);
 
 		instance->descriptor = descriptor;

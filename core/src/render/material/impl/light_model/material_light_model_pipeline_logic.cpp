@@ -9,52 +9,52 @@
 namespace Render
 {
 	void MaterialLightModelPipelineLogic::SetVertexAttrDescriptions(Context *context,
-																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkVertexInputAttributeDescription positionOSDescription0 = {
+		VkVertexInputAttributeDescription positionOSDescription = {
 			0, // location
-			0,
+			0, // binding
 			VK_FORMAT_R32G32B32_SFLOAT,
 			offsetof(Render::Vertex, positionOS)};
 
-		VkVertexInputAttributeDescription normalOSDescription1 = {
+		VkVertexInputAttributeDescription normalOSDescription = {
 			1, // location
-			0,
+			0, // binding
 			VK_FORMAT_R32G32B32_SFLOAT,
 			offsetof(Render::Vertex, normalOS)};
 
-		VkVertexInputAttributeDescription tangentOSDescription2 = {
+		VkVertexInputAttributeDescription tangentOSDescription = {
 			2, // location
-			0,
+			0, // binding
 			VK_FORMAT_R32G32B32_SFLOAT,
 			offsetof(Render::Vertex, tangentOS)};
 
-		VkVertexInputAttributeDescription colorDescription3 = {
+		VkVertexInputAttributeDescription colorDescription = {
 			3, // location
-			0,
+			0, // binding
 			VK_FORMAT_R32G32B32_SFLOAT,
 			offsetof(Render::Vertex, color)};
 
-		VkVertexInputAttributeDescription uv0Description4 = {
+		VkVertexInputAttributeDescription uv0Description = {
 			4, // location
-			0,
+			0, // binding
 			VK_FORMAT_R32G32_SFLOAT,
 			offsetof(Render::Vertex, uv0)};
 
 		auto &stageInfo = graphicsPipeline->stageInfo;
 		stageInfo.vertexInputAttributeDescriptions = {
-			positionOSDescription0,
-			normalOSDescription1,
-			tangentOSDescription2,
-			colorDescription3,
-			uv0Description4};
+			positionOSDescription,
+			normalOSDescription,
+			tangentOSDescription,
+			colorDescription,
+			uv0Description};
 	}
 	void MaterialLightModelPipelineLogic::SetViewport(Context *context,
-													 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+													  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 	}
 	void MaterialLightModelPipelineLogic::SetRasterizationCreateInfo(Context *context,
-																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+																	 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
@@ -62,7 +62,7 @@ namespace Render
 		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 	}
 	void MaterialLightModelPipelineLogic::SetDepthStencilCreateInfo(Context *context,
-																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
@@ -72,7 +72,7 @@ namespace Render
 		depthStencilStateCreateInfo.depthWriteEnable = true;
 	}
 	void MaterialLightModelPipelineLogic::SetColorBlendStage(Context *context,
-															std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+															 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 	}
 }

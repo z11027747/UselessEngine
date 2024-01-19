@@ -59,7 +59,8 @@ namespace Render
                                                                        globalDescriptor->set, 0, globalDescriptor->bufferInfo);
                                    });
 
-        global->globalSampler = SamplerLogic::Create(context, false);
+        global->globalSamplerRepeat = SamplerLogic::Create(context, false);
+        global->globalSamplerClamp = SamplerLogic::Create(context, true);
     }
 
     void DescriptorLogic::DestroyGlobal(Context *context)
@@ -70,7 +71,8 @@ namespace Render
         DescriptorSetLayoutLogic::Destroy(context, global->globalDescriptorSetLayout);
         BufferLogic::Destroy(context, global->globalBuffer);
 
-        SamplerLogic::Destroy(context, global->globalSampler);
+        SamplerLogic::Destroy(context, global->globalSamplerClamp);
+        SamplerLogic::Destroy(context, global->globalSamplerRepeat);
     }
 
 }

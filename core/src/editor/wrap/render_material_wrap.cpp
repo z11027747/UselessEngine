@@ -16,9 +16,36 @@ namespace Editor
 										  Render::Pipeline_LightModel.c_str(),
 										  Render::Pipeline_Color.c_str()};
 
-	static int imageNameIndex = -1;
+	static std::vector<int> imageNameIndexs = {};
 	static std::vector<std::string> imageNames = {};
 	static std::vector<const char *> imageNameCStrs = {};
+
+	static int FindImageNameIndex(std::string &imageName)
+	{
+		auto it = std::find(imageNames.begin(), imageNames.end(), imageName);
+		if (it != imageNames.end())
+		{
+			auto index = std::distance(imageNames.begin(), it);
+			return static_cast<int>(index);
+		}
+
+		return -1;
+	}
+
+	static void FindImageNameIndexsByPipelineName(std::shared_ptr<Render::Material> material)
+	{
+		if (material->pipelineName == Render::Pipeline_Color)
+		{
+		}
+		else if (material->pipelineName == Render::Pipeline_LightModel)
+		{
+			imageNameIndexs.resize(3);
+			for (auto i = 0; i < 3; i++)
+			{
+				imageNameIndexs[i] = FindImageNameIndex(material->imageNames[i]);
+			}
+		}
+	}
 
 	template <>
 	void ComponentWrap<Render::Material>::Draw(Context *context,
@@ -36,17 +63,9 @@ namespace Editor
 				}
 			}
 
-			imageNameIndex = -1;
+			imageNameIndexs.clear();
 			imageNames.clear();
 			Window::GetDirectoryFiles("resource/texture", imageNames);
-
-			auto &imageName = material->imageNames[0];
-			auto it = std::find(imageNames.begin(), imageNames.end(), imageName);
-			if (it != imageNames.end())
-			{
-				auto index = std::distance(imageNames.begin(), it);
-				imageNameIndex = static_cast<int>(index);
-			}
 
 			imageNameCStrs.clear();
 			for (auto &imageName : imageNames)
@@ -54,19 +73,55 @@ namespace Editor
 				imageNameCStrs.push_back(imageName.c_str());
 			}
 
+			FindImageNameIndexsByPipelineName(material);
 			return;
 		}
 
 		if (ImGui::Combo("##pipelineNames",
 						 &pipelineNameIndex, pipelineNames, IM_ARRAYSIZE(pipelineNames)))
 		{
+			material->pipelineName = pipelineNames[pipelineNameIndex];
+			material->hasChanged = true;
+
+			auto &imageNames = material->imageNames;
+			if (material->pipelineName == Render::Pipeline_Color)
+			{
+				imageNames = {};
+			}
+			else if (material->pipelineName == Render::Pipeline_LightModel)
+			{
+				imageNames = {"resource/texture/white.png",
+							  "resource/texture/white.png",
+							  "resource/texture/white.png"};
+			}
+			FindImageNameIndexsByPipelineName(material);
 		}
 
-		if (ImGui::Combo("ImageName", &imageNameIndex,
-						 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
+		if (material->pipelineName == Render::Pipeline_Color)
 		{
-			material->imageNames[0] = imageNames[imageNameIndex];
-			material->hasChanged = true;
+		}
+		else if (material->pipelineName == Render::Pipeline_LightModel)
+		{
+			if (ImGui::Combo("Albedo", &imageNameIndexs[0],
+							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
+			{
+				material->imageNames[1] = imageNames[imageNameIndexs[0]];
+				material->hasChanged = true;
+			}
+
+			if (ImGui::Combo("Specular", &imageNameIndexs[1],
+							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
+			{
+				material->imageNames[2] = imageNames[imageNameIndexs[2]];
+				material->hasChanged = true;
+			}
+
+			if (ImGui::Combo("NomralMap", &imageNameIndexs[2],
+							 imageNameCStrs.data(), static_cast<int>(imageNameCStrs.size())))
+			{
+				material->imageNames[3] = imageNames[imageNameIndexs[2]];
+				material->hasChanged = true;
+			}
 		}
 
 		ImGui::Checkbox("CastShadow", &material->castShadow);
