@@ -205,6 +205,7 @@ namespace Editor
             auto modelMaterial = std::make_shared<Render::Material>();
             modelMaterial->info = std::make_shared<Render::MaterialInfo>();
             modelMaterial->info->pipelineName = Render::Pipeline_Color;
+            modelMaterial->info->renderQueue = Render::Queue_Skybox;
 
             modelEO->AddComponent(modelMesh);
             modelEO->AddComponent(modelMaterial);

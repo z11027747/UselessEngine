@@ -16,6 +16,8 @@ namespace Render
 	const std::string Pipeline_LightModel = "light_model";
 	const std::string Pipeline_Color = "color";
 
+	const uint32_t Queue_Skybox = 1000;
+
 	struct CameraUBO final
 	{
 		alignas(16) glm::vec3 pos;
@@ -50,6 +52,7 @@ namespace Render
 		std::vector<glm::vec4> params{};
 		bool isImageCube{false};
 		bool castShadow{false};
+		uint32_t renderQueue{2000};
 
 		bool hasChanged{false};
 	};

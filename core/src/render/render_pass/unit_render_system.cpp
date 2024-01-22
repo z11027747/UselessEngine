@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
 #include "vulkan/vulkan.h"
 #include "render/vk/global/global_comp.h"
 #include "render/mesh/mesh_logic.h"
@@ -12,58 +15,41 @@
 
 namespace Render
 {
-    void UnitRenderSystem::Update(Context *context,
-                                  uint32_t imageIndex, bool isShadow)
+    static void UpdatePipeline(Context *context,
+                               uint32_t imageIndex, bool isShadow,
+                               const std::string &pipelineName, std::vector<std::shared_ptr<EngineObject>> materialEOs)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
         auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
-        auto &materialEOs = context->renderMaterialEOs;
+        auto &graphicsPipeline = global->pipelineMap[!isShadow ? pipelineName : Pipeline_Shadow];
+        auto &pipeline = graphicsPipeline->pipeline;
+        auto &pipelineLayout = graphicsPipeline->pipelineLayout;
+        vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+
         for (const auto &materialEO : materialEOs)
         {
-            if (!materialEO->active)
-                continue;
-
-            auto unitTransform = materialEO->GetComponent<Logic::Transform>();
+            auto transform = materialEO->GetComponent<Logic::Transform>();
             auto mesh = materialEO->GetComponent<Render::Mesh>();
             auto material = materialEO->GetComponent<Render::Material>();
-
             auto &materialInfo = material->info;
-            if (materialInfo->pipelineName.empty())
-                continue;
-
-            auto &unitParentEOName = unitTransform->parentEOName;
-            if (!unitParentEOName.empty())
-            {
-                auto unitParentEO = context->GetEO(unitParentEOName);
-                if (!unitParentEO->active)
-                    continue;
-            }
 
             if (isShadow && !materialInfo->castShadow)
                 continue;
 
-            auto pipelineName = !isShadow ? materialInfo->pipelineName : Pipeline_Shadow;
-
-            auto &graphicsPipeline = global->pipelineMap[pipelineName];
-            auto &pipeline = graphicsPipeline->pipeline;
-            auto &pipelineLayout = graphicsPipeline->pipelineLayout;
-
-            vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-
             auto &meshInstance = mesh->instance;
 
-            VkBuffer vertexBuffer = meshInstance->vertexBuffer->vkBuffer;
-            VkBuffer indexBuffer = meshInstance->indexBuffer->vkBuffer;
-            uint32_t indexSize = static_cast<uint32_t>(meshInstance->indices.size());
+            auto vertexBuffer = meshInstance->vertexBuffer->vkBuffer;
+            auto indexBuffer = meshInstance->indexBuffer->vkBuffer;
+            auto indexSize = static_cast<uint32_t>(meshInstance->indices.size());
 
             VkBuffer vertexBuffers[] = {vertexBuffer};
             VkDeviceSize offsets[] = {0};
             vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, vertexBuffers, offsets);
             vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-            auto &model = unitTransform->model;
+            auto &model = transform->model;
             vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 
             std::vector<VkDescriptorSet> descriptorSets;
@@ -76,10 +62,57 @@ namespace Render
                     descriptorSets.push_back(materialInstance->descriptor->set);
             }
 
-            vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                    pipelineLayout, 0, static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
+            vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
+                                    static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(),
+                                    0, nullptr);
 
             vkCmdDrawIndexed(vkCmdBuffer, indexSize, 1, 0, 0, 0);
+        }
+    }
+
+    void UnitRenderSystem::Update(Context *context,
+                                  uint32_t imageIndex, bool isShadow)
+    {
+        std::unordered_map<std::string, std::vector<std::shared_ptr<EngineObject>>> materialEOMap;
+
+        auto &materialEOs = context->renderMaterialEOs;
+        for (const auto &materialEO : materialEOs)
+        {
+            if (!materialEO->active)
+                continue;
+
+            auto transform = materialEO->GetComponent<Logic::Transform>();
+            auto &parentEOName = transform->parentEOName;
+            if (!parentEOName.empty() && !context->GetEO(parentEOName)->active)
+                continue;
+
+            auto material = materialEO->GetComponent<Render::Material>();
+            auto &materialInfo = material->info;
+            if (materialInfo->pipelineName.empty())
+                continue;
+
+            materialEOMap[materialInfo->pipelineName].push_back(materialEO);
+        }
+
+        for (auto &kv : materialEOMap)
+        {
+            auto &eos = kv.second;
+            std::sort(eos.begin(), eos.end(),
+                      [](const std::shared_ptr<EngineObject> &eol, const std::shared_ptr<EngineObject> &eor)
+                      {
+                          auto ml = eol->GetComponent<Render::Material>();
+                          auto mr = eor->GetComponent<Render::Material>();
+                          return ml->info->renderQueue < mr->info->renderQueue;
+                      });
+        }
+
+        for (auto &kv : materialEOMap)
+        {
+            auto &pipelineName = kv.first;
+            auto &eos = kv.second;
+            UpdatePipeline(context,
+                           imageIndex, isShadow,
+                           pipelineName, eos);
         }
     }
 };
