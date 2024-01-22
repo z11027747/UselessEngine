@@ -98,7 +98,10 @@ bool Context::CheckEO(std::shared_ptr<EngineObject> eo, bool add)
         if (add)
             renderMaterialEOs.push_back(eo);
         else
+        {
+            Render::MaterialLogic::TryDestroyEO(this, eo);
             RemoveEoInVec(renderMaterialEOs, eo);
+        }
     }
     return true;
 }

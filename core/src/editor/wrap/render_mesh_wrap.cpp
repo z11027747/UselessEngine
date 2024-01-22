@@ -45,6 +45,7 @@ namespace Editor
 						 objNameCStrs.data(), static_cast<int>(objNameCStrs.size())))
 		{
 			mesh->objName = objNames[objNameIndex];
+			mesh->hasChanged = true;
 		}
 
 		auto &meshInstance = mesh->instance;

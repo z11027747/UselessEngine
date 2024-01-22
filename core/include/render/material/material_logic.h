@@ -8,12 +8,15 @@
 #include "render/material/material_comp.h"
 
 class Context;
+class EngineObject;
 
 namespace Render
 {
     class MaterialLogic final
     {
     public:
+        static bool IsShared(Context *, std::shared_ptr<Material>);
+        static void TryDestroyEO(Context *, std::shared_ptr<EngineObject>);
     };
 
     class MaterialInstanceLogic final
@@ -23,26 +26,24 @@ namespace Render
         static void DestroyCache(Context *);
 
         static std::shared_ptr<MaterialInstance> Get(Context *,
-                                                     const std::string &,
-                                                     const std::vector<std::string> &, bool);
+                                                     std::shared_ptr<MaterialInfo> info);
         static std::shared_ptr<MaterialInstance> Create(Context *,
-                                                        const std::string &,
-                                                        const std::vector<std::string> &, bool);
+                                                        std::shared_ptr<MaterialInfo> info);
         static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
         static void SetDestroy(Context *, std::shared_ptr<MaterialInstance>);
 
+        static void GetOrCreateImage(Context *,
+                                     std::shared_ptr<MaterialInstance>, const std::string &);
+        static void GetOrCreateImageCube(Context *,
+                                         std::shared_ptr<MaterialInstance>, const std::vector<std::string> &);
+
         static void CreateImage(Context *,
-                                std::shared_ptr<MaterialInstance>,
-                                const std::string &);
+                                std::shared_ptr<MaterialInstance>, const std::string &);
         static void CreateImageCube(Context *,
-                                    std::shared_ptr<MaterialInstance>,
-                                    const std::vector<std::string> &);
+                                    std::shared_ptr<MaterialInstance>, const std::vector<std::string> &);
 
-        static void CreateBuffer(Context *,
-                                 std::shared_ptr<MaterialInstance>);
-
-        static void CreateDescriptor(Context *context,
-                                     std::shared_ptr<MaterialInstance>);
+        static void CreateBuffer(Context *, std::shared_ptr<MaterialInstance>);
+        static void CreateDescriptor(Context *context, std::shared_ptr<MaterialInstance>);
     };
 
     class MaterialPipelineLogic final

@@ -51,6 +51,7 @@ namespace Render
         bool checkHit{false};
 
         std::shared_ptr<MeshInstance> instance;
+		bool hasChanged;
     };
 
     struct MeshInstanceCache final

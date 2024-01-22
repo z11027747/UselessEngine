@@ -43,7 +43,7 @@ namespace Render
     void MaterialDescriptorLogic::AllocateAndUpdate(Context *context,
                                                     std::shared_ptr<MaterialInstance> instance)
     {
-        auto &name = instance->pipelineName;
+        auto &name = instance->info->pipelineName;
         if (name == Pipeline_LightModel)
         {
             MaterialLightModelDescriptorLogic::AllocateAndUpdate(context,
@@ -55,21 +55,10 @@ namespace Render
                                                              instance);
         }
     }
-    void MaterialDescriptorLogic::Update(Context *context,
-                                                    std::shared_ptr<MaterialInstance> instance)
-    {
-        auto &name = instance->pipelineName;
-        if (name == Pipeline_LightModel)
-        {
-        }
-        else if (name == Pipeline_Skybox)
-        {
-        }
-    }
     void MaterialDescriptorLogic::Destroy(Context *context,
                                           std::shared_ptr<MaterialInstance> instance)
     {
-        auto &name = instance->pipelineName;
+        auto &name = instance->info->pipelineName;
         if (name == Pipeline_LightModel)
         {
             MaterialLightModelDescriptorLogic::Destroy(context,

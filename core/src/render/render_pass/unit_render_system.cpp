@@ -29,7 +29,8 @@ namespace Render
             auto mesh = materialEO->GetComponent<Render::Mesh>();
             auto material = materialEO->GetComponent<Render::Material>();
 
-            if (material->pipelineName.empty())
+            auto &materialInfo = material->info;
+            if (materialInfo->pipelineName.empty())
                 continue;
 
             auto &unitParentEOName = unitTransform->parentEOName;
@@ -40,10 +41,10 @@ namespace Render
                     continue;
             }
 
-            if (isShadow && !material->castShadow)
+            if (isShadow && !materialInfo->castShadow)
                 continue;
 
-            auto pipelineName = !isShadow ? material->pipelineName : Pipeline_Shadow;
+            auto pipelineName = !isShadow ? materialInfo->pipelineName : Pipeline_Shadow;
 
             auto &graphicsPipeline = global->pipelines[pipelineName];
             auto &pipeline = graphicsPipeline->pipeline;

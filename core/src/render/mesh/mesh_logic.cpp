@@ -16,7 +16,7 @@ namespace Render
                                  std::shared_ptr<EngineObject> eo)
     {
         auto mesh = eo->GetComponent<Render::Mesh>();
-        if (mesh->vertexColor != glm::vec3(1.0f))
+        if (!IsShared(context, mesh))
         {
             MeshInstanceLogic::SetDestroy(context, mesh->instance);
         }

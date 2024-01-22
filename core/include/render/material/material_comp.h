@@ -43,32 +43,34 @@ namespace Render
 		alignas(16) glm::vec4 params;
 	};
 
-	struct MaterialInstance final
-	{
-		std::string pipelineName;
-		std::vector<std::string> imageNames;
-		std::vector<glm::vec4> params;
-
-		std::vector<std::shared_ptr<Image>> images;
-		std::shared_ptr<Buffer> buffer;
-		std::shared_ptr<Descriptor> descriptor;
-	};
-
-	struct Material final
+	struct MaterialInfo final
 	{
 		std::string pipelineName{Pipeline_Color};
 		std::vector<std::string> imageNames{};
 		std::vector<glm::vec4> params{};
 		bool isImageCube{false};
 		bool castShadow{false};
+		bool hasChanged{false};
+	};
 
+	struct MaterialInstance final
+	{
+		int id;
+		std::shared_ptr<MaterialInfo> info;
+		std::vector<std::shared_ptr<Image>> images; // ref
+		std::shared_ptr<Buffer> buffer;
+		std::shared_ptr<Descriptor> descriptor;
+	};
+
+	struct Material final
+	{
+		std::shared_ptr<MaterialInfo> info{std::make_shared<MaterialInfo>()};
 		std::shared_ptr<MaterialInstance> instance;
-		bool hasChanged;
 	};
 
 	struct MaterialInstanceCache final
 	{
-		std::unordered_map<std::string, std::vector<std::shared_ptr<MaterialInstance>>> sharedMap{};
+		std::unordered_map<std::string, std::shared_ptr<Image>> sharedImageMap{};
 		std::vector<std::shared_ptr<MaterialInstance>> deletes{};
 	};
 }

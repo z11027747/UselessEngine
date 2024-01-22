@@ -38,12 +38,14 @@ namespace Render
             {
                 SetInstance(context, mesh, isShared);
             }
-            else if (mesh->objName != mesh->instance->objName)
+
+            if (mesh->hasChanged)
             {
                 if (!isShared)
                     MeshInstanceLogic::SetDestroy(context, mesh->instance);
 
                 SetInstance(context, mesh, isShared);
+                mesh->hasChanged = false;
             }
         }
     }

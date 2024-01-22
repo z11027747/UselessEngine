@@ -201,10 +201,11 @@ namespace Editor
         modelMesh->checkHit = true;
 
         auto modelMaterial = std::make_shared<Render::Material>();
-        modelMaterial->pipelineName = Render::Pipeline_LightModel;
-        modelMaterial->imageNames = {imageAlbedoName, imageSpecularName, imageNormalMapName};
-        modelMaterial->params = {glm::vec4(1.0f, 100.0f, 1.0f, 0.0f)};
-        modelMaterial->castShadow = castShadow;
+        modelMaterial->info = std::make_shared<Render::MaterialInfo>();
+        modelMaterial->info->pipelineName = Render::Pipeline_LightModel;
+        modelMaterial->info->imageNames = {imageAlbedoName, imageSpecularName, imageNormalMapName};
+        modelMaterial->info->params = {glm::vec4(1.0f, 100.0f, 1.0f, 0.0f)};
+        modelMaterial->info->castShadow = castShadow;
 
         modelEO->AddComponent(modelMesh);
         modelEO->AddComponent(modelMaterial);
@@ -243,7 +244,8 @@ namespace Editor
             modelMesh->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
-            modelMaterial->pipelineName = Render::Pipeline_Color;
+            modelMaterial->info = std::make_shared<Render::MaterialInfo>();
+            modelMaterial->info->pipelineName = Render::Pipeline_Color;
 
             modelEO->AddComponent(modelMesh);
             modelEO->AddComponent(modelMaterial);
@@ -268,7 +270,8 @@ namespace Editor
             modelMesh->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
-            modelMaterial->pipelineName = Render::Pipeline_Color;
+            modelMaterial->info = std::make_shared<Render::MaterialInfo>();
+            modelMaterial->info->pipelineName = Render::Pipeline_Color;
 
             modelEO->AddComponent(modelMesh);
             modelEO->AddComponent(modelMaterial);
@@ -293,7 +296,8 @@ namespace Editor
             modelMesh->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
-            modelMaterial->pipelineName = Render::Pipeline_Color;
+            modelMaterial->info = std::make_shared<Render::MaterialInfo>();
+            modelMaterial->info->pipelineName = Render::Pipeline_Color;
 
             modelEO->AddComponent(modelMesh);
             modelEO->AddComponent(modelMaterial);

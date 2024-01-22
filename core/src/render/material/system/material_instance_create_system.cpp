@@ -14,36 +14,27 @@ namespace Render
         for (const auto &materialEO : materialEOs)
         {
             auto material = materialEO->GetComponent<Render::Material>();
-            if (material->pipelineName.empty())
+
+            auto &info = material->info;
+            if (info->pipelineName.empty())
                 continue;
 
             if (material->instance == nullptr)
             {
-                material->instance = MaterialInstanceLogic::Get(context,
-                                                                material->pipelineName,
-                                                                material->imageNames, material->isImageCube);
+                material->instance = MaterialInstanceLogic::Create(context,
+                                                                   info);
             }
 
-            if (material->hasChanged)
+            if (info->hasChanged)
             {
-                if (material->pipelineName != material->instance->pipelineName)
-                {
-                    material->instance = MaterialInstanceLogic::Get(context,
-                                                                    material->pipelineName,
-                                                                    material->imageNames, material->isImageCube);
-                }
-                else
-                {
-                    // TODO
-                    auto &oldInstance = material->instance;
-                    MaterialInstanceLogic::SetDestroy(context, oldInstance);
+                auto &oldInstance = material->instance;
+                oldInstance->info = nullptr;
+                MaterialInstanceLogic::SetDestroy(context, oldInstance);
 
-                    material->instance = MaterialInstanceLogic::Create(context,
-                                                                       material->pipelineName,
-                                                                       material->imageNames, material->isImageCube);
-                }
+                material->instance = MaterialInstanceLogic::Create(context,
+                                                                   info);
 
-                material->hasChanged = false;
+                info->hasChanged = false;
             }
         }
     }

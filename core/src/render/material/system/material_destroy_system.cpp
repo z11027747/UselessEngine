@@ -1,5 +1,4 @@
 
-#include "glm/glm.hpp"
 #include "render/material/material_comp.h"
 #include "render/material/material_logic.h"
 #include "render/material/material_system.h"
@@ -13,6 +12,7 @@ namespace Render
         auto &materialEOs = context->renderMaterialEOs;
         for (const auto &materialEO : materialEOs)
         {
+            MaterialLogic::TryDestroyEO(context, materialEO);
         }
     }
 }

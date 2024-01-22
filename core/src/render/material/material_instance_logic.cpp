@@ -24,16 +24,12 @@ namespace Render
         auto &cacheEO = context->renderCacheEo;
         auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
 
-        auto &sharedMap = instanceCache->sharedMap;
-        for (auto &kv : sharedMap)
+        auto &sharedImageMap = instanceCache->sharedImageMap;
+        for (auto &kv : sharedImageMap)
         {
-            auto &instances = kv.second;
-            for (auto &instance : instances)
-            {
-                Destroy(context, instance);
-            }
+            auto &sharedImage = kv.second;
+            ImageLogic::Destroy(context, sharedImage);
         }
-        sharedMap.clear();
 
         // TODO 没用的应该及时删除
         auto &deletes = instanceCache->deletes;
@@ -44,57 +40,24 @@ namespace Render
         deletes.clear();
     }
 
-    std::shared_ptr<MaterialInstance> MaterialInstanceLogic::Get(Context *context,
-                                                                 const std::string &pipelineName,
-                                                                 const std::vector<std::string> &imageNames, bool isCube)
-    {
-        auto &cacheEO = context->renderCacheEo;
-        auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
-
-        auto &sharedMap = instanceCache->sharedMap;
-        if (sharedMap.find(pipelineName) != sharedMap.end())
-        {
-            auto instances = sharedMap[pipelineName];
-            for (auto &instance : instances)
-            {
-                if (imageNames.size() != instance->imageNames.size())
-                    continue;
-
-                auto equal = std::equal(imageNames.begin(), imageNames.end(), instance->imageNames.begin(),
-                                        [](const std::string &str1, const std::string &str2)
-                                        {
-                                            return str1 == str2;
-                                        });
-                if (equal)
-                {
-                    return instance;
-                }
-            }
-        }
-
-        auto newInstance = Create(context, pipelineName, imageNames, isCube);
-        sharedMap[pipelineName].push_back(newInstance);
-
-        return newInstance;
-    }
+    static int Id_Material = 0;
 
     std::shared_ptr<MaterialInstance> MaterialInstanceLogic::Create(Context *context,
-                                                                    const std::string &pipelineName,
-                                                                    const std::vector<std::string> &imageNames, bool isCube)
+                                                                    std::shared_ptr<MaterialInfo> info)
     {
         auto instance = std::make_shared<MaterialInstance>();
-        instance->pipelineName = pipelineName;
-        instance->imageNames = imageNames;
+        instance->id = Id_Material++;
+        instance->info = info;
 
-        if (isCube)
+        if (info->isImageCube)
         {
-            CreateImageCube(context, instance, imageNames);
+            GetOrCreateImageCube(context, instance, info->imageNames);
         }
         else
         {
-            for (auto &imageName : imageNames)
+            for (auto &imageName : info->imageNames)
             {
-                CreateImage(context, instance, imageName);
+                GetOrCreateImage(context, instance, imageName);
             }
         }
 
@@ -109,12 +72,10 @@ namespace Render
                                         std::shared_ptr<MaterialInstance> instance)
     {
         BufferLogic::Destroy(context, instance->buffer);
-        for (auto &image : instance->images)
-        {
-            ImageLogic::Destroy(context, image);
-        }
+        // Common::LogSystem::Info("DestroyBuffer: ", instance->id);
 
-        MaterialDescriptorLogic::Destroy(context, instance);
+        if (instance->descriptor != nullptr)
+            MaterialDescriptorLogic::Destroy(context, instance);
     }
 
     void MaterialInstanceLogic::SetDestroy(Context *context,
@@ -124,6 +85,49 @@ namespace Render
         auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
 
         instanceCache->deletes.push_back(instance);
+    }
+
+    void MaterialInstanceLogic::GetOrCreateImage(Context *context,
+                                                 std::shared_ptr<MaterialInstance> instance,
+                                                 const std::string &imageName)
+    {
+        auto &cacheEO = context->renderCacheEo;
+        auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
+
+        auto &sharedImageMap = instanceCache->sharedImageMap;
+        if (sharedImageMap.find(imageName) != sharedImageMap.end())
+        {
+            auto sharedImage = sharedImageMap[imageName];
+            instance->images.push_back(sharedImage);
+            return;
+        }
+
+        CreateImage(context,
+                    instance, imageName);
+
+        sharedImageMap[imageName] = instance->images.back();
+    }
+
+    void MaterialInstanceLogic::GetOrCreateImageCube(Context *context,
+                                                     std::shared_ptr<MaterialInstance> instance,
+                                                     const std::vector<std::string> &imageNames)
+    {
+        auto &cacheEO = context->renderCacheEo;
+        auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
+
+        auto &sharedImageMap = instanceCache->sharedImageMap;
+        if (sharedImageMap.find(imageNames[0]) != sharedImageMap.end())
+        {
+            auto sharedImage = sharedImageMap[imageNames[0]];
+            instance->images = {sharedImage};
+            return;
+        }
+
+        CreateImageCube(context,
+                        instance,
+                        imageNames);
+
+        sharedImageMap[imageNames[0]] = instance->images.back();
     }
 
     void MaterialInstanceLogic::CreateImage(Context *context,
@@ -175,7 +179,6 @@ namespace Render
                                                 const std::vector<std::string> &imageNames)
     {
         uint32_t imageCubeW, imageCubeH = 0;
-
         std::vector<unsigned char *> datas(6);
 
         for (auto i = 0; i < 6; i++)
@@ -234,6 +237,7 @@ namespace Render
                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         instance->buffer = buffer;
+        // Common::LogSystem::Info("CreateBuffer: ", instance->id);
     }
 
     void MaterialInstanceLogic::CreateDescriptor(Context *context,
