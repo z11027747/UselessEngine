@@ -160,5 +160,4 @@ namespace Render
 
 		return false;
 	}
-
 }

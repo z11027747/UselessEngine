@@ -61,7 +61,7 @@ namespace Editor
         init_info.Allocator = nullptr;
         init_info.CheckVkResultFn = Render::CheckRet;
 
-        ImGui_ImplVulkan_Init(&init_info, global->passes[Render::Pass_ImGui]->renderPass);
+        ImGui_ImplVulkan_Init(&init_info, global->passMap[Render::Pass_ImGui]->renderPass);
     }
 
     void TestLogic::DestroyImGui(Context *context)
@@ -79,18 +79,18 @@ namespace Editor
         auto &currentExtent = global->surfaceCapabilities.currentExtent;
         auto swapchainImageCount = global->swapchainImageCount;
 
-        VkDescriptorSetLayoutBinding samplerBinding0 = {};
-        samplerBinding0.binding = 0;
-        samplerBinding0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        samplerBinding0.descriptorCount = 1;
-        samplerBinding0.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+        VkDescriptorSetLayoutBinding samplerBinding0 = {
+            0,
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            1,
+            VK_SHADER_STAGE_FRAGMENT_BIT};
 
         std::vector<VkDescriptorSetLayoutBinding> bindings;
         bindings.push_back(samplerBinding0);
 
         auto descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
 
-        auto &colorImage2d = global->passes[Render::Pass_Main]->colorImage2ds[0];
+        auto &colorImage2d = global->passMap[Render::Pass_Main]->colorImage2ds[0];
         // auto &colorImage2d = global->passes[Render::Pass_Shadow]->depthImage2ds[0];
 
         auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
@@ -170,47 +170,6 @@ namespace Editor
         directionLightEO->AddComponent<Logic::Camera>(directionLightCamera);
 
         context->AddEO(directionLightEO);
-    }
-
-    void TestLogic::CreateCubes(Context *context)
-    {
-        return;
-
-        CreateCube(context, glm::vec3(0.0f, 0.0f, 0.0f), -90.0f,
-                   "resource/texture/arena/ground01_arena_ds.tga", // albedo
-                   "resource/texture/arena/ground01_arena_ds.tga", //
-                   "resource/texture/arena/ground01_arena_n.tga"   // normalMap
-        );
-    }
-
-    void TestLogic::CreateCube(Context *context,
-                               const glm::vec3 &pos, float eulerAngleY,
-                               const std::string &imageAlbedoName, const std::string &imageSpecularName, const std::string &imageNormalMapName,
-                               bool castShadow)
-    {
-        auto modelEO = std::make_shared<EngineObject>();
-        modelEO->name = "ground01_arena";
-
-        Logic::TransformLogic::Add(modelEO,
-                                   pos,
-                                   glm::vec3(0.0f, eulerAngleY, 0.0f),
-                                   glm::vec3(1.0f, 1.0f, 1.0f));
-
-        auto modelMesh = std::make_shared<Render::Mesh>();
-        modelMesh->objName = "resource/obj/arena/ground01_arena.obj";
-        modelMesh->checkHit = true;
-
-        auto modelMaterial = std::make_shared<Render::Material>();
-        modelMaterial->info = std::make_shared<Render::MaterialInfo>();
-        modelMaterial->info->pipelineName = Render::Pipeline_LightModel;
-        modelMaterial->info->imageNames = {imageAlbedoName, imageSpecularName, imageNormalMapName};
-        modelMaterial->info->params = {glm::vec4(1.0f, 100.0f, 1.0f, 0.0f)};
-        modelMaterial->info->castShadow = castShadow;
-
-        modelEO->AddComponent(modelMesh);
-        modelEO->AddComponent(modelMaterial);
-
-        context->AddEO(modelEO);
     }
 
     void TestLogic::CreateAxis(Context *context)

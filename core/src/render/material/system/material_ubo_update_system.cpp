@@ -20,13 +20,13 @@ namespace Render
                 continue;
 
             auto material = materialEO->GetComponent<Material>();
+            auto &materialInfo = material->info;
 
-            auto &info = material->info;
-            if (info->params.size() == 0)
+            if (materialInfo->params.empty())
                 continue;
 
             MaterialUBO materialUBO = {
-                info->params[0]};
+                materialInfo->params[0]};
 
             auto &buffer = material->instance->buffer;
             BufferSetLogic::Set(context,

@@ -69,7 +69,7 @@ namespace Render
 
 			ImageLogic::CreateView(context,
 								   swapchainImage2d,
-								   VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+								   VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1, 1);
 
 			global->swapchainImages.push_back(std::move(swapchainImage2d));
 		}

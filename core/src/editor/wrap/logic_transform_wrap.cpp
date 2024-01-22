@@ -12,9 +12,9 @@ namespace Editor
 {
 	template <>
 	void ComponentWrap<Logic::Transform>::Draw(Context *context,
-											   std::shared_ptr<Logic::Transform> transform, bool isFirst)
+											   std::shared_ptr<Logic::Transform> transform, bool isInit)
 	{
-		if (isFirst)
+		if (isInit)
 		{
 			return;
 		}

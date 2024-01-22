@@ -66,9 +66,6 @@ namespace Render
 		PipelineLogic::Create(context, Pipeline_LightModel, mainPass);
 		PipelineLogic::Create(context, Pipeline_Color, mainPass);
 
-		auto &cacheEO = context->renderCacheEo;
-		cacheEO = std::make_shared<EngineObject>();
-
 		MeshInstanceLogic::CreateCache(context);
 		MaterialInstanceLogic::CreateCache(context);
 

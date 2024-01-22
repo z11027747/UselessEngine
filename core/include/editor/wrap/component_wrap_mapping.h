@@ -14,9 +14,9 @@ class Context;
 namespace Editor
 {
     template <typename T>
-    static void ComponentDraw(Context *context, std::shared_ptr<void> component, bool isFirst)
+    static void ComponentDraw(Context *context, std::shared_ptr<void> component, bool isInit)
     {
-        ComponentWrap<T>::Draw(context, std::static_pointer_cast<T>(component), isFirst);
+        ComponentWrap<T>::Draw(context, std::static_pointer_cast<T>(component), isInit);
     }
 
     static std::unordered_map<std::type_index, std::function<void(Context *, std::shared_ptr<void>, bool)>> drawFuncMap{
@@ -36,12 +36,12 @@ namespace Editor
     }
 
     static void DrawWrap(Context *context,
-                         std::type_index typeId, std::shared_ptr<void> component, bool isFirst)
+                         std::type_index typeId, std::shared_ptr<void> component, bool isInit)
     {
         auto it = drawFuncMap.find(typeId);
         if (it == drawFuncMap.end())
             return;
 
-        drawFuncMap[typeId](context, component, isFirst);
+        drawFuncMap[typeId](context, component, isInit);
     }
 }

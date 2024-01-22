@@ -33,7 +33,7 @@ namespace Editor
 		if (ImGui::Begin("Hierarchy", NULL))
 		{
 			auto &io = ImGui::GetIO();
-			ImGui::Text("fps: %.1f ms: %.3f", io.Framerate, 1000.0f / io.Framerate);
+			ImGui::Text("fps: %.1f ms: %.1f", io.Framerate, 1000.0f / io.Framerate);
 
 			ImGui::SeparatorText("EngineObjectList Begin");
 

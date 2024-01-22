@@ -10,59 +10,60 @@
 namespace Render
 {
 	std::shared_ptr<Image> ImageLogic::CreateByInfo(Context *context,
-													ImageInfo &info)
+													ImageCreateInfo &createInfo)
 	{
 		auto image = std::make_shared<Image>();
 
-		image->fomat = info.format;
-		image->extent = info.extent;
-		image->aspectMask = info.aspectMask;
-		image->layerCount = info.layerCount;
+		image->fomat = createInfo.format;
+		image->extent = createInfo.extent;
+		image->aspectMask = createInfo.aspectMask;
+		image->layerCount = createInfo.layerCount;
+		image->mipLevels = createInfo.mipLevels;
 
 		Create(context,
-			   image, info);
+			   image, createInfo);
 
 		CreateView(context,
 				   image,
-				   info.viewType, info.aspectMask, info.layerCount);
+				   createInfo.viewType, createInfo.aspectMask, createInfo.layerCount, createInfo.mipLevels);
 
 		TransitionLayout(context,
 						 image,
-						 info.oldLayout, info.newLayout);
+						 createInfo.oldLayout, createInfo.newLayout, createInfo.mipLevels);
 
 		return image;
 	}
 
 	void ImageLogic::Create(Context *context,
-							std::shared_ptr<Image> image, ImageInfo &info)
+							std::shared_ptr<Image> image, ImageCreateInfo &createInfo)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
-		VkImageCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		createInfo.flags = info.flags;
-		createInfo.imageType = VK_IMAGE_TYPE_2D;
-		createInfo.format = info.format;
-		createInfo.extent = {info.extent.width, info.extent.height, 1}; // 2d depth=1
-		createInfo.mipLevels = 1;
-		createInfo.arrayLayers = info.layerCount;
-		createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-		createInfo.tiling = info.tiling;
-		createInfo.usage = info.usage;
-		createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		createInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		VkImageCreateInfo vkCreateInfo = {};
+		vkCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		vkCreateInfo.flags = createInfo.flags;
+		vkCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+		vkCreateInfo.format = createInfo.format;
+		vkCreateInfo.extent = {createInfo.extent.width, createInfo.extent.height, 1}; // 2d depth=1
+		vkCreateInfo.mipLevels = createInfo.mipLevels;
+		vkCreateInfo.arrayLayers = createInfo.layerCount;
+		vkCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+		vkCreateInfo.tiling = createInfo.tiling;
+		vkCreateInfo.usage = createInfo.usage;
+		vkCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		vkCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 		VkImage vkImage;
-		auto ret = vkCreateImage(logicalDevice, &createInfo, nullptr, &vkImage);
+		auto ret = vkCreateImage(logicalDevice, &vkCreateInfo, nullptr, &vkImage);
 		CheckRet(ret, "vkCreateImage");
 
 		VkMemoryRequirements requirements;
 		vkGetImageMemoryRequirements(logicalDevice, vkImage, &requirements);
 
 		auto memoryTypeIndex = PhysicalDeviceLogic::FindMemoryType(context,
-																   requirements.memoryTypeBits, info.propertiesFlags);
+																   requirements.memoryTypeBits, createInfo.propertiesFlags);
 
 		VkMemoryAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -99,7 +100,7 @@ namespace Render
 
 	void ImageLogic::CreateView(Context *context,
 								std::shared_ptr<Image> image,
-								VkImageViewType viewType, VkImageAspectFlags aspectMask, uint32_t layerCount)
+								VkImageViewType viewType, VkImageAspectFlags aspectMask, uint32_t layerCount, uint32_t mipLevels)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -118,7 +119,7 @@ namespace Render
 			VK_COMPONENT_SWIZZLE_IDENTITY,
 			VK_COMPONENT_SWIZZLE_IDENTITY,
 			VK_COMPONENT_SWIZZLE_IDENTITY};
-		createInfo.subresourceRange = {aspectMask, 0, 1, 0, layerCount};
+		createInfo.subresourceRange = {aspectMask, 0, mipLevels, 0, layerCount};
 
 		VkImageView vkImageView;
 		auto ret = vkCreateImageView(logicalDevice, &createInfo, nullptr, &vkImageView);
@@ -139,7 +140,8 @@ namespace Render
 
 	void ImageLogic::TransitionLayout(Context *context,
 									  std::shared_ptr<Image> image,
-									  VkImageLayout oldLayout, VkImageLayout newLayout, bool singleTime)
+									  VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels,
+									  bool singleTime)
 	{
 		auto cmdBuffer = CmdSubmitLogic::CreateAndBegin(context);
 
@@ -150,22 +152,15 @@ namespace Render
 		imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		imageMemoryBarrier.image = image->vkImage;
-		imageMemoryBarrier.subresourceRange = {image->aspectMask, 0, 1, 0, image->layerCount};
+		imageMemoryBarrier.subresourceRange = {image->aspectMask, 0, mipLevels, 0, image->layerCount};
 
 		VkPipelineStageFlags srcStage;
 		VkPipelineStageFlags dstStage;
-		if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+		if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+			(newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL || newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL))
 		{
 			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
 			imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
-			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-			dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-		}
-		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
-		{
-			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
-			imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 
 			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 			dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
@@ -259,5 +254,95 @@ namespace Render
 			CmdSubmitLogic::EndSingleTime(context, cmdBuffer);
 		else
 			CmdSubmitLogic::End(context, cmdBuffer);
+	}
+
+	void ImageLogic::GenerateMipmapsAndTransitionLayout(Context *context,
+														std::shared_ptr<Image> image,
+														VkImageLayout oldLayout, VkImageLayout newLayout)
+	{
+		auto cmdBuffer = CmdSubmitLogic::CreateAndBegin(context);
+
+		VkImageMemoryBarrier barrier = {};
+		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		barrier.image = image->vkImage;
+		barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		barrier.subresourceRange.baseArrayLayer = 0;
+		barrier.subresourceRange.layerCount = 1;
+		barrier.subresourceRange.levelCount = 1;
+
+		auto mipWidth = static_cast<int32_t>(image->extent.width);
+		auto mipHeight = static_cast<int32_t>(image->extent.height);
+		auto mipLevels = image->mipLevels;
+
+		for (auto i = 1; i < mipLevels; i++)
+		{
+			barrier.subresourceRange.baseMipLevel = i - 1;
+			barrier.oldLayout = oldLayout;
+			barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+			vkCmdPipelineBarrier(cmdBuffer,
+								 VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+								 0,
+								 0, nullptr,
+								 0, nullptr,
+								 1, &barrier);
+
+			VkImageBlit blit = {};
+			blit.srcOffsets[0] = {0, 0, 0};
+			blit.srcOffsets[1] = {mipWidth, mipHeight, 1};
+			blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			blit.srcSubresource.mipLevel = i - 1;
+			blit.srcSubresource.baseArrayLayer = 0;
+			blit.srcSubresource.layerCount = 1;
+			blit.dstOffsets[0] = {0, 0, 0};
+			blit.dstOffsets[1] = {mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1};
+			blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			blit.dstSubresource.mipLevel = i;
+			blit.dstSubresource.baseArrayLayer = 0;
+			blit.dstSubresource.layerCount = 1;
+
+			vkCmdBlitImage(cmdBuffer,
+						   image->vkImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+						   image->vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+						   1, &blit, VK_FILTER_LINEAR);
+
+			barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+			barrier.newLayout = newLayout;
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			vkCmdPipelineBarrier(cmdBuffer,
+								 VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+								 0,
+								 0, nullptr,
+								 0, nullptr,
+								 1, &barrier);
+
+			if (mipWidth > 1)
+				mipWidth /= 2;
+			if (mipHeight > 1)
+				mipHeight /= 2;
+		}
+
+		barrier.subresourceRange.baseMipLevel = mipLevels - 1;
+		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+		vkCmdPipelineBarrier(cmdBuffer,
+							 VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+							 0,
+							 0, nullptr,
+							 0, nullptr,
+							 1, &barrier);
+
+		CmdSubmitLogic::End(context, cmdBuffer);
+
+		image->layout = newLayout;
 	}
 }

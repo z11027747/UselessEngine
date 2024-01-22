@@ -30,16 +30,16 @@ namespace Render
 {
     void MeshInstanceLogic::CreateCache(Context *context)
     {
-        auto &cacheEO = context->renderCacheEo;
+        auto &globalEO = context->renderGlobalEO;
 
         auto instanceCache = std::make_shared<MeshInstanceCache>();
-        cacheEO->AddComponent(instanceCache);
+        globalEO->AddComponent(instanceCache);
     }
 
     void MeshInstanceLogic::DestroyCache(Context *context)
     {
-        auto &cacheEO = context->renderCacheEo;
-        auto instanceCache = cacheEO->GetComponent<MeshInstanceCache>();
+        auto &globalEO = context->renderGlobalEO;
+        auto instanceCache = globalEO->GetComponent<MeshInstanceCache>();
 
         auto &sharedMap = instanceCache->sharedMap;
         for (const auto &kv : sharedMap)
@@ -56,13 +56,15 @@ namespace Render
             Destroy(context, instance);
         }
         deletes.clear();
+
+        globalEO->RemoveComponent<MeshInstanceCache>();
     }
 
     std::shared_ptr<MeshInstance> MeshInstanceLogic::Get(Context *context,
                                                          const std::string &objName)
     {
-        auto &cacheEO = context->renderCacheEo;
-        auto instanceCache = cacheEO->GetComponent<MeshInstanceCache>();
+        auto &globalEO = context->renderGlobalEO;
+        auto instanceCache = globalEO->GetComponent<MeshInstanceCache>();
 
         auto &sharedMap = instanceCache->sharedMap;
         if (sharedMap.find(objName) == sharedMap.end())
@@ -73,10 +75,13 @@ namespace Render
         return sharedMap[objName];
     }
 
+    static int Id_Mesh = 0;
+
     std::shared_ptr<MeshInstance> MeshInstanceLogic::Create(Context *context,
                                                             const std::string &objName, const glm::vec3 &vertexColor)
     {
         auto instance = std::make_shared<MeshInstance>();
+        instance->id = Id_Mesh++;
         instance->objName = objName;
 
         LoadObj(context,
@@ -98,8 +103,8 @@ namespace Render
     void MeshInstanceLogic::SetDestroy(Context *context,
                                        std::shared_ptr<MeshInstance> instance)
     {
-        auto &cacheEO = context->renderCacheEo;
-        auto instanceCache = cacheEO->GetComponent<MeshInstanceCache>();
+        auto &globalEO = context->renderGlobalEO;
+        auto instanceCache = globalEO->GetComponent<MeshInstanceCache>();
 
         instanceCache->deletes.push_back(instance);
     }

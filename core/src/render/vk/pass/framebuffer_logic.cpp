@@ -5,7 +5,7 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_logic.h"
 #include "render/vk/logic.h"
-#include "render/vk/pass/pass_logic.h"
+#include "render/render_pass/render_pass_logic.h"
 #include "engine_object.h"
 #include "context.h"
 

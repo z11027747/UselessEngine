@@ -4,7 +4,7 @@
 
 namespace Render
 {
-	struct ImageInfo final
+	struct ImageCreateInfo final
 	{
 		// info
 		VkFormat format;
@@ -15,6 +15,7 @@ namespace Render
 		VkImageCreateFlags flags;
 		uint32_t layerCount;
 		VkImageViewType viewType;
+		uint32_t mipLevels;
 
 		// memory
 		VkMemoryPropertyFlags propertiesFlags;
@@ -30,6 +31,7 @@ namespace Render
 		VkImageAspectFlags aspectMask;
 		uint32_t layerCount;
 		VkImageLayout layout;
+		uint32_t mipLevels;
 
 		VkImage vkImage;
 		VkDeviceSize size;

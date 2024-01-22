@@ -13,18 +13,18 @@
 namespace Editor
 {
 	static int modeI = 0;
-	static float clearColors[4] = {0.1f, 0.1f, 0.1f, 1.0f};
+	static float clearColors[4] = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
 	static float clearDepth = 1.0f;
 
 	template <>
 	void ComponentWrap<Logic::Camera>::Draw(Context *context,
-											std::shared_ptr<Logic::Camera> camera, bool isFirst)
+											std::shared_ptr<Logic::Camera> camera, bool isInit)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
-		auto &renderPass = global->passes[camera->passName];
+		auto &renderPass = global->passMap[camera->passName];
 
-		if (isFirst)
+		if (isInit)
 		{
 			modeI = static_cast<int>(camera->mode);
 			auto &colors = renderPass->clearColorValue.float32;

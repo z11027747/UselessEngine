@@ -50,14 +50,15 @@ namespace Render
 		std::vector<glm::vec4> params{};
 		bool isImageCube{false};
 		bool castShadow{false};
+
 		bool hasChanged{false};
 	};
 
 	struct MaterialInstance final
 	{
 		int id;
-		std::shared_ptr<MaterialInfo> info;
-		std::vector<std::shared_ptr<Image>> images; // ref
+		std::shared_ptr<MaterialInfo> info{nullptr};  // ref
+		std::vector<std::shared_ptr<Image>> images{}; // ref
 		std::shared_ptr<Buffer> buffer;
 		std::shared_ptr<Descriptor> descriptor;
 	};

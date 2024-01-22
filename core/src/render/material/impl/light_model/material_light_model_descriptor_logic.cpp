@@ -63,6 +63,9 @@ namespace Render
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 	}
+
+	static int imageSize = 1 + 3; // shadow + albedo+specular+normalMap
+
 	void MaterialLightModelDescriptorLogic::AllocateAndUpdate(Context *context,
 															  std::shared_ptr<MaterialInstance> instance)
 	{
@@ -70,7 +73,7 @@ namespace Render
 		auto global = globalEO->GetComponent<Global>();
 
 		auto &info = instance->info;
-		auto &graphicsPipeline = global->pipelines[info->pipelineName];
+		auto &graphicsPipeline = global->pipelineMap[info->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptor = std::make_shared<Descriptor>();
@@ -78,8 +81,8 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
-		auto &shadowPass = global->passes[Pass_Shadow];
-		auto depthImageSampler = SamplerLogic::Create(context, true, true);
+		auto &shadowPass = global->passMap[Pass_Shadow];
+		auto depthImageSampler = SamplerLogic::CreateDepth(context);
 
 		VkDescriptorImageInfo shadowImageInfo = {
 			depthImageSampler,
@@ -88,13 +91,14 @@ namespace Render
 
 		descriptor->imageInfos.push_back(shadowImageInfo);
 
-		static int imageSize = 1 + 3; // shadow + albedo+specular+normalMap
-
 		for (auto i = 0; i < imageSize - 1; i++)
 		{
 			auto &image = instance->images[i];
+			auto imageSamplerWithMipMap = SamplerLogic::Create(context, false,
+															   0, image->mipLevels);
+
 			VkDescriptorImageInfo imageInfo = {
-				global->globalSamplerRepeat,
+				imageSamplerWithMipMap,
 				instance->images[i]->vkImageView,
 				instance->images[i]->layout};
 			descriptor->imageInfos.push_back(imageInfo);
@@ -126,6 +130,9 @@ namespace Render
 													std::shared_ptr<MaterialInstance> instance)
 	{
 		auto &descriptor = instance->descriptor;
-		SamplerLogic::Destroy(context, descriptor->imageInfos[0].sampler);
+		for (auto i = 0; i < imageSize; i++)
+		{
+			SamplerLogic::Destroy(context, descriptor->imageInfos[i].sampler);
+		}
 	}
 }

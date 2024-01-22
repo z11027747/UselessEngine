@@ -1,6 +1,6 @@
 
 #include "render/vk/global/global_comp.h"
-#include "render/vk/pass/pass_logic.h"
+#include "render/render_pass/render_pass_logic.h"
 #include "render/render_pass/render_pass_comp.h"
 #include "render/render_pass/render_pass_system.h"
 #include "logic/camera/camera_comp.h"
@@ -16,7 +16,7 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        auto &mainPass = global->passes[Pass_Main];
+        auto &mainPass = global->passMap[Pass_Main];
         FramebufferLogic::BeginRenderPass(context, imageIndex, mainPass);
 
         auto &mainCameraEO = context->logicMainCameraEO;

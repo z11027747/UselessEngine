@@ -2,8 +2,8 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_logic.h"
 #include "render/vk/logic.h"
-#include "render/vk/pass/pass_logic.h"
 #include "render/vk/image/image_logic.h"
+#include "render/render_pass/render_pass_logic.h"
 #include "engine_object.h"
 #include "context.h"
 
@@ -33,7 +33,7 @@ namespace Render
 
 		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
 		pass->colorAttachmentReference = colorAttachmentReference;
-		pass->clearColorValue = {0.0f, 0.0f, 0.0f, 0.0f};
+		pass->clearColorValue = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
 	}
 
 	void RenderPassLogic::CreateDepthAttachment(Context *context,
@@ -90,21 +90,19 @@ namespace Render
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
-			ImageInfo image2dInfo = {
+			ImageCreateInfo imageCreateInfo = {
 				surfaceFormat.format, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 				// image
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-				0,
-				1,
-				VK_IMAGE_VIEW_TYPE_2D,
+            	0, 1, VK_IMAGE_VIEW_TYPE_2D, 1,
 				// memory
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				// layout
 				VK_IMAGE_LAYOUT_UNDEFINED,
 				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 			auto colorImage2d = ImageLogic::CreateByInfo(context,
-														 image2dInfo);
+														 imageCreateInfo);
 
 			pass->colorImage2ds.push_back(colorImage2d);
 		}
@@ -122,14 +120,12 @@ namespace Render
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
-			ImageInfo image2dInfo = {
+			ImageCreateInfo imageCreateInfo = {
 				depthFormat, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
 				// image
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-				0,
-				1,
-				VK_IMAGE_VIEW_TYPE_2D,
+            	0, 1, VK_IMAGE_VIEW_TYPE_2D, 1,
 				// memory
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				// layout
@@ -137,7 +133,7 @@ namespace Render
 				VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL};
 
 			auto depthImage2d = ImageLogic::CreateByInfo(context,
-														 image2dInfo);
+														 imageCreateInfo);
 
 			pass->depthImage2ds.push_back(depthImage2d);
 		}

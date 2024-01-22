@@ -22,13 +22,13 @@ namespace Render
 		RenderPassLogic::GetSwapchainImage2ds(context, pass);
 		RenderPassLogic::AddSubpassDependency(context, pass,
 											  VK_SUBPASS_EXTERNAL, 0,
-											  VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+											  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
 											  VK_ACCESS_MEMORY_READ_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 		RenderPassLogic::SetSubPassDescription(context, pass);
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
-		global->passes.emplace(pass->name, pass);
+		global->passMap.emplace(pass->name, pass);
 		return pass;
 	}
 
@@ -53,7 +53,7 @@ namespace Render
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
-		global->passes.emplace(pass->name, pass);
+		global->passMap.emplace(pass->name, pass);
 		return pass;
 	}
 
@@ -75,7 +75,7 @@ namespace Render
 		RenderPassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
-		global->passes.emplace(pass->name, pass);
+		global->passMap.emplace(pass->name, pass);
 		return pass;
 	}
 
@@ -84,7 +84,7 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 
-		for (const auto &kv : global->passes)
+		for (const auto &kv : global->passMap)
 		{
 			auto &pass = kv.second;
 			RenderPassLogic::DestroyColorImage2ds(context, pass);

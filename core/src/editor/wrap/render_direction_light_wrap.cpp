@@ -14,11 +14,12 @@ namespace Editor
 
 	template <>
 	void ComponentWrap<Render::DirectionLight>::Draw(Context *context,
-													 std::shared_ptr<Render::DirectionLight> directionLight, bool isFirst)
+													 std::shared_ptr<Render::DirectionLight> directionLight, bool isInit)
 	{
-		if (isFirst)
+		if (isInit)
 		{
 			FillFloat3(color, directionLight->color);
+			FillFloat3(ambient, directionLight->ambient);
 			return;
 		}
 

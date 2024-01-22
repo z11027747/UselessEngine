@@ -46,7 +46,7 @@ namespace Render
 
             auto pipelineName = !isShadow ? materialInfo->pipelineName : Pipeline_Shadow;
 
-            auto &graphicsPipeline = global->pipelines[pipelineName];
+            auto &graphicsPipeline = global->pipelineMap[pipelineName];
             auto &pipeline = graphicsPipeline->pipeline;
             auto &pipelineLayout = graphicsPipeline->pipelineLayout;
 

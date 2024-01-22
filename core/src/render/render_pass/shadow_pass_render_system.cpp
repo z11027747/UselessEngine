@@ -1,6 +1,6 @@
 
 #include "render/vk/global/global_comp.h"
-#include "render/vk/pass/pass_logic.h"
+#include "render/render_pass/render_pass_logic.h"
 #include "render/light/light_comp.h"
 #include "render/render_pass/render_pass_comp.h"
 #include "render/render_pass/render_pass_system.h"
@@ -16,7 +16,7 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        auto &shadowPass = global->passes[Pass_Shadow];
+        auto &shadowPass = global->passMap[Pass_Shadow];
         FramebufferLogic::BeginRenderPass(context, imageIndex, shadowPass);
 
         if (context->renderLightEOs.size() > 0)

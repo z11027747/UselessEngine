@@ -13,16 +13,16 @@ namespace Render
 {
     void MaterialInstanceLogic::CreateCache(Context *context)
     {
-        auto &cacheEO = context->renderCacheEo;
+        auto &globalEO = context->renderGlobalEO;
 
         auto instanceCache = std::make_shared<MaterialInstanceCache>();
-        cacheEO->AddComponent(instanceCache);
+        globalEO->AddComponent(instanceCache);
     }
 
     void MaterialInstanceLogic::DestroyCache(Context *context)
     {
-        auto &cacheEO = context->renderCacheEo;
-        auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
+        auto &globalEO = context->renderGlobalEO;
+        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
 
         auto &sharedImageMap = instanceCache->sharedImageMap;
         for (auto &kv : sharedImageMap)
@@ -38,6 +38,8 @@ namespace Render
             Destroy(context, instance);
         }
         deletes.clear();
+
+        globalEO->RemoveComponent<MaterialInstanceCache>();
     }
 
     static int Id_Material = 0;
@@ -81,8 +83,8 @@ namespace Render
     void MaterialInstanceLogic::SetDestroy(Context *context,
                                            std::shared_ptr<MaterialInstance> instance)
     {
-        auto &cacheEO = context->renderCacheEo;
-        auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
+        auto &globalEO = context->renderGlobalEO;
+        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
 
         instanceCache->deletes.push_back(instance);
     }
@@ -91,8 +93,8 @@ namespace Render
                                                  std::shared_ptr<MaterialInstance> instance,
                                                  const std::string &imageName)
     {
-        auto &cacheEO = context->renderCacheEo;
-        auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
+        auto &globalEO = context->renderGlobalEO;
+        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
 
         auto &sharedImageMap = instanceCache->sharedImageMap;
         if (sharedImageMap.find(imageName) != sharedImageMap.end())
@@ -112,8 +114,8 @@ namespace Render
                                                      std::shared_ptr<MaterialInstance> instance,
                                                      const std::vector<std::string> &imageNames)
     {
-        auto &cacheEO = context->renderCacheEo;
-        auto instanceCache = cacheEO->GetComponent<MaterialInstanceCache>();
+        auto &globalEO = context->renderGlobalEO;
+        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
 
         auto &sharedImageMap = instanceCache->sharedImageMap;
         if (sharedImageMap.find(imageNames[0]) != sharedImageMap.end())
@@ -140,6 +142,9 @@ namespace Render
         auto imageH = static_cast<uint32_t>(resImg.height);
         auto imageSize = static_cast<VkDeviceSize>(imageW * imageH * 4);
 
+        // max(w,h), log2, floor+1
+        auto mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(resImg.width, resImg.height)))) + 1;
+
         auto tempBuffer = BufferLogic::CreateTemp(context,
                                                   imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                                                   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
@@ -148,28 +153,28 @@ namespace Render
                                tempBuffer,
                                resImg.data, static_cast<size_t>(imageSize));
 
-        ImageInfo image2dInfo = {
+        ImageCreateInfo imageCreateInfo = {
             VK_FORMAT_R8G8B8A8_UNORM, {imageW, imageH, 1}, VK_IMAGE_ASPECT_COLOR_BIT,
-            // image
+            // info
             VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             0,
             1,
             VK_IMAGE_VIEW_TYPE_2D,
+            mipLevels,
             // memory
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             // layout
             VK_IMAGE_LAYOUT_UNDEFINED,
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL};
-        auto image2d = ImageLogic::CreateByInfo(context, image2dInfo);
+        auto image2d = ImageLogic::CreateByInfo(context, imageCreateInfo);
 
         ImageLogic::CopyFromBuffer(context,
                                    image2d,
                                    tempBuffer);
 
-        ImageLogic::TransitionLayout(context,
-                                     image2d,
-                                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        ImageLogic::GenerateMipmapsAndTransitionLayout(context, image2d,
+                                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
         instance->images.push_back(image2d);
     }
@@ -202,20 +207,21 @@ namespace Render
                                      tempBuffer,
                                      datas, imageCubeSizeOne);
 
-        ImageInfo imageCubeInfo = {
+        ImageCreateInfo imageCreateInfo = {
             VK_FORMAT_R8G8B8A8_UNORM, {imageCubeW, imageCubeH, 1}, VK_IMAGE_ASPECT_COLOR_BIT,
-            // image
+            // info
             VK_IMAGE_TILING_OPTIMAL,
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
             6,
             VK_IMAGE_VIEW_TYPE_CUBE,
+            1,
             // memory
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             // layout
             VK_IMAGE_LAYOUT_UNDEFINED,
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL};
-        auto imageCube = ImageLogic::CreateByInfo(context, imageCubeInfo);
+        auto imageCube = ImageLogic::CreateByInfo(context, imageCreateInfo);
 
         ImageLogic::CopyFromBuffer(context,
                                    imageCube,
@@ -223,7 +229,7 @@ namespace Render
 
         ImageLogic::TransitionLayout(context,
                                      imageCube,
-                                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
 
         instance->images = {imageCube};
     }

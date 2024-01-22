@@ -15,31 +15,38 @@ namespace Editor
 	static std::vector<std::string> objNames = {};
 	static std::vector<const char *> objNameCStrs = {};
 
+	static void DrawInit(Context *context,
+						 std::shared_ptr<Render::Mesh> mesh)
+	{
+		objNameIndex = -1;
+		objNames.clear();
+		Window::GetDirectoryFiles("resource/obj", objNames);
+
+		auto it = std::find(objNames.begin(), objNames.end(), mesh->objName);
+		if (it != objNames.end())
+		{
+			auto index = std::distance(objNames.begin(), it);
+			objNameIndex = static_cast<int>(index);
+		}
+
+		objNameCStrs.clear();
+		for (auto &objName : objNames)
+		{
+			objNameCStrs.push_back(objName.c_str());
+		}
+	}
+
 	template <>
 	void ComponentWrap<Render::Mesh>::Draw(Context *context,
-										   std::shared_ptr<Render::Mesh> mesh, bool isFirst)
+										   std::shared_ptr<Render::Mesh> mesh, bool isInit)
 	{
-		if (isFirst)
+		if (isInit)
 		{
-			objNameIndex = -1;
-			objNames.clear();
-			Window::GetDirectoryFiles("resource/obj", objNames);
-
-			auto it = std::find(objNames.begin(), objNames.end(), mesh->objName);
-			if (it != objNames.end())
-			{
-				auto index = std::distance(objNames.begin(), it);
-				objNameIndex = static_cast<int>(index);
-			}
-
-			objNameCStrs.clear();
-			for (auto &objName : objNames)
-			{
-				objNameCStrs.push_back(objName.c_str());
-			}
-
+			DrawInit(context, mesh);
 			return;
 		}
+
+		ImGui::Text("InstanceId: %d", mesh->instance->id);
 
 		if (ImGui::Combo("ObjName", &objNameIndex,
 						 objNameCStrs.data(), static_cast<int>(objNameCStrs.size())))

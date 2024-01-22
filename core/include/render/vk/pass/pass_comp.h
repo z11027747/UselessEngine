@@ -30,5 +30,4 @@ namespace Render
 
 		std::vector<VkFramebuffer> frameBuffers;
 	};
-
 }

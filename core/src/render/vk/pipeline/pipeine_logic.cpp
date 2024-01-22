@@ -62,7 +62,7 @@ namespace Render
 
 		graphicsPipeline->pipeline = vkPipeline;
 
-		global->pipelines.emplace(graphicsPipeline->name, graphicsPipeline);
+		global->pipelineMap.emplace(graphicsPipeline->name, graphicsPipeline);
 	}
 
 	void PipelineLogic::Destroy(Context *context,
@@ -86,7 +86,7 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 
-		for (const auto &kv : global->pipelines)
+		for (const auto &kv : global->pipelineMap)
 		{
 			auto &pipeline = kv.second;
 			Destroy(context, pipeline);

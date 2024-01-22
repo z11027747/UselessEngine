@@ -35,6 +35,7 @@ namespace Render
 
     struct MeshInstance final
     {
+        int id;
         std::string objName;
         std::vector<Vertex> vertices;
         std::vector<uint16_t> indices;
@@ -51,7 +52,7 @@ namespace Render
         bool checkHit{false};
 
         std::shared_ptr<MeshInstance> instance;
-		bool hasChanged;
+        bool hasChanged;
     };
 
     struct MeshInstanceCache final

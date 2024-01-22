@@ -44,8 +44,8 @@ namespace Render
 		VkCommandPool vkPool;
 		VkDescriptorPool descriptorPool;
 
-		std::unordered_map<std::string, std::shared_ptr<Render::Pass>> passes;
-		std::unordered_map<std::string, std::shared_ptr<Render::GraphicsPipeline>> pipelines;
+		std::unordered_map<std::string, std::shared_ptr<Render::Pass>> passMap;
+		std::unordered_map<std::string, std::shared_ptr<Render::GraphicsPipeline>> pipelineMap;
 
 		std::vector<VkCommandBuffer> batchCmdBuffers;
 		std::vector<VkCommandBuffer> tempCmdBuffers;

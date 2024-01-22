@@ -40,7 +40,7 @@ namespace Render
 		auto global = globalEO->GetComponent<Global>();
 
 		auto &info = instance->info;
-		auto &graphicsPipeline = global->pipelines[info->pipelineName];
+		auto &graphicsPipeline = global->pipelineMap[info->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
 		auto descriptor = std::make_shared<Descriptor>();

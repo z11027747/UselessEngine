@@ -48,7 +48,6 @@ public:
 	std::vector<std::shared_ptr<EngineObject>> renderLightEOs;
 	std::vector<std::shared_ptr<EngineObject>> renderMeshEOs;
 	std::vector<std::shared_ptr<EngineObject>> renderMaterialEOs;
-	std::shared_ptr<EngineObject> renderCacheEo;
 
 	// logic
 	std::shared_ptr<EngineObject> logicMainCameraEO;
