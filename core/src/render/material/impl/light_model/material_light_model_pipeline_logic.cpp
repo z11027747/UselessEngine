@@ -1,5 +1,6 @@
 
 #include <vulkan/vulkan.h>
+#include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/mesh/mesh_comp.h"
 #include "render/material/impl/material_light_model_logic.h"
@@ -63,6 +64,18 @@ namespace Render
 		// TODO 懒得处理缩放为负数的情况
 		//  rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;
+	}
+	void MaterialLightModelPipelineLogic::SetMultisampleCreateInfo(Context *context,
+																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto msaaSamples = global->msaaSamples;
+
+		auto &stageInfo = graphicsPipeline->stageInfo;
+
+		auto &multisampleStateCreateInfo = stageInfo.multisampleStateCreateInfo;
+		multisampleStateCreateInfo.rasterizationSamples = msaaSamples;
 	}
 	void MaterialLightModelPipelineLogic::SetDepthStencilCreateInfo(Context *context,
 																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)

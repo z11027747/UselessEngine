@@ -1,6 +1,6 @@
 
 #include "render/vk/global/global_comp.h"
-#include "render/render_pass/render_pass_logic.h"
+#include "render/vk/pass/pass_logic.h"
 #include "render/render_pass/render_pass_comp.h"
 #include "render/render_pass/render_pass_system.h"
 #include "logic/camera/camera_comp.h"

@@ -84,7 +84,7 @@ namespace Editor
 
         auto descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
 
-        auto &colorImage2d = global->passMap[Render::Pass_Main]->colorImage2ds[0];
+        auto &colorImage2d = global->passMap[Render::Pass_Main]->resolveImage2d;
         // auto &colorImage2d = global->passMap[Render::Pass_Shadow]->depthImage2ds[0];
 
         auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);

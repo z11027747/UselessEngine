@@ -162,6 +162,7 @@ namespace Render
             1,
             VK_IMAGE_VIEW_TYPE_2D,
             mipLevels,
+            VK_SAMPLE_COUNT_1_BIT,
             // memory
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             // layout
@@ -216,6 +217,7 @@ namespace Render
             6,
             VK_IMAGE_VIEW_TYPE_CUBE,
             1,
+            VK_SAMPLE_COUNT_1_BIT,
             // memory
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             // layout

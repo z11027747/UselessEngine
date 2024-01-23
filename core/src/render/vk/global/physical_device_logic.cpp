@@ -36,7 +36,7 @@ namespace Render
 
 			global->physicalDevice = physicalDevice;
 			global->physicalQueueFamilyIndex = queueFamilyIndex;
-			
+
 			return true;
 		}
 
@@ -50,6 +50,7 @@ namespace Render
 		global->surfaceFormat = GetFormat(context);
 		global->surfacePresentMode = GetPresentMode(context);
 		global->surfaceCapabilities = GetCapbilities(context);
+		global->msaaSamples = GetMaxUsableSampleCount(context);
 
 		global->depthFormat = FindSupportedFormat(context,
 												  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
@@ -206,5 +207,37 @@ namespace Render
 		}
 
 		return VK_PRESENT_MODE_FIFO_KHR;
+	}
+
+	VkSampleCountFlagBits PhysicalDeviceLogic::GetMaxUsableSampleCount(Context *context)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto &physicalDevice = global->physicalDevice;
+
+		VkPhysicalDeviceProperties physicalDeviceProperties;
+		vkGetPhysicalDeviceProperties(physicalDevice, &physicalDeviceProperties);
+
+		auto counts = std::min(physicalDeviceProperties.limits.framebufferColorSampleCounts,
+							   physicalDeviceProperties.limits.framebufferDepthSampleCounts);
+		if (counts & VK_SAMPLE_COUNT_64_BIT)
+			return VK_SAMPLE_COUNT_64_BIT;
+
+		if (counts & VK_SAMPLE_COUNT_32_BIT)
+			return VK_SAMPLE_COUNT_32_BIT;
+
+		if (counts & VK_SAMPLE_COUNT_16_BIT)
+			return VK_SAMPLE_COUNT_16_BIT;
+
+		if (counts & VK_SAMPLE_COUNT_8_BIT)
+			return VK_SAMPLE_COUNT_8_BIT;
+
+		if (counts & VK_SAMPLE_COUNT_4_BIT)
+			return VK_SAMPLE_COUNT_4_BIT;
+
+		if (counts & VK_SAMPLE_COUNT_2_BIT)
+			return VK_SAMPLE_COUNT_2_BIT;
+
+		return VK_SAMPLE_COUNT_1_BIT;
 	}
 }

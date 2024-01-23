@@ -16,10 +16,12 @@ namespace Render
 
 		VkAttachmentReference colorAttachmentReference;
 		VkAttachmentReference depthAttachmentReference;
+		VkAttachmentReference resolveAttachmentReference;
 
 		bool isGetSwapchainImage;
 		std::vector<std::shared_ptr<Image>> colorImage2ds;
-		std::vector<std::shared_ptr<Image>> depthImage2ds;
+		std::shared_ptr<Image> depthImage2d;
+		std::shared_ptr<Image> resolveImage2d;
 
 		VkClearColorValue clearColorValue;
 		VkClearDepthStencilValue clearDepthValue;

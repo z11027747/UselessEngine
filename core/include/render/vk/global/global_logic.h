@@ -48,6 +48,8 @@ namespace Render
         static VkSurfaceFormatKHR GetFormat(Context *);
         static VkSurfaceCapabilitiesKHR GetCapbilities(Context *);
         static VkPresentModeKHR GetPresentMode(Context *);
+
+        static VkSampleCountFlagBits GetMaxUsableSampleCount(Context *);
     };
 
     class LogicalDeviceLogic final

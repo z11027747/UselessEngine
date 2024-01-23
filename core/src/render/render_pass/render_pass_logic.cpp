@@ -9,7 +9,7 @@
 
 namespace Render
 {
-	std::shared_ptr<Pass> PassLogic::CreateImGui(Context *context)
+	std::shared_ptr<Pass> RenderPassLogic::CreateImGui(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -17,47 +17,55 @@ namespace Render
 		auto pass = std::make_shared<Pass>();
 		pass->name = Pass_ImGui;
 
-		RenderPassLogic::CreateColorAttachment(context, pass,
-											   VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-		RenderPassLogic::GetSwapchainImage2ds(context, pass);
-		RenderPassLogic::AddSubpassDependency(context, pass,
-											  VK_SUBPASS_EXTERNAL, 0,
-											  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-											  VK_ACCESS_MEMORY_READ_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
-		RenderPassLogic::SetSubPassDescription(context, pass);
-		RenderPassLogic::Create(context, pass);
+		PassLogic::CreateColorAttachment(context, pass,
+										 VK_SAMPLE_COUNT_1_BIT,
+										 VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+		PassLogic::GetSwapchainImage2ds(context, pass);
+		PassLogic::AddSubpassDependency(context, pass,
+										VK_SUBPASS_EXTERNAL, 0,
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+										VK_ACCESS_NONE, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+		PassLogic::SetSubPassDescription(context, pass);
+		PassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
 		global->passMap.emplace(pass->name, pass);
 		return pass;
 	}
 
-	std::shared_ptr<Pass> PassLogic::CreateMain(Context *context)
+	std::shared_ptr<Pass> RenderPassLogic::CreateMain(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
+		auto msaaSamples = global->msaaSamples;
 
 		auto pass = std::make_shared<Pass>();
 		pass->name = Pass_Main;
 
-		RenderPassLogic::CreateColorAttachment(context, pass,
-											   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		RenderPassLogic::CreateDepthAttachment(context, pass);
-		RenderPassLogic::CreateColorImage2ds(context, pass);
-		RenderPassLogic::CreateDepthImage2ds(context, pass);
-		RenderPassLogic::AddSubpassDependency(context, pass,
-											  VK_SUBPASS_EXTERNAL, 0,
-											  VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-											  VK_ACCESS_MEMORY_READ_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
-		RenderPassLogic::SetSubPassDescription(context, pass);
-		RenderPassLogic::Create(context, pass);
+		PassLogic::CreateColorAttachment(context, pass,
+										 msaaSamples,
+										 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::CreateDepthAttachment(context, pass,
+										 msaaSamples);
+		PassLogic::CreateResolveAttachment(context, pass,
+										   VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::CreateColorImage2ds(context, pass, msaaSamples);
+		PassLogic::CreateDepthImage2d(context, pass, msaaSamples);
+		PassLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
+
+		PassLogic::AddSubpassDependency(context, pass,
+										VK_SUBPASS_EXTERNAL, 0,
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+										VK_ACCESS_NONE, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+		PassLogic::SetSubPassDescription(context, pass);
+		PassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
 		global->passMap.emplace(pass->name, pass);
 		return pass;
 	}
 
-	std::shared_ptr<Pass> PassLogic::CreateShadow(Context *context)
+	std::shared_ptr<Pass> RenderPassLogic::CreateShadow(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -65,21 +73,22 @@ namespace Render
 		auto pass = std::make_shared<Pass>();
 		pass->name = Pass_Shadow;
 
-		RenderPassLogic::CreateDepthAttachment(context, pass, 0);
-		RenderPassLogic::CreateDepthImage2ds(context, pass);
-		RenderPassLogic::AddSubpassDependency(context, pass,
-											  VK_SUBPASS_EXTERNAL, 0,
-											  VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
-											  VK_ACCESS_MEMORY_READ_BIT, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
-		RenderPassLogic::SetSubPassDescription(context, pass);
-		RenderPassLogic::Create(context, pass);
+		PassLogic::CreateDepthAttachment(context, pass,
+										 VK_SAMPLE_COUNT_1_BIT, 0);
+		PassLogic::CreateDepthImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
+		PassLogic::AddSubpassDependency(context, pass,
+										VK_SUBPASS_EXTERNAL, 0,
+										VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+										VK_ACCESS_NONE, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+		PassLogic::SetSubPassDescription(context, pass);
+		PassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
 		global->passMap.emplace(pass->name, pass);
 		return pass;
 	}
 
-	void PassLogic::DestroyAll(Context *context)
+	void RenderPassLogic::DestroyAll(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -87,9 +96,9 @@ namespace Render
 		for (const auto &kv : global->passMap)
 		{
 			auto &pass = kv.second;
-			RenderPassLogic::DestroyColorImage2ds(context, pass);
-			RenderPassLogic::DestroyDepthImage2ds(context, pass);
-			RenderPassLogic::Destroy(context, pass);
+			PassLogic::DestroyColorImage2ds(context, pass);
+			PassLogic::DestroyDepthImage2d(context, pass);
+			PassLogic::Destroy(context, pass);
 			FramebufferLogic::Destroy(context, pass);
 		}
 	}

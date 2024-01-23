@@ -16,6 +16,7 @@ namespace Render
 		uint32_t layerCount;
 		VkImageViewType viewType;
 		uint32_t mipLevels;
+		VkSampleCountFlagBits samplers;
 
 		// memory
 		VkMemoryPropertyFlags propertiesFlags;

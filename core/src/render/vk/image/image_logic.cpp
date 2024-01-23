@@ -49,7 +49,7 @@ namespace Render
 		vkCreateInfo.extent = {createInfo.extent.width, createInfo.extent.height, 1}; // 2d depth=1
 		vkCreateInfo.mipLevels = createInfo.mipLevels;
 		vkCreateInfo.arrayLayers = createInfo.layerCount;
-		vkCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+		vkCreateInfo.samples = createInfo.samplers;
 		vkCreateInfo.tiling = createInfo.tiling;
 		vkCreateInfo.usage = createInfo.usage;
 		vkCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -181,10 +181,26 @@ namespace Render
 			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 			dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		}
 		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL)
 		{
 			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
 			imageMemoryBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+
+			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+		{
+			imageMemoryBarrier.srcAccessMask = VK_ACCESS_NONE;
+			imageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
 			srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 			dstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;

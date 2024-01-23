@@ -57,9 +57,9 @@ namespace Render
 
 		MaterialGlobalDescriptorLogic::Create(context);
 
-		/*auto imGuiPass =*/PassLogic::CreateImGui(context);
-		auto mainPass = PassLogic::CreateMain(context);
-		auto shadowPass = PassLogic::CreateShadow(context);
+		auto imGuiPass = RenderPassLogic::CreateImGui(context);
+		auto mainPass = RenderPassLogic::CreateMain(context);
+		auto shadowPass = RenderPassLogic::CreateShadow(context);
 
 		PipelineLogic::Create(context, Pipeline_Shadow, shadowPass);
 		PipelineLogic::Create(context, Pipeline_Skybox, mainPass);
@@ -118,7 +118,7 @@ namespace Render
 		}
 
 		PipelineLogic::DestroyAll(context);
-		PassLogic::DestroyAll(context);
+		RenderPassLogic::DestroyAll(context);
 
 		MaterialGlobalDescriptorLogic::Destroy(context);
 

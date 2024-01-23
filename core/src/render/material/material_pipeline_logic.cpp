@@ -14,15 +14,15 @@ namespace Render
                                                           std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_LightModel)
-        {
-            MaterialLightModelPipelineLogic::SetVertexAttrDescriptions(context,
-                                                                       graphicsPipeline);
-        }
-        else if (name == Pipeline_Color)
+        if (name == Pipeline_Color)
         {
             MaterialColorPipelineLogic::SetVertexAttrDescriptions(context,
                                                                   graphicsPipeline);
+        }
+        else if (name == Pipeline_LightModel)
+        {
+            MaterialLightModelPipelineLogic::SetVertexAttrDescriptions(context,
+                                                                       graphicsPipeline);
         }
         else if (name == Pipeline_Shadow)
         {
@@ -49,15 +49,15 @@ namespace Render
                                                            std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_LightModel)
-        {
-            MaterialLightModelPipelineLogic::SetRasterizationCreateInfo(context,
-                                                                        graphicsPipeline);
-        }
-        else if (name == Pipeline_Color)
+        if (name == Pipeline_Color)
         {
             MaterialColorPipelineLogic::SetRasterizationCreateInfo(context,
                                                                    graphicsPipeline);
+        }
+        else if (name == Pipeline_LightModel)
+        {
+            MaterialLightModelPipelineLogic::SetRasterizationCreateInfo(context,
+                                                                        graphicsPipeline);
         }
         else if (name == Pipeline_Shadow)
         {
@@ -68,6 +68,18 @@ namespace Render
         {
             MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo(context,
                                                                     graphicsPipeline);
+        }
+    }
+    void MaterialPipelineLogic::SetMultisampleCreateInfo(Context *context,
+                                                         std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+    {
+        auto &name = graphicsPipeline->name;
+        if (name == Pipeline_Color ||
+            name == Pipeline_LightModel ||
+            name == Pipeline_Skybox)
+        {
+            MaterialLightModelPipelineLogic::SetMultisampleCreateInfo(context,
+                                                                      graphicsPipeline);
         }
     }
     void MaterialPipelineLogic::SetDepthStencilCreateInfo(Context *context,

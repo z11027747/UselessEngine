@@ -241,6 +241,8 @@ namespace Render
 		multisampleStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		multisampleStateCreateInfo.sampleShadingEnable = false;
 		multisampleStateCreateInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+		MaterialPipelineLogic::SetMultisampleCreateInfo(context, graphicsPipeline);
 	}
 
 	void PipelineLogic::CreateDepthStencilStage(Context *context,

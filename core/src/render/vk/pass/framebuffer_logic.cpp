@@ -5,7 +5,7 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_logic.h"
 #include "render/vk/logic.h"
-#include "render/render_pass/render_pass_logic.h"
+#include "render/vk/pass/pass_logic.h"
 #include "engine_object.h"
 #include "context.h"
 
@@ -23,11 +23,12 @@ namespace Render
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			std::vector<VkImageView> attachments = {};
-			if (pass->colorImage2ds.size() > 0)
+			if (!pass->colorImage2ds.empty())
 				attachments.push_back(pass->colorImage2ds[i]->vkImageView);
-
-			if (pass->depthImage2ds.size() > 0)
-				attachments.push_back(pass->depthImage2ds[i]->vkImageView);
+			if (pass->depthImage2d != nullptr)
+				attachments.push_back(pass->depthImage2d->vkImageView);
+			if (pass->resolveImage2d != nullptr)
+				attachments.push_back(pass->resolveImage2d->vkImageView);
 
 			VkFramebufferCreateInfo createInfo = {};
 			createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -69,16 +70,21 @@ namespace Render
 		auto &frameBuffer = pass->frameBuffers[imageIndex];
 
 		std::vector<VkClearValue> clearValues;
-		if (pass->colorImage2ds.size() > 0)
+		if (!pass->colorImage2ds.empty())
 		{
 			VkClearValue colorValue = {};
 			colorValue.color = pass->clearColorValue;
 			clearValues.push_back(colorValue);
 		}
-		if (pass->depthImage2ds.size() > 0)
+		if (pass->depthImage2d != nullptr)
 		{
 			VkClearValue depthValue = {};
 			depthValue.depthStencil = pass->clearDepthValue;
+			clearValues.push_back(depthValue);
+		}
+		if (pass->resolveImage2d != nullptr)
+		{
+			VkClearValue depthValue = {};
 			clearValues.push_back(depthValue);
 		}
 
