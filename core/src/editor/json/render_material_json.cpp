@@ -12,14 +12,14 @@ namespace Editor
         auto &paramsJArr = j["params"].array_items();
 
         auto material = std::make_shared<Render::Material>();
-        auto info = std::make_shared<Render::MaterialInfo>();
-        info->pipelineName = j["pipelineName"].string_value();
-        info->imageNames.clear();
+        auto materialInfo = std::make_shared<Render::MaterialInfo>();
+        materialInfo->pipelineName = j["pipelineName"].string_value();
+        materialInfo->imageNames.clear();
         for (const auto &imageNameJObj : imageNameJArr)
         {
-            info->imageNames.push_back(imageNameJObj.string_value());
+            materialInfo->imageNames.push_back(imageNameJObj.string_value());
         }
-        info->params.clear();
+        materialInfo->params.clear();
         for (const auto &paramsJOBj : paramsJArr)
         {
             auto &paramsJObjArr = paramsJOBj.array_items();
@@ -27,11 +27,12 @@ namespace Editor
             auto paramsY = (float)paramsJObjArr.at(1).number_value();
             auto paramsZ = (float)paramsJObjArr.at(2).number_value();
             auto paramsW = (float)paramsJObjArr.at(3).number_value();
-            info->params.push_back(glm::vec4(paramsX, paramsY, paramsZ, paramsW));
+            materialInfo->params.push_back(glm::vec4(paramsX, paramsY, paramsZ, paramsW));
         }
-        info->isImageCube = j["isImageCube"].bool_value();
-        info->castShadow = j["castShadow"].bool_value();
-        material->info = info;
+        materialInfo->isImageCube = j["isImageCube"].bool_value();
+        materialInfo->castShadow = j["castShadow"].bool_value();
+        materialInfo->renderQueue = j["renderQueue"].int_value();
+        material->info = materialInfo;
 
         return material;
     }
@@ -40,12 +41,14 @@ namespace Editor
     json11::Json ComponentJson<Render::Material>::To(Context *context,
                                                      std::shared_ptr<Render::Material> material)
     {
-        auto &info = material->info;
-        auto &pipelineName = info->pipelineName;
-        auto &imageNames = info->imageNames;
-        auto &params = info->params;
-        auto isImageCube = info->isImageCube;
-        auto castShadow = info->castShadow;
+        auto &materialInfo = material->info;
+
+        auto &pipelineName = materialInfo->pipelineName;
+        auto &imageNames = materialInfo->imageNames;
+        auto &params = materialInfo->params;
+        auto isImageCube = materialInfo->isImageCube;
+        auto castShadow = materialInfo->castShadow;
+        auto renderQueue = materialInfo->renderQueue;
 
         auto paramsJArr = json11::Json::array{};
         for (auto &param : params)
@@ -60,7 +63,8 @@ namespace Editor
             {"imageNames", imageNames},
             {"params", paramsJArr},
             {"isImageCube", isImageCube},
-            {"castShadow", castShadow}};
+            {"castShadow", castShadow},
+            {"renderQueue", renderQueue}};
 
         return jObj;
     }

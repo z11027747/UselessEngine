@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <string>
+#include <memory>
 
 class Context;
 
@@ -13,17 +14,12 @@ namespace Editor
     public:
         static void CreateImGui(Context *);
         static void DestroyImGui(Context *);
-
         static void CreateDescriptor(Context *);
         static void DestroyDescriptor(Context *);
 
         static void CreateMainCamera(Context *);
         static void CreateLight(Context *);
         static void CreateSkybox(Context *);
-        static void CreateCubes(Context *);
-        static void CreateCube(Context *, const glm::vec3 &, float,
-                               const std::string &, const std::string &, const std::string &,
-                               bool = true);
         static void CreateAxis(Context *);
     };
 

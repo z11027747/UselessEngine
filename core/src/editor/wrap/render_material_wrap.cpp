@@ -96,7 +96,7 @@ namespace Editor
 		}
 	}
 
-template <>
+	template <>
 	void ComponentWrap<Render::Material>::Draw(Context *context,
 											   std::shared_ptr<Render::Material> material, bool isInit)
 	{

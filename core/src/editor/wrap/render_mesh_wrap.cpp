@@ -46,8 +46,6 @@ namespace Editor
 			return;
 		}
 
-		ImGui::Text("InstanceId: %d", mesh->instance->id);
-
 		if (ImGui::Combo("ObjName", &objNameIndex,
 						 objNameCStrs.data(), static_cast<int>(objNameCStrs.size())))
 		{
@@ -58,6 +56,8 @@ namespace Editor
 		auto &meshInstance = mesh->instance;
 		if (meshInstance != nullptr)
 		{
+			ImGui::Text("InstanceId: %d", mesh->instance->id);
+
 			auto &boundingSphere = meshInstance->boundingSphere;
 
 			ImGui::Spacing();
