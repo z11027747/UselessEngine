@@ -10,7 +10,10 @@ namespace Editor
 {
     const std::string Type_Logic_Camera = "Logic::Camera";
     const std::string Type_Logic_Transform = "Logic::Transform";
+    
     const std::string Type_Render_DirectionLight = "Render::DirectionLight";
+    const std::string Type_Render_PointLight = "Render::PointLight";
+    const std::string Type_Render_SpotLight = "Render::SpotLight";
     const std::string Type_Render_Material = "Render::Material";
     const std::string Type_Render_Mesh = "Render::Mesh";
     const std::string Type_Render_Unit = "Render::Unit";

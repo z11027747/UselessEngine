@@ -23,6 +23,8 @@ namespace Editor
         {typeid(Logic::Transform), ComponentDraw<Logic::Transform>},
         {typeid(Logic::Camera), ComponentDraw<Logic::Camera>},
         {typeid(Render::DirectionLight), ComponentDraw<Render::DirectionLight>},
+        {typeid(Render::PointLight), ComponentDraw<Render::PointLight>},
+        // {typeid(Render::SpotLight), ComponentDraw<Render::SpotLight>},
         {typeid(Render::Mesh), ComponentDraw<Render::Mesh>},
         {typeid(Render::Material), ComponentDraw<Render::Material>}};
 

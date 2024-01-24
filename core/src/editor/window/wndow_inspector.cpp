@@ -49,6 +49,8 @@ namespace Editor
 	static const char *addComponentTypes[] = {Type_Logic_Camera.c_str(),
 											  Type_Logic_Transform.c_str(),
 											  Type_Render_DirectionLight.c_str(),
+											  Type_Render_PointLight.c_str(),
+											  Type_Render_SpotLight.c_str(),
 											  Type_Render_Material.c_str(),
 											  Type_Render_Mesh.c_str()};
 

@@ -107,13 +107,12 @@ namespace Render
                       });
         }
 
-        for (auto &kv : materialEOMap)
-        {
-            auto &pipelineName = kv.first;
-            auto &eos = kv.second;
-            UpdatePipeline(context,
-                           imageIndex, isShadow,
-                           pipelineName, eos);
-        }
+        UpdatePipeline(context,
+                       imageIndex, isShadow,
+                       Pipeline_LightModel, materialEOMap[Pipeline_LightModel]);
+
+        UpdatePipeline(context,
+                       imageIndex, isShadow,
+                       Pipeline_Color, materialEOMap[Pipeline_Color]);
     }
 };

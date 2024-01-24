@@ -59,7 +59,7 @@ namespace Editor
     }
 
     static std::string selectFileName = "";
-    static char sceneName[16] = "new.scene";
+    static char sceneName[32] = "new.scene";
 
     static void DrawDirectory(Context *context,
                               const std::string &directoryName, const std::string &directoryFullName)

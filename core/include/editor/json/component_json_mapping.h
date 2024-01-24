@@ -27,6 +27,8 @@ namespace Editor
         {Type_Logic_Camera, ComponentDefault<Logic::Camera>},
         {Type_Logic_Transform, ComponentDefault<Logic::Transform>},
         {Type_Render_DirectionLight, ComponentDefault<Render::DirectionLight>},
+        {Type_Render_PointLight, ComponentDefault<Render::PointLight>},
+        // {Type_Render_SpotLight, ComponentDefault<Render::SpotLight>},
         {Type_Render_Material, ComponentDefault<Render::Material>},
         {Type_Render_Mesh, ComponentDefault<Render::Mesh>}};
 
@@ -47,6 +49,8 @@ namespace Editor
         {Type_Logic_Camera, ComponentFromJson<Logic::Camera>},
         {Type_Logic_Transform, ComponentFromJson<Logic::Transform>},
         {Type_Render_DirectionLight, ComponentFromJson<Render::DirectionLight>},
+        {Type_Render_PointLight, ComponentFromJson<Render::PointLight>},
+        // {Type_Render_SpotLight, ComponentFromJson<Render::SpotLight>},
         {Type_Render_Material, ComponentFromJson<Render::Material>},
         {Type_Render_Mesh, ComponentFromJson<Render::Mesh>}};
 
@@ -82,6 +86,8 @@ namespace Editor
         {typeid(Logic::Camera), ComponentToJson<Logic::Camera>},
         {typeid(Logic::Transform), ComponentToJson<Logic::Transform>},
         {typeid(Render::DirectionLight), ComponentToJson<Render::DirectionLight>},
+        {typeid(Render::PointLight), ComponentToJson<Render::PointLight>},
+        // {typeid(Render::SpotLight), ComponentToJson<Render::SpotLight>},
         {typeid(Render::Material), ComponentToJson<Render::Material>},
         {typeid(Render::Mesh), ComponentToJson<Render::Mesh>}};
 
