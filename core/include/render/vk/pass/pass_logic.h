@@ -16,12 +16,12 @@ namespace Render
 										  std::shared_ptr<Pass>,
 										  VkSampleCountFlagBits, VkImageLayout, VkImageLayout);
 		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>,
-										  VkSampleCountFlagBits, uint32_t index = 1);
+										  VkSampleCountFlagBits, uint32_t = 1);
 		static void CreateResolveAttachment(Context *, std::shared_ptr<Pass>,
 											VkImageLayout, VkImageLayout);
 
 		static void GetSwapchainImage2ds(Context *, std::shared_ptr<Pass>);
-		static void CreateColorImage2ds(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
+		static void CreateColorImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateDepthImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateResolveImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 

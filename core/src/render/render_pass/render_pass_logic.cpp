@@ -48,7 +48,7 @@ namespace Render
 										 pass, msaaSamples,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		PassLogic::CreateDepthAttachment(context, pass, msaaSamples);
-		PassLogic::CreateColorImage2ds(context, pass, msaaSamples);
+		PassLogic::CreateColorImage2d(context, pass, msaaSamples);
 		PassLogic::CreateDepthImage2d(context, pass, msaaSamples);
 
 		if (msaaSamples != VK_SAMPLE_COUNT_1_BIT)

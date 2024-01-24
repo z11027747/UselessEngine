@@ -23,10 +23,16 @@ namespace Render
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			std::vector<VkImageView> attachments = {};
+
 			if (!pass->colorImage2ds.empty())
-				attachments.push_back(pass->colorImage2ds[i]->vkImageView);
+			{
+				auto colorImageIndex = (pass->isGetSwapchainImage) ? i : 0;
+				attachments.push_back(pass->colorImage2ds[colorImageIndex]->vkImageView);
+			}
+
 			if (pass->depthImage2d != nullptr)
 				attachments.push_back(pass->depthImage2d->vkImageView);
+				
 			if (pass->resolveImage2d != nullptr)
 				attachments.push_back(pass->resolveImage2d->vkImageView);
 

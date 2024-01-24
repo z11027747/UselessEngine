@@ -47,9 +47,9 @@ namespace Render
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
 		// rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
 		rasterizationStateCreateInfo.depthBiasEnable = true;
-		rasterizationStateCreateInfo.depthBiasConstantFactor = 1.2f;
+		rasterizationStateCreateInfo.depthBiasConstantFactor = 1.5f;
 		rasterizationStateCreateInfo.depthBiasClamp = 0.0f;
-		rasterizationStateCreateInfo.depthBiasSlopeFactor = 1.5f;
+		rasterizationStateCreateInfo.depthBiasSlopeFactor = 4.0f;
 	}
 	void MaterialShadowPipelineLogic::SetDepthStencilCreateInfo(Context *context,
 																std::shared_ptr<GraphicsPipeline> graphicsPipeline)

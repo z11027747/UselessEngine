@@ -34,7 +34,7 @@ namespace Render
 
 		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
 		pass->colorAttachmentReference = colorAttachmentReference;
-		pass->clearColorValue = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
+		pass->clearColorValue = {0.0, 0.0, 0.0, 0.0f};
 	}
 
 	void PassLogic::CreateDepthAttachment(Context *context,
@@ -106,7 +106,7 @@ namespace Render
 		pass->isGetSwapchainImage = true;
 	}
 
-	void PassLogic::CreateColorImage2ds(Context *context,
+	void PassLogic::CreateColorImage2d(Context *context,
 										std::shared_ptr<Pass> pass,
 										VkSampleCountFlagBits samplers)
 	{
@@ -116,28 +116,25 @@ namespace Render
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 		auto swapchainImageCount = global->swapchainImageCount;
 
-		for (auto i = 0u; i < swapchainImageCount; i++)
-		{
-			ImageCreateInfo imageCreateInfo = {
-				surfaceFormat.format, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
-				// image
-				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-				0,
-				1,
-				VK_IMAGE_VIEW_TYPE_2D,
-				1,
-				samplers,
-				// memory
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				// layout
-				VK_IMAGE_LAYOUT_UNDEFINED,
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
-			auto colorImage2d = ImageLogic::CreateByInfo(context,
-														 imageCreateInfo);
+		ImageCreateInfo imageCreateInfo = {
+			surfaceFormat.format, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
+			// image
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			0,
+			1,
+			VK_IMAGE_VIEW_TYPE_2D,
+			1,
+			samplers,
+			// memory
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			// layout
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+		auto colorImage2d = ImageLogic::CreateByInfo(context,
+													 imageCreateInfo);
 
-			pass->colorImage2ds.push_back(colorImage2d);
-		}
+		pass->colorImage2ds.push_back(colorImage2d);
 	}
 
 	void PassLogic::CreateDepthImage2d(Context *context,
@@ -243,8 +240,8 @@ namespace Render
 		subpassDependency.srcSubpass = srcSubpass;
 		subpassDependency.dstSubpass = dstSubpass;
 		subpassDependency.srcStageMask = srcStageMask;
-		subpassDependency.dstStageMask = dstStageMask;
 		subpassDependency.srcAccessMask = srcAccessMask;
+		subpassDependency.dstStageMask = dstStageMask;
 		subpassDependency.dstAccessMask = dstAccessMask;
 		// subpassDependency.dependencyFlags = dependencyFlags;
 
