@@ -23,8 +23,10 @@ namespace Render
 		PassLogic::GetSwapchainImage2ds(context, pass);
 		PassLogic::AddSubpassDependency(context, pass,
 										VK_SUBPASS_EXTERNAL, 0,
-										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-										VK_ACCESS_NONE, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+										// src
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_NONE,
+										// dst
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 		PassLogic::SetSubPassDescription(context, pass);
 		PassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
@@ -42,21 +44,26 @@ namespace Render
 		auto pass = std::make_shared<Pass>();
 		pass->name = Pass_Main;
 
-		PassLogic::CreateColorAttachment(context, pass,
-										 msaaSamples,
-										 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		PassLogic::CreateDepthAttachment(context, pass,
-										 msaaSamples);
-		PassLogic::CreateResolveAttachment(context, pass,
-										   VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::CreateColorAttachment(context,
+										 pass, msaaSamples,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		PassLogic::CreateDepthAttachment(context, pass, msaaSamples);
 		PassLogic::CreateColorImage2ds(context, pass, msaaSamples);
 		PassLogic::CreateDepthImage2d(context, pass, msaaSamples);
-		PassLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
+
+		if (msaaSamples != VK_SAMPLE_COUNT_1_BIT)
+		{
+			PassLogic::CreateResolveAttachment(context,
+											   pass, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+			PassLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
+		}
 
 		PassLogic::AddSubpassDependency(context, pass,
 										VK_SUBPASS_EXTERNAL, 0,
-										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
-										VK_ACCESS_NONE, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+										// src
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_ACCESS_NONE,
+										// dst
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
 		PassLogic::SetSubPassDescription(context, pass);
 		PassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
@@ -78,8 +85,10 @@ namespace Render
 		PassLogic::CreateDepthImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
 		PassLogic::AddSubpassDependency(context, pass,
 										VK_SUBPASS_EXTERNAL, 0,
-										VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
-										VK_ACCESS_NONE, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+										// src
+										VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_ACCESS_NONE,
+										// dst
+										VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
 		PassLogic::SetSubPassDescription(context, pass);
 		PassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
@@ -98,6 +107,7 @@ namespace Render
 			auto &pass = kv.second;
 			PassLogic::DestroyColorImage2ds(context, pass);
 			PassLogic::DestroyDepthImage2d(context, pass);
+			PassLogic::DestroyResolveImage2d(context, pass);
 			PassLogic::Destroy(context, pass);
 			FramebufferLogic::Destroy(context, pass);
 		}

@@ -28,9 +28,8 @@ namespace Render
         static bool Find(Context *);
         static void GetInfo(Context *);
 
-        static bool CheckType(
-            const VkPhysicalDevice &physicalDevice,
-            VkPhysicalDeviceType deviceType);
+        static bool CheckType(const VkPhysicalDevice &physicalDevice,
+                              VkPhysicalDeviceType deviceType);
 
         static bool CheckQueueFamily(Context *,
                                      const VkPhysicalDevice &,

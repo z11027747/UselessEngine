@@ -84,8 +84,9 @@ namespace Editor
 
         auto descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
 
-        auto &colorImage2d = global->passMap[Render::Pass_Main]->resolveImage2d;
-        // auto &colorImage2d = global->passMap[Render::Pass_Shadow]->depthImage2ds[0];
+        // auto &image2d = global->passMap[Render::Pass_Main]->colorImage2ds[0];
+        auto &image2d = global->passMap[Render::Pass_Main]->resolveImage2d;
+        // auto &image2d = global->passMap[Render::Pass_Shadow]->depthImage2d;
 
         auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 
@@ -94,8 +95,8 @@ namespace Editor
 
         VkDescriptorImageInfo imageInfo = {
             global->globalSamplerClamp,
-            colorImage2d->vkImageView,
-            colorImage2d->layout};
+            image2d->vkImageView,
+            image2d->layout};
 
         descriptor->imageInfos.push_back(imageInfo);
 

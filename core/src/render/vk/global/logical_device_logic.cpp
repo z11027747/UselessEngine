@@ -38,6 +38,7 @@ namespace Render
 		VkPhysicalDeviceFeatures feature = {};
 		feature.fillModeNonSolid = VK_TRUE;
 		feature.wideLines = true;
+		feature.sampleRateShading = true;
 		deviceCreateInfo.pEnabledFeatures = &feature;
 
 		VkDevice logicalDevice;

@@ -239,8 +239,8 @@ namespace Render
 
 		auto &multisampleStateCreateInfo = stageInfo.multisampleStateCreateInfo;
 		multisampleStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		multisampleStateCreateInfo.sampleShadingEnable = false;
 		multisampleStateCreateInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+		multisampleStateCreateInfo.sampleShadingEnable = false;
 
 		MaterialPipelineLogic::SetMultisampleCreateInfo(context, graphicsPipeline);
 	}

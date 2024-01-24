@@ -53,7 +53,7 @@ namespace Render
 		std::vector<glm::vec4> params{};
 		bool isImageCube{false};
 		bool castShadow{false};
-		int renderQueue{2000};
+		int renderQueue{Queue_Geometry};
 
 		bool hasChanged{false};
 	};

@@ -29,7 +29,7 @@ namespace Render
 		VkPresentModeKHR surfacePresentMode;
 		VkSurfaceCapabilitiesKHR surfaceCapabilities;
 		VkFormat depthFormat;
-		VkSampleCountFlagBits msaaSamples;
+		VkSampleCountFlagBits msaaSamples{VK_SAMPLE_COUNT_1_BIT};
 
 		VkSwapchainKHR swapchain;
 		uint32_t swapchainImageCount;

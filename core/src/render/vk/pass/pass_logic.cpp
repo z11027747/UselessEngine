@@ -52,8 +52,8 @@ namespace Render
 		depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		depthAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		depthAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+		depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
 		VkAttachmentReference depthAttachmentReference = {};
 		depthAttachmentReference.attachment = index;
@@ -122,7 +122,7 @@ namespace Render
 				surfaceFormat.format, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 				// image
 				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 				0,
 				1,
 				VK_IMAGE_VIEW_TYPE_2D,
@@ -132,7 +132,7 @@ namespace Render
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				// layout
 				VK_IMAGE_LAYOUT_UNDEFINED,
-				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 			auto colorImage2d = ImageLogic::CreateByInfo(context,
 														 imageCreateInfo);
 
@@ -153,7 +153,7 @@ namespace Render
 			depthFormat, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
 			// image
 			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			0,
 			1,
 			VK_IMAGE_VIEW_TYPE_2D,
@@ -163,7 +163,7 @@ namespace Render
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			// layout
 			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
+			VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL};
 
 		auto depthImage2d = ImageLogic::CreateByInfo(context,
 													 imageCreateInfo);
@@ -184,7 +184,7 @@ namespace Render
 			surfaceFormat.format, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 			// image
 			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			0,
 			1,
 			VK_IMAGE_VIEW_TYPE_2D,
@@ -194,7 +194,7 @@ namespace Render
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			// layout
 			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
 		auto resolveImage2d = ImageLogic::CreateByInfo(context,
 													   imageCreateInfo);
@@ -236,8 +236,8 @@ namespace Render
 	void PassLogic::AddSubpassDependency(Context *context,
 										 std::shared_ptr<Pass> pass,
 										 uint32_t srcSubpass, uint32_t dstSubpass,
-										 VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-										 VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask)
+										 VkPipelineStageFlags srcStageMask, VkAccessFlags srcAccessMask,
+										 VkPipelineStageFlags dstStageMask, VkAccessFlags dstAccessMask)
 	{
 		VkSubpassDependency subpassDependency = {};
 		subpassDependency.srcSubpass = srcSubpass;

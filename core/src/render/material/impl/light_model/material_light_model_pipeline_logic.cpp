@@ -76,6 +76,8 @@ namespace Render
 
 		auto &multisampleStateCreateInfo = stageInfo.multisampleStateCreateInfo;
 		multisampleStateCreateInfo.rasterizationSamples = msaaSamples;
+		multisampleStateCreateInfo.sampleShadingEnable = true;
+		multisampleStateCreateInfo.minSampleShading = 0.2f;
 	}
 	void MaterialLightModelPipelineLogic::SetDepthStencilCreateInfo(Context *context,
 																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)

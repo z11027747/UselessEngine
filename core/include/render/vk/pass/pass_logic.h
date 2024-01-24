@@ -32,8 +32,8 @@ namespace Render
 		static void AddSubpassDependency(Context *,
 										 std::shared_ptr<Pass>,
 										 uint32_t, uint32_t,
-										 VkPipelineStageFlags, VkPipelineStageFlags,
-										 VkAccessFlags, VkAccessFlags);
+										 VkPipelineStageFlags, VkAccessFlags,
+										 VkPipelineStageFlags, VkAccessFlags);
 
 		static void SetSubPassDescription(Context *,
 										  std::shared_ptr<Pass>);

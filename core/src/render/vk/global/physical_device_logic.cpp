@@ -57,9 +57,8 @@ namespace Render
 												  VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
-	bool PhysicalDeviceLogic::CheckType(
-		const VkPhysicalDevice &physicalDevice,
-		VkPhysicalDeviceType deviceType)
+	bool PhysicalDeviceLogic::CheckType(const VkPhysicalDevice &physicalDevice,
+										VkPhysicalDeviceType deviceType)
 	{
 		VkPhysicalDeviceProperties properties;
 		vkGetPhysicalDeviceProperties(physicalDevice, &properties);

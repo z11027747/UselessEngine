@@ -40,15 +40,53 @@ layout(location = 8) in vec4 positionLS;
 
 layout(location = 0) out vec4 outColor;
 
-float CalcShadow() {
-    vec3 shadowUVW = positionLS.xyz / positionLS.w;
-    shadowUVW.xy = shadowUVW.xy * 0.5 + 0.5;
+// float textureProj(vec4 shadowCoord, vec2 off) {
+//     float shadow = 1.0;
 
-    float shadowCmp = texture(shadowSampler, shadowUVW);
-    return mix(1, 0.2, shadowUVW.z - shadowCmp);//  step(shadowUVW.z, shadowCmp);
+//         float dist = texture(shadowMap, shadowCoord.st + off).r;
+//         if(shadowCoord.w > 0.0 && dist < shadowCoord.z) {
+//             shadow = ambient;
+//         }
+
+//     return shadow;
+// }
+
+float CalcShadow() {
+    vec4 positionNDCLS = positionLS / positionLS.w;
+
+    if(abs(positionNDCLS.x) > 1.0 ||
+        abs(positionNDCLS.y) > 1.0 ||
+        abs(positionNDCLS.z) > 1.0) {
+        return 1.0;
+    } else {
+        //pcf
+        ivec2 texSize = textureSize(shadowSampler, 0);
+        float scale = 1.5;
+        float dx = scale * 1.0 / float(texSize.x);
+        float dy = scale * 1.0 / float(texSize.y);
+
+        int PCF_SIZE = 3;
+        int pcfSizeMinus1 = PCF_SIZE - 1;
+        float kernelSize = 2.0 * pcfSizeMinus1 + 1.0;
+        float numSamples = kernelSize * kernelSize;
+
+        float shadowCount = 0.0;
+        vec2 shadowMapCoord = vec2(positionNDCLS.xy * 0.5 + 0.5);
+
+        for(int x = -pcfSizeMinus1; x <= pcfSizeMinus1; x++) {
+            for(int y = -pcfSizeMinus1; y <= pcfSizeMinus1; y++) {
+                vec2 pcfCoordinate = shadowMapCoord + vec2(dx * x, dy * y);
+                vec3 pcfCoordinatePlusReference = vec3(pcfCoordinate, positionNDCLS.z);
+
+                shadowCount += texture(shadowSampler, pcfCoordinatePlusReference).r;
+            }
+        }
+
+        return mix(0.2, 1.0, shadowCount / numSamples);
+    }
 }
 
-vec3 CalcDirectionLight(float shadowAtten) {
+vec3 CalcDirectionLight() {
     CameraUBO camera = globalUBO.camera;
     DirectionLightUBO directionLight = globalUBO.directionLight;
 
@@ -74,11 +112,13 @@ vec3 CalcDirectionLight(float shadowAtten) {
     vec3 halfDir = normalize(viewDir + lightDir);
     vec3 specular = pow(max(0.0, dot(fragNormalWS, halfDir)), specualrShininess) * specularIntensity * vec3(1.0);
 
+    //shadow
+    float shadowAtten = CalcShadow();
+
     return ambient + (diffuse + specular) * shadowAtten;
 }
 
 void main() {
-    float shadowAtten = CalcShadow();
-    vec3 directionLightCol = CalcDirectionLight(shadowAtten);
+    vec3 directionLightCol = CalcDirectionLight();
     outColor = vec4(directionLightCol * color, 1.0);
 }
