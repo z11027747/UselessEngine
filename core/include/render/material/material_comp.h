@@ -62,7 +62,7 @@ namespace Render
 	{
 		int id;
 		std::shared_ptr<MaterialInfo> info{nullptr};  // ref
-		std::vector<std::shared_ptr<Image>> images{}; // ref
+		std::vector<std::shared_ptr<Image>> images{}; // ref(shared)
 		std::shared_ptr<Buffer> buffer;
 		std::shared_ptr<Descriptor> descriptor;
 	};

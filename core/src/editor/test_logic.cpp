@@ -88,9 +88,10 @@ namespace Editor
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
             auto modelMesh = std::make_shared<Render::Mesh>();
-            modelMesh->objName = "resource/obj/base/axis.obj";
-            modelMesh->vertexColor = glm::vec3(1.0f, 0.0f, 0.0f);
-            modelMesh->checkHit = true;
+            modelMesh->info = std::make_shared<Render::MeshInfo>();
+            modelMesh->info->objName = "resource/obj/base/axis.obj";
+            modelMesh->info->vertexColor = glm::vec3(1.0f, 0.0f, 0.0f);
+            modelMesh->info->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
             modelMaterial->info = std::make_shared<Render::MaterialInfo>();
@@ -115,9 +116,10 @@ namespace Editor
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
             auto modelMesh = std::make_shared<Render::Mesh>();
-            modelMesh->objName = "resource/obj/base/axis.obj";
-            modelMesh->vertexColor = glm::vec3(0.0f, 1.0f, 0.0f);
-            modelMesh->checkHit = true;
+            modelMesh->info = std::make_shared<Render::MeshInfo>();
+            modelMesh->info->objName = "resource/obj/base/axis.obj";
+            modelMesh->info->vertexColor = glm::vec3(0.0f, 1.0f, 0.0f);
+            modelMesh->info->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
             modelMaterial->info = std::make_shared<Render::MaterialInfo>();
@@ -142,9 +144,10 @@ namespace Editor
             Logic::TransformLogic::SetParent(modelEO, modelParentEO);
 
             auto modelMesh = std::make_shared<Render::Mesh>();
-            modelMesh->objName = "resource/obj/base/axis.obj";
-            modelMesh->vertexColor = glm::vec3(0.0f, 0.0f, 1.0f);
-            modelMesh->checkHit = true;
+            modelMesh->info = std::make_shared<Render::MeshInfo>();
+            modelMesh->info->objName = "resource/obj/base/axis.obj";
+            modelMesh->info->vertexColor = glm::vec3(0.0f, 0.0f, 1.0f);
+            modelMesh->info->checkHit = true;
 
             auto modelMaterial = std::make_shared<Render::Material>();
             modelMaterial->info = std::make_shared<Render::MaterialInfo>();

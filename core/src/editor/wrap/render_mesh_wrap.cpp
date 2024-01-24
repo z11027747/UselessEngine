@@ -22,7 +22,7 @@ namespace Editor
 		objNames.clear();
 		Window::GetDirectoryFiles("resource/obj", objNames);
 
-		auto it = std::find(objNames.begin(), objNames.end(), mesh->objName);
+		auto it = std::find(objNames.begin(), objNames.end(), mesh->info->objName);
 		if (it != objNames.end())
 		{
 			auto index = std::distance(objNames.begin(), it);
@@ -46,11 +46,13 @@ namespace Editor
 			return;
 		}
 
+		auto &meshInfo = mesh->info;
+
 		if (ImGui::Combo("ObjName", &objNameIndex,
 						 objNameCStrs.data(), static_cast<int>(objNameCStrs.size())))
 		{
-			mesh->objName = objNames[objNameIndex];
-			mesh->hasChanged = true;
+			meshInfo->objName = objNames[objNameIndex];
+			meshInfo->hasChanged = true;
 		}
 
 		auto &meshInstance = mesh->instance;

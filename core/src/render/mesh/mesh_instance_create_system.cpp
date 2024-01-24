@@ -8,18 +8,18 @@
 
 namespace Render
 {
-    inline static void SetInstance(Context *context,
-                                   std::shared_ptr<Render::Mesh> mesh, bool isShared)
+    inline static void GetOrCreateInstance(Context *context,
+                                           std::shared_ptr<Render::Mesh> mesh, bool isShared)
     {
         if (isShared)
         {
             mesh->instance = MeshInstanceLogic::Get(context,
-                                                    mesh->objName);
+                                                    mesh->info);
         }
         else
         {
             mesh->instance = MeshInstanceLogic::Create(context,
-                                                       mesh->objName, mesh->vertexColor);
+                                                       mesh->info);
         }
     }
 
@@ -29,23 +29,25 @@ namespace Render
         for (const auto &meshEO : meshEOs)
         {
             auto mesh = meshEO->GetComponent<Render::Mesh>();
-            if (mesh->objName.empty())
+            
+            auto &meshInfo = mesh->info;
+            if (meshInfo->objName.empty())
                 continue;
 
             auto isShared = MeshLogic::IsShared(context, mesh);
 
             if (mesh->instance == nullptr)
             {
-                SetInstance(context, mesh, isShared);
+                GetOrCreateInstance(context, mesh, isShared);
             }
 
-            if (mesh->hasChanged)
+            if (meshInfo->hasChanged)
             {
                 if (!isShared)
                     MeshInstanceLogic::SetDestroy(context, mesh->instance);
 
-                SetInstance(context, mesh, isShared);
-                mesh->hasChanged = false;
+                GetOrCreateInstance(context, mesh, isShared);
+                meshInfo->hasChanged = false;
             }
         }
     }

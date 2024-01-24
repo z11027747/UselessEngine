@@ -15,7 +15,6 @@ namespace Render
     class MaterialLogic final
     {
     public:
-        static bool IsShared(Context *, std::shared_ptr<Material>);
         static void TryDestroyEO(Context *, std::shared_ptr<EngineObject>);
     };
 
@@ -25,8 +24,6 @@ namespace Render
         static void CreateCache(Context *);
         static void DestroyCache(Context *);
 
-        static std::shared_ptr<MaterialInstance> Get(Context *,
-                                                     std::shared_ptr<MaterialInfo> info);
         static std::shared_ptr<MaterialInstance> Create(Context *,
                                                         std::shared_ptr<MaterialInfo> info);
         static void Destroy(Context *, std::shared_ptr<MaterialInstance>);

@@ -9,7 +9,7 @@ namespace Render
     bool MeshLogic::IsShared(Context *context,
                              std::shared_ptr<Mesh> mesh)
     {
-        return (mesh->vertexColor == glm::vec3(1.0f));
+        return (mesh->info->vertexColor == glm::vec3(1.0f));
     }
 
     void MeshLogic::TryDestroyEO(Context *context,

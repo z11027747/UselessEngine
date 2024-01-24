@@ -14,9 +14,11 @@ namespace Editor
         auto vertexColorB = (float)vertexColorJArr.at(2).number_value();
 
         auto mesh = std::make_shared<Render::Mesh>();
-        mesh->objName = j["objName"].string_value();
-        mesh->vertexColor = glm::vec3(vertexColorR, vertexColorG, vertexColorB);
-        mesh->checkHit = j["checkHit"].bool_value();
+        auto meshInfo = std::make_shared<Render::MeshInfo>();
+        meshInfo->objName = j["objName"].string_value();
+        meshInfo->vertexColor = glm::vec3(vertexColorR, vertexColorG, vertexColorB);
+        meshInfo->checkHit = j["checkHit"].bool_value();
+        mesh->info = meshInfo;
 
         return mesh;
     }
@@ -25,15 +27,16 @@ namespace Editor
     json11::Json ComponentJson<Render::Mesh>::To(Context *context,
                                                  std::shared_ptr<Render::Mesh> mesh)
     {
-        auto &vertexColor = mesh->vertexColor;
+        auto &meshInfo = mesh->info;
+        auto &vertexColor = meshInfo->vertexColor;
 
         auto vertexColorJArr = json11::Json::array{vertexColor.r, vertexColor.g, vertexColor.b};
 
         auto jObj = json11::Json::object{
             {"type", Type_Render_Mesh},
-            {"objName", mesh->objName},
+            {"objName", meshInfo->objName},
             {"vertexColor", vertexColorJArr},
-            {"checkHit", mesh->checkHit}};
+            {"checkHit", meshInfo->checkHit}};
 
         return jObj;
     }

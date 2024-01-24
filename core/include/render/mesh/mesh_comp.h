@@ -33,26 +33,30 @@ namespace Render
         float radius;
     };
 
-    struct MeshInstance final
-    {
-        int id;
-        std::string objName;
-        std::vector<Vertex> vertices;
-        std::vector<uint16_t> indices;
-        std::shared_ptr<Buffer> vertexBuffer;
-        std::shared_ptr<Buffer> indexBuffer;
-
-        BoundingSphere boundingSphere;
-    };
-
-    struct Mesh final
+    struct MeshInfo final
     {
         std::string objName;
         glm::vec3 vertexColor{1.0f, 1.0f, 1.0f};
         bool checkHit{false};
 
+        bool hasChanged{false};
+    };
+
+    struct MeshInstance final
+    {
+        int id;
+        std::shared_ptr<MeshInfo> info; // ref
+        std::vector<Vertex> vertices;
+        std::vector<uint16_t> indices;
+        std::shared_ptr<Buffer> vertexBuffer;
+        std::shared_ptr<Buffer> indexBuffer;
+        BoundingSphere boundingSphere;
+    };
+
+    struct Mesh final
+    {
+        std::shared_ptr<MeshInfo> info{std::make_shared<MeshInfo>()};
         std::shared_ptr<MeshInstance> instance;
-        bool hasChanged;
     };
 
     struct MeshInstanceCache final

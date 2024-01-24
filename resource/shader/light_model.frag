@@ -40,17 +40,6 @@ layout(location = 8) in vec4 positionLS;
 
 layout(location = 0) out vec4 outColor;
 
-// float textureProj(vec4 shadowCoord, vec2 off) {
-//     float shadow = 1.0;
-
-//         float dist = texture(shadowMap, shadowCoord.st + off).r;
-//         if(shadowCoord.w > 0.0 && dist < shadowCoord.z) {
-//             shadow = ambient;
-//         }
-
-//     return shadow;
-// }
-
 float CalcShadow() {
     vec4 positionNDCLS = positionLS / positionLS.w;
 

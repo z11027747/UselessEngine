@@ -39,6 +39,7 @@ namespace Render
                 continue;
 
             auto &meshInstance = mesh->instance;
+            auto &meshInfo = mesh->info;
 
             auto vertexBuffer = meshInstance->vertexBuffer->vkBuffer;
             auto indexBuffer = meshInstance->indexBuffer->vkBuffer;

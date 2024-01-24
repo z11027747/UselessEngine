@@ -61,15 +61,16 @@ namespace Render
     }
 
     std::shared_ptr<MeshInstance> MeshInstanceLogic::Get(Context *context,
-                                                         const std::string &objName)
+                                                         std::shared_ptr<MeshInfo> info)
     {
         auto &globalEO = context->renderGlobalEO;
         auto instanceCache = globalEO->GetComponent<MeshInstanceCache>();
 
+        auto &objName = info->objName;
         auto &sharedMap = instanceCache->sharedMap;
         if (sharedMap.find(objName) == sharedMap.end())
         {
-            sharedMap[objName] = Create(context, objName);
+            sharedMap[objName] = Create(context, info);
         }
 
         return sharedMap[objName];
@@ -78,17 +79,15 @@ namespace Render
     static int Id_Mesh = 0;
 
     std::shared_ptr<MeshInstance> MeshInstanceLogic::Create(Context *context,
-                                                            const std::string &objName, const glm::vec3 &vertexColor)
+                                                            std::shared_ptr<MeshInfo> info)
     {
         auto instance = std::make_shared<MeshInstance>();
         instance->id = Id_Mesh++;
-        instance->objName = objName;
+        instance->info = info;
 
-        LoadObj(context,
-                instance,
-                objName, vertexColor);
-        CalcBoundingSphere(context, instance);
+        LoadObj(context, instance);
         CreateBuffer(context, instance);
+        CalcBoundingSphere(context, instance);
 
         return instance;
     }
@@ -110,10 +109,11 @@ namespace Render
     }
 
     void MeshInstanceLogic::LoadObj(Context *context,
-                                    std::shared_ptr<MeshInstance> instance,
-                                    const std::string &objName, const glm::vec3 &vertexColor)
+                                    std::shared_ptr<MeshInstance> instance)
     {
-        auto &resObj = Common::ResSystem::LoadObj(objName);
+        auto &info = instance->info;
+
+        auto &resObj = Common::ResSystem::LoadObj(info->objName);
         auto &attrib = resObj.attrib;
         auto &shapes = resObj.shapes;
 
@@ -135,7 +135,7 @@ namespace Render
                     vertex.normalOS = {attrib.normals[3 * ni + 0], attrib.normals[3 * ni + 1], attrib.normals[3 * ni + 2]};
                     vertex.normalOS.x *= -1;
                 }
-                vertex.color = vertexColor;
+                vertex.color = info->vertexColor;
                 if (attrib.texcoords.size() > 0)
                 {
                     vertex.uv0 = {attrib.texcoords[2 * ui + 0], 1.0f - attrib.texcoords[2 * ui + 1]};
@@ -191,8 +191,8 @@ namespace Render
     void MeshInstanceLogic::CalcBoundingSphere(Context *context,
                                                std::shared_ptr<MeshInstance> instance)
     {
-        glm::vec3 minPos = glm::vec3(99999.0f);
-        glm::vec3 maxPos = glm::vec3(-99999.0f);
+        auto minPos = glm::vec3(99999.0f);
+        auto maxPos = glm::vec3(-99999.0f);
 
         auto &vertices = instance->vertices;
         for (const auto &vertex : vertices)

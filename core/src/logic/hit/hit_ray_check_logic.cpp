@@ -38,7 +38,7 @@ namespace Logic
                 continue;
 
             auto mesh = meshEO->GetComponent<Render::Mesh>();
-            if (!mesh->checkHit)
+            if (!mesh->info->checkHit)
                 continue;
 
             auto result = Test(context,

@@ -23,15 +23,13 @@ namespace Render
         static void CreateCache(Context *context);
         static void DestroyCache(Context *context);
 
-        static std::shared_ptr<MeshInstance> Get(Context *, const std::string &);
-        static std::shared_ptr<MeshInstance> Create(Context *,
-                                                    const std::string &, const glm::vec3 & = glm::vec3(1.0f));
+        static std::shared_ptr<MeshInstance> Get(Context *, std::shared_ptr<MeshInfo>);
+        static std::shared_ptr<MeshInstance> Create(Context *, std::shared_ptr<MeshInfo>);
+
         static void Destroy(Context *, std::shared_ptr<MeshInstance>);
         static void SetDestroy(Context *, std::shared_ptr<MeshInstance>);
 
-        static void LoadObj(Context *,
-                            std::shared_ptr<MeshInstance>,
-                            const std::string &, const glm::vec3 &);
+        static void LoadObj(Context *, std::shared_ptr<MeshInstance>);
         static void CalcBoundingSphere(Context *, std::shared_ptr<MeshInstance>);
         static void CreateBuffer(Context *, std::shared_ptr<MeshInstance>);
     };
