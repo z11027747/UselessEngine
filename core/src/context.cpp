@@ -76,7 +76,10 @@ bool Context::CheckEO(std::shared_ptr<EngineObject> eo, bool add)
         else
             RemoveEoInVec(editorAxisEOs, eo);
     }
-    if (eo->HasComponent<Render::DirectionLight>())
+
+    if (eo->HasComponent<Render::DirectionLight>() ||
+        eo->HasComponent<Render::PointLight>() ||
+        eo->HasComponent<Render::SpotLight>())
     {
         if (add)
             renderLightEOs.push_back(eo);

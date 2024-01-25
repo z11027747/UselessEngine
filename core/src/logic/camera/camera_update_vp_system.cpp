@@ -21,6 +21,10 @@ namespace Logic
         auto &renderLightEOs = context->renderLightEOs;
         for (const auto &lightEO : renderLightEOs)
         {
+            // TODO 此处正常应该都有Camera
+            if (!lightEO->HasComponent<Logic::Camera>())
+                continue;
+
             auto lightCamera = lightEO->GetComponent<Logic::Camera>();
             Logic::CameraLogic::UpdateView(lightEO);
             Logic::CameraLogic::UpdateProjection(context, lightCamera);

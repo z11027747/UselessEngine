@@ -5,7 +5,6 @@ struct CameraUBO {
     mat4 view;
     mat4 projection;
 };
-
 struct DirectionLightUBO {
     vec3 dir;
     mat4 view;
@@ -13,31 +12,38 @@ struct DirectionLightUBO {
     vec3 ambient;
     vec3 color;
 };
-
-layout(set = 0, binding = 0) uniform GlobalUBO {
+struct PointLight {
+    vec3 pos;
+    mat4 view;
+    mat4 projection;
+    vec3 color;
+    vec3 clq;
+};
+layout (set = 0, binding = 0) uniform GlobalUBO {
     CameraUBO camera;
     DirectionLightUBO directionLight;
+    PointLight pointLights[4];
+    int activePointLights;
 } globalUBO;
 
-layout(push_constant) uniform Push {
+layout (push_constant) uniform Push {
     mat4 model;
 } push;
 
-layout(location = 0) in vec3 positionOS;
-layout(location = 1) in vec3 normalOS;
-layout(location = 2) in vec3 tangentOS;
-layout(location = 3) in vec3 color;
-layout(location = 4) in vec2 uv0;
+layout (location = 0) in vec3 positionOS;
+layout (location = 1) in vec3 normalOS;
+layout (location = 2) in vec3 tangentOS;
+layout (location = 3) in vec3 color;
+layout (location = 4) in vec2 uv0;
 
-layout(location = 0) out vec3 fragPositionWS;
-layout(location = 1) out vec3 fragNormalWS;
-layout(location = 2) out vec3 fragTangentWS;
-layout(location = 3) out vec3 fragTangentMat0;
-layout(location = 4) out vec3 fragTangentMat1;
-layout(location = 5) out vec3 fragTangentMat2;
-layout(location = 6) out vec3 fragColor;
-layout(location = 7) out vec2 fragUV0;
-layout(location = 8) out vec4 fragPositionLS;
+layout (location = 0) out vec3 fragPositionWS;
+layout (location = 1) out vec3 fragNormalWS;
+layout (location = 2) out vec3 fragTangentMat0;
+layout (location = 3) out vec3 fragTangentMat1;
+layout (location = 4) out vec3 fragTangentMat2;
+layout (location = 5) out vec3 fragColor;
+layout (location = 6) out vec2 fragUV0;
+layout (location = 7) out vec4 fragPositionLS;
 
 void main() {
     CameraUBO camera = globalUBO.camera;
@@ -47,7 +53,7 @@ void main() {
 
     //TODO 懒得算M的逆矩阵的转置矩阵了
     fragNormalWS = (push.model * vec4(normalOS, 0.0)).xyz;
-    fragTangentWS = (push.model * vec4(tangentOS, 0.0)).xyz;
+    vec3 fragTangentWS = (push.model * vec4(tangentOS, 0.0)).xyz;
 
     float orient = sign(push.model[0][0] * push.model[1][1] * push.model[2][2]);
 

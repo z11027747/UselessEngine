@@ -18,26 +18,6 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        DirectionLightUBO directionLightUBO = {};
-
-        if (context->renderLightEOs.size() > 0)
-        {
-            auto &directionLightEO = context->renderLightEOs[0];
-            if (directionLightEO->active)
-            {
-                auto directionLightTransform = directionLightEO->GetComponent<Logic::Transform>();
-                auto directionLightCamera = directionLightEO->GetComponent<Logic::Camera>();
-                auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
-
-                directionLightUBO = {
-                    -directionLightTransform->forward,
-                    directionLightCamera->view,
-                    directionLightCamera->projection,
-                    directionLight->ambient,
-                    directionLight->color};
-            }
-        }
-
         CameraUBO cameraUBO = {};
 
         auto &mainCameraEO = context->logicMainCameraEO;
@@ -53,9 +33,57 @@ namespace Render
             };
         }
 
-        GlobalUBO globalUBO = {
-            cameraUBO,
-            directionLightUBO};
+        DirectionLightUBO directionLightUBO = {};
+        PointLightUBO pointLightUBOs[4];
+        int activePointLights = 0;
+
+        auto &lightEOs = context->renderLightEOs;
+        auto lightEOSize = lightEOs.size();
+        for (auto i = 0; i < lightEOSize; i++)
+        {
+            auto &lightEO = lightEOs[i];
+            if (!lightEO->active)
+                continue;
+
+            if (lightEO->HasComponent<Render::DirectionLight>())
+            {
+                auto directionLightTransform = lightEO->GetComponent<Logic::Transform>();
+                auto directionLightCamera = lightEO->GetComponent<Logic::Camera>();
+                auto directionLight = lightEO->GetComponent<Render::DirectionLight>();
+
+                directionLightUBO = {
+                    -directionLightTransform->forward,
+                    directionLightCamera->view,
+                    directionLightCamera->projection,
+                    directionLight->ambient,
+                    directionLight->color};
+            }
+
+            if (lightEO->HasComponent<Render::PointLight>())
+            {
+                auto pointLightTransform = lightEO->GetComponent<Logic::Transform>();
+                // auto pointLightCamera = lightEO->GetComponent<Logic::Camera>();
+                auto pointLight = lightEO->GetComponent<Render::PointLight>();
+
+                pointLightUBOs[activePointLights] = {
+                    pointLightTransform->worldPosition,
+                    glm::mat4(1.0f), // pointLightCamera->view,
+                    glm::mat4(1.0f), // pointLightCamera->projection,
+                    pointLight->color,
+                    pointLight->clq,
+                };
+                activePointLights++;
+            }
+        }
+
+        GlobalUBO globalUBO = {};
+        globalUBO.camera = cameraUBO;
+        globalUBO.directionLight = directionLightUBO;
+        for (auto i = 0; i < activePointLights; i++)
+        {
+            globalUBO.pointLights[i] = pointLightUBOs[i];
+        }
+        globalUBO.activePointLights = activePointLights;
 
         auto &globalBuffer = global->globalBuffer;
         BufferSetLogic::Set(context,

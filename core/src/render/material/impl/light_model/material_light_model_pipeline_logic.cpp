@@ -60,10 +60,7 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
-
-		// TODO 懒得处理缩放为负数的情况
-		//  rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;
+		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 	}
 	void MaterialLightModelPipelineLogic::SetMultisampleCreateInfo(Context *context,
 																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)

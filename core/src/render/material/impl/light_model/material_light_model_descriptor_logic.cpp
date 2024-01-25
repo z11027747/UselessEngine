@@ -18,41 +18,34 @@ namespace Render
 	void MaterialLightModelDescriptorLogic::CreateSetLayout(Context *context,
 															std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkDescriptorSetLayoutBinding shadowSampler = {
+		VkDescriptorSetLayoutBinding shadowMap = {
 			0, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding albedoSampler = {
+		VkDescriptorSetLayoutBinding albedo = {
 			1, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding specularSampler = {
+		VkDescriptorSetLayoutBinding normalMap = {
 			2, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding normalMapSampler = {
-			3, // binding
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			1,
-			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding lightModelUBO = {
-			4, // binding
+			3, // binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
-		bindings.push_back(shadowSampler);
-		bindings.push_back(albedoSampler);
-		bindings.push_back(specularSampler);
-		bindings.push_back(normalMapSampler);
+		bindings.push_back(shadowMap);
+		bindings.push_back(albedo);
+		bindings.push_back(normalMap);
 		bindings.push_back(lightModelUBO);
 
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
@@ -64,7 +57,7 @@ namespace Render
 		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
 	}
 
-	static int imageSize = 1 + 3; // shadow + albedo+specular+normalMap
+	static int imageSize = 1 + 2; // shadow + albedo+normalMap
 
 	void MaterialLightModelDescriptorLogic::AllocateAndUpdate(Context *context,
 															  std::shared_ptr<MaterialInstance> instance)

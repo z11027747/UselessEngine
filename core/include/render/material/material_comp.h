@@ -35,15 +35,26 @@ namespace Render
 		alignas(16) glm::vec3 col;
 	};
 
+	struct PointLightUBO final
+	{
+		alignas(16) glm::vec3 pos;
+		alignas(16) glm::mat4 view;
+		alignas(16) glm::mat4 projection;
+		alignas(16) glm::vec3 col;
+		alignas(16) glm::vec3 clq;
+	};
+
 	struct GlobalUBO final
 	{
 		alignas(16) CameraUBO camera;
 		alignas(16) DirectionLightUBO directionLight;
+		alignas(16) PointLightUBO pointLights[4];
+		alignas(16) int activePointLights;
 	};
 
 	struct MaterialUBO final
 	{
-		alignas(16) glm::vec4 params;
+		glm::vec4 params;
 	};
 
 	struct MaterialInfo final

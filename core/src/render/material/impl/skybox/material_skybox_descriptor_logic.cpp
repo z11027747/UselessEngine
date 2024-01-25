@@ -16,14 +16,14 @@ namespace Render
 	void MaterialSkyboxDescriptorLogic::CreateSetLayout(Context *context,
 														std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkDescriptorSetLayoutBinding samplerBinding0 = {
+		VkDescriptorSetLayoutBinding cubeMap = {
 			0, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
-		bindings.push_back(samplerBinding0);
+		bindings.push_back(cubeMap);
 
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
