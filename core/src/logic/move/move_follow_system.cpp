@@ -25,10 +25,10 @@ namespace Logic
         auto &logicMoveEOs = context->logicMoveEOs;
         for (const auto &moveEO : logicMoveEOs)
         {
-            if (moveEO->HasComponent<MoveFollow>())
-            {
-                UpdateMoveFollow(context, moveEO);
-            }
+            if (!moveEO->HasComponent<MoveFollow>())
+                continue;
+
+            UpdateMoveFollow(context, moveEO);
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Editor
 		auto &meshInstance = mesh->instance;
 		if (meshInstance != nullptr)
 		{
-			ImGui::Text("InstanceId: %d", mesh->instance->id);
+			ImGui::Text("InstanceId: %d", meshInstance->id);
 
 			auto &boundingSphere = meshInstance->boundingSphere;
 
@@ -70,6 +70,8 @@ namespace Editor
 			ImGui::Text("Center");
 
 			ImGui::InputFloat("Radius", &boundingSphere.radius);
+
+			ImGui::Checkbox("CheckHit", &meshInfo->checkHit);
 		}
 	}
 }

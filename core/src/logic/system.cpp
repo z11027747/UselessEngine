@@ -3,6 +3,7 @@
 #include "logic/camera/camera_system.h"
 #include "logic/transform/transform_system.h"
 #include "logic/move/move_system.h"
+#include "logic/rotate/rotate_system.h"
 #include "logic/system.h"
 #include "context.h"
 
@@ -18,6 +19,7 @@ namespace Logic
 		TransformUpdateMSystem::Update(context);
 		CameraUpdateVPSystem::Update(context);
 		MoveFollowSystem::Update(context);
+		RotateAroundSystem::Update(context);
 	}
 	void System::Destroy(Context *context)
 	{

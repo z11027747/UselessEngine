@@ -10,6 +10,8 @@
 #include "render/mesh/mesh_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/camera/camera_comp.h"
+#include "logic/move/move_comp.h"
+#include "logic/rotate/rotate_comp.h"
 #include "engine_object.h"
 #include "context.h"
 
@@ -26,9 +28,12 @@ namespace Editor
     static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<EngineObject>)>> addDefaultFuncMap{
         {Type_Logic_Camera, ComponentDefault<Logic::Camera>},
         {Type_Logic_Transform, ComponentDefault<Logic::Transform>},
+        {Type_Logic_MoveFowrard, ComponentDefault<Logic::MoveFowrard>},
+        {Type_Logic_MoveFollow, ComponentDefault<Logic::MoveFollow>},
+        {Type_Logic_RotateAround, ComponentDefault<Logic::RotateAround>},
         {Type_Render_DirectionLight, ComponentDefault<Render::DirectionLight>},
         {Type_Render_PointLight, ComponentDefault<Render::PointLight>},
-        // {Type_Render_SpotLight, ComponentDefault<Render::SpotLight>},
+        {Type_Render_SpotLight, ComponentDefault<Render::SpotLight>},
         {Type_Render_Material, ComponentDefault<Render::Material>},
         {Type_Render_Mesh, ComponentDefault<Render::Mesh>}};
 

@@ -10,6 +10,8 @@
 
 namespace Editor
 {
+	static bool dragMode = false;
+
 	template <>
 	void ComponentWrap<Logic::Transform>::Draw(Context *context,
 											   std::shared_ptr<Logic::Transform> transform, bool isInit)
@@ -19,7 +21,12 @@ namespace Editor
 			return;
 		}
 
-		ImGui_Input_GlmVec3(transform->localPosition, 0);
+		ImGui::Checkbox("UseDrag", &dragMode);
+
+		if (dragMode)
+			ImGui_Drag_GlmVec3(transform->localPosition, 0, 0.02f);
+		else
+			ImGui_Input_GlmVec3(transform->localPosition, 0);
 		ImGui::SameLine();
 		if (ImGui::Button("P", ImVec2(20, 20)))
 		{
@@ -28,8 +35,10 @@ namespace Editor
 		ImGui::SameLine();
 		ImGui::Text("Position");
 
-		ImGui_Input_GlmVec3(transform->localEulerAngles, 1);
-		// ImGui_Drag_GlmVec3(transform->localEulerAngles, eId, 0.05f);
+		if (dragMode)
+			ImGui_Drag_GlmVec3(transform->localEulerAngles, 1, 0.05f);
+		else
+			ImGui_Input_GlmVec3(transform->localEulerAngles, 1);
 		ImGui::SameLine();
 		if (ImGui::Button("E", ImVec2(20, 20)))
 		{
@@ -38,8 +47,10 @@ namespace Editor
 		ImGui::SameLine();
 		ImGui::Text("EulerAngles");
 
-		ImGui_Input_GlmVec3(transform->localScale, 2);
-		// ImGui_Drag_GlmVec3(transform->localScale, sId, 0.02f);
+		if (dragMode)
+			ImGui_Drag_GlmVec3(transform->localScale, 1, 0.02f);
+		else
+			ImGui_Input_GlmVec3(transform->localScale, 2);
 		ImGui::SameLine();
 		if (ImGui::Button("S", ImVec2(20, 20)))
 		{

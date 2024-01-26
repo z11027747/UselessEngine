@@ -61,7 +61,7 @@ namespace Render
 	{
 		std::string pipelineName{Pipeline_Color};
 		std::vector<std::string> imageNames{};
-		std::vector<glm::vec4> params{};
+		std::vector<glm::vec4> params{{glm::vec4(1.0f)}};
 		bool isImageCube{false};
 		bool castShadow{false};
 		int renderQueue{Queue_Geometry};

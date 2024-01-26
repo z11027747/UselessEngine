@@ -36,7 +36,7 @@ namespace Render
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding lightModelUBO = {
+		VkDescriptorSetLayoutBinding materialUBO = {
 			3, // binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			1,
@@ -46,7 +46,7 @@ namespace Render
 		bindings.push_back(shadowMap);
 		bindings.push_back(albedo);
 		bindings.push_back(normalMap);
-		bindings.push_back(lightModelUBO);
+		bindings.push_back(materialUBO);
 
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}

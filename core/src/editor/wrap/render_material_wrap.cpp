@@ -49,8 +49,8 @@ namespace Editor
 		}
 		else if (info->pipelineName == Render::Pipeline_LightModel)
 		{
-			imageNameIndexs.resize(3);
-			for (auto i = 0; i < 3; i++)
+			imageNameIndexs.resize(2);
+			for (auto i = 0; i < 2; i++)
 			{
 				imageNameIndexs[i] = FindImageNameIndex(info->imageNames[i]);
 			}
@@ -123,13 +123,14 @@ namespace Editor
 			else if (info->pipelineName == Render::Pipeline_Color)
 			{
 				info->imageNames = {};
-				info->params = {};
+				info->params = {glm::vec4(1.0f)};
 			}
 			else if (info->pipelineName == Render::Pipeline_LightModel)
 			{
-				info->imageNames.resize(3, "resource/texture/white.png");
+				info->imageNames = {"resource/texture/white.png", "resource/texture/bump.png"};
 				info->params = {glm::vec4(1.0f, 100.0f, 1.0f, 0.0f)};
 			}
+
 			FindImageNameIndexsByPipelineName(material);
 		}
 
@@ -144,12 +145,13 @@ namespace Editor
 		}
 		else if (info->pipelineName == Render::Pipeline_Color)
 		{
+			auto &params0 = info->params[0];
+			ImGui::ColorEdit3("Color", &params0.x);
 		}
 		else if (info->pipelineName == Render::Pipeline_LightModel)
 		{
 			DrawImageByIndex(material, "Albedo", 0);
-			DrawImageByIndex(material, "Specular", 1);
-			DrawImageByIndex(material, "NomralMap", 2);
+			DrawImageByIndex(material, "NomralMap", 1);
 
 			ImGui::PushItemWidth(150);
 			auto &params0 = info->params[0];
@@ -160,5 +162,6 @@ namespace Editor
 		}
 
 		ImGui::Checkbox("CastShadow", &info->castShadow);
+		ImGui::InputInt("RenderQueue", &info->renderQueue);
 	}
 }

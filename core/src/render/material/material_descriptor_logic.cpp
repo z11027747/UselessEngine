@@ -14,7 +14,12 @@ namespace Render
                                                   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_LightModel)
+        if (name == Pipeline_Color)
+        {
+            MaterialColorDescriptorLogic::CreateSetLayout(context,
+                                                          graphicsPipeline);
+        }
+        else if (name == Pipeline_LightModel)
         {
             MaterialLightModelDescriptorLogic::CreateSetLayout(context,
                                                                graphicsPipeline);
@@ -29,7 +34,12 @@ namespace Render
                                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_LightModel)
+        if (name == Pipeline_Color)
+        {
+            MaterialColorDescriptorLogic::DestroySetLayout(context,
+                                                           graphicsPipeline);
+        }
+        else if (name == Pipeline_LightModel)
         {
             MaterialLightModelDescriptorLogic::DestroySetLayout(context,
                                                                 graphicsPipeline);
@@ -44,7 +54,12 @@ namespace Render
                                                     std::shared_ptr<MaterialInstance> instance)
     {
         auto &name = instance->info->pipelineName;
-        if (name == Pipeline_LightModel)
+        if (name == Pipeline_Color)
+        {
+            MaterialColorDescriptorLogic::AllocateAndUpdate(context,
+                                                            instance);
+        }
+        else if (name == Pipeline_LightModel)
         {
             MaterialLightModelDescriptorLogic::AllocateAndUpdate(context,
                                                                  instance);
@@ -59,7 +74,12 @@ namespace Render
                                           std::shared_ptr<MaterialInstance> instance)
     {
         auto &name = instance->info->pipelineName;
-        if (name == Pipeline_LightModel)
+        if (name == Pipeline_Color)
+        {
+            MaterialColorDescriptorLogic::Destroy(context,
+                                                  instance);
+        }
+        else if (name == Pipeline_LightModel)
         {
             MaterialLightModelDescriptorLogic::Destroy(context,
                                                        instance);

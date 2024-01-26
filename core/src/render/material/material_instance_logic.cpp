@@ -74,7 +74,6 @@ namespace Render
                                         std::shared_ptr<MaterialInstance> instance)
     {
         BufferLogic::Destroy(context, instance->buffer);
-        // Common::LogSystem::Info("DestroyBuffer: ", instance->id);
 
         if (instance->descriptor != nullptr)
             MaterialDescriptorLogic::Destroy(context, instance);
@@ -245,7 +244,6 @@ namespace Render
                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         instance->buffer = buffer;
-        // Common::LogSystem::Info("CreateBuffer: ", instance->id);
     }
 
     void MaterialInstanceLogic::CreateDescriptor(Context *context,

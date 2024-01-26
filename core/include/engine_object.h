@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <typeindex>
 #include <string>
@@ -26,7 +26,7 @@ public:
 	bool active{true};
 	bool hideInHierarchy{false};
 
-	std::unordered_map<std::type_index, std::shared_ptr<void>> componentMap{};
+	std::map<std::type_index, std::shared_ptr<void>> componentMap{};
 
 	template <typename T>
 	bool HasComponent() const

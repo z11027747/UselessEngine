@@ -9,21 +9,17 @@
 
 namespace Editor
 {
-	static float color[3] = {1.0f, 0.9568627f, 0.8392157f};
-
 	template <>
 	void ComponentWrap<Render::PointLight>::Draw(Context *context,
 												 std::shared_ptr<Render::PointLight> pointLight, bool isInit)
 	{
 		if (isInit)
 		{
-			FillFloat3(color, pointLight->color);
 			return;
 		}
 
-		if (ImGui::ColorEdit3("Color", color))
+		if (ImGui::ColorEdit3("Color", &pointLight->color.x))
 		{
-			FillGlmVec3(pointLight->color, color);
 		}
 
 		ImGui::InputFloat("Constant", &pointLight->clq.x);

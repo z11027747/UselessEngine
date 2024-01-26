@@ -5,6 +5,7 @@
 #include "render/material/material_logic.h"
 #include "render/system.h"
 #include "logic/move/move_comp.h"
+#include "logic/rotate/rotate_logic.h"
 #include "logic/system.h"
 #include "editor/system.h"
 #include "editor/test_logic.h"
@@ -104,6 +105,22 @@ bool Context::CheckEO(std::shared_ptr<EngineObject> eo, bool add)
         {
             Render::MaterialLogic::TryDestroyEO(this, eo);
             RemoveEoInVec(renderMaterialEOs, eo);
+        }
+    }
+
+    if (eo->HasComponent<Logic::RotateAround>())
+    {
+        if (add)
+        {
+            // TODO 临时放在这
+            Logic::RotateLogic::BeginRotateAround(this,
+                                                  eo,
+                                                  GetEO("Cube"), 10);
+            logicRotateEOs.push_back(eo);
+        }
+        else
+        {
+            RemoveEoInVec(logicRotateEOs, eo);
         }
     }
     return true;
