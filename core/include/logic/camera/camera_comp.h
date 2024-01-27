@@ -1,8 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <memory>
 #include <string>
+#include <glm/glm.hpp>
 
 namespace Logic
 {
@@ -14,19 +14,18 @@ namespace Logic
 
 	struct Camera final
 	{
+		inline static std::string type{"Logic::Camera"};
+
 		glm::mat4 view;
 		glm::mat4 projection;
-
 		glm::mat4 inverseView;
 		glm::mat4 inverseProjection;
 
 		float near;
 		float far;
-
 		CameraMode mode;
 		float fov;
 		float size;
-
 		std::string passName;
 	};
 }

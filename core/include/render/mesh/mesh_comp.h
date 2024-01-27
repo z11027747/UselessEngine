@@ -55,12 +55,16 @@ namespace Render
 
     struct Mesh final
     {
+		inline static std::string type{"Render::Mesh"};
+
         std::shared_ptr<MeshInfo> info{std::make_shared<MeshInfo>()};
         std::shared_ptr<MeshInstance> instance;
     };
 
     struct MeshInstanceCache final
     {
+		inline static std::string type{"Render::MeshInstanceCache"};
+
         std::unordered_map<std::string, std::shared_ptr<MeshInstance>> sharedMap{};
         std::vector<std::shared_ptr<MeshInstance>> deletes{};
     };

@@ -6,41 +6,44 @@
 namespace Editor
 {
     template <>
-    std::shared_ptr<Render::Material> ComponentJson<Render::Material>::From(Context *context, const json11::Json &j)
+    std::shared_ptr<void> ComponentJson<Render::Material>::From(const json11::Json &j)
     {
-        auto &imageNameJArr = j["imageNames"].array_items();
-        auto &paramsJArr = j["params"].array_items();
+        auto jObj = j.object_items();
+
+        auto &imageNameJArr = jObj["imageNames"].array_items();
+        auto &paramsJArr = jObj["params"].array_items();
 
         auto material = std::make_shared<Render::Material>();
         auto materialInfo = std::make_shared<Render::MaterialInfo>();
-        materialInfo->pipelineName = j["pipelineName"].string_value();
+        materialInfo->pipelineName = jObj["pipelineName"].string_value();
         materialInfo->imageNames.clear();
         for (const auto &imageNameJObj : imageNameJArr)
         {
             materialInfo->imageNames.push_back(imageNameJObj.string_value());
         }
         materialInfo->params.clear();
-        for (const auto &paramsJOBj : paramsJArr)
+        for (const auto &paramsJObj : paramsJArr)
         {
-            auto &paramsJObjArr = paramsJOBj.array_items();
+            auto &paramsJObjArr = paramsJObj.array_items();
             auto paramsX = (float)paramsJObjArr.at(0).number_value();
             auto paramsY = (float)paramsJObjArr.at(1).number_value();
             auto paramsZ = (float)paramsJObjArr.at(2).number_value();
             auto paramsW = (float)paramsJObjArr.at(3).number_value();
             materialInfo->params.push_back(glm::vec4(paramsX, paramsY, paramsZ, paramsW));
         }
-        materialInfo->isImageCube = j["isImageCube"].bool_value();
-        materialInfo->castShadow = j["castShadow"].bool_value();
-        materialInfo->renderQueue = j["renderQueue"].int_value();
+        materialInfo->isImageCube = jObj["isImageCube"].bool_value();
+        materialInfo->castShadow = jObj["castShadow"].bool_value();
+        materialInfo->renderQueue = jObj["renderQueue"].int_value();
         material->info = materialInfo;
 
         return material;
     }
 
     template <>
-    json11::Json ComponentJson<Render::Material>::To(Context *context,
-                                                     std::shared_ptr<Render::Material> material)
+    json11::Json ComponentJson<Render::Material>::To(std::shared_ptr<void> component)
     {
+        auto material = std::static_pointer_cast<Render::Material>(component);
+
         auto &materialInfo = material->info;
 
         auto &pipelineName = materialInfo->pipelineName;
@@ -58,7 +61,7 @@ namespace Editor
         }
 
         auto jObj = json11::Json::object{
-            {"type", Type_Render_Material},
+            {"type", Render::Material::type},
             {"pipelineName", pipelineName},
             {"imageNames", imageNames},
             {"params", paramsJArr},
@@ -66,6 +69,7 @@ namespace Editor
             {"castShadow", castShadow},
             {"renderQueue", renderQueue}};
 
-        return jObj;
+        auto j = json11::Json(jObj);
+        return j;
     }
 }

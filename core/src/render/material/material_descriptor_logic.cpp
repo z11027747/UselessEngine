@@ -1,4 +1,6 @@
 
+#include <unordered_map>
+#include <functional>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/material/material_logic.h"
@@ -13,81 +15,61 @@ namespace Render
     void MaterialDescriptorLogic::CreateSetLayout(Context *context,
                                                   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
+            funcMap{
+                {Pipeline_Color, MaterialColorDescriptorLogic::CreateSetLayout},
+                {Pipeline_LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
+                {Pipeline_Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
+            };
+
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Color)
-        {
-            MaterialColorDescriptorLogic::CreateSetLayout(context,
-                                                          graphicsPipeline);
-        }
-        else if (name == Pipeline_LightModel)
-        {
-            MaterialLightModelDescriptorLogic::CreateSetLayout(context,
-                                                               graphicsPipeline);
-        }
-        else if (name == Pipeline_Skybox)
-        {
-            MaterialSkyboxDescriptorLogic::CreateSetLayout(context,
-                                                           graphicsPipeline);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, graphicsPipeline);
     }
     void MaterialDescriptorLogic::DestroySetLayout(Context *context,
                                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
+            funcMap{
+                {Pipeline_Color, MaterialColorDescriptorLogic::DestroySetLayout},
+                {Pipeline_LightModel, MaterialLightModelDescriptorLogic::DestroySetLayout},
+                {Pipeline_Skybox, MaterialSkyboxDescriptorLogic::DestroySetLayout},
+            };
+
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Color)
-        {
-            MaterialColorDescriptorLogic::DestroySetLayout(context,
-                                                           graphicsPipeline);
-        }
-        else if (name == Pipeline_LightModel)
-        {
-            MaterialLightModelDescriptorLogic::DestroySetLayout(context,
-                                                                graphicsPipeline);
-        }
-        else if (name == Pipeline_Skybox)
-        {
-            MaterialSkyboxDescriptorLogic::DestroySetLayout(context,
-                                                            graphicsPipeline);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, graphicsPipeline);
     }
     void MaterialDescriptorLogic::AllocateAndUpdate(Context *context,
                                                     std::shared_ptr<MaterialInstance> instance)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialInstance>)>>
+            funcMap{
+                {Pipeline_Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
+                {Pipeline_LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
+                {Pipeline_Skybox, MaterialSkyboxDescriptorLogic::AllocateAndUpdate},
+            };
+
         auto &name = instance->info->pipelineName;
-        if (name == Pipeline_Color)
-        {
-            MaterialColorDescriptorLogic::AllocateAndUpdate(context,
-                                                            instance);
-        }
-        else if (name == Pipeline_LightModel)
-        {
-            MaterialLightModelDescriptorLogic::AllocateAndUpdate(context,
-                                                                 instance);
-        }
-        else if (name == Pipeline_Skybox)
-        {
-            MaterialSkyboxDescriptorLogic::AllocateAndUpdate(context,
-                                                             instance);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, instance);
     }
     void MaterialDescriptorLogic::Destroy(Context *context,
                                           std::shared_ptr<MaterialInstance> instance)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialInstance>)>>
+            funcMap{
+                {Pipeline_Color, MaterialColorDescriptorLogic::Destroy},
+                {Pipeline_LightModel, MaterialLightModelDescriptorLogic::Destroy},
+                {Pipeline_Skybox, MaterialSkyboxDescriptorLogic::Destroy},
+            };
+
         auto &name = instance->info->pipelineName;
-        if (name == Pipeline_Color)
-        {
-            MaterialColorDescriptorLogic::Destroy(context,
-                                                  instance);
-        }
-        else if (name == Pipeline_LightModel)
-        {
-            MaterialLightModelDescriptorLogic::Destroy(context,
-                                                       instance);
-        }
-        else if (name == Pipeline_Skybox)
-        {
-            MaterialSkyboxDescriptorLogic::Destroy(context,
-                                                   instance);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, instance);
     }
 }

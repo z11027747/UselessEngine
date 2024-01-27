@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include <typeindex>
+#include <string>
 #include <functional>
 #include "render/light/light_comp.h"
 #include "render/material/material_comp.h"
@@ -19,31 +19,29 @@ namespace Editor
         ComponentWrap<T>::Draw(context, std::static_pointer_cast<T>(component), isInit);
     }
 
-    static std::unordered_map<std::type_index, std::function<void(Context *, std::shared_ptr<void>, bool)>> drawFuncMap{
-        {typeid(Logic::Transform), ComponentDraw<Logic::Transform>},
-        {typeid(Logic::Camera), ComponentDraw<Logic::Camera>},
-        {typeid(Render::DirectionLight), ComponentDraw<Render::DirectionLight>},
-        {typeid(Render::PointLight), ComponentDraw<Render::PointLight>},
-        // {typeid(Render::SpotLight), ComponentDraw<Render::SpotLight>},
-        {typeid(Render::Mesh), ComponentDraw<Render::Mesh>},
-        {typeid(Render::Material), ComponentDraw<Render::Material>}};
+    static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<void>, bool)>>
+        drawMap{
+            {Logic::Transform::type, ComponentDraw<Logic::Transform>},
+            {Logic::Camera::type, ComponentDraw<Logic::Camera>},
+            {Render::DirectionLight::type, ComponentDraw<Render::DirectionLight>},
+            {Render::PointLight::type, ComponentDraw<Render::PointLight>},
+            // Render::SpotLight::type, ComponentDraw<Render::SpotLight>},
+            {Render::Mesh::type, ComponentDraw<Render::Mesh>},
+            {Render::Material::type, ComponentDraw<Render::Material>}};
 
-    static bool HasWrap(Context *context, std::type_index typeId)
+    static bool HasWrap(Context *context, std::string type)
     {
-        auto it = drawFuncMap.find(typeId);
-        if (it == drawFuncMap.end())
+        auto it = drawMap.find(type);
+        if (it == drawMap.end())
             return false;
 
         return true;
     }
 
     static void DrawWrap(Context *context,
-                         std::type_index typeId, std::shared_ptr<void> component, bool isInit)
+                         std::string type, std::shared_ptr<void> component, bool isInit)
     {
-        auto it = drawFuncMap.find(typeId);
-        if (it == drawFuncMap.end())
-            return;
-
-        drawFuncMap[typeId](context, component, isInit);
+        if (HasWrap(context, type))
+            drawMap[type](context, component, isInit);
     }
 }

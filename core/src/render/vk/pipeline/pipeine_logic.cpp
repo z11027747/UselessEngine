@@ -29,7 +29,7 @@ namespace Render
 		CreateInputAssemblyStage(context, graphicsPipeline);
 		CreateViewportStage(context, graphicsPipeline);
 		CreateRasterizationStage(context, graphicsPipeline);
-		CreateMultisampleStage(context, graphicsPipeline);
+		CreateMultisampleStage(context, graphicsPipeline, pass);
 		CreateDepthStencilStage(context, graphicsPipeline);
 		CreateColorBlendStage(context, graphicsPipeline);
 
@@ -233,13 +233,14 @@ namespace Render
 	}
 
 	void PipelineLogic::CreateMultisampleStage(Context *context,
-											   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+											   std::shared_ptr<GraphicsPipeline> graphicsPipeline,
+											   std::shared_ptr<Pass> pass)
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &multisampleStateCreateInfo = stageInfo.multisampleStateCreateInfo;
 		multisampleStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		multisampleStateCreateInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+		multisampleStateCreateInfo.rasterizationSamples = pass->msaaSamples;
 		multisampleStateCreateInfo.sampleShadingEnable = false;
 
 		MaterialPipelineLogic::SetMultisampleCreateInfo(context, graphicsPipeline);

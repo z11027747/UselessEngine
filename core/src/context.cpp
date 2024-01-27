@@ -61,6 +61,7 @@ void RemoveEoInVec(std::vector<std::shared_ptr<EngineObject>> &vec, std::shared_
     vec.erase(std::remove(vec.begin(), vec.end(), eo), vec.end());
 }
 
+// TODO
 bool Context::CheckEO(std::shared_ptr<EngineObject> eo, bool add)
 {
     if (eo->name == Name_MainCamera)

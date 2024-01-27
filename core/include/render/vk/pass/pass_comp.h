@@ -22,6 +22,7 @@ namespace Render
 		std::vector<std::shared_ptr<Image>> colorImage2ds;
 		std::shared_ptr<Image> depthImage2d;
 		std::shared_ptr<Image> resolveImage2d;
+		VkSampleCountFlagBits msaaSamples{VK_SAMPLE_COUNT_1_BIT};
 
 		VkClearColorValue clearColorValue;
 		VkClearDepthStencilValue clearDepthValue;

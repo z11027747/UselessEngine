@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <string>
 #include "render/vk/image/image_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
 #include "render/vk/pass/pass_comp.h"
@@ -14,6 +15,8 @@ namespace Render
 {
 	struct Global final
 	{
+		inline static std::string type{"Render::Global"};
+		
 		VkInstance instance;
 
 		bool enabledDebug;

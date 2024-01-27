@@ -107,8 +107,8 @@ namespace Render
 	}
 
 	void PassLogic::CreateColorImage2d(Context *context,
-										std::shared_ptr<Pass> pass,
-										VkSampleCountFlagBits samplers)
+									   std::shared_ptr<Pass> pass,
+									   VkSampleCountFlagBits samplers)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();

@@ -6,26 +6,29 @@
 namespace Editor
 {
     template <>
-    std::shared_ptr<Logic::Camera> ComponentJson<Logic::Camera>::From(Context *context, const json11::Json &j)
+    std::shared_ptr<void> ComponentJson<Logic::Camera>::From(const json11::Json &j)
     {
+        auto jObj = j.object_items();
+
         auto camera = std::make_shared<Logic::Camera>();
-        camera->near = (float)j["near"].number_value();
-        camera->far = (float)j["far"].number_value();
-        camera->mode = (Logic::CameraMode)j["mode"].int_value();
-        camera->fov = (float)j["fov"].int_value();
-        camera->fov = (float)j["fov"].int_value();
-        camera->size = (float)j["size"].int_value();
-        camera->passName = j["passName"].string_value();
+        camera->near = (float)jObj["near"].number_value();
+        camera->far = (float)jObj["far"].number_value();
+        camera->mode = (Logic::CameraMode)jObj["mode"].int_value();
+        camera->fov = (float)jObj["fov"].int_value();
+        camera->fov = (float)jObj["fov"].int_value();
+        camera->size = (float)jObj["size"].int_value();
+        camera->passName = jObj["passName"].string_value();
 
         return camera;
     }
 
     template <>
-    json11::Json ComponentJson<Logic::Camera>::To(Context *context,
-                                                  std::shared_ptr<Logic::Camera> camera)
+    json11::Json ComponentJson<Logic::Camera>::To(std::shared_ptr<void> component)
     {
+        auto camera = std::static_pointer_cast<Logic::Camera>(component);
+
         auto jObj = json11::Json::object{
-            {"type", Type_Logic_Camera},
+            {"type", Logic::Camera::type},
             {"near", camera->near},
             {"far", camera->far},
             {"mode", (int)camera->mode},
@@ -33,6 +36,7 @@ namespace Editor
             {"size", camera->size},
             {"passName", camera->passName}};
 
-        return jObj;
+        auto j = json11::Json(jObj);
+        return j;
     }
 }

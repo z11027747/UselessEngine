@@ -1,4 +1,6 @@
 
+#include <unordered_map>
+#include <functional>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/material/material_logic.h"
@@ -13,89 +15,74 @@ namespace Render
     void MaterialPipelineLogic::SetVertexAttrDescriptions(Context *context,
                                                           std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
+            funcMap{
+                {Pipeline_Color, MaterialColorPipelineLogic::SetVertexAttrDescriptions},
+                {Pipeline_LightModel, MaterialLightModelPipelineLogic::SetVertexAttrDescriptions},
+                {Pipeline_Shadow, MaterialShadowPipelineLogic::SetVertexAttrDescriptions},
+                {Pipeline_Skybox, MaterialSkyboxPipelineLogic::SetVertexAttrDescriptions},
+            };
+
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Color)
-        {
-            MaterialColorPipelineLogic::SetVertexAttrDescriptions(context,
-                                                                  graphicsPipeline);
-        }
-        else if (name == Pipeline_LightModel)
-        {
-            MaterialLightModelPipelineLogic::SetVertexAttrDescriptions(context,
-                                                                       graphicsPipeline);
-        }
-        else if (name == Pipeline_Shadow)
-        {
-            MaterialShadowPipelineLogic::SetVertexAttrDescriptions(context,
-                                                                   graphicsPipeline);
-        }
-        else if (name == Pipeline_Skybox)
-        {
-            MaterialSkyboxPipelineLogic::SetVertexAttrDescriptions(context,
-                                                                   graphicsPipeline);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, graphicsPipeline);
     }
     void MaterialPipelineLogic::SetViewport(Context *context,
                                             std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
+            funcMap{
+                {Pipeline_Shadow, MaterialColorPipelineLogic::SetViewport},
+            };
+
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Shadow)
-        {
-            MaterialShadowPipelineLogic::SetViewport(context,
-                                                     graphicsPipeline);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, graphicsPipeline);
     }
     void MaterialPipelineLogic::SetRasterizationCreateInfo(Context *context,
                                                            std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
+            funcMap{
+                {Pipeline_Color, MaterialColorPipelineLogic::SetRasterizationCreateInfo},
+                {Pipeline_LightModel, MaterialLightModelPipelineLogic::SetRasterizationCreateInfo},
+                {Pipeline_Shadow, MaterialShadowPipelineLogic::SetRasterizationCreateInfo},
+                {Pipeline_Skybox, MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo},
+            };
+
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Color)
-        {
-            MaterialColorPipelineLogic::SetRasterizationCreateInfo(context,
-                                                                   graphicsPipeline);
-        }
-        else if (name == Pipeline_LightModel)
-        {
-            MaterialLightModelPipelineLogic::SetRasterizationCreateInfo(context,
-                                                                        graphicsPipeline);
-        }
-        else if (name == Pipeline_Shadow)
-        {
-            MaterialShadowPipelineLogic::SetRasterizationCreateInfo(context,
-                                                                    graphicsPipeline);
-        }
-        else if (name == Pipeline_Skybox)
-        {
-            MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo(context,
-                                                                    graphicsPipeline);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, graphicsPipeline);
     }
     void MaterialPipelineLogic::SetMultisampleCreateInfo(Context *context,
                                                          std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
+            funcMap{
+                {Pipeline_LightModel, MaterialLightModelPipelineLogic::SetMultisampleCreateInfo},
+            };
+
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Color ||
-            name == Pipeline_LightModel ||
-            name == Pipeline_Skybox)
-        {
-            MaterialLightModelPipelineLogic::SetMultisampleCreateInfo(context,
-                                                                      graphicsPipeline);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, graphicsPipeline);
     }
     void MaterialPipelineLogic::SetDepthStencilCreateInfo(Context *context,
                                                           std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
+            funcMap{
+                {Pipeline_Color, MaterialColorPipelineLogic::SetDepthStencilCreateInfo},
+                {Pipeline_Skybox, MaterialSkyboxPipelineLogic::SetDepthStencilCreateInfo},
+            };
+
         auto &name = graphicsPipeline->name;
-        if (name == Pipeline_Color)
-        {
-            MaterialColorPipelineLogic::SetDepthStencilCreateInfo(context,
-                                                                  graphicsPipeline);
-        }
-        else if (name == Pipeline_Skybox)
-        {
-            MaterialSkyboxPipelineLogic::SetDepthStencilCreateInfo(context,
-                                                                   graphicsPipeline);
-        }
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, graphicsPipeline);
     }
     void MaterialPipelineLogic::SetColorBlendStage(Context *context,
                                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline)

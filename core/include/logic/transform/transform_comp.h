@@ -5,12 +5,12 @@
 #include <vector>
 #include <string>
 
-class EngineObject;
-
 namespace Logic
 {
 	struct Transform final
 	{
+		inline static std::string type{"Logic::Transform"};
+
 		glm::vec3 localPosition;
 		glm::vec3 localEulerAngles;
 		glm::vec3 localScale;

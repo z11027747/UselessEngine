@@ -128,7 +128,7 @@ namespace Editor
 			else if (info->pipelineName == Render::Pipeline_LightModel)
 			{
 				info->imageNames = {"resource/texture/white.png", "resource/texture/bump.png"};
-				info->params = {glm::vec4(1.0f, 100.0f, 1.0f, 0.0f)};
+				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 0.0f)};
 			}
 
 			FindImageNameIndexsByPipelineName(material);

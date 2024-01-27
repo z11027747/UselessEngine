@@ -65,16 +65,11 @@ namespace Render
 	void MaterialLightModelPipelineLogic::SetMultisampleCreateInfo(Context *context,
 																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
-		auto msaaSamples = global->msaaSamples;
-
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &multisampleStateCreateInfo = stageInfo.multisampleStateCreateInfo;
-		multisampleStateCreateInfo.rasterizationSamples = msaaSamples;
-		// multisampleStateCreateInfo.sampleShadingEnable = true;
-		// multisampleStateCreateInfo.minSampleShading = 0.2f;
+		multisampleStateCreateInfo.sampleShadingEnable = true;
+		multisampleStateCreateInfo.minSampleShading = 0.2f;
 	}
 	void MaterialLightModelPipelineLogic::SetDepthStencilCreateInfo(Context *context,
 																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)

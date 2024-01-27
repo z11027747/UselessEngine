@@ -11,13 +11,13 @@
 
 namespace Render
 {
-	const std::string Pipeline_Skybox = "skybox";
-	const std::string Pipeline_Shadow = "shadow";
-	const std::string Pipeline_LightModel = "light_model";
-	const std::string Pipeline_Color = "color";
+	const std::string Pipeline_Skybox{"skybox"};
+	const std::string Pipeline_Shadow{"shadow"};
+	const std::string Pipeline_LightModel{"light_model"};
+	const std::string Pipeline_Color{"color"};
 
-	const int Queue_Skybox = 1000;
-	const int Queue_Geometry = 2000;
+	const int Queue_Skybox{1000};
+	const int Queue_Geometry{2000};
 
 	struct CameraUBO final
 	{
@@ -80,12 +80,16 @@ namespace Render
 
 	struct Material final
 	{
+		inline static std::string type{"Render::Material"};
+
 		std::shared_ptr<MaterialInfo> info{std::make_shared<MaterialInfo>()};
 		std::shared_ptr<MaterialInstance> instance;
 	};
 
 	struct MaterialInstanceCache final
 	{
+		inline static std::string type{"Render::MaterialInstanceCache"};
+
 		std::unordered_map<std::string, std::shared_ptr<Image>> sharedImageMap{};
 		std::vector<std::shared_ptr<MaterialInstance>> deletes{};
 	};

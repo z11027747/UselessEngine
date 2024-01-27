@@ -53,6 +53,7 @@ namespace Render
 
 		if (msaaSamples != VK_SAMPLE_COUNT_1_BIT)
 		{
+			pass->msaaSamples = msaaSamples;
 			PassLogic::CreateResolveAttachment(context,
 											   pass, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 			PassLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);

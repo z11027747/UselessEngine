@@ -20,7 +20,7 @@ namespace Render
 		static void CreateInputAssemblyStage(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void CreateViewportStage(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void CreateRasterizationStage(Context *, std::shared_ptr<GraphicsPipeline>);
-		static void CreateMultisampleStage(Context *, std::shared_ptr<GraphicsPipeline>);
+		static void CreateMultisampleStage(Context *, std::shared_ptr<GraphicsPipeline>, std::shared_ptr<Pass>);
 		static void CreateDepthStencilStage(Context *, std::shared_ptr<GraphicsPipeline>);
 		static void CreateColorBlendStage(Context *, std::shared_ptr<GraphicsPipeline>);
 

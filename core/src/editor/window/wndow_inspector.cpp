@@ -8,6 +8,7 @@
 #include "editor/wrap/component_wrap_mapping.h"
 #include "editor/json/component_json.h"
 #include "editor/json/component_json_mapping.h"
+#include "editor/reflection/type_construct.h"
 #include "editor/window.h"
 #include "engine_object.h"
 #include "context.h"
@@ -25,34 +26,39 @@ namespace Editor
 	{
 		selectEO = eo;
 
-		if (eo->name != Name_MainCamera && eo->name != Name_Skybox &&
-			eo->name != Name_AxisX && eo->name != Name_AxisY && eo->name != Name_AxisZ)
-		{
-			auto axisEO = context->GetEO(Name_Axis);
-			axisEO->active = true;
+		auto validEO = (eo->name != Name_MainCamera &&
+						eo->name != Name_Skybox &&
+						eo->name != Name_AxisX &&
+						eo->name != Name_AxisY &&
+						eo->name != Name_AxisZ);
 
+		auto axisEO = context->GetEO(Name_Axis);
+		axisEO->active = validEO;
+
+		if (validEO)
 			Logic::MoveLogic::BeginFollow(context,
 										  axisEO,
 										  eo, glm::vec3(0.0f));
-		}
 
 		auto &componentMap = selectEO->componentMap;
 		for (const auto &kv : componentMap)
 		{
-			auto typeId = kv.first;
+			auto type = kv.first;
 			auto &component = kv.second;
-			DrawWrap(context, typeId, component, true);
+			DrawWrap(context, type, component, true);
 		}
 	}
 
 	static int addComponentTypeIndex = -1;
 	static const char *addComponentTypes[] = {
-		Type_Logic_Camera.c_str(), Type_Logic_Transform.c_str(),
-		Type_Logic_MoveFowrard.c_str(), Type_Logic_MoveFollow.c_str(),
-		Type_Logic_RotateAround.c_str(),
-		Type_Render_DirectionLight.c_str(), Type_Render_PointLight.c_str(), Type_Render_SpotLight.c_str(),
-		Type_Render_Material.c_str(),
-		Type_Render_Mesh.c_str()};
+		// logic
+		Logic::Camera::type.c_str(), Logic::Transform::type.c_str(),
+		Logic::MoveFowrard::type.c_str(), Logic::MoveFollow::type.c_str(),
+		Logic::RotateAround::type.c_str(),
+		// render
+		Render::DirectionLight::type.c_str(), Render::PointLight::type.c_str(), Render::SpotLight::type.c_str(),
+		Render::Material::type.c_str(),
+		Render::Mesh::type.c_str()};
 
 	void Window::DrawInspector(Context *context)
 	{
@@ -70,18 +76,17 @@ namespace Editor
 				auto &componentMap = selectEO->componentMap;
 				for (const auto &kv : componentMap)
 				{
-					auto typeId = kv.first;
+					auto type = kv.first;
 					auto &component = kv.second;
 
-					if (!HasWrap(context, typeId))
+					if (!HasWrap(context, type))
 						continue;
 
-					auto typeName = typeId.name();
-					ImGui::PushID(typeName);
+					ImGui::PushID(type.c_str());
 					ImGui::SetNextItemOpen(true);
-					if (ImGui::TreeNode("Comp: &s", typeName))
+					if (ImGui::TreeNode("Comp: &s", type.c_str()))
 					{
-						DrawWrap(context, typeId, component, false);
+						DrawWrap(context, type, component, false);
 
 						ImGui::TreePop();
 					}
@@ -98,7 +103,9 @@ namespace Editor
 				{
 					// std::cout << "Add Component Click!" << std::endl;
 					auto componentType = std::string(addComponentTypes[addComponentTypeIndex]);
-					EOAddDefault(context, selectEO, componentType);
+					auto component = TypeConstruct::Create(componentType);
+					selectEO->AddComponent(componentType, component);
+					context->CheckEO(selectEO, true);
 
 					// for refresh
 					SetSelectEO(context, selectEO);

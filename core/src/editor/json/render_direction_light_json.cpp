@@ -6,34 +6,38 @@
 namespace Editor
 {
     template <>
-    std::shared_ptr<Render::DirectionLight> ComponentJson<Render::DirectionLight>::From(Context *context, const json11::Json &j)
+    std::shared_ptr<void> ComponentJson<Render::DirectionLight>::From(const json11::Json &j)
     {
-        auto &colorJArr = j["color"].array_items();
+        auto jObj = j.object_items();
+
+        auto &colorJArr = jObj["color"].array_items();
         auto colorR = (float)colorJArr.at(0).number_value();
         auto colorG = (float)colorJArr.at(1).number_value();
         auto colorB = (float)colorJArr.at(2).number_value();
 
         auto directionLight = std::make_shared<Render::DirectionLight>();
         directionLight->color = glm::vec3(colorR, colorG, colorB);
-        directionLight->hasShadow = j["hasShadow"].bool_value();
+        directionLight->hasShadow = jObj["hasShadow"].bool_value();
 
         return directionLight;
     }
 
     template <>
-    json11::Json ComponentJson<Render::DirectionLight>::To(Context *context,
-                                                           std::shared_ptr<Render::DirectionLight> directionLight)
+    json11::Json ComponentJson<Render::DirectionLight>::To(std::shared_ptr<void> component)
     {
+        auto directionLight = std::static_pointer_cast<Render::DirectionLight>(component);
+
         auto &color = directionLight->color;
         auto hasShadow = directionLight->hasShadow;
 
         auto colorJArr = json11::Json::array{color.x, color.y, color.z};
 
         auto jObj = json11::Json::object{
-            {"type", Type_Render_DirectionLight},
+            {"type", Render::DirectionLight::type},
             {"color", colorJArr},
             {"hasShadow", hasShadow}};
 
-        return jObj;
+        auto j = json11::Json(jObj);
+        return j;
     }
 }
