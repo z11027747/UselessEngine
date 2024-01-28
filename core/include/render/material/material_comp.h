@@ -8,17 +8,10 @@
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
+#include "common/define.h"
 
 namespace Render
 {
-	const std::string Pipeline_Skybox{"skybox"};
-	const std::string Pipeline_Shadow{"shadow"};
-	const std::string Pipeline_LightModel{"light_model"};
-	const std::string Pipeline_Color{"color"};
-
-	const int Queue_Skybox{1000};
-	const int Queue_Geometry{2000};
-
 	struct CameraUBO final
 	{
 		alignas(16) glm::vec3 pos;
@@ -59,12 +52,12 @@ namespace Render
 
 	struct MaterialInfo final
 	{
-		std::string pipelineName{Pipeline_Color};
+		std::string pipelineName{Define::Pipeline::Color};
 		std::vector<std::string> imageNames{};
 		std::vector<glm::vec4> params{{glm::vec4(1.0f)}};
 		bool isImageCube{false};
 		bool castShadow{false};
-		int renderQueue{Queue_Geometry};
+		int renderQueue{Define::RenderQueue::Geometry};
 
 		bool hasChanged{false};
 	};

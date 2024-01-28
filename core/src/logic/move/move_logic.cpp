@@ -1,4 +1,5 @@
 
+#include "logic/move/move_comp.h"
 #include "logic/move/move_logic.h"
 #include "engine_object.h"
 #include "context.h"
@@ -17,9 +18,7 @@ namespace Logic
         else
         {
             moveFollow = std::make_shared<MoveFollow>();
-            selfEO->AddComponent(moveFollow);
-
-            context->logicMoveEOs.push_back(selfEO);
+            context->AddComponent(selfEO, moveFollow);
         }
 
         moveFollow->targetEO = targetEO;

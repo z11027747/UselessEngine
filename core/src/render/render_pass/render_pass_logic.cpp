@@ -15,7 +15,7 @@ namespace Render
 		auto global = globalEO->GetComponent<Global>();
 
 		auto pass = std::make_shared<Pass>();
-		pass->name = Pass_ImGui;
+		pass->name = Define::Pass::ImGui;
 
 		PassLogic::CreateColorAttachment(context, pass,
 										 VK_SAMPLE_COUNT_1_BIT,
@@ -42,7 +42,7 @@ namespace Render
 		auto msaaSamples = global->msaaSamples;
 
 		auto pass = std::make_shared<Pass>();
-		pass->name = Pass_Main;
+		pass->name = Define::Pass::Main;
 
 		PassLogic::CreateColorAttachment(context,
 										 pass, msaaSamples,
@@ -79,7 +79,7 @@ namespace Render
 		auto global = globalEO->GetComponent<Global>();
 
 		auto pass = std::make_shared<Pass>();
-		pass->name = Pass_Shadow;
+		pass->name = Define::Pass::Shadow;
 
 		PassLogic::CreateDepthAttachment(context, pass,
 										 VK_SAMPLE_COUNT_1_BIT, 0);

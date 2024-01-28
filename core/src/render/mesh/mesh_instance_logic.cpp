@@ -33,7 +33,7 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
 
         auto instanceCache = std::make_shared<MeshInstanceCache>();
-        globalEO->AddComponent(instanceCache);
+        context->AddComponent(globalEO, instanceCache);
     }
 
     void MeshInstanceLogic::DestroyCache(Context *context)

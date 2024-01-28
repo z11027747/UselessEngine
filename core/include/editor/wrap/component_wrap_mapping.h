@@ -8,6 +8,7 @@
 #include "render/mesh/mesh_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/camera/camera_comp.h"
+#include "logic/rotate/rotate_comp.h"
 
 class Context;
 
@@ -19,15 +20,24 @@ namespace Editor
         ComponentWrap<T>::Draw(context, std::static_pointer_cast<T>(component), isInit);
     }
 
+#define TYPE_TO_DRAW(class)                \
+    {                                      \
+        class ::type, ComponentDraw<class> \
+    }
+
     static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<void>, bool)>>
         drawMap{
-            {Logic::Transform::type, ComponentDraw<Logic::Transform>},
-            {Logic::Camera::type, ComponentDraw<Logic::Camera>},
-            {Render::DirectionLight::type, ComponentDraw<Render::DirectionLight>},
-            {Render::PointLight::type, ComponentDraw<Render::PointLight>},
-            // Render::SpotLight::type, ComponentDraw<Render::SpotLight>},
-            {Render::Mesh::type, ComponentDraw<Render::Mesh>},
-            {Render::Material::type, ComponentDraw<Render::Material>}};
+            // logic
+            TYPE_TO_DRAW(Logic::Transform),
+            TYPE_TO_DRAW(Logic::Camera),
+            TYPE_TO_DRAW(Logic::RotateAround),
+            // render
+            TYPE_TO_DRAW(Render::DirectionLight),
+            TYPE_TO_DRAW(Render::PointLight),
+            // TYPE_TO_DRAW(Render::SpotLight),
+            TYPE_TO_DRAW(Render::Mesh),
+            TYPE_TO_DRAW(Render::Material),
+        };
 
     static bool HasWrap(Context *context, std::string type)
     {

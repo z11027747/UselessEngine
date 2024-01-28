@@ -1,5 +1,6 @@
 
 #include "logic/transform/transform_comp.h"
+#include "logic/move/move_comp.h"
 #include "logic/move/move_logic.h"
 #include "logic/move/move_system.h"
 #include "engine_object.h"

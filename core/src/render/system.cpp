@@ -31,7 +31,7 @@ namespace Render
 		globalEO = std::make_shared<EngineObject>();
 
 		auto global = std::make_shared<Global>();
-		globalEO->AddComponent<Global>(global);
+		context->AddComponent<Global>(globalEO, global);
 
 		auto windowExtensions = GetWindowExtensions();
 
@@ -61,10 +61,10 @@ namespace Render
 		auto mainPass = RenderPassLogic::CreateMain(context);
 		auto shadowPass = RenderPassLogic::CreateShadow(context);
 
-		PipelineLogic::Create(context, Pipeline_Shadow, shadowPass);
-		PipelineLogic::Create(context, Pipeline_Skybox, mainPass);
-		PipelineLogic::Create(context, Pipeline_LightModel, mainPass);
-		PipelineLogic::Create(context, Pipeline_Color, mainPass);
+		PipelineLogic::Create(context, Define::Pipeline::Shadow, shadowPass);
+		PipelineLogic::Create(context, Define::Pipeline::Skybox, mainPass);
+		PipelineLogic::Create(context, Define::Pipeline::LightModel, mainPass);
+		PipelineLogic::Create(context, Define::Pipeline::Color, mainPass);
 
 		MeshInstanceLogic::CreateCache(context);
 		MaterialInstanceLogic::CreateCache(context);

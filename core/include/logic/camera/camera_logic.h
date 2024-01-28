@@ -11,6 +11,9 @@ namespace Logic
 	class CameraLogic final
 	{
 	public:
+		static void OnAdd(Context *, std::shared_ptr<EngineObject>);
+		static void OnRemove(Context *, std::shared_ptr<EngineObject>);
+
 		static void UpdateView(std::shared_ptr<EngineObject>);
 		static void UpdateProjection(Context *, std::shared_ptr<Camera>);
 

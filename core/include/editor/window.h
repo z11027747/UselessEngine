@@ -15,7 +15,7 @@ namespace Editor
 	class Window final
 	{
 	public:
-		static void Draw(Context *context)
+		inline static void Draw(Context *context)
 		{
 			DrawMenuBar(context);
 			DrawHierachy(context);

@@ -3,7 +3,6 @@
 #include <vector>
 #include <memory>
 #include "render/vk/pass/pass_comp.h"
-#include "render/render_pass/render_pass_comp.h"
 
 class Context;
 

@@ -42,12 +42,6 @@ namespace Editor
 		static void Update(Context *);
 	};
 
-	class AxisSelectSystem final
-	{
-	public:
-		static bool Update(Context *);
-	};
-
 	class EOSelectSystem final
 	{
 	public:

@@ -9,7 +9,7 @@
 #include "render/vk/image/sampler_logic.h"
 #include "render/mesh/mesh_comp.h"
 #include "render/material/impl/material_light_model_logic.h"
-#include "render/render_pass/render_pass_comp.h"
+#include "common/define.h"
 #include "engine_object.h"
 #include "context.h"
 
@@ -74,7 +74,7 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
-		auto &shadowPass = global->passMap[Pass_Shadow];
+		auto &shadowPass = global->passMap[Define::Pass::Shadow];
 		auto depthImageSampler = SamplerLogic::CreateDepth(context);
 
 		VkDescriptorImageInfo shadowImageInfo = {

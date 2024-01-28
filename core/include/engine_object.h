@@ -4,19 +4,23 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <functional>
 
 class EngineObject final
 {
 public:
-	inline static uint32_t beginId{0};
-
-	uint32_t id;
+	inline static int beginId{0};
 
 	EngineObject() : id(beginId++) {}
 
+	int id;
 	std::string name{""};
 	bool active{true};
+
+	// TODO Bits
 	bool hideInHierarchy{false};
+	bool save{true};
+	bool dontDestroy{false};
 
 	std::map<std::string, std::shared_ptr<void>> componentMap{};
 
@@ -30,9 +34,8 @@ public:
 	template <typename T>
 	void AddComponent(std::shared_ptr<T> comp)
 	{
-		componentMap[T::type] = comp;
+		AddComponent(T::type, comp);
 	}
-
 	void AddComponent(const std::string &type, std::shared_ptr<void> comp)
 	{
 		componentMap[type] = comp;
@@ -53,7 +56,11 @@ public:
 	template <typename T>
 	void RemoveComponent()
 	{
-		auto it = componentMap.find(T::type);
+		RemoveComponent(T::type);
+	}
+	void RemoveComponent(const std::string &type)
+	{
+		auto it = componentMap.find(type);
 		if (it != componentMap.end())
 		{
 			componentMap.erase(it);

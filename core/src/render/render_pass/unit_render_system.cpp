@@ -7,9 +7,9 @@
 #include "render/vk/global/global_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/material/material_logic.h"
-#include "render/render_pass/render_pass_comp.h"
 #include "render/render_pass/render_pass_system.h"
 #include "logic/transform/transform_comp.h"
+#include "common/define.h"
 #include "engine_object.h"
 #include "context.h"
 
@@ -23,7 +23,7 @@ namespace Render
         auto global = globalEO->GetComponent<Global>();
         auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
-        auto &graphicsPipeline = global->pipelineMap[!isShadow ? pipelineName : Pipeline_Shadow];
+        auto &graphicsPipeline = global->pipelineMap[!isShadow ? pipelineName : Define::Pipeline::Shadow];
         auto &pipeline = graphicsPipeline->pipeline;
         auto &pipelineLayout = graphicsPipeline->pipelineLayout;
         vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -109,10 +109,10 @@ namespace Render
 
         UpdatePipeline(context,
                        imageIndex, isShadow,
-                       Pipeline_LightModel, materialEOMap[Pipeline_LightModel]);
+                       Define::Pipeline::LightModel, materialEOMap[Define::Pipeline::LightModel]);
 
         UpdatePipeline(context,
                        imageIndex, isShadow,
-                       Pipeline_Color, materialEOMap[Pipeline_Color]);
+                       Define::Pipeline::Color, materialEOMap[Define::Pipeline::Color]);
     }
 };

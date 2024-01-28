@@ -6,16 +6,9 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-
-const std::string Name_MainCamera = "MainCamera";
-const std::string Name_DirectionLight = "DirectionLight";
-const std::string Name_Skybox = "Skybox";
-const std::string Name_Axis = "Axis";
-const std::string Name_AxisX = "X";
-const std::string Name_AxisY = "Y";
-const std::string Name_AxisZ = "Z";
-
-class EngineObject;
+#include "common/define.h"
+#include "common/reflection/type.h"
+#include "engine_object.h"
 
 class Context final
 {
@@ -61,12 +54,41 @@ public:
 	std::vector<std::shared_ptr<EngineObject>> allEOs;
 	std::unordered_map<std::string, std::shared_ptr<EngineObject>> allEOMap;
 
-	bool CheckEO(std::shared_ptr<EngineObject>, bool);
-
 	void AddEO(std::shared_ptr<EngineObject>);
+	inline void RemoveEOInVector(std::shared_ptr<EngineObject> eo,
+								 std::vector<std::shared_ptr<EngineObject>> &vector)
+	{
+		vector.erase(std::remove(vector.begin(), vector.end(), eo), vector.end());
+	}
 	std::shared_ptr<EngineObject> GetEO(const std::string &);
 	void DestroyEO(std::shared_ptr<EngineObject>, bool = true);
 	void DestroyAllEOs();
+
+	template <typename T>
+	void AddComponent(std::shared_ptr<EngineObject> eo, std::shared_ptr<T> comp)
+	{
+		eo->AddComponent<T>(comp);
+		Common::Type::OnAdd(T::type, this, eo);
+	}
+	void AddComponent(std::shared_ptr<EngineObject> eo,
+					  const std::string &type, std::shared_ptr<void> comp)
+	{
+		eo->AddComponent(type, comp);
+		Common::Type::OnAdd(type, this, eo);
+	}
+
+	template <typename T>
+	void RemoveComponent(std::shared_ptr<EngineObject> eo)
+	{
+		eo->RemoveComponent<T>();
+		Common::Type::OnRemove(T::type, this, eo);
+	}
+	void AddComponent(std::shared_ptr<EngineObject> eo,
+					  const std::string &type)
+	{
+		eo->RemoveComponent(type);
+		Common::Type::OnRemove(type, this, eo);
+	}
 
 	// scene
 	std::string newSceneName{""};

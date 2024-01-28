@@ -12,6 +12,16 @@
 namespace Logic
 {
 	void TransformLogic::Add(std::shared_ptr<EngineObject> eo,
+							 const glm::vec3 &p, const glm::vec3 &ea)
+	{
+		auto transform = std::make_shared<Transform>();
+		transform->localPosition = p;
+		transform->localEulerAngles = ea;
+		transform->localScale = glm::vec3(1.0f);
+
+		eo->AddComponent<Transform>(transform);
+	}
+	void TransformLogic::Add(std::shared_ptr<EngineObject> eo,
 							 const glm::vec3 &p, const glm::vec3 &ea, const glm::vec3 &s)
 	{
 		auto transform = std::make_shared<Transform>();

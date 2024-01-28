@@ -3,7 +3,7 @@
 #include "editor/imgui_demo/imgui_impl_glfw.h"
 #include "editor/imgui_demo/imgui_impl_vulkan.h"
 #include "render/vk/global/global_comp.h"
-#include "editor/test_logic.h"
+#include "editor/imgui_logic.h"
 #include "editor/system.h"
 #include "editor/window.h"
 #include "engine_object.h"

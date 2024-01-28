@@ -13,6 +13,8 @@ namespace Logic
 	{
 	public:
 		static void Add(std::shared_ptr<EngineObject>,
+						const glm::vec3 &, const glm::vec3 &);
+		static void Add(std::shared_ptr<EngineObject>,
 						const glm::vec3 &, const glm::vec3 &, const glm::vec3 &);
 		static void SetScale(std::shared_ptr<EngineObject>, const glm::vec3 &);
 		static void SetScale(std::shared_ptr<EngineObject>, float);

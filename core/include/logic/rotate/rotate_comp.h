@@ -15,6 +15,5 @@ namespace Logic
         std::shared_ptr<EngineObject> targetEO;
         glm::vec3 offset;
         float angleSpeed;
-        float currAngle;
     };
 }

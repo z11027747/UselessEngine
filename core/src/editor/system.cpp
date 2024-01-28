@@ -1,5 +1,6 @@
 
-#include "editor/test_logic.h"
+#include "editor/imgui_logic.h"
+#include "editor/axis/axis_system.h"
 #include "editor/system.h"
 #include "editor/window.h"
 #include "context.h"
@@ -11,8 +12,8 @@ namespace Editor
 
 	void System::Create(Context *context)
 	{
-		TestLogic::CreateImGui(context);
-		TestLogic::CreateDescriptor(context);
+		ImGuiLogic::CreateImGui(context);
+		ImGuiLogic::CreateDescriptor(context);
 	}
 
 	void System::Update(Context *context)
@@ -29,7 +30,7 @@ namespace Editor
 
 	void System::Destroy(Context *context)
 	{
-		TestLogic::DestroyDescriptor(context);
-		TestLogic::DestroyImGui(context);
+		ImGuiLogic::DestroyDescriptor(context);
+		ImGuiLogic::DestroyImGui(context);
 	}
 }

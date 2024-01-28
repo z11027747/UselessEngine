@@ -6,11 +6,11 @@
 #include "render/system.h"
 #include "logic/move/move_comp.h"
 #include "logic/rotate/rotate_logic.h"
+#include "logic/scene/scene_logic.h"
 #include "logic/system.h"
 #include "editor/system.h"
-#include "editor/test_logic.h"
+#include "editor/imgui_logic.h"
 #include "editor/json/component_json.h"
-#include "editor/json/component_json_mapping.h"
 #include "common/res_system.h"
 #include "engine_object.h"
 #include "context.h"
@@ -19,11 +19,6 @@ void Context::Create()
 {
     Render::System::Create(this);
     Logic::System::Create(this);
-
-    // Test
-    Editor::TestLogic::CreateMainCamera(this);
-    Editor::TestLogic::CreateLight(this);
-    Editor::TestLogic::CreateAxis(this);
 }
 
 void Context::Update()
@@ -56,80 +51,14 @@ void Context::Destroy()
     Logic::System::Destroy(this);
 }
 
-void RemoveEoInVec(std::vector<std::shared_ptr<EngineObject>> &vec, std::shared_ptr<EngineObject> eo)
-{
-    vec.erase(std::remove(vec.begin(), vec.end(), eo), vec.end());
-}
-
-// TODO
-bool Context::CheckEO(std::shared_ptr<EngineObject> eo, bool add)
-{
-    if (eo->name == Name_MainCamera)
-    {
-        if (add)
-            logicMainCameraEO = eo;
-        else
-            logicMainCameraEO = nullptr;
-    }
-    if (eo->name == Name_AxisX || eo->name == Name_AxisY || eo->name == Name_AxisZ)
-    {
-        if (add)
-            editorAxisEOs.push_back(eo);
-        else
-            RemoveEoInVec(editorAxisEOs, eo);
-    }
-
-    if (eo->HasComponent<Render::DirectionLight>() ||
-        eo->HasComponent<Render::PointLight>() ||
-        eo->HasComponent<Render::SpotLight>())
-    {
-        if (add)
-            renderLightEOs.push_back(eo);
-        else
-            RemoveEoInVec(renderLightEOs, eo);
-    }
-    if (eo->HasComponent<Render::Mesh>())
-    {
-        if (add)
-            renderMeshEOs.push_back(eo);
-        else
-        {
-            Render::MeshLogic::TryDestroyEO(this, eo);
-            RemoveEoInVec(renderMeshEOs, eo);
-        }
-    }
-    if (eo->HasComponent<Render::Material>())
-    {
-        if (add)
-            renderMaterialEOs.push_back(eo);
-        else
-        {
-            Render::MaterialLogic::TryDestroyEO(this, eo);
-            RemoveEoInVec(renderMaterialEOs, eo);
-        }
-    }
-
-    if (eo->HasComponent<Logic::RotateAround>())
-    {
-        if (add)
-        {
-            // TODO 临时放在这
-            Logic::RotateLogic::BeginRotateAround(this,
-                                                  eo,
-                                                  GetEO("Cube"), 10);
-            logicRotateEOs.push_back(eo);
-        }
-        else
-        {
-            RemoveEoInVec(logicRotateEOs, eo);
-        }
-    }
-    return true;
-}
-
 void Context::AddEO(std::shared_ptr<EngineObject> eo)
 {
-    CheckEO(eo, true);
+    // auto &componentMap = eo->componentMap;
+    // for (const auto &kv : componentMap)
+    // {
+    //     auto &type = kv.first;
+    //     Common::Type::OnAdd(type, this, eo);
+    // }
 
     allEOs.push_back(eo);
     allEOMap.emplace(eo->name, eo);
@@ -142,7 +71,13 @@ std::shared_ptr<EngineObject> Context::GetEO(const std::string &name)
 
 void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
 {
-    CheckEO(eo, false);
+    auto &componentMap = eo->componentMap;
+    for (const auto &kv : componentMap)
+    {
+        auto &type = kv.first;
+        Common::Type::OnRemove(type, this, eo);
+    }
+    eo->RemoveAllComponents();
 
     if (remove)
     {

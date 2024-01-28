@@ -17,10 +17,10 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Pipeline_Color, MaterialColorPipelineLogic::SetVertexAttrDescriptions},
-                {Pipeline_LightModel, MaterialLightModelPipelineLogic::SetVertexAttrDescriptions},
-                {Pipeline_Shadow, MaterialShadowPipelineLogic::SetVertexAttrDescriptions},
-                {Pipeline_Skybox, MaterialSkyboxPipelineLogic::SetVertexAttrDescriptions},
+                {Define::Pipeline::Color, MaterialColorPipelineLogic::SetVertexAttrDescriptions},
+                {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetVertexAttrDescriptions},
+                {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetVertexAttrDescriptions},
+                {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetVertexAttrDescriptions},
             };
 
         auto &name = graphicsPipeline->name;
@@ -33,7 +33,7 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Pipeline_Shadow, MaterialColorPipelineLogic::SetViewport},
+                {Define::Pipeline::Shadow, MaterialColorPipelineLogic::SetViewport},
             };
 
         auto &name = graphicsPipeline->name;
@@ -46,10 +46,10 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Pipeline_Color, MaterialColorPipelineLogic::SetRasterizationCreateInfo},
-                {Pipeline_LightModel, MaterialLightModelPipelineLogic::SetRasterizationCreateInfo},
-                {Pipeline_Shadow, MaterialShadowPipelineLogic::SetRasterizationCreateInfo},
-                {Pipeline_Skybox, MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Color, MaterialColorPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo},
             };
 
         auto &name = graphicsPipeline->name;
@@ -62,7 +62,7 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Pipeline_LightModel, MaterialLightModelPipelineLogic::SetMultisampleCreateInfo},
+                {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetMultisampleCreateInfo},
             };
 
         auto &name = graphicsPipeline->name;
@@ -75,8 +75,8 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Pipeline_Color, MaterialColorPipelineLogic::SetDepthStencilCreateInfo},
-                {Pipeline_Skybox, MaterialSkyboxPipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::Color, MaterialColorPipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetDepthStencilCreateInfo},
             };
 
         auto &name = graphicsPipeline->name;

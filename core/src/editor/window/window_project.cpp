@@ -5,7 +5,6 @@
 #include <json/json11.hpp>
 #include "editor/window.h"
 #include "editor/json/component_json.h"
-#include "editor/json/component_json_mapping.h"
 #include "common/log_system.h"
 #include "common/res_system.h"
 #include "engine_object.h"

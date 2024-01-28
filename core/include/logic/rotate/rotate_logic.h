@@ -12,6 +12,9 @@ namespace Logic
     class RotateLogic final
     {
     public:
+        static void OnAdd(Context *, std::shared_ptr<EngineObject>);
+        static void OnRemove(Context *, std::shared_ptr<EngineObject>);
+
         static void BeginRotateAround(Context *,
                                       std::shared_ptr<EngineObject>,
                                       std::shared_ptr<EngineObject>, float);

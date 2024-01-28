@@ -17,9 +17,9 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Pipeline_Color, MaterialColorDescriptorLogic::CreateSetLayout},
-                {Pipeline_LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
-                {Pipeline_Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Color, MaterialColorDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
             };
 
         auto &name = graphicsPipeline->name;
@@ -32,9 +32,9 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Pipeline_Color, MaterialColorDescriptorLogic::DestroySetLayout},
-                {Pipeline_LightModel, MaterialLightModelDescriptorLogic::DestroySetLayout},
-                {Pipeline_Skybox, MaterialSkyboxDescriptorLogic::DestroySetLayout},
+                {Define::Pipeline::Color, MaterialColorDescriptorLogic::DestroySetLayout},
+                {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::DestroySetLayout},
+                {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::DestroySetLayout},
             };
 
         auto &name = graphicsPipeline->name;
@@ -47,9 +47,9 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialInstance>)>>
             funcMap{
-                {Pipeline_Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
-                {Pipeline_LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
-                {Pipeline_Skybox, MaterialSkyboxDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::AllocateAndUpdate},
             };
 
         auto &name = instance->info->pipelineName;
@@ -62,9 +62,9 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialInstance>)>>
             funcMap{
-                {Pipeline_Color, MaterialColorDescriptorLogic::Destroy},
-                {Pipeline_LightModel, MaterialLightModelDescriptorLogic::Destroy},
-                {Pipeline_Skybox, MaterialSkyboxDescriptorLogic::Destroy},
+                {Define::Pipeline::Color, MaterialColorDescriptorLogic::Destroy},
+                {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::Destroy},
+                {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::Destroy},
             };
 
         auto &name = instance->info->pipelineName;

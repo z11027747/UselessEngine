@@ -16,7 +16,7 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
 
         auto instanceCache = std::make_shared<MaterialInstanceCache>();
-        globalEO->AddComponent(instanceCache);
+        context->AddComponent(globalEO, instanceCache);
     }
 
     void MaterialInstanceLogic::DestroyCache(Context *context)

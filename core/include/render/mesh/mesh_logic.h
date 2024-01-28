@@ -13,6 +13,9 @@ namespace Render
     class MeshLogic final
     {
     public:
+        static void OnAdd(Context *, std::shared_ptr<EngineObject>);
+        static void OnRemove(Context *, std::shared_ptr<EngineObject>);
+
         static bool IsShared(Context *, std::shared_ptr<Mesh>);
         static void TryDestroyEO(Context *, std::shared_ptr<EngineObject>);
     };

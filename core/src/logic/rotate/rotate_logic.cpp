@@ -18,9 +18,7 @@ namespace Logic
         else
         {
             rotateAround = std::make_shared<RotateAround>();
-            selfEO->AddComponent(rotateAround);
-
-            context->logicRotateEOs.push_back(selfEO);
+            context->AddComponent(selfEO, rotateAround);
         }
 
         auto selfTransform = selfEO->GetComponent<Transform>();
@@ -30,7 +28,6 @@ namespace Logic
         rotateAround->targetEO = targetEO;
         rotateAround->offset = offset;
         rotateAround->angleSpeed = angleSpeed;
-        rotateAround->currAngle = 0.0f;
     }
 
     void RotateLogic::BeginRotateAround(Context *context,
@@ -45,14 +42,11 @@ namespace Logic
         else
         {
             rotateAround = std::make_shared<RotateAround>();
-            selfEO->AddComponent(rotateAround);
-
-            context->logicRotateEOs.push_back(selfEO);
+            context->AddComponent(selfEO, rotateAround);
         }
 
         rotateAround->targetEO = targetEO;
         rotateAround->offset = offset;
         rotateAround->angleSpeed = angleSpeed;
-        rotateAround->currAngle = 0.0f;
     }
 }
