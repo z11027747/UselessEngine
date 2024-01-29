@@ -48,7 +48,7 @@ namespace Editor
 		ImGui::Text("EulerAngles");
 
 		if (dragMode)
-			ImGui_Drag_GlmVec3(transform->localScale, 1, 0.02f);
+			ImGui_Drag_GlmVec3(transform->localScale, 2, 0.02f);
 		else
 			ImGui_Input_GlmVec3(transform->localScale, 2);
 		ImGui::SameLine();

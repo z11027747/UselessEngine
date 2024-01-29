@@ -92,12 +92,13 @@ namespace Render
 		auto global = globalEO->GetComponent<Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
-		// auto shadowMapSize = 512u;
-
 		auto pass = std::make_shared<Pass>();
 		pass->name = Define::Pass::Shadow;
-		// pass->extent = {shadowMapSize, shadowMapSize};
 		pass->extent = {currentExtent.width, currentExtent.height};
+
+		// TODO 如果是512*512的就显示不对 可能没在NDC空间里面算 有BUG
+		// auto shadowMapSize = 512u;
+		// pass->extent = {shadowMapSize, shadowMapSize};
 
 		PassLogic::CreateDepthAttachment(context, pass,
 										 VK_SAMPLE_COUNT_1_BIT, 0);

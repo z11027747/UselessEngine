@@ -61,7 +61,7 @@ namespace Editor
 
         if (ImGui::Begin("ShadowMap", NULL))
         {
-            auto &shadowPass = global->passMap[Define::Pass::Main];
+            auto &shadowPass = global->passMap[Define::Pass::Shadow];
             auto shadowMapExtent = shadowPass->extent;
 
             if (shadowMapExtent.width == shadowMapExtent.height)
