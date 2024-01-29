@@ -15,9 +15,11 @@
 
 namespace Render
 {
-    static void UpdatePipeline(Context *context,
-                               uint32_t imageIndex, bool isShadow,
-                               const std::string &pipelineName, std::vector<std::shared_ptr<EngineObject>> materialEOs)
+    static std::unordered_map<std::string, std::vector<std::shared_ptr<EngineObject>>> materialEOMap{};
+
+    static void RenderSinglePipeline(Context *context,
+                                     uint32_t imageIndex, bool isShadow,
+                                     const std::string &pipelineName)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -28,18 +30,21 @@ namespace Render
         auto &pipelineLayout = graphicsPipeline->pipelineLayout;
         vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
+        auto &materialEOs = materialEOMap[pipelineName];
         for (const auto &materialEO : materialEOs)
         {
             auto transform = materialEO->GetComponent<Logic::Transform>();
+            auto &model = transform->model;
+
             auto mesh = materialEO->GetComponent<Render::Mesh>();
-            auto material = materialEO->GetComponent<Render::Material>();
-            auto &materialInfo = material->info;
-
-            if (isShadow && !materialInfo->castShadow)
-                continue;
-
             auto &meshInstance = mesh->instance;
             auto &meshInfo = mesh->info;
+
+            auto material = materialEO->GetComponent<Render::Material>();
+            auto &materialInstance = material->instance;
+            auto &materialInfo = material->info;
+            if (isShadow && !materialInfo->castShadow)
+                continue;
 
             auto vertexBuffer = meshInstance->vertexBuffer->vkBuffer;
             auto indexBuffer = meshInstance->indexBuffer->vkBuffer;
@@ -50,7 +55,6 @@ namespace Render
             vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, vertexBuffers, offsets);
             vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-            auto &model = transform->model;
             vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 
             std::vector<VkDescriptorSet> descriptorSets;
@@ -58,7 +62,6 @@ namespace Render
 
             if (!isShadow)
             {
-                auto &materialInstance = material->instance;
                 if (materialInstance->descriptor != nullptr)
                     descriptorSets.push_back(materialInstance->descriptor->set);
             }
@@ -74,7 +77,8 @@ namespace Render
     void UnitRenderSystem::Update(Context *context,
                                   uint32_t imageIndex, bool isShadow)
     {
-        std::unordered_map<std::string, std::vector<std::shared_ptr<EngineObject>>> materialEOMap;
+
+        materialEOMap.clear();
 
         auto &materialEOs = context->renderMaterialEOs;
         for (const auto &materialEO : materialEOs)
@@ -107,12 +111,10 @@ namespace Render
                       });
         }
 
-        UpdatePipeline(context,
-                       imageIndex, isShadow,
-                       Define::Pipeline::LightModel, materialEOMap[Define::Pipeline::LightModel]);
+        RenderSinglePipeline(context,
+                             imageIndex, isShadow, Define::Pipeline::LightModel);
 
-        UpdatePipeline(context,
-                       imageIndex, isShadow,
-                       Define::Pipeline::Color, materialEOMap[Define::Pipeline::Color]);
+        RenderSinglePipeline(context,
+                             imageIndex, isShadow, Define::Pipeline::Color);
     }
 };

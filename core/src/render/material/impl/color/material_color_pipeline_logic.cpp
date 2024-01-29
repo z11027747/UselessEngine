@@ -48,10 +48,20 @@ namespace Render
 		auto &depthStencilStateCreateInfo = stageInfo.depthStencilStateCreateInfo;
 		depthStencilStateCreateInfo.depthTestEnable = true;
 		depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
-		depthStencilStateCreateInfo.depthWriteEnable = true;
+		depthStencilStateCreateInfo.depthWriteEnable = false;
 	}
 	void MaterialColorPipelineLogic::SetColorBlendStage(Context *context,
 														std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
+		auto &stageInfo = graphicsPipeline->stageInfo;
+
+		auto &colorBlendAttachmentState = stageInfo.colorBlendAttachmentState;
+		colorBlendAttachmentState.blendEnable = true;
+		colorBlendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		colorBlendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		colorBlendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
+		colorBlendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		colorBlendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		colorBlendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
 	}
 }

@@ -87,5 +87,14 @@ namespace Render
     void MaterialPipelineLogic::SetColorBlendStage(Context *context,
                                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
+            funcMap{
+                {Define::Pipeline::Color, MaterialColorPipelineLogic::SetColorBlendStage},
+            };
+
+        auto &name = graphicsPipeline->name;
+        auto it = funcMap.find(name);
+        if (it != funcMap.end())
+            funcMap[name](context, graphicsPipeline);
     }
 }

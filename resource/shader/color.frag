@@ -1,7 +1,7 @@
 #version 450
 
 layout(set = 1, binding = 0) uniform MaterialUBO {
-    vec4 params; //col r+g+b
+    vec4 params; //col rgba
 } materialUBO;
 
 layout(location = 0) in vec3 inColor;
@@ -9,6 +9,6 @@ layout(location = 0) in vec3 inColor;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    vec3 col = materialUBO.params.xyz;
-    outColor = vec4(col * inColor, 1.0);
+    vec4 col = materialUBO.params;
+    outColor = vec4(col.rgb * inColor, col.a);
 }

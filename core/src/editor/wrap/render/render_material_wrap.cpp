@@ -147,7 +147,7 @@ namespace Editor
 		else if (info->pipelineName == Define::Pipeline::Color)
 		{
 			auto &params0 = info->params[0];
-			ImGui::ColorEdit3("Color", &params0.x);
+			ImGui::ColorEdit4("Color", &params0.x);
 		}
 		else if (info->pipelineName == Define::Pipeline::LightModel)
 		{

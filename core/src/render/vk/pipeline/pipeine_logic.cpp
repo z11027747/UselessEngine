@@ -271,8 +271,10 @@ namespace Render
 
 		auto &colorBlendAttachmentState = stageInfo.colorBlendAttachmentState;
 		colorBlendAttachmentState.blendEnable = false;
-		colorBlendAttachmentState.colorWriteMask =
-			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		colorBlendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+												   VK_COLOR_COMPONENT_G_BIT |
+												   VK_COLOR_COMPONENT_B_BIT |
+												   VK_COLOR_COMPONENT_A_BIT;
 
 		auto &colorBlendingStateCreateInfo = stageInfo.colorBlendingStateCreateInfo;
 		colorBlendingStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
