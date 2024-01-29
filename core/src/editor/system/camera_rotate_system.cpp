@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include "logic/camera/camera_logic.h"
 #include "logic/camera/camera_system.h"
+#include "logic/transform/transform_logic.h"
 #include "editor/window.h"
 #include "editor/system.h"
 #include "engine_object.h"

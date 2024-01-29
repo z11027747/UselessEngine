@@ -7,13 +7,12 @@
 
 namespace Editor
 {
-	VkDescriptorSetLayout System::descriptorSetLayout = nullptr;
-	std::shared_ptr<Render::Descriptor> System::descriptor = nullptr;
-
 	void System::Create(Context *context)
 	{
 		ImGuiLogic::CreateImGui(context);
+		ImGuiLogic::CreateDescriptorSetLayout(context);
 		ImGuiLogic::CreateDescriptor(context);
+		ImGuiLogic::CreateDescriptor_ShadowMap(context);
 	}
 
 	void System::Update(Context *context)
@@ -30,7 +29,7 @@ namespace Editor
 
 	void System::Destroy(Context *context)
 	{
-		ImGuiLogic::DestroyDescriptor(context);
+		ImGuiLogic::DestroyDescriptorSetLayout(context);
 		ImGuiLogic::DestroyImGui(context);
 	}
 }

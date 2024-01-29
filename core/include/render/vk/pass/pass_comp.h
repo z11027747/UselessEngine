@@ -24,6 +24,9 @@ namespace Render
 		std::shared_ptr<Image> resolveImage2d;
 		VkSampleCountFlagBits msaaSamples{VK_SAMPLE_COUNT_1_BIT};
 
+		VkOffset2D offset{0, 0};
+		VkExtent2D extent{0, 0};
+
 		VkClearColorValue clearColorValue;
 		VkClearDepthStencilValue clearDepthValue;
 

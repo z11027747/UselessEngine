@@ -113,11 +113,9 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto surfaceFormat = global->surfaceFormat;
-		auto &currentExtent = global->surfaceCapabilities.currentExtent;
-		auto swapchainImageCount = global->swapchainImageCount;
 
 		ImageCreateInfo imageCreateInfo = {
-			surfaceFormat.format, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
+			surfaceFormat.format, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 			// image
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -143,11 +141,10 @@ namespace Render
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
-		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 		auto depthFormat = global->depthFormat;
 
 		ImageCreateInfo imageCreateInfo = {
-			depthFormat, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
+			depthFormat, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT,
 			// image
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -175,10 +172,9 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto surfaceFormat = global->surfaceFormat;
-		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
 		ImageCreateInfo imageCreateInfo = {
-			surfaceFormat.format, {currentExtent.width, currentExtent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
+			surfaceFormat.format, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 			// image
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -243,7 +239,7 @@ namespace Render
 		subpassDependency.srcAccessMask = srcAccessMask;
 		subpassDependency.dstStageMask = dstStageMask;
 		subpassDependency.dstAccessMask = dstAccessMask;
-		// subpassDependency.dependencyFlags = dependencyFlags;
+		subpassDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
 		pass->subpassDependencies.push_back(subpassDependency);
 	}

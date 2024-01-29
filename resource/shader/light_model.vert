@@ -64,7 +64,7 @@ void main() {
 
     fragColor = color;
     fragUV0 = uv0;
-    fragPositionLS = directionLight.projection * directionLight.view * vec4(fragPositionWS, 1.0);
+    fragPositionLS = directionLight.projection * directionLight.view * push.model * vec4(positionOS, 1.0);
 
-    gl_Position = camera.projection * camera.view * vec4(fragPositionWS, 1.0);
+    gl_Position = camera.projection * camera.view * push.model * vec4(positionOS, 1.0);
 }

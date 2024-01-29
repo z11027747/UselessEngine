@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <memory>
+#include "render/vk/pipeline/descriptor_comp.h"
+#include "render/vk/image/image_comp.h"
+#include "logic/transform/transform_comp.h"
 
 class Context;
 
@@ -14,8 +17,18 @@ namespace Editor
     public:
         static void CreateImGui(Context *);
         static void DestroyImGui(Context *);
+
+        static VkDescriptorSetLayout descriptorSetLayout;
+
+        static void CreateDescriptorSetLayout(Context *);
+        static void DestroyDescriptorSetLayout(Context *);
+
+        static std::shared_ptr<Render::Descriptor> descriptor;
+        static std::shared_ptr<Render::Descriptor> descriptor_ShadowMap; // forDebug -- ShadowMap
+
+        static std::shared_ptr<Render::Descriptor> CreateDescriptor(Context *, std::shared_ptr<Render::Image> image);
         static void CreateDescriptor(Context *);
-        static void DestroyDescriptor(Context *);
+        static void CreateDescriptor_ShadowMap(Context *);
     };
 
     inline static bool ImGui_ButtonWithColor(const char *label, ImVec4 color, bool cond = true)

@@ -33,7 +33,7 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Define::Pipeline::Shadow, MaterialColorPipelineLogic::SetViewport},
+                {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetViewport},
             };
 
         auto &name = graphicsPipeline->name;

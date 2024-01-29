@@ -42,7 +42,7 @@ namespace Render
 		alignas(16) CameraUBO camera;
 		alignas(16) DirectionLightUBO directionLight;
 		alignas(16) PointLightUBO pointLights[4];
-		alignas(16) int activePointLights;
+		alignas(4) int activePointLights;
 	};
 
 	struct MaterialUBO final

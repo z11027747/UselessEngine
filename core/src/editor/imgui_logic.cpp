@@ -18,6 +18,7 @@
 
 namespace Editor
 {
+
     void ImGuiLogic::CreateImGui(Context *context)
     {
         auto &window = context->window;
@@ -38,6 +39,12 @@ namespace Editor
         style.FrameBorderSize = 1.0f;
         style.PopupBorderSize = 1.0f;
         style.SeparatorTextAlign = {1.0f, 0.5f};
+        style.AntiAliasedLines = true;
+        style.AntiAliasedLinesUseTex = false;
+        style.AntiAliasedFill = false;
+
+        auto *colors = style.Colors;
+        // colors[ImGuiCol_TitleBg] = ImVec4(1.0f, 0.63f, 0.0f, 1.0f);
 
         ImGui_ImplGlfw_InitForVulkan(window, true);
         ImGui_ImplVulkan_InitInfo init_info = {};
@@ -66,14 +73,10 @@ namespace Editor
         ImGui::DestroyContext();
     }
 
-    void ImGuiLogic::CreateDescriptor(Context *context)
-    {
-        auto &globalEO = context->renderGlobalEO;
-        auto global = globalEO->GetComponent<Render::Global>();
-        auto &logicalDevice = global->logicalDevice;
-        auto &currentExtent = global->surfaceCapabilities.currentExtent;
-        auto swapchainImageCount = global->swapchainImageCount;
+    VkDescriptorSetLayout ImGuiLogic::descriptorSetLayout = nullptr;
 
+    void ImGuiLogic::CreateDescriptorSetLayout(Context *context)
+    {
         VkDescriptorSetLayoutBinding samplerBinding0 = {
             0,
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -83,11 +86,18 @@ namespace Editor
         std::vector<VkDescriptorSetLayoutBinding> bindings;
         bindings.push_back(samplerBinding0);
 
-        auto descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
+        descriptorSetLayout = Render::DescriptorSetLayoutLogic::Create(context, bindings);
+    }
 
-        // auto &image2d = global->passMap[Define::Pass::Main]->colorImage2ds[0];
-        auto &image2d = global->passMap[Define::Pass::Main]->resolveImage2d;
-        // auto &image2d = global->passMap[Define::Pass::Shadow]->depthImage2d;
+    void ImGuiLogic::DestroyDescriptorSetLayout(Context *context)
+    {
+        Render::DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
+    }
+
+    std::shared_ptr<Render::Descriptor> ImGuiLogic::CreateDescriptor(Context *context, std::shared_ptr<Render::Image> image)
+    {
+        auto &globalEO = context->renderGlobalEO;
+        auto global = globalEO->GetComponent<Render::Global>();
 
         auto descriptorSet = Render::DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 
@@ -96,8 +106,8 @@ namespace Editor
 
         VkDescriptorImageInfo imageInfo = {
             global->globalSamplerClamp,
-            image2d->vkImageView,
-            image2d->layout};
+            image->vkImageView,
+            image->layout};
 
         descriptor->imageInfos.push_back(imageInfo);
 
@@ -108,15 +118,28 @@ namespace Editor
                                                                                       descriptor->set, 0, descriptor->imageInfos[0]);
                                            });
 
-        System::descriptorSetLayout = descriptorSetLayout;
-        System::descriptor = descriptor;
+        return descriptor;
     }
 
-    void ImGuiLogic::DestroyDescriptor(Context *context)
-    {
-        auto &descriptorSetLayout = System::descriptorSetLayout;
-        auto &descriptor = System::descriptor;
+    std::shared_ptr<Render::Descriptor> ImGuiLogic::descriptor = nullptr;
+    std::shared_ptr<Render::Descriptor> ImGuiLogic::descriptor_ShadowMap = nullptr;
 
-        Render::DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
+    void ImGuiLogic::CreateDescriptor(Context *context)
+    {
+        auto &globalEO = context->renderGlobalEO;
+        auto global = globalEO->GetComponent<Render::Global>();
+
+        // auto &image2d = global->passMap[Define::Pass::Main]->colorImage2ds[0];
+        auto &image2d = global->passMap[Define::Pass::Main]->resolveImage2d;
+        descriptor = CreateDescriptor(context, image2d);
+    }
+
+    void ImGuiLogic::CreateDescriptor_ShadowMap(Context *context)
+    {
+        auto &globalEO = context->renderGlobalEO;
+        auto global = globalEO->GetComponent<Render::Global>();
+
+        auto &image2d = global->passMap[Define::Pass::Shadow]->depthImage2d;
+        descriptor_ShadowMap = CreateDescriptor(context, image2d);
     }
 }

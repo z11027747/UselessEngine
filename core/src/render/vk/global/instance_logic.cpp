@@ -29,29 +29,19 @@ namespace Render
 		std::vector<const char *> enabledExtensions(windowExtensions);
 		if (enabledDebug)
 		{
-			enabledExtensions.push_back("VK_EXT_debug_utils");
+			enabledExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 		}
+		// enabledExtensions.push_back(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME);
 		instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(enabledExtensions.size());
 		instanceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 		std::vector<const char *> enabledLayers;
-		VkDebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfo = {};
-
 		if (enabledDebug)
 		{
 			enabledLayers.push_back("VK_LAYER_KHRONOS_validation");
-
-			instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(enabledLayers.size());
-			instanceCreateInfo.ppEnabledLayerNames = enabledLayers.data();
-
-			// MakeDebugUtilsMessengerCreateInfo(debugUtilsMessengerCreateInfo);
-			// instanceCreateInfo.pNext = reinterpret_cast<VkDebugUtilsMessengerCreateInfoEXT*>(&debugUtilsMessengerCreateInfo);
 		}
-		else
-		{
-			instanceCreateInfo.enabledLayerCount = 0;
-			instanceCreateInfo.pNext = nullptr;
-		}
+		instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(enabledLayers.size());
+		instanceCreateInfo.ppEnabledLayerNames = enabledLayers.data();
 
 		VkInstance vkInstance;
 		auto ret = vkCreateInstance(&instanceCreateInfo, nullptr, &vkInstance);

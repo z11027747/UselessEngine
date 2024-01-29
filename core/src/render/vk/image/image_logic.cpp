@@ -292,7 +292,7 @@ namespace Render
 		auto mipHeight = static_cast<int32_t>(image->extent.height);
 		auto mipLevels = image->mipLevels;
 
-		for (auto i = 1; i < mipLevels; i++)
+		for (auto i = 1u; i < mipLevels; i++)
 		{
 			barrier.subresourceRange.baseMipLevel = i - 1;
 			barrier.oldLayout = oldLayout;

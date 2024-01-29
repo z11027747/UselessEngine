@@ -17,7 +17,6 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
-		auto &surfaceCapabilities = global->surfaceCapabilities;
 		auto swapchainImageCount = global->swapchainImageCount;
 
 		for (auto i = 0u; i < swapchainImageCount; i++)
@@ -32,7 +31,7 @@ namespace Render
 
 			if (pass->depthImage2d != nullptr)
 				attachments.push_back(pass->depthImage2d->vkImageView);
-				
+
 			if (pass->resolveImage2d != nullptr)
 				attachments.push_back(pass->resolveImage2d->vkImageView);
 
@@ -40,8 +39,8 @@ namespace Render
 			createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			createInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 			createInfo.pAttachments = attachments.data();
-			createInfo.width = surfaceCapabilities.currentExtent.width;
-			createInfo.height = surfaceCapabilities.currentExtent.height;
+			createInfo.width = pass->extent.width;
+			createInfo.height =  pass->extent.height;
 			createInfo.renderPass = pass->renderPass;
 			createInfo.layers = 1;
 
@@ -98,8 +97,8 @@ namespace Render
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassBeginInfo.renderPass = renderPass;
 		renderPassBeginInfo.framebuffer = frameBuffer;
-		renderPassBeginInfo.renderArea.offset = {0, 0};
-		renderPassBeginInfo.renderArea.extent = surfaceCapabilities.currentExtent;
+		renderPassBeginInfo.renderArea.offset = pass->offset;
+		renderPassBeginInfo.renderArea.extent = pass->extent;
 		renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		renderPassBeginInfo.pClearValues = clearValues.data();
 
