@@ -48,6 +48,7 @@ namespace Render
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &swapchain = global->swapchain;
+		auto surfaceFormat = global->surfaceFormat;
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
 		uint32_t swapchainImageCount;
@@ -59,10 +60,9 @@ namespace Render
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			auto swapchainImage2d = std::make_shared<Image>();
-			swapchainImage2d->fomat = global->surfaceFormat.format;
+			swapchainImage2d->format = surfaceFormat.format;
 			swapchainImage2d->extent = {currentExtent.width, currentExtent.height, 0};
 			swapchainImage2d->aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			swapchainImage2d->layerCount = 1;
 			swapchainImage2d->layout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 			swapchainImage2d->vkImage = swapchainImages[i];
@@ -71,7 +71,7 @@ namespace Render
 								   swapchainImage2d,
 								   VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1, 1);
 
-			global->swapchainImages.push_back(std::move(swapchainImage2d));
+			global->swapchainImages.push_back(swapchainImage2d);
 		}
 		global->swapchainImageCount = swapchainImageCount;
 	}

@@ -40,7 +40,7 @@ namespace Render
 			createInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 			createInfo.pAttachments = attachments.data();
 			createInfo.width = pass->extent.width;
-			createInfo.height =  pass->extent.height;
+			createInfo.height = pass->extent.height;
 			createInfo.renderPass = pass->renderPass;
 			createInfo.layers = 1;
 

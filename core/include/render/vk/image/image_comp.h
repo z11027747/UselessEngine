@@ -27,12 +27,12 @@ namespace Render
 
 	struct Image final
 	{
-		VkFormat fomat;
+		VkFormat format;
 		VkExtent3D extent;
 		VkImageAspectFlags aspectMask;
-		uint32_t layerCount;
-		VkImageLayout layout;
-		uint32_t mipLevels;
+		uint32_t layerCount{1};
+		VkImageLayout layout{VK_IMAGE_LAYOUT_UNDEFINED};
+		uint32_t mipLevels{1};
 
 		VkImage vkImage;
 		VkDeviceSize size;

@@ -14,7 +14,7 @@ namespace Render
 	{
 		auto image = std::make_shared<Image>();
 
-		image->fomat = createInfo.format;
+		image->format = createInfo.format;
 		image->extent = createInfo.extent;
 		image->aspectMask = createInfo.aspectMask;
 		image->layerCount = createInfo.layerCount;
@@ -106,7 +106,7 @@ namespace Render
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
 
-		auto format = image->fomat;
+		auto format = image->format;
 		auto &vkImage = image->vkImage;
 
 		VkImageViewCreateInfo createInfo = {};
