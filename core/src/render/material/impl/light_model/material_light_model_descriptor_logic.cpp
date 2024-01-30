@@ -50,12 +50,6 @@ namespace Render
 
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
-	void MaterialLightModelDescriptorLogic::DestroySetLayout(Context *context,
-															 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
-		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
-	}
 
 	static int imageSize = 1 + 2; // shadow + albedo+normalMap
 

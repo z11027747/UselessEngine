@@ -23,12 +23,6 @@ namespace Render
 
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
-	void MaterialColorDescriptorLogic::DestroySetLayout(Context *context,
-														std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
-		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
-	}
 	void MaterialColorDescriptorLogic::AllocateAndUpdate(Context *context,
 														 std::shared_ptr<MaterialInstance> instance)
 	{

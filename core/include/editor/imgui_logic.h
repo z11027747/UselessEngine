@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <memory>
+#include <unordered_map>
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/image/image_comp.h"
 #include "logic/transform/transform_comp.h"
@@ -23,12 +24,11 @@ namespace Editor
         static void CreateDescriptorSetLayout(Context *);
         static void DestroyDescriptorSetLayout(Context *);
 
-        static std::shared_ptr<Render::Descriptor> descriptor;
-        static std::shared_ptr<Render::Descriptor> descriptor_ShadowMap; // forDebug -- ShadowMap
+        static std::unordered_map<std::string, std::shared_ptr<Render::Descriptor>> descriptorMap;
 
         static std::shared_ptr<Render::Descriptor> CreateDescriptor(Context *, std::shared_ptr<Render::Image> image);
-        static void CreateDescriptor(Context *);
-        static void CreateDescriptor_ShadowMap(Context *);
+        static void CreateDescriptors(Context *);
+        static VkDescriptorSet GetDescriptorSet(const std::string &);
     };
 
     inline static bool ImGui_ButtonWithColor(const char *label, ImVec4 color, bool cond = true)

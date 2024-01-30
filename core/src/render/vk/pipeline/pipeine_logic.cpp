@@ -157,17 +157,21 @@ namespace Render
 		auto &vertexInputAttributeDescriptions = stageInfo.vertexInputAttributeDescriptions;
 		MaterialPipelineLogic::SetVertexAttrDescriptions(context, graphicsPipeline);
 
-		auto &vertexBindingDescription = stageInfo.vertexBindingDescription;
-		vertexBindingDescription.binding = 0;
-		vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		vertexBindingDescription.stride = sizeof(Render::Vertex);
-
 		auto &vertexInputStateCreateInfo = stageInfo.vertexInputStateCreateInfo;
 		vertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
-		vertexInputStateCreateInfo.pVertexBindingDescriptions = &vertexBindingDescription;
-		vertexInputStateCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInputAttributeDescriptions.size());
-		vertexInputStateCreateInfo.pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data();
+
+		if (graphicsPipeline->name != Define::Pipeline::PostProcess_Bloom)
+		{
+			auto &vertexBindingDescription = stageInfo.vertexBindingDescription;
+			vertexBindingDescription.binding = 0;
+			vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+			vertexBindingDescription.stride = sizeof(Render::Vertex);
+
+			vertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
+			vertexInputStateCreateInfo.pVertexBindingDescriptions = &vertexBindingDescription;
+			vertexInputStateCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInputAttributeDescriptions.size());
+			vertexInputStateCreateInfo.pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data();
+		}
 	}
 
 	void PipelineLogic::CreateInputAssemblyStage(Context *context,

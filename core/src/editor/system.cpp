@@ -11,8 +11,7 @@ namespace Editor
 	{
 		ImGuiLogic::CreateImGui(context);
 		ImGuiLogic::CreateDescriptorSetLayout(context);
-		ImGuiLogic::CreateDescriptor(context);
-		ImGuiLogic::CreateDescriptor_ShadowMap(context);
+		ImGuiLogic::CreateDescriptors(context);
 	}
 
 	void System::Update(Context *context)

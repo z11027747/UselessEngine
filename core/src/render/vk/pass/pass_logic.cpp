@@ -38,12 +38,10 @@ namespace Render
 			subpassDescription.colorAttachmentCount = 1;
 			subpassDescription.pColorAttachments = &pass->colorAttachmentReference;
 		}
-
 		if (pass->depthImage2d != nullptr)
 		{
 			subpassDescription.pDepthStencilAttachment = &pass->depthAttachmentReference;
 		}
-
 		if (pass->resolveImage2d != nullptr)
 		{
 			subpassDescription.pResolveAttachments = &pass->resolveAttachmentReference;

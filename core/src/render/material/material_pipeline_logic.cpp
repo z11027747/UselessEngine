@@ -8,6 +8,7 @@
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
+#include "render/material/impl/material_post_process_logic.h"
 #include "context.h"
 
 namespace Render
@@ -34,6 +35,7 @@ namespace Render
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetViewport},
+                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessBloomPipelineLogic::SetViewport},
             };
 
         auto &name = graphicsPipeline->name;

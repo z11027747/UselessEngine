@@ -27,12 +27,6 @@ namespace Render
 
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
-	void MaterialSkyboxDescriptorLogic::DestroySetLayout(Context *context,
-														 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
-		DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
-	}
 	void MaterialSkyboxDescriptorLogic::AllocateAndUpdate(Context *context,
 														  std::shared_ptr<MaterialInstance> instance)
 	{

@@ -15,7 +15,8 @@ namespace Render
 	public:
 		static void CreateColorAttachment(Context *,
 										  std::shared_ptr<Pass>,
-										  VkSampleCountFlagBits, VkImageLayout, VkImageLayout);
+										  VkSampleCountFlagBits,
+										  VkImageLayout, VkImageLayout, VkImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>,
 										  VkSampleCountFlagBits, uint32_t = 1);
 		static void CreateResolveAttachment(Context *, std::shared_ptr<Pass>,
@@ -25,9 +26,6 @@ namespace Render
 		static void CreateColorImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateDepthImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateResolveImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
-		
-		static void CreatePostProcessImage2d(Context *, std::shared_ptr<Pass>,
-											 std::shared_ptr<Image>, uint32_t = 4);
 
 		static void DestroyColorImage2ds(Context *, std::shared_ptr<Pass>);
 		static void DestroyDepthImage2d(Context *, std::shared_ptr<Pass>);

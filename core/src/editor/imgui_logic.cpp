@@ -121,25 +121,28 @@ namespace Editor
         return descriptor;
     }
 
-    std::shared_ptr<Render::Descriptor> ImGuiLogic::descriptor = nullptr;
-    std::shared_ptr<Render::Descriptor> ImGuiLogic::descriptor_ShadowMap = nullptr;
+    std::unordered_map<std::string, std::shared_ptr<Render::Descriptor>> ImGuiLogic::descriptorMap = {};
 
-    void ImGuiLogic::CreateDescriptor(Context *context)
+    void ImGuiLogic::CreateDescriptors(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
-
-        // auto &image2d = global->passMap[Define::Pass::Main]->colorImage2ds[0];
-        auto &image2d = global->passMap[Define::Pass::Main]->resolveImage2d;
-        descriptor = CreateDescriptor(context, image2d);
+        {
+            auto &resolveImage2d = global->passMap[Define::Pass::Main]->resolveImage2d;
+            descriptorMap[Define::Pass::Main] = CreateDescriptor(context, resolveImage2d);
+        }
+        {
+            auto &depthImage2d = global->passMap[Define::Pass::Shadow]->depthImage2d;
+            descriptorMap[Define::Pass::Shadow] = CreateDescriptor(context, depthImage2d);
+        }
+        {
+            auto &colorImage2ds = global->passMap[Define::Pass::PostProcess]->colorImage2ds[0];
+            descriptorMap[Define::Pass::PostProcess] = CreateDescriptor(context, colorImage2ds);
+        }
     }
 
-    void ImGuiLogic::CreateDescriptor_ShadowMap(Context *context)
+    VkDescriptorSet ImGuiLogic::GetDescriptorSet(const std::string &passName)
     {
-        auto &globalEO = context->renderGlobalEO;
-        auto global = globalEO->GetComponent<Render::Global>();
-
-        auto &image2d = global->passMap[Define::Pass::Shadow]->depthImage2d;
-        descriptor_ShadowMap = CreateDescriptor(context, image2d);
+        return descriptorMap[passName]->set;
     }
 }

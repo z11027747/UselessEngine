@@ -57,14 +57,16 @@ namespace Render
 
 		MaterialGlobalDescriptorLogic::Create(context);
 
-		auto imGuiPass = RenderPassLogic::CreateImGui(context);
+		RenderPassLogic::CreateImGui(context);
 		auto mainPass = RenderPassLogic::CreateMain(context);
 		auto shadowPass = RenderPassLogic::CreateShadow(context);
+		auto postProcessPass = RenderPassLogic::CreatePostProcess(context);
 
 		PipelineLogic::Create(context, Define::Pipeline::Shadow, shadowPass);
 		PipelineLogic::Create(context, Define::Pipeline::Skybox, mainPass);
 		PipelineLogic::Create(context, Define::Pipeline::LightModel, mainPass);
 		PipelineLogic::Create(context, Define::Pipeline::Color, mainPass);
+		PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
 
 		MeshInstanceLogic::CreateCache(context);
 		MaterialInstanceLogic::CreateCache(context);
@@ -97,6 +99,7 @@ namespace Render
 
 			ShadowPassRenderSystem::Update(context, imageIndex);
 			MainPassRenderSystem::Update(context, imageIndex);
+			PostProcessPassRenderSystem::Update(context, imageIndex);
 			ImGuiPassRenderSystem::Update(context, imageIndex);
 		}
 

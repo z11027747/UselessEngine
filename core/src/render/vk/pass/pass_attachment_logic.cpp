@@ -11,7 +11,9 @@ namespace Render
 {
 	void PassLogic::CreateColorAttachment(Context *context,
 										  std::shared_ptr<Pass> pass,
-										  VkSampleCountFlagBits samplers, VkImageLayout initLayout, VkImageLayout finalLayout)
+										  VkSampleCountFlagBits samplers,
+										  VkImageLayout initLayout, VkImageLayout finalLayout,
+										  VkImageLayout subPassLayout)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -29,7 +31,7 @@ namespace Render
 
 		VkAttachmentReference colorAttachmentReference = {};
 		colorAttachmentReference.attachment = 0;
-		colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		colorAttachmentReference.layout = subPassLayout;
 
 		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
 		pass->colorAttachmentReference = colorAttachmentReference;
