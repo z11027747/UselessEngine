@@ -110,11 +110,11 @@ vec3 CalcDirectionLight(vec3 baseCol, vec3 N, float shadowAtten) {
     vec3 lightColor = directionLight.color;
 
     float diffuseIntensity = materialUBO.params.x;
-    // float specualrShininess = materialUBO.params.y;
-    // float specularIntensity = materialUBO.params.z;
+    float specualrShininess = materialUBO.params.y;
+    float specularIntensity = materialUBO.params.z;
 
     vec3 diffuse = CalcHalfLambert(baseCol * lightColor, N, lightDir, diffuseIntensity);
-    vec3 specular = vec3(0.0); //CalcBlingPhone(vec3(1.0), N, lightDir, specualrShininess, specularIntensity);
+    vec3 specular = CalcBlingPhone(vec3(1.0), N, lightDir, specualrShininess, specularIntensity);
 
     return lightAmbient + (diffuse + specular) * shadowAtten;
 }
@@ -123,7 +123,7 @@ vec3 CalcPointLight(int i, vec3 baseCol, vec3 N, float shadowAtten) {
     PointLight pointLight = globalUBO.pointLights[i];
 
     vec3 lightDir = normalize(pointLight.pos - positionWS);
-    vec3 lightColor = pointLight.color;
+    vec3 lightColor = pointLight.color;//TODO Test
 
     float dist = distance(pointLight.pos, positionWS);
     float atten = 1.0 /

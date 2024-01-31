@@ -40,10 +40,10 @@ namespace Editor
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
-        auto &mainPass = global->passMap[Define::Pass::Main];
-        auto &clearColor = mainPass->clearColorValue.float32;
 
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(clearColor[0], clearColor[1], clearColor[2], 1.0f));
+        // auto &mainPass = global->passMap[Define::Pass::Main];
+        // auto &clearColor = mainPass->clearColorValue.float32;
+        // ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(clearColor[0], clearColor[1], clearColor[2], 1.0f));
         if (ImGui::Begin("Scene", NULL))
         {
             ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::PostProcess), ImGui::GetContentRegionAvail());
@@ -57,7 +57,7 @@ namespace Editor
             ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Viewport Size: %.fx%.f", size.x, size.y);
         }
         ImGui::End();
-        ImGui::PopStyleColor();
+        // ImGui::PopStyleColor();
 
         if (ImGui::Begin("ShadowMap", NULL))
         {
