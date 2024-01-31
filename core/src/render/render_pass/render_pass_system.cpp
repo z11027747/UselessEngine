@@ -17,9 +17,48 @@ namespace Render
 {
     static std::unordered_map<std::string, std::vector<std::shared_ptr<EngineObject>>> materialEOMap{};
 
-    static void RenderSinglePipeline(Context *context,
-                                     uint32_t imageIndex, bool isShadow,
-                                     const std::string &pipelineName)
+    static void SplitPipeline(Context *context)
+    {
+        materialEOMap.clear();
+
+        auto &materialEOs = context->renderMaterialEOs;
+        for (const auto &materialEO : materialEOs)
+        {
+            if (!materialEO->active)
+                continue;
+
+            auto transform = materialEO->GetComponent<Logic::Transform>();
+            auto &parentEOName = transform->parentEOName;
+            if (!parentEOName.empty() && !context->GetEO(parentEOName)->active)
+                continue;
+
+            auto material = materialEO->GetComponent<Render::Material>();
+            auto &materialInfo = material->info;
+            if (materialInfo->pipelineName.empty())
+                continue;
+
+            materialEOMap[materialInfo->pipelineName].push_back(materialEO);
+        }
+    }
+
+    static void SortPipeline()
+    {
+        for (auto &kv : materialEOMap)
+        {
+            auto &eos = kv.second;
+            std::sort(eos.begin(), eos.end(),
+                      [](const std::shared_ptr<EngineObject> &eol, const std::shared_ptr<EngineObject> &eor)
+                      {
+                          auto ml = eol->GetComponent<Render::Material>();
+                          auto mr = eor->GetComponent<Render::Material>();
+                          return ml->info->renderQueue < mr->info->renderQueue;
+                      });
+        }
+    }
+
+    static void DrawPipeline(Context *context,
+                             uint32_t imageIndex, bool isShadow,
+                             const std::string &pipelineName)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -74,47 +113,13 @@ namespace Render
         }
     }
 
-    void UnitRenderSystem::Update(Context *context,
+    void RenderPassSystem::Update(Context *context,
                                   uint32_t imageIndex, bool isShadow)
     {
+        SplitPipeline(context);
+        SortPipeline();
 
-        materialEOMap.clear();
-
-        auto &materialEOs = context->renderMaterialEOs;
-        for (const auto &materialEO : materialEOs)
-        {
-            if (!materialEO->active)
-                continue;
-
-            auto transform = materialEO->GetComponent<Logic::Transform>();
-            auto &parentEOName = transform->parentEOName;
-            if (!parentEOName.empty() && !context->GetEO(parentEOName)->active)
-                continue;
-
-            auto material = materialEO->GetComponent<Render::Material>();
-            auto &materialInfo = material->info;
-            if (materialInfo->pipelineName.empty())
-                continue;
-
-            materialEOMap[materialInfo->pipelineName].push_back(materialEO);
-        }
-
-        for (auto &kv : materialEOMap)
-        {
-            auto &eos = kv.second;
-            std::sort(eos.begin(), eos.end(),
-                      [](const std::shared_ptr<EngineObject> &eol, const std::shared_ptr<EngineObject> &eor)
-                      {
-                          auto ml = eol->GetComponent<Render::Material>();
-                          auto mr = eor->GetComponent<Render::Material>();
-                          return ml->info->renderQueue < mr->info->renderQueue;
-                      });
-        }
-
-        RenderSinglePipeline(context,
-                             imageIndex, isShadow, Define::Pipeline::LightModel);
-
-        RenderSinglePipeline(context,
-                             imageIndex, isShadow, Define::Pipeline::Color);
+        DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::LightModel);
+        DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Color);
     }
 };

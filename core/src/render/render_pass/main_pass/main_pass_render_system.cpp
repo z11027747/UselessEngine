@@ -25,7 +25,7 @@ namespace Render
             auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
             if (mainCameraEO->active)
             {
-                UnitRenderSystem::Update(context, imageIndex, false);
+                RenderPassSystem::Update(context, imageIndex, false);
             }
         }
 

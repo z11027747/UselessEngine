@@ -6,6 +6,7 @@
 #include "render/light/light_comp.h"
 #include "render/material/material_comp.h"
 #include "render/mesh/mesh_comp.h"
+#include "render/post_process/post_process_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/rotate/rotate_comp.h"
@@ -37,6 +38,7 @@ namespace Editor
             // TYPE_TO_DRAW(Render::SpotLight),
             TYPE_TO_DRAW(Render::Mesh),
             TYPE_TO_DRAW(Render::Material),
+            TYPE_TO_DRAW(Render::PostProcess),
         };
 
     static bool HasWrap(Context *context, std::string type)

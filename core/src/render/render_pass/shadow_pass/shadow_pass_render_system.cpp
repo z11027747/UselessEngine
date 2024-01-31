@@ -26,7 +26,7 @@ namespace Render
 
             if (directionLightEO->active && directionLight->hasShadow)
             {
-                UnitRenderSystem::Update(context, imageIndex, true);
+                RenderPassSystem::Update(context, imageIndex, true);
             }
         }
 

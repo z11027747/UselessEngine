@@ -35,9 +35,7 @@ namespace Render
     {
         auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
         if (descriptorSetLayout != nullptr)
-        {
             DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
-        }
     }
     void MaterialDescriptorLogic::AllocateAndUpdate(Context *context,
                                                     std::shared_ptr<MaterialInstance> instance)

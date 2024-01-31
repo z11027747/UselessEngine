@@ -4,6 +4,7 @@
 #include <iostream>
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pass/pass_comp.h"
+#include "render/post_process/post_process_comp.h"
 #include "common/define.h"
 #include "editor/window.h"
 #include "editor/system.h"
@@ -41,12 +42,18 @@ namespace Editor
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
 
-        // auto &mainPass = global->passMap[Define::Pass::Main];
-        // auto &clearColor = mainPass->clearColorValue.float32;
-        // ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(clearColor[0], clearColor[1], clearColor[2], 1.0f));
         if (ImGui::Begin("Scene", NULL))
         {
-            ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::PostProcess), ImGui::GetContentRegionAvail());
+            auto &mainCameraEO = context->logicMainCameraEO;
+            auto postProcess = mainCameraEO->GetComponent<Render::PostProcess>();
+            if (postProcess->enabled)
+            {
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::PostProcess), ImGui::GetContentRegionAvail());
+            }
+            else
+            {
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Main), ImGui::GetContentRegionAvail());
+            }
 
             focuesd = ImGui::IsWindowFocused();
             pos = ImGui::GetWindowPos();
@@ -57,7 +64,6 @@ namespace Editor
             ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Viewport Size: %.fx%.f", size.x, size.y);
         }
         ImGui::End();
-        // ImGui::PopStyleColor();
 
         if (ImGui::Begin("ShadowMap", NULL))
         {
@@ -76,12 +82,6 @@ namespace Editor
                          ImVec4(1, 1, 1, 1),                                                  // tint_col
                          ImVec4(0, 0, 0, 0)                                                   // border_col
             );
-        }
-        ImGui::End();
-
-        if (ImGui::Begin("No-PostProcess", NULL))
-        {
-            ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Main), ImGui::GetContentRegionAvail());
         }
         ImGui::End();
     }

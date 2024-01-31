@@ -1,5 +1,9 @@
 #version 450
 
+layout (push_constant) uniform Push {
+    vec4 params;//x+Threshold+Intensity+Scale
+} push;
+
 layout (set = 0, binding = 0) uniform sampler2D colorAttachment;
 
 layout (location = 0) in vec2 uv;
@@ -13,7 +17,7 @@ float Luma(vec3 col) {
 void main() {
     ivec2 texSize = textureSize(colorAttachment, 0);
 
-    float scale = 5;
+    float scale = push.params.y;
     float dx = scale * 1.0 / float(texSize.x);
     float dy = scale * 1.0 / float(texSize.y);
 
@@ -47,8 +51,9 @@ void main() {
     blurColor.rgb += (b + d + f + h) * 0.0625;
     blurColor.rgb += (j + k + l + m) * 0.125;
 
-    float lumaThresold = 0.5;
+    float lumaThresold = push.params.z;
     float luma = clamp(Luma(e) - lumaThresold, 0, 1);
 
-    outColor = vec4(e + (blurColor * luma), 1.0);
+    float intensity = push.params.w;
+    outColor = vec4(e + (blurColor * luma * intensity), 1.0);
 }

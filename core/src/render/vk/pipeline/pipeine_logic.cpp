@@ -154,24 +154,24 @@ namespace Render
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
-		auto &vertexInputAttributeDescriptions = stageInfo.vertexInputAttributeDescriptions;
-		MaterialPipelineLogic::SetVertexAttrDescriptions(context, graphicsPipeline);
-
 		auto &vertexInputStateCreateInfo = stageInfo.vertexInputStateCreateInfo;
 		vertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-		if (graphicsPipeline->name != Define::Pipeline::PostProcess_Bloom)
-		{
-			auto &vertexBindingDescription = stageInfo.vertexBindingDescription;
-			vertexBindingDescription.binding = 0;
-			vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-			vertexBindingDescription.stride = sizeof(Render::Vertex);
+		MaterialPipelineLogic::SetVertexAttrDescriptions(context, graphicsPipeline);
 
-			vertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
-			vertexInputStateCreateInfo.pVertexBindingDescriptions = &vertexBindingDescription;
-			vertexInputStateCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInputAttributeDescriptions.size());
-			vertexInputStateCreateInfo.pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data();
-		}
+		auto &vertexInputAttributeDescriptions = stageInfo.vertexInputAttributeDescriptions;
+		if (vertexInputAttributeDescriptions.empty())
+			return;
+
+		auto &vertexBindingDescription = stageInfo.vertexBindingDescription;
+		vertexBindingDescription.binding = 0;
+		vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vertexBindingDescription.stride = sizeof(Render::Vertex);
+
+		vertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
+		vertexInputStateCreateInfo.pVertexBindingDescriptions = &vertexBindingDescription;
+		vertexInputStateCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInputAttributeDescriptions.size());
+		vertexInputStateCreateInfo.pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data();
 	}
 
 	void PipelineLogic::CreateInputAssemblyStage(Context *context,

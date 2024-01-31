@@ -29,7 +29,7 @@ namespace Render
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		PassLogic::CreateDepthAttachment(context, pass, msaaSamples);
 
-		pass->clearColorValue = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
+		// pass->clearColorValue = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
 
 		if (msaaSamples != VK_SAMPLE_COUNT_1_BIT)
 		{

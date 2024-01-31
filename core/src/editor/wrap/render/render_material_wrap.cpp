@@ -6,7 +6,6 @@
 #include "common/define.h"
 #include "editor/wrap/component_wrap.h"
 #include "editor/window.h"
-#include "editor/imgui_logic.h"
 #include "context.h"
 
 namespace Editor

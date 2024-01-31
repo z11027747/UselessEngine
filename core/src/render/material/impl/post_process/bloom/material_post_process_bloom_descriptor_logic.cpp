@@ -25,27 +25,6 @@ namespace Render
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(colorAttachment);
 
-		auto descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
-		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
-
-		auto &resolveImage2d = global->passMap[Define::Pass::Main]->resolveImage2d;
-		VkDescriptorImageInfo imageInfo = {
-			global->globalSamplerClamp,
-			resolveImage2d->vkImageView,
-			resolveImage2d->layout};
-
-		auto descriptor = std::make_shared<Descriptor>();
-		descriptor->set = descriptorSet;
-		descriptor->imageInfos.push_back(imageInfo);
-
-		graphicsPipeline->descriptorSetLayout = descriptorSetLayout;
-		graphicsPipeline->descriptor = descriptor;
-
-		DescriptorSetLogic::Update(context,
-								   [&descriptor](std::vector<VkWriteDescriptorSet> &writes)
-								   {
-									   DescriptorSetLogic::WriteImage(writes,
-																	  descriptor->set, 0, descriptor->imageInfos[0]);
-								   });
+		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 }

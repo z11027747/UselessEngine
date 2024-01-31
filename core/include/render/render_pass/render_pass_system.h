@@ -7,7 +7,6 @@ class Context;
 
 namespace Render
 {
-
     class ImGuiPassRenderSystem final
     {
     public:
@@ -29,7 +28,7 @@ namespace Render
         static void Update(Context *, uint32_t);
     };
 
-    class UnitRenderSystem final
+    class RenderPassSystem final
     {
     public:
         static void Update(Context *, uint32_t, bool);

@@ -17,7 +17,7 @@ namespace Render
     public:
         static void OnAdd(Context *, std::shared_ptr<EngineObject>);
         static void OnRemove(Context *, std::shared_ptr<EngineObject>);
-        
+
         static void TryDestroyEO(Context *, std::shared_ptr<EngineObject>);
     };
 

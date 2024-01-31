@@ -4,7 +4,6 @@
 #include <iostream>
 #include "render/light/light_comp.h"
 #include "editor/wrap/component_wrap.h"
-#include "editor/imgui_logic.h"
 #include "context.h"
 
 namespace Editor
