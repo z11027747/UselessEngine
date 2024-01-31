@@ -31,6 +31,9 @@ namespace Render
 		static void DestroyDepthImage2d(Context *, std::shared_ptr<Pass>);
 		static void DestroyResolveImage2d(Context *, std::shared_ptr<Pass>);
 
+		static void CreatePostProcessImage2d(Context *, std::shared_ptr<Pass>,
+											 std::shared_ptr<Image>, uint32_t = 4);
+
 		static void AddSubpassDependency(Context *,
 										 std::shared_ptr<Pass>,
 										 uint32_t, uint32_t,

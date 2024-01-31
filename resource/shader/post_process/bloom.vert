@@ -1,9 +1,5 @@
 #version 450
 
-// layout (push_constant) uniform Push {
-
-// } push;
-
 layout(location = 0) out vec2 uv;
 
 void main() {

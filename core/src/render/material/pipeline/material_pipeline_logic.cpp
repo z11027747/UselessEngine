@@ -35,7 +35,8 @@ namespace Render
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetViewport},
-                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessBloomPipelineLogic::SetViewport},
+                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessPipelineLogic::SetViewport},
+                {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessPipelineLogic::SetViewport},
             };
 
         auto &name = graphicsPipeline->name;

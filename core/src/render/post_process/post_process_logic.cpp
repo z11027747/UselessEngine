@@ -42,9 +42,5 @@ namespace Render
 
     void PostProcessLogic::Destroy(Context *context, std::shared_ptr<EngineObject> mainCameraEO)
     {
-        auto postProcess = mainCameraEO->GetComponent<PostProcess>();
-
-        auto &descriptorSetLayout = postProcess->descriptorSetLayout;
-        DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
     }
 }

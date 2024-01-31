@@ -65,7 +65,7 @@ namespace Editor
     {
         if (ImGui::TreeNode(directoryName.c_str()))
         {
-            if (directory2files.count(directoryFullName) == 0)
+            if (directory2subs.count(directoryFullName) > 0)
             {
                 auto &directorySubs = directory2subs[directoryFullName];
                 for (auto const &directorySubName : directorySubs)
@@ -75,7 +75,8 @@ namespace Editor
                                   directorySubName, directorySubFullName);
                 }
             }
-            else
+
+            if (directory2files.count(directoryFullName) > 0)
             {
                 auto &fileNames = directory2files[directoryFullName];
                 for (auto const &fileName : fileNames)

@@ -33,7 +33,8 @@ public:
         inline static std::string Shadow{"shadow"};
         inline static std::string LightModel{"light_model"};
         inline static std::string Color{"color"};
-        inline static std::string PostProcess_Bloom{"post_process_bloom"};
+        inline static std::string PostProcess_Bloom{"bloom"};
+        inline static std::string PostProcess_ToonMapping{"toon_mapping"};
     };
 
     class RenderQueue final

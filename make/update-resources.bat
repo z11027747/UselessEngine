@@ -9,10 +9,9 @@ for /r "resource\shader\" %%F in (*) do (
         echo Ignore .glsl file: "%%~nxF"  
     ) else (
         echo Compiling shader: "%%~nxF" to spv format ... 
-        glslc "resource\shader\%%~nxF" -o "resource\spv\%%~nxF.spv"
+        glslc %%F -o "resource\spv\%%~nxF.spv"
     )
 )  
 
 ::xcopy /s /i /y "resource\" "out\resource\"
-
 ::pause

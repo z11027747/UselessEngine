@@ -9,11 +9,7 @@
 
 namespace Render
 {
-	void MaterialPostProcessBloomPipelineLogic::SetVertexAttrDescriptions(Context *context,
-																		  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
-	void MaterialPostProcessBloomPipelineLogic::SetViewport(Context *context,
+	void MaterialPostProcessPipelineLogic::SetViewport(Context *context,
 															std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &globalEO = context->renderGlobalEO;
@@ -29,17 +25,5 @@ namespace Render
 		viewport.height = static_cast<float>(currentExtent.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-	}
-	void MaterialPostProcessBloomPipelineLogic::SetRasterizationCreateInfo(Context *context,
-																		   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
-	void MaterialPostProcessBloomPipelineLogic::SetDepthStencilCreateInfo(Context *context,
-																		  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
-	void MaterialPostProcessBloomPipelineLogic::SetColorBlendStage(Context *context,
-																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
 	}
 }

@@ -114,6 +114,35 @@ namespace Render
 		pass->resolveImage2d = resolveImage2d;
 	}
 
+	void PassLogic::CreatePostProcessImage2d(Context *context,
+											 std::shared_ptr<Pass> pass,
+											 std::shared_ptr<Image> image2d, uint32_t mipLevels)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto surfaceFormat = global->surfaceFormat;
+		auto &currentExtent = global->surfaceCapabilities.currentExtent;
+
+		for (auto i = 0u; i < mipLevels; i++)
+		{
+			auto postProcessImage = std::make_shared<Image>();
+			postProcessImage->format = image2d->format;
+			postProcessImage->extent = image2d->extent;
+			postProcessImage->aspectMask = image2d->aspectMask;
+			postProcessImage->layerCount = image2d->layerCount;
+			postProcessImage->layout = image2d->layout;
+			postProcessImage->mipLevels = mipLevels;
+
+			postProcessImage->vkImage = image2d->vkImage;
+
+			ImageLogic::CreateView(context,
+								   postProcessImage,
+								   VK_IMAGE_VIEW_TYPE_2D, image2d->aspectMask, 1, mipLevels);
+
+			pass->colorImage2ds.push_back(postProcessImage);
+		}
+	}
+
 	void PassLogic::DestroyColorImage2ds(Context *context,
 										 std::shared_ptr<Pass> pass)
 	{
