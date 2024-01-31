@@ -1,0 +1,12 @@
+D:\G\UselessEngine\game\Game\bin\Debug\net6.0\Game.deps.json
+D:\G\UselessEngine\game\Game\bin\Debug\net6.0\Game.dll
+D:\G\UselessEngine\game\Game\bin\Debug\net6.0\Game.pdb
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\Game.csproj.AssemblyReference.cache
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\Game.GeneratedMSBuildEditorConfig.editorconfig
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\Game.AssemblyInfoInputs.cache
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\Game.AssemblyInfo.cs
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\Game.csproj.CoreCompileInputs.cache
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\Game.dll
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\refint\Game.dll
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\Game.pdb
+D:\G\UselessEngine\game\Game\obj\Debug\net6.0\ref\Game.dll
