@@ -1,21 +1,21 @@
 #version 450
 
-layout (push_constant) uniform Push {
+layout(push_constant) uniform Push {
     vec4 params;//Brightness+Saturation+Intensity
 } push;
 
-layout (set = 0, binding = 0) uniform sampler2D blitImage;
+layout(set = 0, binding = 0) uniform sampler2D resolveImage;
 
-layout (location = 0) in vec2 uv;
+layout(location = 0) in vec2 uv;
 
-layout (location = 0) out vec4 outColor;
+layout(location = 0) out vec4 outColor;
 
 float Luma(vec3 col) {
     return dot(col, vec3(0.2125, 0.7154, 0.0721));
 }
 
 void main() {
-    vec3 col = texture(blitImage, uv).rgb;
+    vec3 col = texture(resolveImage, uv).rgb;
 
     float brightness = push.params.x;
     float saturation = push.params.y;

@@ -3,7 +3,9 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <functional>
+#include <memory>
 #include "render/vk/global/global_comp.h"
+#include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "engine_object.h"
 #include "context.h"
@@ -36,14 +38,15 @@ namespace Render
 		}
 
 		static void WriteBuffer(std::vector<VkWriteDescriptorSet> &writes,
-								VkDescriptorSet set, uint32_t binding, VkDescriptorBufferInfo &bufferInfo)
+								VkDescriptorSet set, uint32_t binding,
+								VkDescriptorType descriptorType, VkDescriptorBufferInfo &bufferInfo)
 		{
 			VkWriteDescriptorSet write = {};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			write.dstSet = set;
 			write.dstBinding = binding;
 			write.dstArrayElement = 0;
-			write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			write.descriptorType = descriptorType;
 			write.descriptorCount = 1;
 			write.pBufferInfo = &bufferInfo;
 
@@ -51,14 +54,15 @@ namespace Render
 		}
 
 		static void WriteImage(std::vector<VkWriteDescriptorSet> &writes,
-							   VkDescriptorSet set, uint32_t binding, VkDescriptorImageInfo &imageInfo)
+							   VkDescriptorSet set, uint32_t binding,
+							   VkDescriptorType descriptorType, VkDescriptorImageInfo &imageInfo)
 		{
 			VkWriteDescriptorSet write = {};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			write.dstSet = set;
 			write.dstBinding = binding;
 			write.dstArrayElement = 0;
-			write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			write.descriptorType = descriptorType;
 			write.descriptorCount = 1;
 			write.pImageInfo = &imageInfo;
 

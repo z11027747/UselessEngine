@@ -48,6 +48,7 @@ namespace Render
 		bindings.push_back(normalMap);
 		bindings.push_back(materialUBO);
 
+		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 
@@ -101,16 +102,17 @@ namespace Render
 		instance->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
-								   [&descriptor](std::vector<VkWriteDescriptorSet> &writes)
+								   [=](std::vector<VkWriteDescriptorSet> &writes)
 								   {
-									   for (auto i = 0; i < imageSize; i++)
+									   auto &bindings = graphicsPipeline->descriptorBindings;
+									   for (auto imageIdx = 0; imageIdx < imageSize; imageIdx++)
 									   {
-										   DescriptorSetLogic::WriteImage(writes,
-																		  descriptor->set, i, descriptor->imageInfos[i]);
+										   DescriptorSetLogic::WriteImage(writes, descriptor->set, imageIdx,
+																		  bindings[imageIdx].descriptorType, descriptor->imageInfos[imageIdx]);
 									   }
-
-									   DescriptorSetLogic::WriteBuffer(writes,
-																	   descriptor->set, imageSize, descriptor->bufferInfos[0]);
+									   auto bufferIdx = imageSize;
+									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, bufferIdx,
+																	   bindings[bufferIdx].descriptorType, descriptor->bufferInfos[0]);
 								   });
 	}
 	void MaterialLightModelDescriptorLogic::Destroy(Context *context,

@@ -19,32 +19,55 @@ namespace Render
 		pass->name = Define::Pass::PostProcess;
 		pass->extent = {currentExtent.width, currentExtent.height};
 
-		// count: 2
-		PassLogic::SetSubpassCount(context, pass, 2);
+		// image2ds
+		FramebufferLogic::CreateColorImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
+		FramebufferLogic::CreateInputImage2d(context, pass, 1u);
+		FramebufferLogic::CreateInputImage2d(context, pass, 1u);
+
+		// subpass count: 3
+		PassLogic::SetSubpassCount(context, pass, 3);
 
 		// subpass0: toon mapping
 		// attachment0: color
 		PassLogic::CreateColorAttachment(context, pass, 0,
 										 VK_SAMPLE_COUNT_1_BIT,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		// description0
+										 1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		// description1
 		PassLogic::SetSubpassDescription(context, pass, 0);
 
-		// subpass1
+		// subpass1: bloom
 		// attachment0: color
 		PassLogic::CreateColorAttachment(context, pass, 1,
 										 VK_SAMPLE_COUNT_1_BIT,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		PassLogic::CreateInputAttachment(context, pass, 1,
-										 0, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										 2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		// description1
 		PassLogic::SetSubpassDescription(context, pass, 1);
+
+		// subpass2
+		// attachment0: color
+		PassLogic::CreateColorAttachment(context, pass, 2,
+										 VK_SAMPLE_COUNT_1_BIT,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+										 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		// attachment1: input-toon mapping
+		PassLogic::CreateInputAttachment(context, pass, 2,
+										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		// attachment2: input-bloom
+		PassLogic::CreateInputAttachment(context, pass, 2,
+										 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		// description0
+		PassLogic::SetSubpassDescription(context, pass, 2);
 
 		// dependency: 0->1
 		PassLogic::AddSubpassDependency(context, pass,
 										0, 1,
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+										VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_INPUT_ATTACHMENT_READ_BIT);
+		// dependency: 1->2
+		PassLogic::AddSubpassDependency(context, pass,
+										1, 2,
 										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
 										VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_INPUT_ATTACHMENT_READ_BIT);
 		// dependency: external->0
@@ -59,9 +82,6 @@ namespace Render
 										VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT);
 		PassLogic::Create(context, pass);
 
-		// images & frame buffer
-		FramebufferLogic::CreateColorImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
-		FramebufferLogic::CreatePostProcessImage2d(context, pass, 4u); // mipLevels
 		FramebufferLogic::Create(context, pass);
 
 		global->passMap[pass->name] = pass;

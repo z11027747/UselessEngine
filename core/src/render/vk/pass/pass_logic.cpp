@@ -26,7 +26,7 @@ namespace Render
 
 		if (!pass->colorImage2ds.empty())
 		{
-			subpassDescription.colorAttachmentCount = static_cast<uint32_t>(subpass.inputAttachmentReferences.size());
+			subpassDescription.colorAttachmentCount = static_cast<uint32_t>(subpass.colorAttachmentReferences.size());
 			subpassDescription.pColorAttachments = subpass.colorAttachmentReferences.data();
 		}
 		if (pass->depthImage2d != nullptr)

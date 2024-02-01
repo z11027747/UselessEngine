@@ -18,26 +18,43 @@ namespace Render
 
         auto postProcess = std::make_shared<PostProcess>();
 
+        auto &mainPass = global->passMap[Define::Pass::Main];
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
-        auto &colorImage2d = postProcessPass->colorImage2ds[1];
-
         auto &postProcessPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
-        auto descriptorSet = DescriptorSetLogic::AllocateOne(context, postProcessPipeline->descriptorSetLayout);
-
-        VkDescriptorImageInfo imageInfo = {
-            global->globalSamplerClamp,
-            colorImage2d->vkImageView,
-            colorImage2d->layout};
 
         auto descriptor = std::make_shared<Descriptor>();
+
+        auto descriptorSet = DescriptorSetLogic::AllocateOne(context, postProcessPipeline->descriptorSetLayout);
         descriptor->set = descriptorSet;
-        descriptor->imageInfos.push_back(imageInfo);
+
+        VkDescriptorImageInfo resolveImageInfo = {
+            global->globalSamplerClamp,
+            mainPass->resolveImage2d->vkImageView,
+            mainPass->resolveImage2d->layout};
+        descriptor->imageInfos.push_back(resolveImageInfo);
+
+        VkDescriptorImageInfo toonMappingAttachmentInfo = {
+            global->globalSamplerClamp,
+            postProcessPass->inputImage2ds[0]->vkImageView,
+            postProcessPass->inputImage2ds[0]->layout};
+        descriptor->imageInfos.push_back(toonMappingAttachmentInfo);
+
+        VkDescriptorImageInfo bloomAttachmentInfo = {
+            global->globalSamplerClamp,
+            postProcessPass->inputImage2ds[1]->vkImageView,
+            postProcessPass->inputImage2ds[1]->layout};
+        descriptor->imageInfos.push_back(bloomAttachmentInfo);
 
         DescriptorSetLogic::Update(context,
-                                   [&descriptor](std::vector<VkWriteDescriptorSet> &writes)
+                                   [=](std::vector<VkWriteDescriptorSet> &writes)
                                    {
-                                       DescriptorSetLogic::WriteImage(writes,
-                                                                      descriptor->set, 0, descriptor->imageInfos[0]);
+                                       auto &bindings = postProcessPipeline->descriptorBindings;
+                                       DescriptorSetLogic::WriteImage(writes, descriptor->set, 0,
+                                                                      bindings[0].descriptorType, descriptor->imageInfos[0]);
+                                       DescriptorSetLogic::WriteImage(writes, descriptor->set, 1,
+                                                                      bindings[1].descriptorType, descriptor->imageInfos[1]);
+                                       DescriptorSetLogic::WriteImage(writes, descriptor->set, 2,
+                                                                      bindings[2].descriptorType, descriptor->imageInfos[2]);
                                    });
 
         postProcess->descriptor = descriptor;
@@ -57,7 +74,7 @@ namespace Render
         auto &descriptor = postProcess->descriptor;
 
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
-        auto &colorImage2d = postProcessPass->colorImage2ds[1];
+        auto &inputImage2d = postProcessPass->inputImage2ds[0];
 
         auto &mainPass = global->passMap[Define::Pass::Main];
         auto &resolveImage2d = mainPass->resolveImage2d;
@@ -65,11 +82,11 @@ namespace Render
         ImageLogic::TransitionLayout(context, resolveImage2d,
                                      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1,
                                      true);
-        ImageLogic::TransitionLayout(context, colorImage2d,
-                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, colorImage2d->mipLevels,
+        ImageLogic::TransitionLayout(context, inputImage2d,
+                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, inputImage2d->mipLevels,
                                      true);
 
-        ImageLogic::CopyFromImage(context, colorImage2d,
+        ImageLogic::CopyFromImage(context, inputImage2d,
                                   resolveImage2d,
                                   true);
 
@@ -77,7 +94,7 @@ namespace Render
                                      VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1,
                                      true);
 
-        ImageLogic::GenerateMipmapsAndTransitionLayout(context, colorImage2d,
+        ImageLogic::GenerateMipmapsAndTransitionLayout(context, inputImage2d,
                                                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                                                        true);
     }

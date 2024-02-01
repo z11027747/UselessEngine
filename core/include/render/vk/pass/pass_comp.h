@@ -24,20 +24,23 @@ namespace Render
 
 		std::vector<Subpass> subpasses;
 		std::vector<VkSubpassDescription> subpassDescriptions;
+		std::vector<VkSubpassDependency> subpassDependencies;
 
 		bool isGetSwapchainImage;
+		VkSampleCountFlagBits msaaSamples{VK_SAMPLE_COUNT_1_BIT};
+
 		std::vector<std::shared_ptr<Image>> colorImage2ds;
 		std::shared_ptr<Image> depthImage2d;
 		std::shared_ptr<Image> resolveImage2d;
-		VkSampleCountFlagBits msaaSamples{VK_SAMPLE_COUNT_1_BIT};
+		std::vector<std::shared_ptr<Image>> inputImage2ds;
+
+		VkClearColorValue clearColorValue;
+		VkClearDepthStencilValue clearDepthValue;
+		std::vector<VkClearColorValue> clearInputValues;
 
 		VkOffset2D offset{0, 0};
 		VkExtent2D extent{0, 0};
 
-		VkClearColorValue clearColorValue;
-		VkClearDepthStencilValue clearDepthValue;
-
-		std::vector<VkSubpassDependency> subpassDependencies;
 		VkRenderPass renderPass;
 
 		std::vector<VkFramebuffer> frameBuffers;

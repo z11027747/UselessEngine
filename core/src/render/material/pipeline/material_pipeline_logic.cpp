@@ -37,6 +37,7 @@ namespace Render
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetViewport},
                 {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessPipelineLogic::SetViewport},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessPipelineLogic::SetViewport},
+                {Define::Pipeline::PostProcess_Global, MaterialPostProcessPipelineLogic::SetViewport},
             };
 
         auto &name = graphicsPipeline->name;
@@ -95,6 +96,7 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessPipelineLogic::SetColorBlendStage},
+                {Define::Pipeline::PostProcess_Global, MaterialPostProcessPipelineLogic::SetColorBlendStage},
             };
 
         auto &name = graphicsPipeline->name;

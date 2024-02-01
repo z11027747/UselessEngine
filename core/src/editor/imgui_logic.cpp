@@ -108,14 +108,14 @@ namespace Editor
             global->globalSamplerClamp,
             image->vkImageView,
             image->layout};
-
         descriptor->imageInfos.push_back(imageInfo);
 
         Render::DescriptorSetLogic::Update(context,
-                                           [&descriptor](std::vector<VkWriteDescriptorSet> &writes)
+                                           [=](std::vector<VkWriteDescriptorSet> &writes)
                                            {
                                                Render::DescriptorSetLogic::WriteImage(writes,
-                                                                                      descriptor->set, 0, descriptor->imageInfos[0]);
+                                                                                      descriptor->set, 0,
+                                                                                      VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, descriptor->imageInfos[0]);
                                            });
 
         return descriptor;

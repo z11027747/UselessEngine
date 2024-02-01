@@ -21,6 +21,7 @@ namespace Render
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(materialUBO);
 
+		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 	void MaterialColorDescriptorLogic::AllocateAndUpdate(Context *context,
@@ -47,10 +48,11 @@ namespace Render
 		instance->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
-								   [&descriptor](std::vector<VkWriteDescriptorSet> &writes)
+								   [=](std::vector<VkWriteDescriptorSet> &writes)
 								   {
-									   DescriptorSetLogic::WriteBuffer(writes,
-																	   descriptor->set, 0, descriptor->bufferInfos[0]);
+									   auto &bindings = graphicsPipeline->descriptorBindings;
+									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, 0,
+																	   bindings[0].descriptorType, descriptor->bufferInfos[0]);
 								   });
 	}
 	void MaterialColorDescriptorLogic::Destroy(Context *context,

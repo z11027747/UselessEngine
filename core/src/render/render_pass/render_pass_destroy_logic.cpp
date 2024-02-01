@@ -21,6 +21,7 @@ namespace Render
 			FramebufferLogic::DestroyColorImage2ds(context, pass);
 			FramebufferLogic::DestroyDepthImage2d(context, pass);
 			FramebufferLogic::DestroyResolveImage2d(context, pass);
+			FramebufferLogic::DestroyInputImage2ds(context, pass);
 			FramebufferLogic::Destroy(context, pass);
 		}
 	}

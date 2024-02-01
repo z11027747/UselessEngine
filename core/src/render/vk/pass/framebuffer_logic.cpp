@@ -28,12 +28,18 @@ namespace Render
 				auto colorImageIndex = (pass->isGetSwapchainImage) ? i : 0;
 				attachments.push_back(pass->colorImage2ds[colorImageIndex]->vkImageView);
 			}
-
 			if (pass->depthImage2d != nullptr)
+			{
 				attachments.push_back(pass->depthImage2d->vkImageView);
-
+			}
 			if (pass->resolveImage2d != nullptr)
+			{
 				attachments.push_back(pass->resolveImage2d->vkImageView);
+			}
+			for (auto &inputImage2d : pass->inputImage2ds)
+			{
+				attachments.push_back(inputImage2d->vkImageView);
+			}
 
 			VkFramebufferCreateInfo createInfo = {};
 			createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -92,6 +98,12 @@ namespace Render
 			VkClearValue depthValue = {};
 			clearValues.push_back(depthValue);
 		}
+		for (auto &clearInputValue : pass->clearInputValues)
+		{
+			VkClearValue colorValue = {};
+			colorValue.color = clearInputValue;
+			clearValues.push_back(colorValue);
+		}
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -105,8 +117,16 @@ namespace Render
 		vkCmdBeginRenderPass(vkCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void FramebufferLogic::EndRenderPass(Context *context,
-										 uint32_t imageIndex)
+	void FramebufferLogic::NextSubpass(Context *context, uint32_t imageIndex)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+		auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+
+		vkCmdNextSubpass(vkCmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
+	}
+
+	void FramebufferLogic::EndRenderPass(Context *context, uint32_t imageIndex)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();

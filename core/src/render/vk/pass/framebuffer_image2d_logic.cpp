@@ -114,8 +114,8 @@ namespace Render
 		pass->resolveImage2d = resolveImage2d;
 	}
 
-	void FramebufferLogic::CreatePostProcessImage2d(Context *context,
-													std::shared_ptr<Pass> pass, uint32_t mipLevels)
+	void FramebufferLogic::CreateInputImage2d(Context *context,
+											  std::shared_ptr<Pass> pass, uint32_t mipLevels)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -125,7 +125,7 @@ namespace Render
 			surfaceFormat.format, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 			// image
 			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			0,
 			1,
 			VK_IMAGE_VIEW_TYPE_2D,
@@ -139,7 +139,7 @@ namespace Render
 		auto colorImage2d = ImageLogic::CreateByInfo(context,
 													 imageCreateInfo);
 
-		pass->colorImage2ds.push_back(colorImage2d);
+		pass->inputImage2ds.push_back(colorImage2d);
 	}
 
 	void FramebufferLogic::DestroyColorImage2ds(Context *context,
@@ -175,5 +175,16 @@ namespace Render
 		{
 			ImageLogic::Destroy(context, pass->resolveImage2d);
 		}
+	}
+
+	void FramebufferLogic::DestroyInputImage2ds(Context *context,
+												 std::shared_ptr<Pass> pass)
+	{
+		auto &inputImage2ds = pass->inputImage2ds;
+		for (const auto &inputImage2d : inputImage2ds)
+		{
+			ImageLogic::Destroy(context, inputImage2d);
+		}
+		inputImage2ds.clear();
 	}
 }

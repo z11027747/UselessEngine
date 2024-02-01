@@ -35,6 +35,7 @@ public:
         inline static std::string Color{"color"};
         inline static std::string PostProcess_Bloom{"bloom"};
         inline static std::string PostProcess_ToonMapping{"toon_mapping"};
+        inline static std::string PostProcess_Global{"global"};
     };
 
     class RenderQueue final

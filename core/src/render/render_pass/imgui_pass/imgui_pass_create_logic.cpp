@@ -18,7 +18,9 @@ namespace Render
 		auto pass = std::make_shared<Pass>();
 		pass->name = Define::Pass::ImGui;
 		pass->extent = {currentExtent.width, currentExtent.height};
-		pass->clearColorValue = {0.0, 0.0, 0.0, 0.0f};
+
+		// image2ds
+		FramebufferLogic::GetSwapchainImage2ds(context, pass);
 
 		// count: 1
 		PassLogic::SetSubpassCount(context, pass, 1);
@@ -40,10 +42,8 @@ namespace Render
 										0, VK_SUBPASS_EXTERNAL,
 										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
 										VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_INPUT_ATTACHMENT_READ_BIT);
-		PassLogic::Create(context, pass);
 
-		// images & frame buffer
-		FramebufferLogic::GetSwapchainImage2ds(context, pass);
+		PassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
 
 		global->passMap[pass->name] = pass;

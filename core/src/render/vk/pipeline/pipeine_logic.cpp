@@ -55,7 +55,7 @@ namespace Render
 
 		auto &renderPass = pass->renderPass;
 		pipelineCreateInfo.renderPass = renderPass;
-		pipelineCreateInfo.subpass = 0;
+		pipelineCreateInfo.subpass = graphicsPipeline->subpass;
 
 		VkPipeline vkPipeline;
 		auto ret = vkCreateGraphicsPipelines(logicalDevice, nullptr, 1, &pipelineCreateInfo, nullptr, &vkPipeline);

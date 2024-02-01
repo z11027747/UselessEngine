@@ -25,6 +25,7 @@ namespace Render
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(cubeMap);
 
+		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 	void MaterialSkyboxDescriptorLogic::AllocateAndUpdate(Context *context,
@@ -52,10 +53,11 @@ namespace Render
 		instance->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
-								   [&descriptor](std::vector<VkWriteDescriptorSet> &writes)
+								   [=](std::vector<VkWriteDescriptorSet> &writes)
 								   {
-									   DescriptorSetLogic::WriteImage(writes,
-																	  descriptor->set, 0, descriptor->imageInfos[0]);
+									   auto &bindings = graphicsPipeline->descriptorBindings;
+									   DescriptorSetLogic::WriteImage(writes, descriptor->set, 0,
+																	  bindings[0].descriptorType, descriptor->imageInfos[0]);
 								   });
 	}
 	void MaterialSkyboxDescriptorLogic::Destroy(Context *context,

@@ -36,6 +36,7 @@ namespace Render
 		colorAttachmentReference.layout = subPassLayout;
 
 		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
+		pass->clearColorValue = {0.0f, 0.0f, 0.0f, 0.0f};
 		subpass.colorAttachmentReferences.push_back(colorAttachmentReference);
 	}
 
@@ -64,6 +65,7 @@ namespace Render
 		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
+		pass->clearDepthValue = {1.0f, 0};
 		subpass.depthAttachmentReference = depthAttachmentReference;
 	}
 
@@ -110,6 +112,7 @@ namespace Render
 		inputAttachmentReference.attachment = index;
 		inputAttachmentReference.layout = subPassLayout;
 
+		pass->clearInputValues.push_back({1.0f, 1.0f, 1.0f, 1.0f});
 		subpass.inputAttachmentReferences.push_back(inputAttachmentReference);
 	}
 }

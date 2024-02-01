@@ -22,8 +22,14 @@ namespace Render
 		pass->name = Define::Pass::Main;
 		pass->extent = {currentExtent.width, currentExtent.height};
 		pass->msaaSamples = msaaSamples;
-		pass->clearColorValue = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
-		pass->clearDepthValue = {1.0f, 0};
+
+		// image2ds
+		FramebufferLogic::CreateColorImage2d(context, pass, msaaSamples);
+		FramebufferLogic::CreateDepthImage2d(context, pass, msaaSamples);
+		if (hasMsaa)
+		{
+			FramebufferLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
+		}
 
 		// count: 1
 		PassLogic::SetSubpassCount(context, pass, 1);
@@ -54,16 +60,11 @@ namespace Render
 										0, VK_SUBPASS_EXTERNAL,
 										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
 										VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT);
-		PassLogic::Create(context, pass);
 
-		// images & frame buffer
-		FramebufferLogic::CreateColorImage2d(context, pass, msaaSamples);
-		FramebufferLogic::CreateDepthImage2d(context, pass, msaaSamples);
-		if (hasMsaa)
-		{
-			FramebufferLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
-		}
+		PassLogic::Create(context, pass);
 		FramebufferLogic::Create(context, pass);
+
+		pass->clearColorValue = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
 
 		global->passMap[pass->name] = pass;
 		return pass;

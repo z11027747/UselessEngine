@@ -20,11 +20,11 @@ namespace Render
 		static void CreateColorAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
 										  VkSampleCountFlagBits,
 										  VkImageLayout, VkImageLayout,
-										  uint32_t = 0, VkImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+										  uint32_t = 0u, VkImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
-										  VkSampleCountFlagBits, uint32_t = 1);
+										  VkSampleCountFlagBits, uint32_t = 1u);
 		static void CreateResolveAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
-											VkImageLayout, VkImageLayout, uint32_t = 2);
+											VkImageLayout, VkImageLayout, uint32_t = 2u);
 		static void CreateInputAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
 										  uint32_t, VkImageLayout);
 
@@ -49,13 +49,15 @@ namespace Render
 		static void CreateColorImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateDepthImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateResolveImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
-		static void CreatePostProcessImage2d(Context *, std::shared_ptr<Pass>, uint32_t = 4);
+		static void CreateInputImage2d(Context *, std::shared_ptr<Pass>, uint32_t = 4);
 
 		static void DestroyColorImage2ds(Context *, std::shared_ptr<Pass>);
 		static void DestroyDepthImage2d(Context *, std::shared_ptr<Pass>);
 		static void DestroyResolveImage2d(Context *, std::shared_ptr<Pass>);
+		static void DestroyInputImage2ds(Context *, std::shared_ptr<Pass>);
 
 		static void BeginRenderPass(Context *, uint32_t, std::shared_ptr<Pass>);
+		static void NextSubpass(Context *, uint32_t);
 		static void EndRenderPass(Context *, uint32_t);
 	};
 }

@@ -56,10 +56,10 @@ namespace Render
 
         // update
         DescriptorSetLogic::Update(context,
-                                   [&globalDescriptor](std::vector<VkWriteDescriptorSet> &writes)
+                                   [=](std::vector<VkWriteDescriptorSet> &writes)
                                    {
-                                       DescriptorSetLogic::WriteBuffer(writes,
-                                                                       globalDescriptor->set, 0, globalDescriptor->bufferInfos[0]);
+                                       DescriptorSetLogic::WriteBuffer(writes, globalDescriptor->set, 0,
+                                                                       VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, globalDescriptor->bufferInfos[0]);
                                    });
 
         global->globalSamplerRepeat = SamplerLogic::Create(context, false, 0, 4);

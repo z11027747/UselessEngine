@@ -24,6 +24,7 @@ namespace Render
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::CreateSetLayout},
             };
 
         auto &name = graphicsPipeline->name;

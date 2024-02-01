@@ -44,27 +44,36 @@ namespace Render
         FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
 
         auto &mainCameraEO = context->logicMainCameraEO;
-        PostProcessLogic::Blit(context, mainCameraEO);
-
         auto postProcess = mainCameraEO->GetComponent<PostProcess>();
 
         // toon mapping
-        if (postProcess->toonMappingParams.w == 1.0f)
+        auto &toonMappingParams = postProcess->toonMappingParams;
+        if (toonMappingParams.w == 1.0f)
         {
-            auto &graphicsPipeline = global->pipelineMap[Define::Pipeline::PostProcess_ToonMapping];
+            auto &toonMappingPipeline = global->pipelineMap[Define::Pipeline::PostProcess_ToonMapping];
             DrawPipeline(vkCmdBuffer,
-                         graphicsPipeline,
-                         postProcess->descriptor, postProcess->toonMappingParams);
+                         toonMappingPipeline,
+                         postProcess->descriptor, toonMappingParams);
         }
 
+        FramebufferLogic::NextSubpass(context, imageIndex);
+
         // bloom
-        if (postProcess->bloomParams.w == 1.0f)
+        auto &bloomParams = postProcess->bloomParams;
+        if (bloomParams.w == 1.0f)
         {
             auto &graphicsPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
             DrawPipeline(vkCmdBuffer,
                          graphicsPipeline,
-                         postProcess->descriptor, postProcess->bloomParams);
+                         postProcess->descriptor, bloomParams);
         }
+
+        FramebufferLogic::NextSubpass(context, imageIndex);
+
+        auto &globalPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Global];
+        DrawPipeline(vkCmdBuffer,
+                     globalPipeline,
+                     postProcess->descriptor, glm::vec4(0.0f));
 
         FramebufferLogic::EndRenderPass(context, imageIndex);
     }
