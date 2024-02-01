@@ -8,15 +8,22 @@
 
 namespace Render
 {
+	struct Subpass final
+	{
+		std::vector<VkAttachmentReference> colorAttachmentReferences;
+		VkAttachmentReference depthAttachmentReference;
+		VkAttachmentReference resolveAttachmentReference;
+		std::vector<VkAttachmentReference> inputAttachmentReferences;
+	};
+
 	struct Pass final
 	{
 		std::string name;
 
 		std::vector<VkAttachmentDescription> attachmentDescriptions;
 
-		VkAttachmentReference colorAttachmentReference;
-		VkAttachmentReference depthAttachmentReference;
-		VkAttachmentReference resolveAttachmentReference;
+		std::vector<Subpass> subpasses;
+		std::vector<VkSubpassDescription> subpassDescriptions;
 
 		bool isGetSwapchainImage;
 		std::vector<std::shared_ptr<Image>> colorImage2ds;
@@ -31,7 +38,6 @@ namespace Render
 		VkClearDepthStencilValue clearDepthValue;
 
 		std::vector<VkSubpassDependency> subpassDependencies;
-		VkSubpassDescription subpassDescription;
 		VkRenderPass renderPass;
 
 		std::vector<VkFramebuffer> frameBuffers;

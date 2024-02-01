@@ -19,27 +19,49 @@ namespace Render
 		pass->name = Define::Pass::PostProcess;
 		pass->extent = {currentExtent.width, currentExtent.height};
 
-		PassLogic::CreateColorImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
+		// count: 2
+		PassLogic::SetSubpassCount(context, pass, 2);
 
-		auto mipLevels = 4u;
-		PassLogic::CreatePostProcessImage2d(context, pass, mipLevels);
-
-		PassLogic::CreateColorAttachment(context, pass,
+		// subpass0: toon mapping
+		// attachment0: color
+		PassLogic::CreateColorAttachment(context, pass, 0,
 										 VK_SAMPLE_COUNT_1_BIT,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		// description0
+		PassLogic::SetSubpassDescription(context, pass, 0);
 
-		PassLogic::SetSubPassDescription(context, pass);
+		// subpass1
+		// attachment0: color
+		PassLogic::CreateColorAttachment(context, pass, 1,
+										 VK_SAMPLE_COUNT_1_BIT,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+										 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::CreateInputAttachment(context, pass, 1,
+										 0, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		// description1
+		PassLogic::SetSubpassDescription(context, pass, 1);
 
+		// dependency: 0->1
+		PassLogic::AddSubpassDependency(context, pass,
+										0, 1,
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+										VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_INPUT_ATTACHMENT_READ_BIT);
+		// dependency: external->0
 		PassLogic::AddSubpassDependency(context, pass,
 										VK_SUBPASS_EXTERNAL, 0,
-										VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,					  // src
-										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT); // dst
+										VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+		// dependency: 0->external
 		PassLogic::AddSubpassDependency(context, pass,
 										0, VK_SUBPASS_EXTERNAL,
-										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // src
-										VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT);					 // dst
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+										VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT);
 		PassLogic::Create(context, pass);
 
+		// images & frame buffer
+		FramebufferLogic::CreateColorImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
+		FramebufferLogic::CreatePostProcessImage2d(context, pass, 4u); // mipLevels
 		FramebufferLogic::Create(context, pass);
 
 		global->passMap[pass->name] = pass;

@@ -9,6 +9,44 @@
 
 namespace Render
 {
+	void PassLogic::SetSubpassCount(Context *context,
+									std::shared_ptr<Pass> pass, uint32_t count)
+	{
+		pass->subpasses.resize(count);
+		pass->subpassDescriptions.resize(count);
+	}
+
+	void PassLogic::SetSubpassDescription(Context *context,
+										  std::shared_ptr<Pass> pass, uint32_t subpassIndex)
+	{
+		auto &subpass = pass->subpasses[subpassIndex];
+		auto &subpassDescription = pass->subpassDescriptions[subpassIndex];
+
+		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+
+		if (!pass->colorImage2ds.empty())
+		{
+			subpassDescription.colorAttachmentCount = static_cast<uint32_t>(subpass.inputAttachmentReferences.size());
+			subpassDescription.pColorAttachments = subpass.colorAttachmentReferences.data();
+		}
+		if (pass->depthImage2d != nullptr)
+		{
+			subpassDescription.pDepthStencilAttachment = &subpass.depthAttachmentReference;
+		}
+		if (pass->resolveImage2d != nullptr)
+		{
+			subpassDescription.pResolveAttachments = &subpass.resolveAttachmentReference;
+		}
+
+		if (!subpass.inputAttachmentReferences.empty())
+		{
+			subpassDescription.inputAttachmentCount = static_cast<uint32_t>(subpass.inputAttachmentReferences.size());
+			subpassDescription.pInputAttachments = subpass.inputAttachmentReferences.data();
+		}
+
+		pass->subpassDescriptions[subpassIndex] = subpassDescription;
+	}
+
 	void PassLogic::AddSubpassDependency(Context *context,
 										 std::shared_ptr<Pass> pass,
 										 uint32_t srcSubpass, uint32_t dstSubpass,
@@ -27,29 +65,6 @@ namespace Render
 		pass->subpassDependencies.push_back(subpassDependency);
 	}
 
-	void PassLogic::SetSubPassDescription(Context *context,
-										  std::shared_ptr<Pass> pass)
-	{
-		VkSubpassDescription subpassDescription = {};
-		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-
-		if (!pass->colorImage2ds.empty())
-		{
-			subpassDescription.colorAttachmentCount = 1;
-			subpassDescription.pColorAttachments = &pass->colorAttachmentReference;
-		}
-		if (pass->depthImage2d != nullptr)
-		{
-			subpassDescription.pDepthStencilAttachment = &pass->depthAttachmentReference;
-		}
-		if (pass->resolveImage2d != nullptr)
-		{
-			subpassDescription.pResolveAttachments = &pass->resolveAttachmentReference;
-		}
-
-		pass->subpassDescription = subpassDescription;
-	}
-
 	void PassLogic::Create(Context *context,
 						   std::shared_ptr<Pass> pass)
 	{
@@ -57,8 +72,8 @@ namespace Render
 		createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		createInfo.attachmentCount = static_cast<uint32_t>(pass->attachmentDescriptions.size());
 		createInfo.pAttachments = pass->attachmentDescriptions.data();
-		createInfo.subpassCount = 1;
-		createInfo.pSubpasses = &pass->subpassDescription;
+		createInfo.subpassCount = static_cast<uint32_t>(pass->subpassDescriptions.size());
+		createInfo.pSubpasses = pass->subpassDescriptions.data();
 		createInfo.dependencyCount = static_cast<uint32_t>(pass->subpassDependencies.size());
 		createInfo.pDependencies = pass->subpassDependencies.data();
 

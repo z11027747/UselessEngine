@@ -9,8 +9,8 @@
 
 namespace Render
 {
-	void PassLogic::GetSwapchainImage2ds(Context *context,
-										 std::shared_ptr<Pass> pass)
+	void FramebufferLogic::GetSwapchainImage2ds(Context *context,
+												std::shared_ptr<Pass> pass)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -25,9 +25,9 @@ namespace Render
 		pass->isGetSwapchainImage = true;
 	}
 
-	void PassLogic::CreateColorImage2d(Context *context,
-									   std::shared_ptr<Pass> pass,
-									   VkSampleCountFlagBits samplers)
+	void FramebufferLogic::CreateColorImage2d(Context *context,
+											  std::shared_ptr<Pass> pass,
+											  VkSampleCountFlagBits samplers)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -54,9 +54,9 @@ namespace Render
 		pass->colorImage2ds.push_back(colorImage2d);
 	}
 
-	void PassLogic::CreateDepthImage2d(Context *context,
-									   std::shared_ptr<Pass> pass,
-									   VkSampleCountFlagBits samplers)
+	void FramebufferLogic::CreateDepthImage2d(Context *context,
+											  std::shared_ptr<Pass> pass,
+											  VkSampleCountFlagBits samplers)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -84,9 +84,9 @@ namespace Render
 		pass->depthImage2d = depthImage2d;
 	}
 
-	void PassLogic::CreateResolveImage2d(Context *context,
-										 std::shared_ptr<Pass> pass,
-										 VkSampleCountFlagBits samplers)
+	void FramebufferLogic::CreateResolveImage2d(Context *context,
+												std::shared_ptr<Pass> pass,
+												VkSampleCountFlagBits samplers)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -114,8 +114,8 @@ namespace Render
 		pass->resolveImage2d = resolveImage2d;
 	}
 
-	void PassLogic::CreatePostProcessImage2d(Context *context,
-											 std::shared_ptr<Pass> pass, uint32_t mipLevels)
+	void FramebufferLogic::CreatePostProcessImage2d(Context *context,
+													std::shared_ptr<Pass> pass, uint32_t mipLevels)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -142,8 +142,8 @@ namespace Render
 		pass->colorImage2ds.push_back(colorImage2d);
 	}
 
-	void PassLogic::DestroyColorImage2ds(Context *context,
-										 std::shared_ptr<Pass> pass)
+	void FramebufferLogic::DestroyColorImage2ds(Context *context,
+												std::shared_ptr<Pass> pass)
 	{
 		if (pass->isGetSwapchainImage)
 		{
@@ -159,8 +159,8 @@ namespace Render
 		colorImage2ds.clear();
 	}
 
-	void PassLogic::DestroyDepthImage2d(Context *context,
-										std::shared_ptr<Pass> pass)
+	void FramebufferLogic::DestroyDepthImage2d(Context *context,
+											   std::shared_ptr<Pass> pass)
 	{
 		if (pass->depthImage2d != nullptr)
 		{
@@ -168,8 +168,8 @@ namespace Render
 		}
 	}
 
-	void PassLogic::DestroyResolveImage2d(Context *context,
-										  std::shared_ptr<Pass> pass)
+	void FramebufferLogic::DestroyResolveImage2d(Context *context,
+												 std::shared_ptr<Pass> pass)
 	{
 		if (pass->resolveImage2d != nullptr)
 		{

@@ -17,10 +17,10 @@ namespace Render
 		for (const auto &kv : global->passMap)
 		{
 			auto &pass = kv.second;
-			PassLogic::DestroyColorImage2ds(context, pass);
-			PassLogic::DestroyDepthImage2d(context, pass);
-			PassLogic::DestroyResolveImage2d(context, pass);
 			PassLogic::Destroy(context, pass);
+			FramebufferLogic::DestroyColorImage2ds(context, pass);
+			FramebufferLogic::DestroyDepthImage2d(context, pass);
+			FramebufferLogic::DestroyResolveImage2d(context, pass);
 			FramebufferLogic::Destroy(context, pass);
 		}
 	}

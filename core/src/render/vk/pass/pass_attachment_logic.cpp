@@ -10,11 +10,13 @@
 namespace Render
 {
 	void PassLogic::CreateColorAttachment(Context *context,
-										  std::shared_ptr<Pass> pass,
+										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
 										  VkSampleCountFlagBits samplers,
 										  VkImageLayout initLayout, VkImageLayout finalLayout,
-										  VkImageLayout subPassLayout)
+										  uint32_t index, VkImageLayout subPassLayout)
 	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto surfaceFormat = global->surfaceFormat;
@@ -30,18 +32,19 @@ namespace Render
 		colorAttachmentDescription.finalLayout = finalLayout;
 
 		VkAttachmentReference colorAttachmentReference = {};
-		colorAttachmentReference.attachment = 0;
+		colorAttachmentReference.attachment = index;
 		colorAttachmentReference.layout = subPassLayout;
 
 		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
-		pass->colorAttachmentReference = colorAttachmentReference;
-		pass->clearColorValue = {0.0, 0.0, 0.0, 0.0f};
+		subpass.colorAttachmentReferences.push_back(colorAttachmentReference);
 	}
 
 	void PassLogic::CreateDepthAttachment(Context *context,
-										  std::shared_ptr<Pass> pass,
+										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
 										  VkSampleCountFlagBits samplers, uint32_t index)
 	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto depthFormat = global->depthFormat;
@@ -61,14 +64,16 @@ namespace Render
 		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
-		pass->depthAttachmentReference = depthAttachmentReference;
-		pass->clearDepthValue = {1.0f, 0};
+		subpass.depthAttachmentReference = depthAttachmentReference;
 	}
 
 	void PassLogic::CreateResolveAttachment(Context *context,
-											std::shared_ptr<Pass> pass,
-											VkImageLayout initLayout, VkImageLayout finalLayout)
+											std::shared_ptr<Pass> pass, uint32_t subpassIndex,
+											VkImageLayout initLayout, VkImageLayout finalLayout,
+											uint32_t index)
 	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto surfaceFormat = global->surfaceFormat;
@@ -84,10 +89,27 @@ namespace Render
 		resolveAttachmentDescription.finalLayout = finalLayout;
 
 		VkAttachmentReference resolveAttachmentReference = {};
-		resolveAttachmentReference.attachment = 2;
+		resolveAttachmentReference.attachment = index;
 		resolveAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		pass->attachmentDescriptions.push_back(resolveAttachmentDescription);
-		pass->resolveAttachmentReference = resolveAttachmentReference;
+		subpass.resolveAttachmentReference = resolveAttachmentReference;
+	}
+
+	void PassLogic::CreateInputAttachment(Context *context,
+										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
+										  uint32_t index, VkImageLayout subPassLayout)
+	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto surfaceFormat = global->surfaceFormat;
+
+		VkAttachmentReference inputAttachmentReference = {};
+		inputAttachmentReference.attachment = index;
+		inputAttachmentReference.layout = subPassLayout;
+
+		subpass.inputAttachmentReferences.push_back(inputAttachmentReference);
 	}
 }
