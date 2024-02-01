@@ -48,7 +48,7 @@ namespace Render
 		pipelineCreateInfo.pColorBlendState = &stageInfo.colorBlendingStateCreateInfo;
 
 		MaterialDescriptorLogic::CreateSetLayout(context, graphicsPipeline);
-		PipelineLayoutLogic::Create(context, graphicsPipeline);
+		PipelineLayoutLogic::Create(context, graphicsPipeline, pass);
 
 		auto &pipelineLayout = graphicsPipeline->pipelineLayout;
 		pipelineCreateInfo.layout = pipelineLayout;

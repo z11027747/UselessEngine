@@ -12,6 +12,7 @@ namespace Render
     {
     public:
         static void SetViewport(Context *, std::shared_ptr<GraphicsPipeline>);
+        static void SetColorBlendStage(Context *, std::shared_ptr<GraphicsPipeline>);
     };
 
     class MaterialPostProcessDescriptorLogic final

@@ -96,7 +96,7 @@ namespace Render
 			surfaceFormat.format, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 			// image
 			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			0,
 			1,
 			VK_IMAGE_VIEW_TYPE_2D,
@@ -115,32 +115,31 @@ namespace Render
 	}
 
 	void PassLogic::CreatePostProcessImage2d(Context *context,
-											 std::shared_ptr<Pass> pass,
-											 std::shared_ptr<Image> image2d, uint32_t mipLevels)
+											 std::shared_ptr<Pass> pass, uint32_t mipLevels)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto surfaceFormat = global->surfaceFormat;
-		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
-		for (auto i = 0u; i < mipLevels; i++)
-		{
-			auto postProcessImage = std::make_shared<Image>();
-			postProcessImage->format = image2d->format;
-			postProcessImage->extent = image2d->extent;
-			postProcessImage->aspectMask = image2d->aspectMask;
-			postProcessImage->layerCount = image2d->layerCount;
-			postProcessImage->layout = image2d->layout;
-			postProcessImage->mipLevels = mipLevels;
+		ImageCreateInfo imageCreateInfo = {
+			surfaceFormat.format, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
+			// image
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			0,
+			1,
+			VK_IMAGE_VIEW_TYPE_2D,
+			mipLevels,
+			VK_SAMPLE_COUNT_1_BIT,
+			// memory
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			// layout
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+		auto colorImage2d = ImageLogic::CreateByInfo(context,
+													 imageCreateInfo);
 
-			postProcessImage->vkImage = image2d->vkImage;
-
-			ImageLogic::CreateView(context,
-								   postProcessImage,
-								   VK_IMAGE_VIEW_TYPE_2D, image2d->aspectMask, 1, mipLevels);
-
-			pass->colorImage2ds.push_back(postProcessImage);
-		}
+		pass->colorImage2ds.push_back(colorImage2d);
 	}
 
 	void PassLogic::DestroyColorImage2ds(Context *context,

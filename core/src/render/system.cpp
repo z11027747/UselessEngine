@@ -67,6 +67,7 @@ namespace Render
 		PipelineLogic::Create(context, Define::Pipeline::LightModel, mainPass);
 		PipelineLogic::Create(context, Define::Pipeline::Color, mainPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
+		PipelineLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping, postProcessPass);
 
 		MeshInstanceLogic::CreateCache(context);
 		MaterialInstanceLogic::CreateCache(context);

@@ -9,32 +9,30 @@
 
 namespace Editor
 {
-	static bool enableBloom = false;
-
 	template <>
 	void ComponentWrap<Render::PostProcess>::Draw(Context *context,
 												  std::shared_ptr<Render::PostProcess> postProcess, bool isInit)
 	{
-		auto &bloomParams = postProcess->bloomParams;
 
 		if (isInit)
 		{
-			enableBloom = (bloomParams.x == 1.0f);
 			return;
 		}
 
 		ImGui::Checkbox("Enabled", &postProcess->enabled);
 
 		ImGui::Spacing();
-		if (ImGui::Checkbox("Enable Bloom", &enableBloom))
-		{
-			bloomParams.x = enableBloom ? 1.0f : 0.0f;
-		}
-		if (enableBloom)
-		{
-			ImGui::DragFloat("Scale", &bloomParams.y, 0.1f);
-			ImGui::DragFloat("Threshold", &bloomParams.z, 0.01f, 0.0f, 1.0f);
-			ImGui::InputFloat("Intensity", &bloomParams.w);
-		}
+		ImGui::Text("Toon Mapping");
+		auto &toonMappingParams = postProcess->toonMappingParams;
+		ImGui::SliderFloat("Brightness", &toonMappingParams.x, 0.0f, 3.0f);
+		ImGui::SliderFloat("Saturation", &toonMappingParams.y, 0.0f, 3.0f);
+		ImGui::SliderFloat("Contrast", &toonMappingParams.z, 0.0f, 3.0f);
+
+		ImGui::Spacing();
+		ImGui::Text("Bloom");
+		auto &bloomParams = postProcess->bloomParams;
+		ImGui::SliderFloat("Scale", &bloomParams.x, 0.0f, 10.0f);
+		ImGui::SliderFloat("Threshold", &bloomParams.y, 0.0f, 1.0f);
+		ImGui::InputFloat("Intensity", &bloomParams.z);
 	}
 }

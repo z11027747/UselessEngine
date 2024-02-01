@@ -93,6 +93,8 @@ namespace Render
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetColorBlendStage},
+                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessPipelineLogic::SetColorBlendStage},
+                {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessPipelineLogic::SetColorBlendStage},
             };
 
         auto &name = graphicsPipeline->name;

@@ -62,8 +62,8 @@ namespace Render
                                                                        globalDescriptor->set, 0, globalDescriptor->bufferInfos[0]);
                                    });
 
-        global->globalSamplerRepeat = SamplerLogic::Create(context, false);
-        global->globalSamplerClamp = SamplerLogic::Create(context, true);
+        global->globalSamplerRepeat = SamplerLogic::Create(context, false, 0, 4);
+        global->globalSamplerClamp = SamplerLogic::Create(context, true, 0, 4);
     }
 
     void MaterialGlobalDescriptorLogic::Destroy(Context *context)

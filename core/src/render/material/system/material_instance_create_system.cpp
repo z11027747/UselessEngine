@@ -21,8 +21,7 @@ namespace Render
 
             if (material->instance == nullptr)
             {
-                material->instance = MaterialInstanceLogic::Create(context,
-                                                                   info);
+                material->instance = MaterialInstanceLogic::Create(context, info);
             }
 
             if (info->hasChanged)

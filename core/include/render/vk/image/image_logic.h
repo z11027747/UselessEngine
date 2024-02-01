@@ -27,11 +27,11 @@ namespace Render
 									 bool singleTime = false);
 
 		static void GenerateMipmapsAndTransitionLayout(Context *, std::shared_ptr<Image>,
-													   VkImageLayout, VkImageLayout);
+													   VkImageLayout, VkImageLayout, bool = false);
 
 		static void CopyFromBuffer(Context *, std::shared_ptr<Image>,
 								   std::shared_ptr<Buffer>);
 		static void CopyFromImage(Context *, std::shared_ptr<Image>,
-								  std::shared_ptr<Image>, bool singleTime = false);
+								  std::shared_ptr<Image>, bool = false);
 	};
 }

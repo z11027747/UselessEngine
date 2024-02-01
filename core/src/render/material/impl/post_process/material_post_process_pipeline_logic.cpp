@@ -26,4 +26,8 @@ namespace Render
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 	}
+	void MaterialPostProcessPipelineLogic::SetColorBlendStage(Context *context,
+														std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	{
+	}
 }
