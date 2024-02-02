@@ -37,8 +37,8 @@ public:
         inline static std::string Deferred_LightModel{"deferred_light_model"};
 
         // post process
-        inline static std::string PostProcess_Bloom{"bloom"};
         inline static std::string PostProcess_ToonMapping{"toon_mapping"};
+        inline static std::string PostProcess_Bloom{"bloom"};
         inline static std::string PostProcess_Global{"global"};
     };
 

@@ -85,6 +85,8 @@ namespace Render
 
 		FramebufferLogic::Create(context, pass);
 
+		pass->clearColorValue = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
+		
 		global->passMap[pass->name] = pass;
 		return pass;
 	}
