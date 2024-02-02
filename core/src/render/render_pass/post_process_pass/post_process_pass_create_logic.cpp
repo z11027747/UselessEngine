@@ -21,8 +21,9 @@ namespace Render
 
 		// image2ds
 		FramebufferLogic::CreateColorImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
-		FramebufferLogic::CreateInputImage2d(context, pass, 1u);
-		FramebufferLogic::CreateInputImage2d(context, pass, 1u);
+		FramebufferLogic::CreateBlitImage2d(context, pass, 4u);
+		FramebufferLogic::CreateInputImage2d(context, pass);
+		FramebufferLogic::CreateInputImage2d(context, pass);
 
 		// subpass count: 3
 		PassLogic::SetSubpassCount(context, pass, 3);
@@ -53,10 +54,10 @@ namespace Render
 										 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		// attachment1: input-toon mapping
 		PassLogic::CreateInputAttachment(context, pass, 2,
-										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {1.0f, 1.0f, 1.0f, 1.0f});
 		// attachment2: input-bloom
 		PassLogic::CreateInputAttachment(context, pass, 2,
-										 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
 		// description0
 		PassLogic::SetSubpassDescription(context, pass, 2);
 

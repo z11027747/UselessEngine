@@ -13,7 +13,5 @@ namespace Render
     public:
         static void Create(Context *, std::shared_ptr<EngineObject>);
         static void Destroy(Context *, std::shared_ptr<EngineObject>);
-
-        static void Blit(Context *, std::shared_ptr<EngineObject>);
     };
 }

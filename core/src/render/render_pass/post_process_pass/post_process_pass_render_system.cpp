@@ -16,23 +16,11 @@ class Context;
 
 namespace Render
 {
-    static void DrawPipeline(VkCommandBuffer vkCmdBuffer,
-                             std::shared_ptr<GraphicsPipeline> graphicsPipeline,
-                             std::shared_ptr<Descriptor> descriptor, glm::vec4 params)
-    {
-        auto &pipeline = graphicsPipeline->pipeline;
-        auto &pipelineLayout = graphicsPipeline->pipelineLayout;
-        vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    static void BlitResolveImageAndGenMipmap(Context *);
 
-        vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
-                                1, &descriptor->set,
-                                0, nullptr);
-
-        vkCmdPushConstants(vkCmdBuffer, pipelineLayout,
-                           VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(glm::vec4), &params);
-
-        vkCmdDraw(vkCmdBuffer, 6, 1, 0, 0);
-    }
+    static void DrawPipeline(VkCommandBuffer,
+                             std::shared_ptr<GraphicsPipeline>,
+                             std::shared_ptr<Descriptor>, glm::vec4 &);
 
     void PostProcessPassRenderSystem::Update(Context *context, uint32_t imageIndex)
     {
@@ -42,6 +30,9 @@ namespace Render
 
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
         FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
+
+        // blit
+        BlitResolveImageAndGenMipmap(context);
 
         auto &mainCameraEO = context->logicMainCameraEO;
         auto postProcess = mainCameraEO->GetComponent<PostProcess>();
@@ -76,5 +67,58 @@ namespace Render
                      postProcess->descriptor, glm::vec4(0.0f));
 
         FramebufferLogic::EndRenderPass(context, imageIndex);
+    }
+
+    static void BlitResolveImageAndGenMipmap(Context *context)
+    {
+        auto &globalEO = context->renderGlobalEO;
+        auto global = globalEO->GetComponent<Global>();
+
+        auto &mainCameraEO = context->logicMainCameraEO;
+        auto postProcess = mainCameraEO->GetComponent<PostProcess>();
+
+        auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
+        auto &colorImage2d = postProcessPass->colorImage2ds[1];
+
+        auto &mainPass = global->passMap[Define::Pass::Main];
+        auto &resolveImage2d = mainPass->resolveImage2d;
+
+        // TODO 一次 cmd
+
+        ImageLogic::TransitionLayout(context, resolveImage2d,
+                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1,
+                                     true);
+        ImageLogic::TransitionLayout(context, colorImage2d,
+                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, colorImage2d->mipLevels,
+                                     true);
+
+        ImageLogic::CopyFromImage(context, colorImage2d,
+                                  resolveImage2d,
+                                  true);
+
+        ImageLogic::TransitionLayout(context, resolveImage2d,
+                                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1,
+                                     true);
+
+        ImageLogic::GenerateMipmapsAndTransitionLayout(context, colorImage2d,
+                                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                       true);
+    }
+    static void DrawPipeline(VkCommandBuffer vkCmdBuffer,
+                             std::shared_ptr<GraphicsPipeline> graphicsPipeline,
+                             std::shared_ptr<Descriptor> descriptor, glm::vec4 &params)
+    {
+        auto &pipeline = graphicsPipeline->pipeline;
+        auto &pipelineLayout = graphicsPipeline->pipelineLayout;
+        vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+
+        vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
+                                1, &descriptor->set,
+                                0, nullptr);
+
+        vkCmdPushConstants(vkCmdBuffer, pipelineLayout,
+                           VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(glm::vec4), &params);
+
+        vkCmdDraw(vkCmdBuffer, 6, 1, 0, 0);
     }
 }

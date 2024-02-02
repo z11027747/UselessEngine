@@ -17,6 +17,22 @@ namespace Render
 {
     static std::unordered_map<std::string, std::vector<std::shared_ptr<EngineObject>>> materialEOMap{};
 
+    static void SplitPipeline(Context *);
+    static void SortPipeline();
+    static void DrawPipeline(Context *,
+                             uint32_t, bool,
+                             const std::string &);
+
+    void RenderPassSystem::Update(Context *context,
+                                  uint32_t imageIndex, bool isShadow)
+    {
+        SplitPipeline(context);
+        SortPipeline();
+
+        DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::LightModel);
+        DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Color);
+    }
+
     static void SplitPipeline(Context *context)
     {
         materialEOMap.clear();
@@ -113,13 +129,4 @@ namespace Render
         }
     }
 
-    void RenderPassSystem::Update(Context *context,
-                                  uint32_t imageIndex, bool isShadow)
-    {
-        SplitPipeline(context);
-        SortPipeline();
-
-        DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::LightModel);
-        DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Color);
-    }
 };

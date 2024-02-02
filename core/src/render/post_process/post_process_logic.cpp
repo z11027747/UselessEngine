@@ -18,7 +18,6 @@ namespace Render
 
         auto postProcess = std::make_shared<PostProcess>();
 
-        auto &mainPass = global->passMap[Define::Pass::Main];
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
         auto &postProcessPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
 
@@ -29,8 +28,8 @@ namespace Render
 
         VkDescriptorImageInfo resolveImageInfo = {
             global->globalSamplerClamp,
-            mainPass->resolveImage2d->vkImageView,
-            mainPass->resolveImage2d->layout};
+            postProcessPass->colorImage2ds[1]->vkImageView,
+            postProcessPass->colorImage2ds[1]->layout};
         descriptor->imageInfos.push_back(resolveImageInfo);
 
         VkDescriptorImageInfo toonMappingAttachmentInfo = {
@@ -63,39 +62,5 @@ namespace Render
     }
     void PostProcessLogic::Destroy(Context *context, std::shared_ptr<EngineObject> mainCameraEO)
     {
-    }
-
-    void PostProcessLogic::Blit(Context *context, std::shared_ptr<EngineObject> mainCameraEO)
-    {
-        auto &globalEO = context->renderGlobalEO;
-        auto global = globalEO->GetComponent<Global>();
-
-        auto postProcess = mainCameraEO->GetComponent<PostProcess>();
-        auto &descriptor = postProcess->descriptor;
-
-        auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
-        auto &inputImage2d = postProcessPass->inputImage2ds[0];
-
-        auto &mainPass = global->passMap[Define::Pass::Main];
-        auto &resolveImage2d = mainPass->resolveImage2d;
-
-        ImageLogic::TransitionLayout(context, resolveImage2d,
-                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1,
-                                     true);
-        ImageLogic::TransitionLayout(context, inputImage2d,
-                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, inputImage2d->mipLevels,
-                                     true);
-
-        ImageLogic::CopyFromImage(context, inputImage2d,
-                                  resolveImage2d,
-                                  true);
-
-        ImageLogic::TransitionLayout(context, resolveImage2d,
-                                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1,
-                                     true);
-
-        ImageLogic::GenerateMipmapsAndTransitionLayout(context, inputImage2d,
-                                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                                       true);
     }
 }

@@ -57,6 +57,5 @@ void main() {
 
     float intensity = push.params.z;
 
-    vec3 col = texture(blitImage, uv).rgb;
-    outColor = vec4(col + (blurColor * luma * intensity), 1.0);
+    outColor = vec4(vec3(blurColor * luma * intensity), 1.0);
 }

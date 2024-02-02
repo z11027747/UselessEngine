@@ -115,7 +115,7 @@ namespace Render
 	}
 
 	void FramebufferLogic::CreateInputImage2d(Context *context,
-											  std::shared_ptr<Pass> pass, uint32_t mipLevels)
+											  std::shared_ptr<Pass> pass)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -129,7 +129,7 @@ namespace Render
 			0,
 			1,
 			VK_IMAGE_VIEW_TYPE_2D,
-			mipLevels,
+			1,
 			VK_SAMPLE_COUNT_1_BIT,
 			// memory
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -140,6 +140,34 @@ namespace Render
 													 imageCreateInfo);
 
 		pass->inputImage2ds.push_back(colorImage2d);
+	}
+
+	void FramebufferLogic::CreateBlitImage2d(Context *context,
+											 std::shared_ptr<Pass> pass, uint32_t mipLevels)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto surfaceFormat = global->surfaceFormat;
+
+		ImageCreateInfo imageCreateInfo = {
+			surfaceFormat.format, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
+			// image
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL | VK_IMAGE_USAGE_SAMPLED_BIT,
+			0,
+			1,
+			VK_IMAGE_VIEW_TYPE_2D,
+			mipLevels,
+			VK_SAMPLE_COUNT_1_BIT,
+			// memory
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			// layout
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+		auto colorImage2d = ImageLogic::CreateByInfo(context,
+													 imageCreateInfo);
+
+		pass->colorImage2ds.push_back(colorImage2d);
 	}
 
 	void FramebufferLogic::DestroyColorImage2ds(Context *context,
@@ -178,7 +206,7 @@ namespace Render
 	}
 
 	void FramebufferLogic::DestroyInputImage2ds(Context *context,
-												 std::shared_ptr<Pass> pass)
+												std::shared_ptr<Pass> pass)
 	{
 		auto &inputImage2ds = pass->inputImage2ds;
 		for (const auto &inputImage2d : inputImage2ds)

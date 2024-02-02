@@ -100,7 +100,7 @@ namespace Render
 
 	void PassLogic::CreateInputAttachment(Context *context,
 										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-										  uint32_t index, VkImageLayout subPassLayout)
+										  uint32_t index, VkImageLayout subPassLayout, VkClearColorValue &&clearValue)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
@@ -112,7 +112,7 @@ namespace Render
 		inputAttachmentReference.attachment = index;
 		inputAttachmentReference.layout = subPassLayout;
 
-		pass->clearInputValues.push_back({1.0f, 1.0f, 1.0f, 1.0f});
+		pass->clearInputValues.push_back(clearValue);
 		subpass.inputAttachmentReferences.push_back(inputAttachmentReference);
 	}
 }

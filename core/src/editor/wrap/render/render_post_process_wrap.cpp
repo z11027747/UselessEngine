@@ -48,7 +48,7 @@ namespace Editor
 		}
 		if (enableBloom)
 		{
-			ImGui::SliderFloat("Scale", &bloomParams.x, 0.0f, 10.0f);
+			ImGui::SliderFloat("Scale", &bloomParams.x, 0.0f, 30.0f);
 			ImGui::SliderFloat("Threshold", &bloomParams.y, 0.0f, 1.0f);
 			ImGui::InputFloat("Intensity", &bloomParams.z);
 		}
