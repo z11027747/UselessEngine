@@ -30,7 +30,6 @@ json11::Json Common::ComponentJson<Render::Mesh>::To(std::shared_ptr<void> compo
 
     auto &meshInfo = mesh->info;
     auto &vertexColor = meshInfo->vertexColor;
-
     auto vertexColorJArr = json11::Json::array{vertexColor.r, vertexColor.g, vertexColor.b};
 
     auto jObj = json11::Json::object{

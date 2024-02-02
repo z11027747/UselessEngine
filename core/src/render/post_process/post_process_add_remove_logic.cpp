@@ -11,13 +11,12 @@
 
 namespace Render
 {
-    void PostProcessLogic::Create(Context *context, std::shared_ptr<EngineObject> mainCameraEO)
+    void PostProcessLogic::OnAdd(Context *context, std::shared_ptr<EngineObject> eo)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        auto postProcess = std::make_shared<PostProcess>();
-
+        auto postProcess = eo->GetComponent<PostProcess>();
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
         auto &postProcessPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
 
@@ -57,10 +56,8 @@ namespace Render
                                    });
 
         postProcess->descriptor = descriptor;
-
-        mainCameraEO->AddComponent(postProcess);
     }
-    void PostProcessLogic::Destroy(Context *context, std::shared_ptr<EngineObject> mainCameraEO)
+    void PostProcessLogic::OnRemove(Context *context, std::shared_ptr<EngineObject> eo)
     {
     }
 }

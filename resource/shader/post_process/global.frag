@@ -13,7 +13,6 @@ layout (location = 0) in vec2 uv;
 layout (location = 0) out vec4 outColor;
 
 void main() {
-    // vec3 col = texture(blitImage, uv).rgb;
     vec3 toonMappingCol = subpassLoad(toonMappingAttachment).rgb;
     vec3 bloomCol = subpassLoad(bloomAttachment).rgb;
 

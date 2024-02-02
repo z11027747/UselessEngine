@@ -7,6 +7,8 @@
 #include "render/material/material_logic.h"
 #include "render/mesh/mesh_comp.h"
 #include "render/mesh/mesh_logic.h"
+#include "render/post_process/post_process_comp.h"
+#include "render/post_process/post_process_logic.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/camera/camera_logic.h"
 #include "logic/hit/hit_comp.h"
@@ -42,6 +44,7 @@ namespace Common
             TYPE_TO_CONSTRUCT(Render::SpotLight),
             TYPE_TO_CONSTRUCT(Render::Material),
             TYPE_TO_CONSTRUCT(Render::Mesh),
+            TYPE_TO_CONSTRUCT(Render::PostProcess),
         };
 
     std::shared_ptr<void> Type::Create(const std::string &type)
@@ -69,6 +72,7 @@ namespace Common
             TYPE_TO_ADD(Render::PointLight, Render::LightLogic),
             TYPE_TO_ADD(Render::Material, Render::MaterialLogic),
             TYPE_TO_ADD(Render::Mesh, Render::MeshLogic),
+            TYPE_TO_ADD(Render::PostProcess, Render::PostProcessLogic),
         };
 
     void Type::OnAdd(const std::string &type,

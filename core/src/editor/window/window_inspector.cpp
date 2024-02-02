@@ -58,7 +58,8 @@ namespace Editor
 		// render
 		Render::DirectionLight::type.c_str(), Render::PointLight::type.c_str(), Render::SpotLight::type.c_str(),
 		Render::Material::type.c_str(),
-		Render::Mesh::type.c_str()};
+		Render::Mesh::type.c_str(),
+		Render::PostProcess::type.c_str()};
 
 	void Window::DrawInspector(Context *context)
 	{

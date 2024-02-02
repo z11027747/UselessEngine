@@ -4,6 +4,7 @@
 #include "render/light/light_comp.h"
 #include "render/material/material_comp.h"
 #include "render/mesh/mesh_comp.h"
+#include "render/post_process/post_process_comp.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/hit/hit_comp.h"
 #include "logic/move/move_comp.h"
@@ -31,6 +32,7 @@ namespace Common
             // TYPE_JSON_FROM(Render::SpotLight),
             TYPE_JSON_FROM(Render::Material),
             TYPE_JSON_FROM(Render::Mesh),
+            TYPE_JSON_FROM(Render::PostProcess),
         };
 
     std::shared_ptr<void> TypeJson::From(const std::string &type, const json11::Json &j)
@@ -59,6 +61,7 @@ namespace Common
             // TYPE_JSON_TO(Render::SpotLight),
             TYPE_JSON_TO(Render::Material),
             TYPE_JSON_TO(Render::Mesh),
+            TYPE_JSON_TO(Render::PostProcess),
         };
 
     json11::Json TypeJson::To(const std::string &type, std::shared_ptr<void> component)

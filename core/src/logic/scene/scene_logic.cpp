@@ -2,6 +2,7 @@
 #include "render/light/light_comp.h"
 #include "render/material/material_comp.h"
 #include "render/mesh/mesh_comp.h"
+#include "render/post_process/post_process_logic.h"
 #include "logic/transform/transform_logic.h"
 #include "logic/camera/camera_logic.h"
 #include "logic/scene/scene_logic.h"

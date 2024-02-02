@@ -3,6 +3,7 @@
 #include "render/vk/pass/pass_logic.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/image/image_logic.h"
+#include "render/vk/cmd/cmd_logic.h"
 #include "render/light/light_comp.h"
 #include "render/render_pass/render_pass_system.h"
 #include "render/post_process/post_process_comp.h"
@@ -16,7 +17,7 @@ class Context;
 
 namespace Render
 {
-    static void BlitResolveImageAndGenMipmap(Context *);
+    static void BlitResolveImageAndGenMipmaps(Context *);
 
     static void DrawPipeline(VkCommandBuffer,
                              std::shared_ptr<GraphicsPipeline>,
@@ -24,18 +25,17 @@ namespace Render
 
     void PostProcessPassRenderSystem::Update(Context *context, uint32_t imageIndex)
     {
+        auto &mainCameraEO = context->logicMainCameraEO;
+        auto postProcess = mainCameraEO->GetComponent<PostProcess>();
+        if (postProcess == nullptr)
+            return;
+
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
         auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
         FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
-
-        // blit
-        BlitResolveImageAndGenMipmap(context);
-
-        auto &mainCameraEO = context->logicMainCameraEO;
-        auto postProcess = mainCameraEO->GetComponent<PostProcess>();
 
         // toon mapping
         auto &toonMappingParams = postProcess->toonMappingParams;
@@ -53,6 +53,8 @@ namespace Render
         auto &bloomParams = postProcess->bloomParams;
         if (bloomParams.w == 1.0f)
         {
+            BlitResolveImageAndGenMipmaps(context);
+
             auto &graphicsPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
             DrawPipeline(vkCmdBuffer,
                          graphicsPipeline,
@@ -69,7 +71,7 @@ namespace Render
         FramebufferLogic::EndRenderPass(context, imageIndex);
     }
 
-    static void BlitResolveImageAndGenMipmap(Context *context)
+    static void BlitResolveImageAndGenMipmaps(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -83,26 +85,21 @@ namespace Render
         auto &mainPass = global->passMap[Define::Pass::Main];
         auto &resolveImage2d = mainPass->resolveImage2d;
 
-        // TODO 一次 cmd
-
         ImageLogic::TransitionLayout(context, resolveImage2d,
-                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1,
-                                     true);
+                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1);
         ImageLogic::TransitionLayout(context, colorImage2d,
-                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, colorImage2d->mipLevels,
-                                     true);
+                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, colorImage2d->mipLevels);
 
         ImageLogic::CopyFromImage(context, colorImage2d,
-                                  resolveImage2d,
-                                  true);
+                                  resolveImage2d);
 
         ImageLogic::TransitionLayout(context, resolveImage2d,
-                                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1,
-                                     true);
+                                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
 
         ImageLogic::GenerateMipmapsAndTransitionLayout(context, colorImage2d,
-                                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                                       true);
+                                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+        CmdSubmitLogic::BatchAll(context);
     }
     static void DrawPipeline(VkCommandBuffer vkCmdBuffer,
                              std::shared_ptr<GraphicsPipeline> graphicsPipeline,

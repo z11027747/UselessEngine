@@ -86,7 +86,7 @@ namespace Render
 			MaterialInstanceCreateSystem::Update(context);
 		}
 
-		CmdSubmitLogic::UpdateBatch(context);
+		CmdSubmitLogic::BatchAll(context);
 		BufferLogic::DestroyAllTemps(context);
 		CmdPoolLogic::DestroyAllTempBuffers(context);
 

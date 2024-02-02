@@ -22,6 +22,7 @@ void main() {
     float dy = scale * 1.0 / float(texSize.y);
 
     int mipLevel = 4;
+
     // Take 13 samples around current texel:
     // === ('e' is the current texel) ===
     // a - b - c

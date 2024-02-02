@@ -27,8 +27,6 @@ namespace Editor
 			return;
 		}
 
-		ImGui::Checkbox("Enabled", &postProcess->enabled);
-
 		ImGui::Spacing();
 		if (ImGui::Checkbox("Toon Mapping", &enableToonMapping))
 		{

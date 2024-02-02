@@ -46,7 +46,7 @@ namespace Editor
         {
             auto &mainCameraEO = context->logicMainCameraEO;
             auto postProcess = mainCameraEO->GetComponent<Render::PostProcess>();
-            if (postProcess->enabled)
+            if (postProcess != nullptr)
             {
                 ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::PostProcess), ImGui::GetContentRegionAvail());
             }

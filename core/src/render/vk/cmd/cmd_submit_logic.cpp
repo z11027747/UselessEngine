@@ -57,7 +57,7 @@ namespace Render
 		CmdPoolLogic::FreeBuffers(context, cmdBuffers);
 	}
 
-	void CmdSubmitLogic::UpdateBatch(Context *context)
+	void CmdSubmitLogic::BatchAll(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();

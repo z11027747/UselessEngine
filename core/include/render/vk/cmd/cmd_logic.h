@@ -30,7 +30,6 @@ namespace Render
 		static VkCommandBuffer CreateAndBegin(Context *);
 		static void End(Context *, VkCommandBuffer &);
 		static void EndSingleTime(Context *, VkCommandBuffer &);
-
-		static void UpdateBatch(Context *);
+		static void BatchAll(Context *);
 	};
 }
