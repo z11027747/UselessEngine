@@ -75,5 +75,6 @@ Shader (VkPipeline)
 
 Preview
 -----
-![image](https://github.com/z11027747/UselessEngine/assets/24534845/fb89104b-c762-40e2-91f2-fb17eb9c0cdd)
+![image](https://github.com/z11027747/UselessEngine/assets/24534845/eb98c6b4-746b-4091-84ac-b28069847b8f)
+
 
