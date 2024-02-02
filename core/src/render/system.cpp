@@ -58,14 +58,14 @@ namespace Render
 		MaterialGlobalDescriptorLogic::Create(context);
 
 		RenderPassLogic::CreateImGui(context);
-		auto mainPass = RenderPassLogic::CreateMain(context);
 		auto shadowPass = RenderPassLogic::CreateShadow(context);
+		auto forwardPass = RenderPassLogic::CreateForward(context);
 		auto postProcessPass = RenderPassLogic::CreatePostProcess(context);
 
 		PipelineLogic::Create(context, Define::Pipeline::Shadow, shadowPass);
-		PipelineLogic::Create(context, Define::Pipeline::Skybox, mainPass);
-		PipelineLogic::Create(context, Define::Pipeline::LightModel, mainPass);
-		PipelineLogic::Create(context, Define::Pipeline::Color, mainPass);
+		PipelineLogic::Create(context, Define::Pipeline::Skybox, forwardPass);
+		PipelineLogic::Create(context, Define::Pipeline::LightModel, forwardPass);
+		PipelineLogic::Create(context, Define::Pipeline::Color, forwardPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping, postProcessPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_Global, postProcessPass);
@@ -100,7 +100,7 @@ namespace Render
 			MaterialUBOUpdateSystem::Update(context);
 
 			ShadowPassRenderSystem::Update(context, imageIndex);
-			MainPassRenderSystem::Update(context, imageIndex);
+			ForwardPassRenderSystem::Update(context, imageIndex);
 			PostProcessPassRenderSystem::Update(context, imageIndex);
 			ImGuiPassRenderSystem::Update(context, imageIndex);
 		}

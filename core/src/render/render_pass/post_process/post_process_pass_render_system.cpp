@@ -82,8 +82,8 @@ namespace Render
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
         auto &colorImage2d = postProcessPass->colorImage2ds[1];
 
-        auto &mainPass = global->passMap[Define::Pass::Main];
-        auto &resolveImage2d = mainPass->resolveImage2d;
+        auto &forwardPass = global->passMap[Define::Pass::Forward];
+        auto &resolveImage2d = forwardPass->resolveImage2d;
 
         ImageLogic::TransitionLayout(context, resolveImage2d,
                                      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1);

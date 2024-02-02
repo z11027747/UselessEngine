@@ -12,12 +12,17 @@ namespace Render
     public:
         static void Update(Context *, uint32_t);
     };
-    class MainPassRenderSystem final
+    class ShadowPassRenderSystem final
     {
     public:
         static void Update(Context *, uint32_t);
     };
-    class ShadowPassRenderSystem final
+    class ForwardPassRenderSystem final
+    {
+    public:
+        static void Update(Context *, uint32_t);
+    };
+    class DeferredPassRenderSystem final
     {
     public:
         static void Update(Context *, uint32_t);

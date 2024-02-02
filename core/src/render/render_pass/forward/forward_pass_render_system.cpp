@@ -11,13 +11,13 @@ class Context;
 
 namespace Render
 {
-    void MainPassRenderSystem::Update(Context *context, uint32_t imageIndex)
+    void ForwardPassRenderSystem::Update(Context *context, uint32_t imageIndex)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
-        auto &mainPass = global->passMap[Define::Pass::Main];
-        FramebufferLogic::BeginRenderPass(context, imageIndex, mainPass);
+        auto &forwardPass = global->passMap[Define::Pass::Forward];
+        FramebufferLogic::BeginRenderPass(context, imageIndex, forwardPass);
 
         auto &mainCameraEO = context->logicMainCameraEO;
         if (mainCameraEO != nullptr)

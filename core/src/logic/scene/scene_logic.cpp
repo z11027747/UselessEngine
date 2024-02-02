@@ -30,7 +30,7 @@ namespace Logic
         mainCamera->far = 100.0f;
         mainCamera->mode = Logic::CameraMode::ePerspective;
         mainCamera->fov = 60.0f;
-        mainCamera->passName = Define::Pass::Main;
+        mainCamera->passName = Define::Pass::Forward;
         context->AddComponent(mainCameraEO, mainCamera);
 
         context->AddEO(mainCameraEO);

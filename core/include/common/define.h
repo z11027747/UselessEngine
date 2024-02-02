@@ -21,7 +21,8 @@ public:
     {
     public:
         inline static std::string ImGui{"imGui"};
-        inline static std::string Main{"main"};
+        inline static std::string Forward{"forward"};
+        inline static std::string Deferred{"deferred"};
         inline static std::string Shadow{"shadow"};
         inline static std::string PostProcess{"post_process"};
     };
@@ -33,6 +34,9 @@ public:
         inline static std::string Shadow{"shadow"};
         inline static std::string LightModel{"light_model"};
         inline static std::string Color{"color"};
+        inline static std::string Deferred_LightModel{"deferred_light_model"};
+
+        // post process
         inline static std::string PostProcess_Bloom{"bloom"};
         inline static std::string PostProcess_ToonMapping{"toon_mapping"};
         inline static std::string PostProcess_Global{"global"};

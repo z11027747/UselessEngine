@@ -9,7 +9,7 @@
 
 namespace Render
 {
-	std::shared_ptr<Pass> RenderPassLogic::CreateMain(Context *context)
+	std::shared_ptr<Pass> RenderPassLogic::CreateForward(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -19,7 +19,7 @@ namespace Render
 		auto hasMsaa = (msaaSamples != VK_SAMPLE_COUNT_1_BIT);
 
 		auto pass = std::make_shared<Pass>();
-		pass->name = Define::Pass::Main;
+		pass->name = Define::Pass::Forward;
 		pass->extent = {currentExtent.width, currentExtent.height};
 		pass->msaaSamples = msaaSamples;
 

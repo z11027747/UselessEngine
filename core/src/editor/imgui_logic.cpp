@@ -128,8 +128,8 @@ namespace Editor
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
         {
-            auto &resolveImage2d = global->passMap[Define::Pass::Main]->resolveImage2d;
-            descriptorMap[Define::Pass::Main] = CreateDescriptor(context, resolveImage2d);
+            auto &resolveImage2d = global->passMap[Define::Pass::Forward]->resolveImage2d;
+            descriptorMap[Define::Pass::Forward] = CreateDescriptor(context, resolveImage2d);
         }
         {
             auto &depthImage2d = global->passMap[Define::Pass::Shadow]->depthImage2d;

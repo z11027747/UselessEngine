@@ -52,7 +52,7 @@ namespace Editor
             }
             else
             {
-                ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Main), ImGui::GetContentRegionAvail());
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Forward), ImGui::GetContentRegionAvail());
             }
 
             focuesd = ImGui::IsWindowFocused();
@@ -67,20 +67,11 @@ namespace Editor
 
         if (ImGui::Begin("ShadowMap", NULL))
         {
-            auto &shadowPass = global->passMap[Define::Pass::Shadow];
-            auto shadowMapExtent = shadowPass->extent;
-
-            auto regionMin = ImGui::GetWindowContentRegionMin();
-            auto regionMax = ImGui::GetWindowContentRegionMax();
-            auto x = (regionMin.x + regionMax.x) * 0.5f - shadowMapExtent.width * 0.5f;
-            auto y = (regionMin.y + regionMax.y) * 0.5f - shadowMapExtent.height * 0.5f;
-            ImGui::SetCursorPos(ImVec2(x, y));
-
             ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Shadow),
-                         ImVec2(shadowMapExtent.width * 1.0f, shadowMapExtent.height * 1.0f), // size
-                         ImVec2(0, 0), ImVec2(1, 1),                                          // uv0-1
-                         ImVec4(1, 1, 1, 1),                                                  // tint_col
-                         ImVec4(0, 0, 0, 0)                                                   // border_col
+                         ImGui::GetContentRegionAvail(), // size
+                         ImVec2(0, 0), ImVec2(1, 1),     // uv0-1
+                         ImVec4(1, 1, 1, 1),             // tint_col
+                         ImVec4(0, 0, 0, 0)              // border_col
             );
         }
         ImGui::End();
