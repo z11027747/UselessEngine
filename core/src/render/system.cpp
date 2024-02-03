@@ -60,6 +60,7 @@ namespace Render
 		RenderPassLogic::CreateImGui(context);
 		auto shadowPass = RenderPassLogic::CreateShadow(context);
 		auto forwardPass = RenderPassLogic::CreateForward(context);
+		auto deferredPass = RenderPassLogic::CreateDeferred(context);
 		auto postProcessPass = RenderPassLogic::CreatePostProcess(context);
 
 		PipelineLogic::Create(context, Define::Pipeline::Shadow, shadowPass);
