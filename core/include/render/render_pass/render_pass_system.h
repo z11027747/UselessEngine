@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-#include <stdint.h>
+#include <memory>
+#include "render/vk/pass/pass_comp.h"
 
 class Context;
 
@@ -36,6 +37,6 @@ namespace Render
     class RenderPassSystem final
     {
     public:
-        static void Update(Context *, uint32_t, bool);
+        static void Update(Context *, uint32_t, std::shared_ptr<Pass> pass);
     };
 };

@@ -127,21 +127,34 @@ namespace Editor
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
+        //forward
         {
             auto &resolveImage2d = global->passMap[Define::Pass::Forward]->resolveImage2d;
-            descriptorMap[Define::Pass::Forward] = CreateDescriptor(context, resolveImage2d);
+            descriptorMap[Descriptor_Forward] = CreateDescriptor(context, resolveImage2d);
         }
+        //deferred
         {
-            auto &colorImage2ds = global->passMap[Define::Pass::Deferred]->colorImage2ds[0];
-            descriptorMap[Define::Pass::Deferred] = CreateDescriptor(context, colorImage2ds);
+            auto &colorImage2d = global->passMap[Define::Pass::Deferred]->colorImage2ds[0];
+            auto &input0Image2d = global->passMap[Define::Pass::Deferred]->inputImage2ds[0];
+            auto &input1Image2d = global->passMap[Define::Pass::Deferred]->inputImage2ds[1];
+            auto &input2Image2d = global->passMap[Define::Pass::Deferred]->inputImage2ds[2];
+            auto &input3Image2d = global->passMap[Define::Pass::Deferred]->inputImage2ds[3];
+
+            descriptorMap[Descriptor_Deferred] = CreateDescriptor(context, colorImage2d);
+            descriptorMap[Descriptor_Deferred_Position] = CreateDescriptor(context, input0Image2d);
+            descriptorMap[Descriptor_Deferred_Normal] = CreateDescriptor(context, input1Image2d);
+            descriptorMap[Descriptor_Deferred_Color] = CreateDescriptor(context, input2Image2d);
+            descriptorMap[Descriptor_Deferred_Material] = CreateDescriptor(context, input3Image2d);
         }
+        //shadow
         {
             auto &depthImage2d = global->passMap[Define::Pass::Shadow]->depthImage2d;
-            descriptorMap[Define::Pass::Shadow] = CreateDescriptor(context, depthImage2d);
+            descriptorMap[Descriptor_Shadow] = CreateDescriptor(context, depthImage2d);
         }
+        //postprocess
         {
-            auto &colorImage2ds = global->passMap[Define::Pass::PostProcess]->colorImage2ds[0];
-            descriptorMap[Define::Pass::PostProcess] = CreateDescriptor(context, colorImage2ds);
+            auto &colorImage2d = global->passMap[Define::Pass::PostProcess]->colorImage2ds[0];
+            descriptorMap[Descriptor_PostProcess] = CreateDescriptor(context, colorImage2d);
         }
     }
 

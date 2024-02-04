@@ -12,7 +12,7 @@ namespace Render
 	void PassLogic::SetSubpassCount(Context *context,
 									std::shared_ptr<Pass> pass, uint32_t count)
 	{
-		for (auto i = 0; i < count; i++)
+		for (auto i = 0u; i < count; i++)
 		{
 			pass->subpasses.push_back(std::make_shared<Subpass>());
 			pass->subpassDescriptions.push_back({});

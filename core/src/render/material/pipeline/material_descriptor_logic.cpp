@@ -9,6 +9,7 @@
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
+#include "render/material/impl/material_deferred_light_model_logic.h"
 #include "render/material/impl/material_post_process_logic.h"
 #include "context.h"
 
@@ -21,6 +22,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessDescriptorLogic::CreateSetLayout},
@@ -46,6 +48,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::AllocateAndUpdate},
             };
 
@@ -61,6 +64,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::Destroy},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::Destroy},
+                {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryDescriptorLogic::Destroy},
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::Destroy},
             };
 

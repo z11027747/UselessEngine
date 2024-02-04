@@ -24,13 +24,23 @@ namespace Render
                              const std::string &);
 
     void RenderPassSystem::Update(Context *context,
-                                  uint32_t imageIndex, bool isShadow)
+                                  uint32_t imageIndex, std::shared_ptr<Pass> pass)
     {
         SplitPipeline(context);
         SortPipeline();
 
-        DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::LightModel);
-        DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Color);
+        auto isShadow = (pass->name == Define::Pass::Shadow);
+
+        if (pass->name == Define::Pass::Forward)
+        {
+            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::LightModel);
+            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Color);
+        }
+        else if (pass->name == Define::Pass::Deferred)
+        {
+            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_LightModel_Geometry);
+            // DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_LightModel_Lighting);
+        }
     }
 
     static void SplitPipeline(Context *context)
@@ -76,6 +86,10 @@ namespace Render
                              uint32_t imageIndex, bool isShadow,
                              const std::string &pipelineName)
     {
+        auto it = materialEOMap.find(pipelineName);
+        if (it == materialEOMap.end())
+            return;
+
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
         auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];

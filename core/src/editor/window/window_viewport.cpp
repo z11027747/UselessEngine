@@ -56,23 +56,43 @@ namespace Editor
             {
                 if (postProcess != nullptr)
                 {
-                    ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::PostProcess), availSize);
+                    ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_PostProcess), availSize);
                 }
                 else
                 {
-                    ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Forward), availSize);
+                    ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Forward), availSize);
                 }
             }
             else if (passName == Define::Pass::Deferred)
             {
-                ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Deferred), availSize);
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred), availSize);
+
+                // ImGui::SetItemAllowOverlap();
+                auto size = ImVec2(150.0f, 150.0f);
+                auto fontHeight = 20.0f;
+                auto min = ImGui::GetWindowContentRegionMin();
+                auto max = ImGui::GetWindowContentRegionMax();
+                auto pos = ImVec2(min.x, max.y - size.y - fontHeight);
+                ImGui::SetCursorPos(pos);
+                ImGui::Text("gBuffer (position, normal, color, material)");
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred_Position), size,
+                             ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
+                ImGui::SameLine();
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred_Normal), size,
+                             ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
+                ImGui::SameLine();
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred_Color), size,
+                             ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
+                ImGui::SameLine();
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred_Material), size,
+                             ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
             }
 
             focuesd = ImGui::IsWindowFocused();
             pos = ImGui::GetWindowPos();
             size = ImGui::GetWindowSize();
 
-            ImGui::SetItemAllowOverlap();
+            ImGui::SetNextItemAllowOverlap();
             ImGui::SetCursorPos(ImGui::GetWindowContentRegionMin());
             ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Viewport Size: %.fx%.f", size.x, size.y);
         }

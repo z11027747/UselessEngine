@@ -8,6 +8,7 @@
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
+#include "render/material/impl/material_deferred_light_model_logic.h"
 #include "render/material/impl/material_post_process_logic.h"
 #include "context.h"
 
@@ -20,6 +21,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetVertexAttrDescriptions},
+                {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetVertexAttrDescriptions},
             };
@@ -35,6 +37,7 @@ namespace Render
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetViewport},
+                {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryPipelineLogic::SetViewport},
                 {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessPipelineLogic::SetViewport},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessPipelineLogic::SetViewport},
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessPipelineLogic::SetViewport},
@@ -52,6 +55,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo},
             };
@@ -67,6 +71,7 @@ namespace Render
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetMultisampleCreateInfo},
+                {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryPipelineLogic::SetMultisampleCreateInfo},
             };
 
         auto &name = graphicsPipeline->name;
@@ -94,6 +99,7 @@ namespace Render
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetColorBlendStage},
+                {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessPipelineLogic::SetColorBlendStage},

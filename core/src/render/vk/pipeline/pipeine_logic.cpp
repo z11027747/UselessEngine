@@ -273,21 +273,23 @@ namespace Render
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
-		auto &colorBlendAttachmentState = stageInfo.colorBlendAttachmentState;
-		colorBlendAttachmentState.blendEnable = false;
-		colorBlendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-												   VK_COLOR_COMPONENT_G_BIT |
-												   VK_COLOR_COMPONENT_B_BIT |
-												   VK_COLOR_COMPONENT_A_BIT;
-
 		auto &colorBlendingStateCreateInfo = stageInfo.colorBlendingStateCreateInfo;
 		colorBlendingStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		colorBlendingStateCreateInfo.logicOpEnable = false;
 		colorBlendingStateCreateInfo.logicOp = VK_LOGIC_OP_COPY;
-		colorBlendingStateCreateInfo.attachmentCount = 1;
-		colorBlendingStateCreateInfo.pAttachments = &colorBlendAttachmentState;
+
+		auto &colorBlendAttachmentStates = stageInfo.colorBlendAttachmentStates;
+		colorBlendAttachmentStates.resize(1);
+		colorBlendAttachmentStates[0].blendEnable = false;
+		colorBlendAttachmentStates[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+													   VK_COLOR_COMPONENT_G_BIT |
+													   VK_COLOR_COMPONENT_B_BIT |
+													   VK_COLOR_COMPONENT_A_BIT;
 
 		MaterialPipelineLogic::SetColorBlendStage(context, graphicsPipeline);
+
+		colorBlendingStateCreateInfo.attachmentCount = static_cast<uint32_t>(colorBlendAttachmentStates.size());
+		colorBlendingStateCreateInfo.pAttachments = colorBlendAttachmentStates.data();
 	}
 
 }

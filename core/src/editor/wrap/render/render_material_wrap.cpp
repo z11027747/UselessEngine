@@ -14,8 +14,9 @@ namespace Editor
 	static const char *pipelineNames[] = {Define::Pipeline::Skybox.c_str(),
 										  Define::Pipeline::Shadow.c_str(),
 										  Define::Pipeline::LightModel.c_str(),
+										  Define::Pipeline::Deferred_LightModel_Geometry.c_str(),
 										  Define::Pipeline::Color.c_str()};
-	static const int pipelineNameSize = 4;
+	static const int pipelineNameSize = 5;
 
 	static std::vector<int> imageNameIndexs = {};
 	static std::vector<std::string> imageNames = {};
@@ -47,7 +48,8 @@ namespace Editor
 		else if (info->pipelineName == Define::Pipeline::Color)
 		{
 		}
-		else if (info->pipelineName == Define::Pipeline::LightModel)
+		else if (info->pipelineName == Define::Pipeline::LightModel ||
+				 info->pipelineName == Define::Pipeline::Deferred_LightModel_Geometry)
 		{
 			imageNameIndexs.resize(2);
 			for (auto i = 0; i < 2; i++)
@@ -125,7 +127,8 @@ namespace Editor
 				info->imageNames = {};
 				info->params = {glm::vec4(1.0f)};
 			}
-			else if (info->pipelineName == Define::Pipeline::LightModel)
+			else if (info->pipelineName == Define::Pipeline::LightModel ||
+					 info->pipelineName == Define::Pipeline::Deferred_LightModel_Geometry)
 			{
 				info->imageNames = {Define::Res::Img_White, Define::Res::Img_Bump};
 				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 0.0f)};
@@ -148,7 +151,8 @@ namespace Editor
 			auto &params0 = info->params[0];
 			ImGui::ColorEdit4("Color", &params0.x);
 		}
-		else if (info->pipelineName == Define::Pipeline::LightModel)
+		else if (info->pipelineName == Define::Pipeline::LightModel ||
+				 info->pipelineName == Define::Pipeline::Deferred_LightModel_Geometry)
 		{
 			DrawImageByIndex(material, "Albedo", 0);
 			DrawImageByIndex(material, "NomralMap", 1);

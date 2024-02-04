@@ -11,7 +11,7 @@ class Context;
 
 namespace Render
 {
-    void ForwardPassRenderSystem::Update(Context *context, uint32_t imageIndex)
+    void DeferredPassRenderSystem::Update(Context *context, uint32_t imageIndex)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -21,12 +21,18 @@ namespace Render
             return;
 
         auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
-        if (mainCameraEO->active && mainCamera->passName == Define::Pass::Forward)
+        if (mainCameraEO->active && mainCamera->passName == Define::Pass::Deferred)
         {
-            auto &forwardPass = global->passMap[Define::Pass::Forward];
-            FramebufferLogic::BeginRenderPass(context, imageIndex, forwardPass);
+            auto &deferredPass = global->passMap[Define::Pass::Deferred];
+            FramebufferLogic::BeginRenderPass(context, imageIndex, deferredPass);
 
-            RenderPassSystem::Update(context, imageIndex, forwardPass);
+            // subpass0: geometryPass
+            RenderPassSystem::Update(context, imageIndex, deferredPass);
+
+            FramebufferLogic::NextSubpass(context, imageIndex);
+
+            // subpass1: lightingPass
+            // TODO
 
             FramebufferLogic::EndRenderPass(context, imageIndex);
         }

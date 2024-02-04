@@ -55,7 +55,7 @@ namespace Render
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
-		auto &colorBlendAttachmentState = stageInfo.colorBlendAttachmentState;
+		auto &colorBlendAttachmentState = stageInfo.colorBlendAttachmentStates[0];
 		colorBlendAttachmentState.blendEnable = true;
 		colorBlendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
 		colorBlendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
