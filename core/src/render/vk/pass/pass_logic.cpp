@@ -29,15 +29,14 @@ namespace Render
 			subpassDescription.colorAttachmentCount = static_cast<uint32_t>(subpass.colorAttachmentReferences.size());
 			subpassDescription.pColorAttachments = subpass.colorAttachmentReferences.data();
 		}
-		if (pass->depthImage2d != nullptr)
+		if (subpass.depthAttachmentReference.layout == VK_IMAGE_LAYOUT_UNDEFINED)
 		{
 			subpassDescription.pDepthStencilAttachment = &subpass.depthAttachmentReference;
 		}
-		if (pass->resolveImage2d != nullptr)
+		if (subpass.resolveAttachmentReference.layout == VK_IMAGE_LAYOUT_UNDEFINED)
 		{
 			subpassDescription.pResolveAttachments = &subpass.resolveAttachmentReference;
 		}
-
 		if (!subpass.inputAttachmentReferences.empty())
 		{
 			subpassDescription.inputAttachmentCount = static_cast<uint32_t>(subpass.inputAttachmentReferences.size());

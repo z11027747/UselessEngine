@@ -52,7 +52,7 @@ namespace Render
 										 VK_SAMPLE_COUNT_1_BIT,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 										 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		// attachment1: input-toon mapping
+		// attachment1: input-toonmapping
 		PassLogic::CreateInputAttachment(context, pass, 2,
 										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {1.0f, 1.0f, 1.0f, 1.0f});
 		// attachment2: input-bloom

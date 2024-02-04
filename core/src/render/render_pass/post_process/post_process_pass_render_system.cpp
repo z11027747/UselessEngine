@@ -116,6 +116,6 @@ namespace Render
         vkCmdPushConstants(vkCmdBuffer, pipelineLayout,
                            VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(glm::vec4), &params);
 
-        vkCmdDraw(vkCmdBuffer, 6, 1, 0, 0);
+        vkCmdDraw(vkCmdBuffer, 3, 1, 0, 0);
     }
 }
