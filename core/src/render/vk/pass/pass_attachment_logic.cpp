@@ -13,7 +13,6 @@ namespace Render
 										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
 										  VkSampleCountFlagBits samplers,
 										  VkImageLayout initLayout, VkImageLayout finalLayout,
-										  uint32_t index, VkImageLayout subPassLayout,
 										  VkClearColorValue &&clearColorValue)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
@@ -32,21 +31,48 @@ namespace Render
 		colorAttachmentDescription.initialLayout = initLayout;
 		colorAttachmentDescription.finalLayout = finalLayout;
 
-		VkAttachmentReference colorAttachmentReference = {};
-		colorAttachmentReference.attachment = index;
-		colorAttachmentReference.layout = subPassLayout;
-
 		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
 
 		VkClearValue clearValue = {};
 		clearValue.color = clearColorValue;
 		subpass->clearColorValue = clearValue;
+	}
+	void PassLogic::SetColorAttachment(Context *context,
+									   std::shared_ptr<Pass> pass, uint32_t subpassIndex,
+									   uint32_t index, VkImageLayout subPassLayout)
+	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
+		VkAttachmentReference colorAttachmentReference = {};
+		colorAttachmentReference.attachment = index;
+		colorAttachmentReference.layout = subPassLayout;
+
 		subpass->colorAttachmentReferences.push_back(colorAttachmentReference);
+	}
+	void PassLogic::SetInputAttachment(Context *context,
+									   std::shared_ptr<Pass> pass, uint32_t subpassIndex,
+									   uint32_t index, VkImageLayout subPassLayout,
+									   VkClearColorValue &&clearColorValue)
+	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto surfaceFormat = global->surfaceFormat;
+
+		VkAttachmentReference inputAttachmentReference = {};
+		inputAttachmentReference.attachment = index;
+		inputAttachmentReference.layout = subPassLayout;
+
+		VkClearValue clearValue = {};
+		clearValue.color = clearColorValue;
+		subpass->clearInputValues.push_back(clearValue);
+		subpass->inputAttachmentReferences.push_back(inputAttachmentReference);
 	}
 
 	void PassLogic::CreateDepthAttachment(Context *context,
 										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-										  VkSampleCountFlagBits samplers, uint32_t index)
+										  VkSampleCountFlagBits samplers)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
@@ -64,15 +90,22 @@ namespace Render
 		depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 		depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
-		VkAttachmentReference depthAttachmentReference = {};
-		depthAttachmentReference.attachment = index;
-		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
 		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
 
 		VkClearValue clearValue = {};
 		clearValue.depthStencil = {1.0f, 0};
 		subpass->clearDepthValue = clearValue;
+	}
+	void PassLogic::SetDepthAttachment(Context *context,
+									   std::shared_ptr<Pass> pass, uint32_t subpassIndex,
+									   uint32_t index)
+	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
+		VkAttachmentReference depthAttachmentReference = {};
+		depthAttachmentReference.attachment = index;
+		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
 		subpass->depthAttachmentReference = depthAttachmentReference;
 	}
 
@@ -103,26 +136,5 @@ namespace Render
 
 		pass->attachmentDescriptions.push_back(resolveAttachmentDescription);
 		subpass->resolveAttachmentReference = resolveAttachmentReference;
-	}
-
-	void PassLogic::CreateInputAttachment(Context *context,
-										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-										  uint32_t index, VkImageLayout subPassLayout,
-										  VkClearColorValue &&clearColorValue)
-	{
-		auto &subpass = pass->subpasses[subpassIndex];
-
-		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
-		auto surfaceFormat = global->surfaceFormat;
-
-		VkAttachmentReference inputAttachmentReference = {};
-		inputAttachmentReference.attachment = index;
-		inputAttachmentReference.layout = subPassLayout;
-
-		VkClearValue clearValue = {};
-		clearValue.color = clearColorValue;
-		subpass->clearInputValues.push_back(clearValue);
-		subpass->inputAttachmentReferences.push_back(inputAttachmentReference);
 	}
 }

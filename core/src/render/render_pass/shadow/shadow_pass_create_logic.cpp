@@ -25,10 +25,15 @@ namespace Render
 		// count: 1
 		PassLogic::SetSubpassCount(context, pass, 1);
 
-		// subpass0
-		// attachment0: depth
+		// attachments
+		//  attachment0: depth
 		PassLogic::CreateDepthAttachment(context, pass, 0,
-										 VK_SAMPLE_COUNT_1_BIT, 0);
+										 VK_SAMPLE_COUNT_1_BIT);
+
+		// subpass0
+		PassLogic::SetDepthAttachment(context, pass, 0,
+									  0);
+
 		// description0
 		PassLogic::SetSubpassDescription(context, pass, 0);
 		// dependency: external->0

@@ -22,63 +22,67 @@ namespace Render
 		auto samplers = VK_SAMPLE_COUNT_1_BIT;
 
 		// images
+		FramebufferLogic::CreateColorImage2d(context, pass, samplers);
 		FramebufferLogic::CreateDepthImage2d(context, pass, samplers);
 		FramebufferLogic::CreateInputImage2d(context, pass);
 		FramebufferLogic::CreateInputImage2d(context, pass);
 		FramebufferLogic::CreateInputImage2d(context, pass);
 		FramebufferLogic::CreateInputImage2d(context, pass);
-		FramebufferLogic::CreateColorImage2d(context, pass, samplers);
 
 		// subpass count: 2
 		PassLogic::SetSubpassCount(context, pass, 2);
 
-		// subpass0: GeometryPass
-		// attachment0: depth
-		PassLogic::CreateDepthAttachment(context, pass, 0,
-										 samplers,
-										 0);
-		// attachment0: gbuffer-position
-		PassLogic::CreateColorAttachment(context, pass, 0,
-										 samplers,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		// attachment1: gbuffer-normal
-		PassLogic::CreateColorAttachment(context, pass, 0,
-										 samplers,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		// attachment2: gbuffer-color
-		PassLogic::CreateColorAttachment(context, pass, 0,
-										 samplers,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 3, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		// attachment3: gbuffer-material
-		PassLogic::CreateColorAttachment(context, pass, 0,
-										 samplers,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 4, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		// descriptions
-		PassLogic::SetSubpassDescription(context, pass, 0);
-
-		// subpass1: LightingPass
+		// attachments
 		// attachment0: color
 		PassLogic::CreateColorAttachment(context, pass, 1,
 										 samplers,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 5, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 										 {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
-		// attachment1: input-gbuffer-position
-		PassLogic::CreateInputAttachment(context, pass, 1,
-										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
-		// attachment2: gbuffer-normal
-		PassLogic::CreateInputAttachment(context, pass, 1,
-										 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.5f, 0.5f, 0.0f, 0.0f});
-		// attachment3: gbuffer-color
-		PassLogic::CreateInputAttachment(context, pass, 1,
-										 3, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
-		// attachment3: gbuffer-material
-		PassLogic::CreateInputAttachment(context, pass, 1,
-										 4, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
+		// attachment1: depth
+		PassLogic::CreateDepthAttachment(context, pass, 0,
+										 samplers);
+		// attachment2: gbuffer-position
+		PassLogic::CreateColorAttachment(context, pass, 0,
+										 samplers,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		// attachment3: gbuffer-normal
+		PassLogic::CreateColorAttachment(context, pass, 0,
+										 samplers,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		// attachment4: gbuffer-color
+		PassLogic::CreateColorAttachment(context, pass, 0,
+										 samplers,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		// attachment5: gbuffer-material
+		PassLogic::CreateColorAttachment(context, pass, 0,
+										 samplers,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+		// subpass0: GeometryPass
+		PassLogic::SetColorAttachment(context, pass, 0,
+									  2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::SetColorAttachment(context, pass, 0,
+									  3, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::SetColorAttachment(context, pass, 0,
+									  4, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::SetColorAttachment(context, pass, 0,
+									  5, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::SetDepthAttachment(context, pass, 0,
+									  1);
+		// descriptions
+		PassLogic::SetSubpassDescription(context, pass, 0);
+
+		// subpass1: LightingPass
+		PassLogic::SetColorAttachment(context, pass, 1,
+									  0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::SetInputAttachment(context, pass, 1,
+									  2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
+		PassLogic::SetInputAttachment(context, pass, 1,
+									  3, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.5f, 0.5f, 0.0f, 0.0f});
+		PassLogic::SetInputAttachment(context, pass, 1,
+									  4, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
+		PassLogic::SetInputAttachment(context, pass, 1,
+									  5, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
 		// descriptions
 		PassLogic::SetSubpassDescription(context, pass, 1);
 

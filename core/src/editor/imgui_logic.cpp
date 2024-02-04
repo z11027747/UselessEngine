@@ -132,6 +132,10 @@ namespace Editor
             descriptorMap[Define::Pass::Forward] = CreateDescriptor(context, resolveImage2d);
         }
         {
+            auto &colorImage2ds = global->passMap[Define::Pass::Deferred]->colorImage2ds[0];
+            descriptorMap[Define::Pass::Deferred] = CreateDescriptor(context, colorImage2ds);
+        }
+        {
             auto &depthImage2d = global->passMap[Define::Pass::Shadow]->depthImage2d;
             descriptorMap[Define::Pass::Shadow] = CreateDescriptor(context, depthImage2d);
         }

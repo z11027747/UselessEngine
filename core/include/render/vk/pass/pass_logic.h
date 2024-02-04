@@ -20,14 +20,19 @@ namespace Render
 		static void CreateColorAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
 										  VkSampleCountFlagBits,
 										  VkImageLayout, VkImageLayout,
-										  uint32_t = 0u, VkImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 										  VkClearColorValue && = {0.0f, 0.0f, 0.0f, 0.0f});
+		static void SetColorAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
+									   uint32_t = 0u, VkImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		static void SetInputAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
+									   uint32_t, VkImageLayout, VkClearColorValue &&);
+
 		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
-										  VkSampleCountFlagBits, uint32_t = 1u);
+										  VkSampleCountFlagBits);
+		static void SetDepthAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
+									   uint32_t);
+
 		static void CreateResolveAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
 											VkImageLayout, VkImageLayout, uint32_t = 2u);
-		static void CreateInputAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
-										  uint32_t, VkImageLayout, VkClearColorValue &&);
 
 		// subpass
 		static void SetSubpassCount(Context *, std::shared_ptr<Pass>, uint32_t);

@@ -25,13 +25,18 @@ namespace Render
 		// count: 1
 		PassLogic::SetSubpassCount(context, pass, 1);
 
-		// subpass0
-		// attachment0: color
+		// attachments
+		//  attachment0: color
 		PassLogic::CreateColorAttachment(context, pass, 0,
 										 VK_SAMPLE_COUNT_1_BIT,
 										 VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
+		// subpass0
+		PassLogic::SetColorAttachment(context, pass, 0,
+									  0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		// description0
 		PassLogic::SetSubpassDescription(context, pass, 0);
+
 		// dependency: external->0
 		PassLogic::AddSubpassDependency(context, pass,
 										VK_SUBPASS_EXTERNAL, 0,

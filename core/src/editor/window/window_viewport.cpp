@@ -5,6 +5,7 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pass/pass_comp.h"
 #include "render/post_process/post_process_comp.h"
+#include "logic/camera/camera_comp.h"
 #include "common/define.h"
 #include "editor/window.h"
 #include "editor/system.h"
@@ -44,15 +45,27 @@ namespace Editor
 
         if (ImGui::Begin("Scene", NULL))
         {
+            auto availSize = ImGui::GetContentRegionAvail();
+
             auto &mainCameraEO = context->logicMainCameraEO;
+            auto camera = mainCameraEO->GetComponent<Logic::Camera>();
             auto postProcess = mainCameraEO->GetComponent<Render::PostProcess>();
-            if (postProcess != nullptr)
+
+            auto &passName = camera->passName;
+            if (passName == Define::Pass::Forward)
             {
-                ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::PostProcess), ImGui::GetContentRegionAvail());
+                if (postProcess != nullptr)
+                {
+                    ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::PostProcess), availSize);
+                }
+                else
+                {
+                    ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Forward), availSize);
+                }
             }
-            else
+            else if (passName == Define::Pass::Deferred)
             {
-                ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Forward), ImGui::GetContentRegionAvail());
+                ImGui::Image(ImGuiLogic::GetDescriptorSet(Define::Pass::Deferred), availSize);
             }
 
             focuesd = ImGui::IsWindowFocused();

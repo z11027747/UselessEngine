@@ -20,45 +20,48 @@ namespace Render
 		pass->extent = {currentExtent.width, currentExtent.height};
 
 		// image2ds
-		FramebufferLogic::CreateInputImage2d(context, pass);
-		FramebufferLogic::CreateInputImage2d(context, pass);
 		FramebufferLogic::CreateColorImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
 		FramebufferLogic::CreateBlitImage2d(context, pass, 4u);
+		FramebufferLogic::CreateInputImage2d(context, pass);
+		FramebufferLogic::CreateInputImage2d(context, pass);
 
 		// subpass count: 3
 		PassLogic::SetSubpassCount(context, pass, 3);
 
-		// subpass0: toon mapping
-		// attachment0: color
-		PassLogic::CreateColorAttachment(context, pass, 0,
+		// attachments
+		//  attachment0: color
+		PassLogic::CreateColorAttachment(context, pass, 2,
 										 VK_SAMPLE_COUNT_1_BIT,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+										 {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
+		// attachment1: toonmapping
+		PassLogic::CreateColorAttachment(context, pass, 0,
+										 VK_SAMPLE_COUNT_1_BIT,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		// attachment2: bloom
+		PassLogic::CreateColorAttachment(context, pass, 1,
+										 VK_SAMPLE_COUNT_1_BIT,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+		// subpass0: toonmapping
+		PassLogic::SetColorAttachment(context, pass, 0,
+									  1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		// description1
 		PassLogic::SetSubpassDescription(context, pass, 0);
 
 		// subpass1: bloom
-		// attachment0: color
-		PassLogic::CreateColorAttachment(context, pass, 1,
-										 VK_SAMPLE_COUNT_1_BIT,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::SetColorAttachment(context, pass, 1,
+									  2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		// description1
 		PassLogic::SetSubpassDescription(context, pass, 1);
 
 		// subpass2
-		// attachment0: color
-		PassLogic::CreateColorAttachment(context, pass, 2,
-										 VK_SAMPLE_COUNT_1_BIT,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-										 {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
-		// attachment1: input-toonmapping
-		PassLogic::CreateInputAttachment(context, pass, 2,
-										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {1.0f, 1.0f, 1.0f, 1.0f});
-		// attachment2: input-bloom
-		PassLogic::CreateInputAttachment(context, pass, 2,
-										 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
+		PassLogic::SetColorAttachment(context, pass, 2,
+									  0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::SetInputAttachment(context, pass, 2,
+									  1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {1.0f, 1.0f, 1.0f, 1.0f});
+		PassLogic::SetInputAttachment(context, pass, 2,
+									  2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
 		// description0
 		PassLogic::SetSubpassDescription(context, pass, 2);
 
