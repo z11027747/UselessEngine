@@ -39,8 +39,8 @@ namespace Render
 
         VkDescriptorImageInfo bloomAttachmentInfo = {
             global->globalSamplerClamp,
-            postProcessPass->inputImage2ds[1]->vkImageView,
-            postProcessPass->inputImage2ds[1]->layout};
+            postProcessPass->inputImage2ds[0]->vkImageView,
+            postProcessPass->inputImage2ds[0]->layout};
         descriptor->imageInfos.push_back(bloomAttachmentInfo);
 
         DescriptorSetLogic::Update(context,

@@ -13,16 +13,11 @@ namespace Render
 												std::shared_ptr<Pass> pass)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
-		auto &logicalDevice = global->logicalDevice;
-		auto swapchainImageCount = global->swapchainImageCount;
+		auto global = globalEO->GetComponent<Global>();
 		auto &swapchainImages = global->swapchainImages;
 
-		for (auto i = 0u; i < swapchainImageCount; i++)
-		{
-			pass->colorImage2ds.push_back(swapchainImages[i]);
-		}
 		pass->isGetSwapchainImage = true;
+		pass->colorImage2ds.insert(pass->colorImage2ds.end(), swapchainImages.begin(), swapchainImages.end());
 	}
 
 	void FramebufferLogic::CreateColorImage2d(Context *context,
@@ -30,7 +25,7 @@ namespace Render
 											  VkSampleCountFlagBits samplers)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto surfaceFormat = global->surfaceFormat;
 
 		ImageCreateInfo imageCreateInfo = {
@@ -59,7 +54,7 @@ namespace Render
 											  VkSampleCountFlagBits samplers)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto depthFormat = global->depthFormat;
 
 		ImageCreateInfo imageCreateInfo = {
@@ -89,7 +84,7 @@ namespace Render
 												VkSampleCountFlagBits samplers)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto surfaceFormat = global->surfaceFormat;
 
 		ImageCreateInfo imageCreateInfo = {
@@ -118,7 +113,7 @@ namespace Render
 											  std::shared_ptr<Pass> pass)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto surfaceFormat = global->surfaceFormat;
 
 		ImageCreateInfo imageCreateInfo = {
@@ -143,10 +138,11 @@ namespace Render
 	}
 
 	void FramebufferLogic::CreateBlitImage2d(Context *context,
-											 std::shared_ptr<Pass> pass, uint32_t mipLevels)
+											 std::shared_ptr<Pass> pass,
+											 uint32_t mipLevels)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto surfaceFormat = global->surfaceFormat;
 
 		ImageCreateInfo imageCreateInfo = {

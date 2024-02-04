@@ -12,9 +12,7 @@
 
 namespace Editor
 {
-	static int modeI = 0;
-	static float clearColors[4] = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
-	static float clearDepth = 1.0f;
+	static int mode = 0;
 
 	template <>
 	void ComponentWrap<Logic::Camera>::Draw(Context *context,
@@ -22,18 +20,11 @@ namespace Editor
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
-		auto &renderPass = global->passMap[camera->passName];
+		auto &pass = global->passMap[camera->passName];
 
 		if (isInit)
 		{
-			modeI = static_cast<int>(camera->mode);
-			auto &colors = renderPass->clearColorValue.float32;
-			for (auto i = 0; i < 4; i++)
-			{
-				clearColors[i] = colors[i];
-			}
-			auto &depth = renderPass->clearDepthValue.depth;
-			clearDepth = depth;
+			mode = static_cast<int>(camera->mode);
 			return;
 		}
 
@@ -48,42 +39,35 @@ namespace Editor
 		{
 		}
 
-		if (ImGui::Combo("Mode", &modeI, "Perspective\0Ortho\0"))
+		if (ImGui::Combo("Mode", &mode, "Perspective\0Ortho\0"))
 		{
-			camera->mode = static_cast<Logic::CameraMode>(modeI);
+			camera->mode = static_cast<Logic::CameraMode>(mode);
 		}
 
 		if (camera->mode == Logic::CameraMode::ePerspective)
 		{
-			if (ImGui::DragFloat("fov", &camera->fov, 0.02f, 10.0f, 90.0f))
-			{
-			}
+			ImGui::DragFloat("fov", &camera->fov, 0.02f, 10.0f, 90.0f);
 		}
 		if (camera->mode == Logic::CameraMode::eOrtho)
 		{
-			if (ImGui::DragFloat("Size", &camera->size, 0.02f))
-			{
-			}
+			ImGui::DragFloat("Size", &camera->size, 0.02f);
 		}
 
 		ImGui::Spacing();
 		ImGui::Text("Clear Values");
 
-		if (ImGui::ColorEdit4("Color", clearColors))
+		auto &subpasses = pass->subpasses;
+		for (auto &subpass : subpasses)
 		{
-			auto &colors = renderPass->clearColorValue.float32;
-			for (auto i = 0; i < 4; i++)
+			// color
+			ImGui::ColorEdit4("ClearColor", &subpass->clearColorValue.color.float32[0]);
+			// depth
+			ImGui::SliderFloat2("ClearDepth", &subpass->clearDepthValue.depthStencil.depth, 0.0f, 1.0f);
+			// inputs
+			for (auto &clearInputValue : subpass->clearInputValues)
 			{
-				colors[i] = clearColors[i];
+				ImGui::ColorEdit4("Input ClearColor", &clearInputValue.color.float32[0]);
 			}
-		}
-
-		if (ImGui::InputFloat("Depth", &clearDepth))
-		{
-			clearDepth = std::clamp(clearDepth, 0.0f, 1.0f);
-
-			auto &depth = renderPass->clearDepthValue.depth;
-			depth = clearDepth;
 		}
 	}
 }

@@ -12,8 +12,11 @@ namespace Render
 	void PassLogic::SetSubpassCount(Context *context,
 									std::shared_ptr<Pass> pass, uint32_t count)
 	{
-		pass->subpasses.resize(count);
-		pass->subpassDescriptions.resize(count);
+		for (auto i = 0; i < count; i++)
+		{
+			pass->subpasses.push_back(std::make_shared<Subpass>());
+			pass->subpassDescriptions.push_back({});
+		}
 	}
 
 	void PassLogic::SetSubpassDescription(Context *context,
@@ -24,26 +27,24 @@ namespace Render
 
 		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-		if (!pass->colorImage2ds.empty())
+		if (!subpass->colorAttachmentReferences.empty())
 		{
-			subpassDescription.colorAttachmentCount = static_cast<uint32_t>(subpass.colorAttachmentReferences.size());
-			subpassDescription.pColorAttachments = subpass.colorAttachmentReferences.data();
+			subpassDescription.colorAttachmentCount = static_cast<uint32_t>(subpass->colorAttachmentReferences.size());
+			subpassDescription.pColorAttachments = subpass->colorAttachmentReferences.data();
 		}
-		if (subpass.depthAttachmentReference.layout == VK_IMAGE_LAYOUT_UNDEFINED)
+		if (subpass->depthAttachmentReference.layout != VK_IMAGE_LAYOUT_UNDEFINED)
 		{
-			subpassDescription.pDepthStencilAttachment = &subpass.depthAttachmentReference;
+			subpassDescription.pDepthStencilAttachment = &subpass->depthAttachmentReference;
 		}
-		if (subpass.resolveAttachmentReference.layout == VK_IMAGE_LAYOUT_UNDEFINED)
+		if (subpass->resolveAttachmentReference.layout != VK_IMAGE_LAYOUT_UNDEFINED)
 		{
-			subpassDescription.pResolveAttachments = &subpass.resolveAttachmentReference;
+			subpassDescription.pResolveAttachments = &subpass->resolveAttachmentReference;
 		}
-		if (!subpass.inputAttachmentReferences.empty())
+		if (!subpass->inputAttachmentReferences.empty())
 		{
-			subpassDescription.inputAttachmentCount = static_cast<uint32_t>(subpass.inputAttachmentReferences.size());
-			subpassDescription.pInputAttachments = subpass.inputAttachmentReferences.data();
+			subpassDescription.inputAttachmentCount = static_cast<uint32_t>(subpass->inputAttachmentReferences.size());
+			subpassDescription.pInputAttachments = subpass->inputAttachmentReferences.data();
 		}
-
-		pass->subpassDescriptions[subpassIndex] = subpassDescription;
 	}
 
 	void PassLogic::AddSubpassDependency(Context *context,

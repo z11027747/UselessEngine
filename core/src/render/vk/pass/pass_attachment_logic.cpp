@@ -13,7 +13,8 @@ namespace Render
 										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
 										  VkSampleCountFlagBits samplers,
 										  VkImageLayout initLayout, VkImageLayout finalLayout,
-										  uint32_t index, VkImageLayout subPassLayout)
+										  uint32_t index, VkImageLayout subPassLayout,
+										  VkClearColorValue &&clearColorValue)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
@@ -36,8 +37,11 @@ namespace Render
 		colorAttachmentReference.layout = subPassLayout;
 
 		pass->attachmentDescriptions.push_back(colorAttachmentDescription);
-		pass->clearColorValue = {0.0f, 0.0f, 0.0f, 0.0f};
-		subpass.colorAttachmentReferences.push_back(colorAttachmentReference);
+
+		VkClearValue clearValue = {};
+		clearValue.color = clearColorValue;
+		subpass->clearColorValue = clearValue;
+		subpass->colorAttachmentReferences.push_back(colorAttachmentReference);
 	}
 
 	void PassLogic::CreateDepthAttachment(Context *context,
@@ -65,8 +69,11 @@ namespace Render
 		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
-		pass->clearDepthValue = {1.0f, 0};
-		subpass.depthAttachmentReference = depthAttachmentReference;
+
+		VkClearValue clearValue = {};
+		clearValue.depthStencil = {1.0f, 0};
+		subpass->clearDepthValue = clearValue;
+		subpass->depthAttachmentReference = depthAttachmentReference;
 	}
 
 	void PassLogic::CreateResolveAttachment(Context *context,
@@ -95,12 +102,13 @@ namespace Render
 		resolveAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		pass->attachmentDescriptions.push_back(resolveAttachmentDescription);
-		subpass.resolveAttachmentReference = resolveAttachmentReference;
+		subpass->resolveAttachmentReference = resolveAttachmentReference;
 	}
 
 	void PassLogic::CreateInputAttachment(Context *context,
 										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-										  uint32_t index, VkImageLayout subPassLayout, VkClearColorValue &&clearValue)
+										  uint32_t index, VkImageLayout subPassLayout,
+										  VkClearColorValue &&clearColorValue)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
@@ -112,7 +120,9 @@ namespace Render
 		inputAttachmentReference.attachment = index;
 		inputAttachmentReference.layout = subPassLayout;
 
-		pass->clearInputValues.push_back(clearValue);
-		subpass.inputAttachmentReferences.push_back(inputAttachmentReference);
+		VkClearValue clearValue = {};
+		clearValue.color = clearColorValue;
+		subpass->clearInputValues.push_back(clearValue);
+		subpass->inputAttachmentReferences.push_back(inputAttachmentReference);
 	}
 }

@@ -20,10 +20,10 @@ namespace Render
 		pass->extent = {currentExtent.width, currentExtent.height};
 
 		// image2ds
+		FramebufferLogic::CreateInputImage2d(context, pass);
+		FramebufferLogic::CreateInputImage2d(context, pass);
 		FramebufferLogic::CreateColorImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
 		FramebufferLogic::CreateBlitImage2d(context, pass, 4u);
-		FramebufferLogic::CreateInputImage2d(context, pass);
-		FramebufferLogic::CreateInputImage2d(context, pass);
 
 		// subpass count: 3
 		PassLogic::SetSubpassCount(context, pass, 3);
@@ -51,7 +51,8 @@ namespace Render
 		PassLogic::CreateColorAttachment(context, pass, 2,
 										 VK_SAMPLE_COUNT_1_BIT,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+										 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+										 {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
 		// attachment1: input-toonmapping
 		PassLogic::CreateInputAttachment(context, pass, 2,
 										 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {1.0f, 1.0f, 1.0f, 1.0f});
@@ -85,8 +86,6 @@ namespace Render
 
 		FramebufferLogic::Create(context, pass);
 
-		pass->clearColorValue = {0.1921569f, 0.3019608f, 0.4745098f, 0.0f};
-		
 		global->passMap[pass->name] = pass;
 		return pass;
 	}

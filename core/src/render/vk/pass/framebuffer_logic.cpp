@@ -36,7 +36,7 @@ namespace Render
 			{
 				attachments.push_back(pass->resolveImage2d->vkImageView);
 			}
-			for (auto &inputImage2d : pass->inputImage2ds)
+			for (const auto &inputImage2d : pass->inputImage2ds)
 			{
 				attachments.push_back(inputImage2d->vkImageView);
 			}
@@ -81,28 +81,27 @@ namespace Render
 		auto &frameBuffer = pass->frameBuffers[imageIndex];
 
 		std::vector<VkClearValue> clearValues;
-		if (!pass->colorImage2ds.empty())
+
+		auto &subpasses = pass->subpasses;
+		for (const auto &subpass : subpasses)
 		{
-			VkClearValue colorValue = {};
-			colorValue.color = pass->clearColorValue;
-			clearValues.push_back(colorValue);
-		}
-		if (pass->depthImage2d != nullptr)
-		{
-			VkClearValue depthValue = {};
-			depthValue.depthStencil = pass->clearDepthValue;
-			clearValues.push_back(depthValue);
-		}
-		if (pass->resolveImage2d != nullptr)
-		{
-			VkClearValue depthValue = {};
-			clearValues.push_back(depthValue);
-		}
-		for (auto &clearInputValue : pass->clearInputValues)
-		{
-			VkClearValue colorValue = {};
-			colorValue.color = clearInputValue;
-			clearValues.push_back(colorValue);
+			if (!subpass->colorAttachmentReferences.empty())
+			{
+				clearValues.push_back(subpass->clearColorValue);
+			}
+			if (subpass->depthAttachmentReference.layout != VK_IMAGE_LAYOUT_UNDEFINED)
+			{
+				clearValues.push_back(subpass->clearDepthValue);
+			}
+			if (subpass->resolveAttachmentReference.layout != VK_IMAGE_LAYOUT_UNDEFINED)
+			{
+				VkClearValue clearValue = {};
+				clearValues.push_back(clearValue);
+			}
+			if (!subpass->inputAttachmentReferences.empty())
+			{
+				clearValues.insert(clearValues.end(), subpass->clearInputValues.begin(), subpass->clearInputValues.end());
+			}
 		}
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};

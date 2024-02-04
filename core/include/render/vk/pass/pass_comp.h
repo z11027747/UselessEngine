@@ -14,29 +14,29 @@ namespace Render
 		VkAttachmentReference depthAttachmentReference;
 		VkAttachmentReference resolveAttachmentReference;
 		std::vector<VkAttachmentReference> inputAttachmentReferences;
+
+		VkClearValue clearColorValue;
+		VkClearValue clearDepthValue;
+		std::vector<VkClearValue> clearInputValues;
 	};
 
 	struct Pass final
 	{
 		std::string name;
-
+		
 		std::vector<VkAttachmentDescription> attachmentDescriptions;
 
-		std::vector<Subpass> subpasses;
+		std::vector<std::shared_ptr<Subpass>> subpasses;
 		std::vector<VkSubpassDescription> subpassDescriptions;
 		std::vector<VkSubpassDependency> subpassDependencies;
-
-		bool isGetSwapchainImage;
+		
 		VkSampleCountFlagBits msaaSamples{VK_SAMPLE_COUNT_1_BIT};
 
+		bool isGetSwapchainImage;
 		std::vector<std::shared_ptr<Image>> colorImage2ds;
 		std::shared_ptr<Image> depthImage2d;
 		std::shared_ptr<Image> resolveImage2d;
 		std::vector<std::shared_ptr<Image>> inputImage2ds;
-
-		VkClearColorValue clearColorValue;
-		VkClearDepthStencilValue clearDepthValue;
-		std::vector<VkClearColorValue> clearInputValues;
 
 		VkOffset2D offset{0, 0};
 		VkExtent2D extent{0, 0};
