@@ -5,6 +5,7 @@ layout (push_constant) uniform Push {
 } push;
 
 layout (set = 0, binding = 0) uniform sampler2D blitImage;
+layout (input_attachment_index = 0, set = 0, binding = 1) uniform subpassInput toonMappingAttachment;
 
 layout (location = 0) in vec2 uv;
 
@@ -53,8 +54,10 @@ void main() {
     blurColor.rgb += (b + d + f + h) * 0.0625;
     blurColor.rgb += (j + k + l + m) * 0.125;
 
+    vec3 toonMappingCol = subpassLoad(toonMappingAttachment).rgb;
+
     float lumaThresold = push.params.y;
-    float luma = clamp(Luma(e) - lumaThresold, 0, 1);
+    float luma = clamp(Luma(toonMappingCol) - lumaThresold, 0, 1);
 
     float intensity = push.params.z;
 

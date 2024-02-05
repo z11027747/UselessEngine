@@ -65,7 +65,14 @@ namespace Editor
             }
             else if (passName == Define::Pass::Deferred)
             {
-                ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred), availSize);
+                if (postProcess != nullptr)
+                {
+                    ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_PostProcess), availSize);
+                }
+                else
+                {
+                    ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred), availSize);
+                }
 
                 // ImGui::SetItemAllowOverlap();
                 auto size = ImVec2(120.0f, 120.0f);

@@ -102,7 +102,6 @@ namespace Render
 			// layout
 			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
-
 		auto resolveImage2d = ImageLogic::CreateByInfo(context,
 													   imageCreateInfo);
 
@@ -110,7 +109,8 @@ namespace Render
 	}
 
 	void FramebufferLogic::CreateInputImage2d(Context *context,
-											  std::shared_ptr<Pass> pass, VkFormat format)
+											  std::shared_ptr<Pass> pass,
+											  VkFormat format, VkSampleCountFlagBits samplers)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -124,16 +124,16 @@ namespace Render
 			1,
 			VK_IMAGE_VIEW_TYPE_2D,
 			1,
-			VK_SAMPLE_COUNT_1_BIT,
+			samplers,
 			// memory
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			// layout
 			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
-		auto colorImage2d = ImageLogic::CreateByInfo(context,
+		auto inputImage2d = ImageLogic::CreateByInfo(context,
 													 imageCreateInfo);
 
-		pass->inputImage2ds.push_back(colorImage2d);
+		pass->inputImage2ds.push_back(inputImage2d);
 	}
 
 	void FramebufferLogic::CreateBlitImage2d(Context *context,

@@ -17,20 +17,16 @@ namespace Render
 		auto surfaceFormat = global->surfaceFormat;
 		auto msaaSamples = global->msaaSamples;
 
-		auto hasMsaa = (msaaSamples != VK_SAMPLE_COUNT_1_BIT);
+		auto hasMSAA = (msaaSamples != VK_SAMPLE_COUNT_1_BIT);
 
 		auto pass = std::make_shared<Pass>();
 		pass->name = Define::Pass::Forward;
 		pass->extent = {currentExtent.width, currentExtent.height};
-		pass->msaaSamples = msaaSamples;
 
 		// image2ds
 		FramebufferLogic::CreateColorImage2d(context, pass, msaaSamples);
 		FramebufferLogic::CreateDepthImage2d(context, pass, msaaSamples);
-		if (hasMsaa)
-		{
-			FramebufferLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
-		}
+		FramebufferLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
 
 		// count: 1
 		PassLogic::SetSubpassCount(context, pass, 1);
@@ -44,18 +40,17 @@ namespace Render
 		// attachment1: depth
 		PassLogic::CreateDepthAttachment(context, pass, 0,
 										 msaaSamples);
-		if (hasMsaa)
-		{
-			// attachment2: resolve
-			PassLogic::CreateResolveAttachment(context, pass, 0,
-											   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		}
+		// attachment2: resolve
+		PassLogic::CreateResolveAttachment(context, pass, 0,
+										   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		// subpass0 LightingPass
 		PassLogic::SetColorAttachment(context, pass, 0,
 									  0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		PassLogic::SetDepthAttachment(context, pass, 0,
 									  1);
+		PassLogic::SetResolveAttachment(context, pass, 0,
+										2);
 		// description0
 		PassLogic::SetSubpassDescription(context, pass, 0);
 

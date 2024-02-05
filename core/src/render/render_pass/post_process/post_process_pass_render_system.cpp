@@ -9,6 +9,7 @@
 #include "render/render_pass/render_pass_logic.h"
 #include "render/post_process/post_process_comp.h"
 #include "render/post_process/post_process_logic.h"
+#include "logic/camera/camera_comp.h"
 #include "common/define.h"
 #include "editor/system.h"
 #include "engine_object.h"
@@ -80,26 +81,27 @@ namespace Render
         auto global = globalEO->GetComponent<Global>();
 
         auto &mainCameraEO = context->logicMainCameraEO;
+
+        auto camera = mainCameraEO->GetComponent<Logic::Camera>();
+        auto &cameraPass = camera->passName;
+        auto &dstImage2d = global->passMap[cameraPass]->resolveImage2d;
+
         auto postProcess = mainCameraEO->GetComponent<PostProcess>();
-
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
-        auto &colorImage2d = postProcessPass->colorImage2ds[1];
+        auto &srcImage2d = postProcessPass->colorImage2ds[1];
 
-        auto &forwardPass = global->passMap[Define::Pass::Forward];
-        auto &resolveImage2d = forwardPass->resolveImage2d;
-
-        ImageLogic::TransitionLayout(context, resolveImage2d,
+        ImageLogic::TransitionLayout(context, dstImage2d,
                                      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1);
-        ImageLogic::TransitionLayout(context, colorImage2d,
-                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, colorImage2d->mipLevels);
+        ImageLogic::TransitionLayout(context, srcImage2d,
+                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, srcImage2d->mipLevels);
 
-        ImageLogic::CopyFromImage(context, colorImage2d,
-                                  resolveImage2d);
+        ImageLogic::CopyFromImage(context, srcImage2d,
+                                  dstImage2d);
 
-        ImageLogic::TransitionLayout(context, resolveImage2d,
+        ImageLogic::TransitionLayout(context, dstImage2d,
                                      VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
 
-        ImageLogic::GenerateMipmapsAndTransitionLayout(context, colorImage2d,
+        ImageLogic::GenerateMipmapsAndTransitionLayout(context, srcImage2d,
                                                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
         CmdSubmitLogic::BatchAll(context);

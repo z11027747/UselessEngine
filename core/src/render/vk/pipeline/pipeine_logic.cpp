@@ -24,6 +24,8 @@ namespace Render
 		auto graphicsPipeline = std::make_shared<GraphicsPipeline>();
 		graphicsPipeline->name = name;
 
+		MaterialDescriptorLogic::CreateSetLayout(context, graphicsPipeline);
+
 		CreateShaderStage(context, graphicsPipeline);
 		CreateVertexInputStage(context, graphicsPipeline);
 		CreateInputAssemblyStage(context, graphicsPipeline);
@@ -47,14 +49,12 @@ namespace Render
 		pipelineCreateInfo.pDepthStencilState = &stageInfo.depthStencilStateCreateInfo;
 		pipelineCreateInfo.pColorBlendState = &stageInfo.colorBlendingStateCreateInfo;
 
-		MaterialDescriptorLogic::CreateSetLayout(context, graphicsPipeline);
 		PipelineLayoutLogic::Create(context, graphicsPipeline, pass);
 
 		auto &pipelineLayout = graphicsPipeline->pipelineLayout;
 		pipelineCreateInfo.layout = pipelineLayout;
 
-		auto &renderPass = pass->renderPass;
-		pipelineCreateInfo.renderPass = renderPass;
+		pipelineCreateInfo.renderPass = pass->renderPass;
 		pipelineCreateInfo.subpass = graphicsPipeline->subpass;
 
 		VkPipeline vkPipeline;
@@ -244,7 +244,7 @@ namespace Render
 
 		auto &multisampleStateCreateInfo = stageInfo.multisampleStateCreateInfo;
 		multisampleStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		multisampleStateCreateInfo.rasterizationSamples = pass->msaaSamples;
+		multisampleStateCreateInfo.rasterizationSamples = pass->subpasses[graphicsPipeline->subpass]->msaaSamples;
 		multisampleStateCreateInfo.sampleShadingEnable = false;
 
 		MaterialPipelineLogic::SetMultisampleCreateInfo(context, graphicsPipeline);

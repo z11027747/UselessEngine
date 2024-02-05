@@ -62,8 +62,8 @@ namespace Render
                                                                        VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, globalDescriptor->bufferInfos[0]);
                                    });
 
-        global->globalSamplerRepeat = SamplerLogic::Create(context, false, 0, 4);
-        global->globalSamplerClamp = SamplerLogic::Create(context, true, 0, 4);
+        global->globalSamplerRepeat = SamplerLogic::Create(context, false, 0, 6);
+        global->globalSamplerClamp = SamplerLogic::Create(context, true, 0, 6);
     }
 
     void MaterialGlobalDescriptorLogic::Destroy(Context *context)

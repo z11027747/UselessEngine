@@ -134,13 +134,13 @@ namespace Editor
         }
         //deferred
         {
-            auto &colorImage2d = global->passMap[Define::Pass::Deferred]->colorImage2ds[0];
+            auto &resolveImage2d = global->passMap[Define::Pass::Deferred]->resolveImage2d;
             auto &input0Image2d = global->passMap[Define::Pass::Deferred]->inputImage2ds[0];
             auto &input1Image2d = global->passMap[Define::Pass::Deferred]->inputImage2ds[1];
             auto &input2Image2d = global->passMap[Define::Pass::Deferred]->inputImage2ds[2];
             auto &input3Image2d = global->passMap[Define::Pass::Deferred]->inputImage2ds[3];
 
-            descriptorMap[Descriptor_Deferred] = CreateDescriptor(context, colorImage2d);
+            descriptorMap[Descriptor_Deferred] = CreateDescriptor(context, resolveImage2d);
             descriptorMap[Descriptor_Deferred_Position] = CreateDescriptor(context, input0Image2d);
             descriptorMap[Descriptor_Deferred_Normal] = CreateDescriptor(context, input1Image2d);
             descriptorMap[Descriptor_Deferred_Color] = CreateDescriptor(context, input2Image2d);

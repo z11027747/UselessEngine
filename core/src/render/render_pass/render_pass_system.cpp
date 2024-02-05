@@ -27,14 +27,14 @@ namespace Render
     void RenderPassSystem::Update(Context *context,
                                   uint32_t imageIndex, bool isShadow)
     {
-        auto &cameraEO = context->logicMainCameraEO;
-        if (cameraEO == nullptr)
+        auto &mainCameraEO = context->logicMainCameraEO;
+        if (mainCameraEO == nullptr)
             return;
 
         SplitPipeline(context);
         SortPipeline();
 
-        auto camera = cameraEO->GetComponent<Logic::Camera>();
+        auto camera = mainCameraEO->GetComponent<Logic::Camera>();
         auto &cameraPass = camera->passName;
 
         if (cameraPass == Define::Pass::Forward)

@@ -16,6 +16,7 @@ namespace Render
 										  VkClearColorValue &&clearColorValue)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
+		subpass->msaaSamples = samplers;
 
 		VkAttachmentDescription colorAttachmentDescription = {};
 		colorAttachmentDescription.format = format;
@@ -50,10 +51,6 @@ namespace Render
 									   uint32_t index, VkImageLayout subPassLayout)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
-
-		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
-		auto surfaceFormat = global->surfaceFormat;
 
 		VkAttachmentReference inputAttachmentReference = {};
 		inputAttachmentReference.attachment = index;
@@ -103,8 +100,7 @@ namespace Render
 
 	void PassLogic::CreateResolveAttachment(Context *context,
 											std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-											VkImageLayout initLayout, VkImageLayout finalLayout,
-											uint32_t index)
+											VkImageLayout initLayout, VkImageLayout finalLayout)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
@@ -122,15 +118,23 @@ namespace Render
 		resolveAttachmentDescription.initialLayout = initLayout;
 		resolveAttachmentDescription.finalLayout = finalLayout;
 
-		VkAttachmentReference resolveAttachmentReference = {};
-		resolveAttachmentReference.attachment = index;
-		resolveAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
 		pass->attachmentDescriptions.push_back(resolveAttachmentDescription);
-		subpass->resolveAttachmentReference = resolveAttachmentReference;
 
 		VkClearValue clearValue = {};
 		clearValue.color = {0.0f, 0.0f, 0.0f, 0.0f};
 		pass->clearValues.push_back(clearValue);
+	}
+
+	void PassLogic::SetResolveAttachment(Context *context,
+											std::shared_ptr<Pass> pass, uint32_t subpassIndex,
+											uint32_t index)
+	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
+		VkAttachmentReference resolveAttachmentReference = {};
+		resolveAttachmentReference.attachment = index;
+		resolveAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		subpass->resolveAttachmentReference = resolveAttachmentReference;
 	}
 }

@@ -14,6 +14,8 @@ namespace Render
 		VkAttachmentReference depthAttachmentReference;
 		VkAttachmentReference resolveAttachmentReference;
 		std::vector<VkAttachmentReference> inputAttachmentReferences;
+		
+		VkSampleCountFlagBits msaaSamples{VK_SAMPLE_COUNT_1_BIT};
 	};
 
 	struct Pass final
@@ -26,8 +28,6 @@ namespace Render
 		std::vector<std::shared_ptr<Subpass>> subpasses;
 		std::vector<VkSubpassDescription> subpassDescriptions;
 		std::vector<VkSubpassDependency> subpassDependencies;
-		
-		VkSampleCountFlagBits msaaSamples{VK_SAMPLE_COUNT_1_BIT};
 
 		bool isGetSwapchainImage;
 		std::vector<std::shared_ptr<Image>> colorImage2ds;

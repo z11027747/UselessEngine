@@ -131,7 +131,7 @@ namespace Editor
 					 info->pipelineName == Define::Pipeline::Deferred_LightModel)
 			{
 				info->imageNames = {Define::Res::Img_White, Define::Res::Img_Bump};
-				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 0.0f)};
+				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 1.0f)};
 			}
 
 			FindImageNameIndexsByPipelineName(material);

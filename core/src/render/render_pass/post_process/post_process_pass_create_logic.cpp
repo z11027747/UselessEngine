@@ -55,6 +55,8 @@ namespace Render
 		// subpass1: bloom
 		PassLogic::SetColorAttachment(context, pass, 1,
 									  2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		PassLogic::SetInputAttachment(context, pass, 1,
+									  1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		// description1
 		PassLogic::SetSubpassDescription(context, pass, 1);
 
