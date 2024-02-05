@@ -6,6 +6,7 @@
 #include "render/vk/cmd/cmd_logic.h"
 #include "render/light/light_comp.h"
 #include "render/render_pass/render_pass_system.h"
+#include "render/render_pass/render_pass_logic.h"
 #include "render/post_process/post_process_comp.h"
 #include "render/post_process/post_process_logic.h"
 #include "common/define.h"
@@ -37,6 +38,8 @@ namespace Render
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
         FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
 
+        auto &postProcessDescriptor = RenderPassLogic::descriptorMap[Define::Pass::PostProcess];
+
         // toon mapping
         auto &toonMappingParams = postProcess->toonMappingParams;
         if (toonMappingParams.w == 1.0f)
@@ -44,7 +47,7 @@ namespace Render
             auto &toonMappingPipeline = global->pipelineMap[Define::Pipeline::PostProcess_ToonMapping];
             DrawPipeline(vkCmdBuffer,
                          toonMappingPipeline,
-                         postProcess->descriptor, toonMappingParams);
+                         postProcessDescriptor, toonMappingParams);
         }
 
         FramebufferLogic::NextSubpass(context, imageIndex);
@@ -58,7 +61,7 @@ namespace Render
             auto &graphicsPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
             DrawPipeline(vkCmdBuffer,
                          graphicsPipeline,
-                         postProcess->descriptor, bloomParams);
+                         postProcessDescriptor, bloomParams);
         }
 
         FramebufferLogic::NextSubpass(context, imageIndex);
@@ -66,7 +69,7 @@ namespace Render
         auto &globalPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Global];
         DrawPipeline(vkCmdBuffer,
                      globalPipeline,
-                     postProcess->descriptor, glm::vec4(0.0f));
+                     postProcessDescriptor, glm::vec4(0.0f));
 
         FramebufferLogic::EndRenderPass(context, imageIndex);
     }

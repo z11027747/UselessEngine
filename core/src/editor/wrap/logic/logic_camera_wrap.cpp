@@ -78,28 +78,15 @@ namespace Editor
 		ImGui::Spacing();
 		ImGui::Text("Clear Values");
 
-		auto &subpasses = pass->subpasses;
-		auto subpassSize = subpasses.size();
-		for (auto i = 0; i < subpassSize; i++)
+		auto clearValueSize = pass->clearValues.size();
+		for (auto i = 0; i < clearValueSize; i++)
 		{
-			ImGui::Text("SubPass: %d", i);
-			auto &subpass = subpasses[i];
-
-			ImGui::PushID(i * 100);
-			ImGui::ColorEdit4("Color", &subpass->clearColorValue.color.float32[0]);
-			ImGui::SliderFloat2("Depth", &subpass->clearDepthValue.depthStencil.depth, 0.0f, 1.0f);
+			ImGui::Text("Color: %d", i);
+			ImGui::PushID(i * 10);
+			auto &clearColorValue = pass->clearValues[i];
+			ImGui::ColorEdit4("##Color", &clearColorValue.color.float32[0]);
+			ImGui::SliderFloat2("##Depth", &clearColorValue.depthStencil.depth, 0.0f, 0.1f);
 			ImGui::PopID();
-
-			// inputs
-			auto clearInputValueSize = subpass->clearInputValues.size();
-			for (auto j = 0; j < clearInputValueSize; j++)
-			{
-				ImGui::Text("Input: %d", j);
-				ImGui::PushID(j * 10);
-				auto &clearInputValue = subpass->clearInputValues[j];
-				ImGui::ColorEdit4("##Input", &clearInputValue.color.float32[0]);
-				ImGui::PopID();
-			}
 		}
 	}
 }

@@ -11,18 +11,14 @@ namespace Render
 {
 	void PassLogic::CreateColorAttachment(Context *context,
 										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-										  VkSampleCountFlagBits samplers,
+										  VkFormat format, VkSampleCountFlagBits samplers,
 										  VkImageLayout initLayout, VkImageLayout finalLayout,
 										  VkClearColorValue &&clearColorValue)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
-		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
-		auto surfaceFormat = global->surfaceFormat;
-
 		VkAttachmentDescription colorAttachmentDescription = {};
-		colorAttachmentDescription.format = surfaceFormat.format;
+		colorAttachmentDescription.format = format;
 		colorAttachmentDescription.samples = samplers;
 		colorAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		colorAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -35,7 +31,7 @@ namespace Render
 
 		VkClearValue clearValue = {};
 		clearValue.color = clearColorValue;
-		subpass->clearColorValue = clearValue;
+		pass->clearValues.push_back(clearValue);
 	}
 	void PassLogic::SetColorAttachment(Context *context,
 									   std::shared_ptr<Pass> pass, uint32_t subpassIndex,
@@ -51,8 +47,7 @@ namespace Render
 	}
 	void PassLogic::SetInputAttachment(Context *context,
 									   std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-									   uint32_t index, VkImageLayout subPassLayout,
-									   VkClearColorValue &&clearColorValue)
+									   uint32_t index, VkImageLayout subPassLayout)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
@@ -64,9 +59,6 @@ namespace Render
 		inputAttachmentReference.attachment = index;
 		inputAttachmentReference.layout = subPassLayout;
 
-		VkClearValue clearValue = {};
-		clearValue.color = clearColorValue;
-		subpass->clearInputValues.push_back(clearValue);
 		subpass->inputAttachmentReferences.push_back(inputAttachmentReference);
 	}
 
@@ -94,7 +86,7 @@ namespace Render
 
 		VkClearValue clearValue = {};
 		clearValue.depthStencil = {1.0f, 0};
-		subpass->clearDepthValue = clearValue;
+		pass->clearValues.push_back(clearValue);
 	}
 	void PassLogic::SetDepthAttachment(Context *context,
 									   std::shared_ptr<Pass> pass, uint32_t subpassIndex,
@@ -136,5 +128,9 @@ namespace Render
 
 		pass->attachmentDescriptions.push_back(resolveAttachmentDescription);
 		subpass->resolveAttachmentReference = resolveAttachmentReference;
+
+		VkClearValue clearValue = {};
+		clearValue.color = {0.0f, 0.0f, 0.0f, 0.0f};
+		pass->clearValues.push_back(clearValue);
 	}
 }

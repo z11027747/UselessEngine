@@ -14,6 +14,7 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
+		auto surfaceFormat = global->surfaceFormat;
 		auto msaaSamples = global->msaaSamples;
 
 		auto hasMsaa = (msaaSamples != VK_SAMPLE_COUNT_1_BIT);
@@ -37,7 +38,7 @@ namespace Render
 		// attachments
 		// attachment0: color
 		PassLogic::CreateColorAttachment(context, pass, 0,
-										 msaaSamples,
+										 surfaceFormat.format, msaaSamples,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 										 {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
 		// attachment1: depth

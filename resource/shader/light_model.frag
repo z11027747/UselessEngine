@@ -22,7 +22,7 @@ struct PointLight {
 layout (set = 0, binding = 0) uniform GlobalUBO {
     CameraUBO camera;
     DirectionLightUBO directionLight;
-    PointLight pointLights[4];
+    PointLight pointLights[128];
     int activePointLights;
 } globalUBO;
 
@@ -80,8 +80,8 @@ float CalcShadow() {
     }
 }
 
-vec3 CalcHalfLambert(vec3 baseCol, vec3 normalWS, vec3 lightDir, float intensity) {
-    float NdotL = clamp(dot(normalWS, lightDir), 0, 1);
+vec3 CalcHalfLambert(vec3 baseCol, vec3 N, vec3 L, float intensity) {
+    float NdotL = clamp(dot(N, L), 0, 1);
     return baseCol * NdotL * intensity;
 }
 
@@ -93,16 +93,13 @@ vec3 SafeNormalize(vec3 normal) {
     return normalize(normal);
 }
 
-vec3 CalcBlingPhone(vec3 baseCol, vec3 N, vec3 lightDir, float shininess, float intensity) {
-    CameraUBO camera = globalUBO.camera;
-
-    vec3 viewDir = normalize(camera.pos - positionWS);
-    vec3 halfDir = SafeNormalize(viewDir + lightDir);
-    float NdotH = clamp(dot(N, halfDir), 0, 1);
+vec3 CalcBlingPhone(vec3 baseCol, vec3 V, vec3 N, vec3 L, float shininess, float intensity) {
+    vec3 H = SafeNormalize(V + L);
+    float NdotH = clamp(dot(N, H), 0, 1);
     return baseCol * pow(NdotH, shininess) * intensity;
 }
 
-vec3 CalcDirectionLight(vec3 baseCol, vec3 N, float shadowAtten) {
+vec3 CalcDirectionLight(vec3 baseCol, vec3 V, vec3 N, float shadowAtten) {
     DirectionLightUBO directionLight = globalUBO.directionLight;
 
     vec3 lightDir = normalize(directionLight.dir);
@@ -114,16 +111,16 @@ vec3 CalcDirectionLight(vec3 baseCol, vec3 N, float shadowAtten) {
     float specularIntensity = materialUBO.params.z;
 
     vec3 diffuse = CalcHalfLambert(baseCol * lightColor, N, lightDir, diffuseIntensity);
-    vec3 specular = CalcBlingPhone(vec3(1.0), N, lightDir, specualrShininess, specularIntensity);
+    vec3 specular = CalcBlingPhone(vec3(1.0), V, N, lightDir, specualrShininess, specularIntensity);
 
     return lightAmbient + (diffuse + specular) * shadowAtten;
 }
 
-vec3 CalcPointLight(int i, vec3 baseCol, vec3 N, float shadowAtten) {
+vec3 CalcPointLight(int i, vec3 baseCol, vec3 V, vec3 N,  vec3 P,float shadowAtten) {
     PointLight pointLight = globalUBO.pointLights[i];
 
-    vec3 lightDir = normalize(pointLight.pos - positionWS);
-    vec3 lightColor = pointLight.color;//TODO Test
+    vec3 lightColor = pointLight.color;
+    vec3 L = normalize(pointLight.pos - P);
 
     float dist = distance(pointLight.pos, positionWS);
     float atten = 1.0 /
@@ -133,8 +130,8 @@ vec3 CalcPointLight(int i, vec3 baseCol, vec3 N, float shadowAtten) {
     float specualrShininess = materialUBO.params.y;
     float specularIntensity = materialUBO.params.z;
 
-    vec3 diffuse = CalcHalfLambert(baseCol * lightColor, N, lightDir, diffuseIntensity);
-    vec3 specular = CalcBlingPhone(lightColor, N, lightDir, specualrShininess, specularIntensity);
+    vec3 diffuse = CalcHalfLambert(baseCol * lightColor, N, L, diffuseIntensity);
+    vec3 specular = CalcBlingPhone(lightColor, V, N, L, specualrShininess, specularIntensity);
 
     return (diffuse + specular) * atten * shadowAtten;
 }
@@ -146,14 +143,16 @@ void main() {
     vec3 calcNormalWS = vec3(dot(tangentMat0, calcNormalMap), dot(tangentMat1, calcNormalMap), dot(tangentMat2, calcNormalMap));
     calcNormalWS = normalize(calcNormalWS);
 
+    vec3 viewDir = normalize(globalUBO.camera.pos - positionWS);
+
     float shadowAtten = CalcShadow();
 
-    vec3 directionLightCol = CalcDirectionLight(baseCol, calcNormalWS, shadowAtten);
+    vec3 directionLightCol = CalcDirectionLight(baseCol, viewDir, calcNormalWS, shadowAtten);
 
     vec3 pointLightsCol = vec3(0.0);
     int activePointLights = globalUBO.activePointLights;
     for (int i = 0; i < activePointLights; i++) {
-        pointLightsCol += CalcPointLight(i, baseCol, calcNormalWS, 1.0);
+        pointLightsCol += CalcPointLight(i, baseCol, viewDir, calcNormalWS, positionWS, 1.0);
     }
 
     // outColor = vec4(directionLightCol, 1.0);

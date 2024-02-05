@@ -56,6 +56,7 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Deferred_LightModel_Lighting, MaterialDeferredLightModelLightingPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo},
             };
@@ -72,6 +73,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetMultisampleCreateInfo},
                 {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryPipelineLogic::SetMultisampleCreateInfo},
+                {Define::Pipeline::Deferred_LightModel_Lighting, MaterialDeferredLightModelLightingPipelineLogic::SetMultisampleCreateInfo},
             };
 
         auto &name = graphicsPipeline->name;

@@ -68,7 +68,7 @@ namespace Editor
                 ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred), availSize);
 
                 // ImGui::SetItemAllowOverlap();
-                auto size = ImVec2(150.0f, 150.0f);
+                auto size = ImVec2(120.0f, 120.0f);
                 auto fontHeight = 20.0f;
                 auto min = ImGui::GetWindowContentRegionMin();
                 auto max = ImGui::GetWindowContentRegionMax();

@@ -80,29 +80,7 @@ namespace Render
 		auto &renderPass = pass->renderPass;
 		auto &frameBuffer = pass->frameBuffers[imageIndex];
 
-		std::vector<VkClearValue> clearValues;
-
-		auto &subpasses = pass->subpasses;
-		for (const auto &subpass : subpasses)
-		{
-			if (!subpass->colorAttachmentReferences.empty())
-			{
-				clearValues.push_back(subpass->clearColorValue);
-			}
-			if (subpass->depthAttachmentReference.layout != VK_IMAGE_LAYOUT_UNDEFINED)
-			{
-				clearValues.push_back(subpass->clearDepthValue);
-			}
-			if (subpass->resolveAttachmentReference.layout != VK_IMAGE_LAYOUT_UNDEFINED)
-			{
-				VkClearValue clearValue = {};
-				clearValues.push_back(clearValue);
-			}
-			if (!subpass->inputAttachmentReferences.empty())
-			{
-				clearValues.insert(clearValues.end(), subpass->clearInputValues.begin(), subpass->clearInputValues.end());
-			}
-		}
+		auto &clearValues = pass->clearValues;
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

@@ -14,10 +14,6 @@ namespace Render
 		VkAttachmentReference depthAttachmentReference;
 		VkAttachmentReference resolveAttachmentReference;
 		std::vector<VkAttachmentReference> inputAttachmentReferences;
-
-		VkClearValue clearColorValue;
-		VkClearValue clearDepthValue;
-		std::vector<VkClearValue> clearInputValues;
 	};
 
 	struct Pass final
@@ -25,6 +21,7 @@ namespace Render
 		std::string name;
 		
 		std::vector<VkAttachmentDescription> attachmentDescriptions;
+		std::vector<VkClearValue> clearValues;
 
 		std::vector<std::shared_ptr<Subpass>> subpasses;
 		std::vector<VkSubpassDescription> subpassDescriptions;

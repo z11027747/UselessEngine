@@ -14,6 +14,7 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
+		auto surfaceFormat = global->surfaceFormat;
 
 		auto pass = std::make_shared<Pass>();
 		pass->name = Define::Pass::ImGui;
@@ -28,7 +29,7 @@ namespace Render
 		// attachments
 		//  attachment0: color
 		PassLogic::CreateColorAttachment(context, pass, 0,
-										 VK_SAMPLE_COUNT_1_BIT,
+										 surfaceFormat.format, VK_SAMPLE_COUNT_1_BIT,
 										 VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
 		// subpass0

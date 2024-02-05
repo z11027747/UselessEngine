@@ -22,7 +22,7 @@ struct PointLight {
 layout (set = 0, binding = 0) uniform GlobalUBO {
     CameraUBO camera;
     DirectionLightUBO directionLight;
-    PointLight pointLights[4];
+    PointLight pointLights[128];
     int activePointLights;
 } globalUBO;
 

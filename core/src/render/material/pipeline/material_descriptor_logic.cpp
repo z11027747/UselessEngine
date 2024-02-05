@@ -23,6 +23,7 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Deferred_LightModel_Lighting, MaterialDeferredLightModelLightingDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessDescriptorLogic::CreateSetLayout},
@@ -49,6 +50,7 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::Deferred_LightModel_Lighting, MaterialDeferredLightModelLightingDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::AllocateAndUpdate},
             };
 
@@ -65,6 +67,7 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::Destroy},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::Destroy},
                 {Define::Pipeline::Deferred_LightModel_Geometry, MaterialDeferredLightModelGeometryDescriptorLogic::Destroy},
+                {Define::Pipeline::Deferred_LightModel_Lighting, MaterialDeferredLightModelLightingDescriptorLogic::Destroy},
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::Destroy},
             };
 

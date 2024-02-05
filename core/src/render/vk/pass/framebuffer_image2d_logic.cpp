@@ -110,14 +110,13 @@ namespace Render
 	}
 
 	void FramebufferLogic::CreateInputImage2d(Context *context,
-											  std::shared_ptr<Pass> pass)
+											  std::shared_ptr<Pass> pass, VkFormat format)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
-		auto surfaceFormat = global->surfaceFormat;
 
 		ImageCreateInfo imageCreateInfo = {
-			surfaceFormat.format, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
+			format, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_COLOR_BIT,
 			// image
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,

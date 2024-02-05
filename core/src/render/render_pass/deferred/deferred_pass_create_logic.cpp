@@ -14,6 +14,7 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
+		auto surfaceFormat = global->surfaceFormat;
 
 		auto pass = std::make_shared<Pass>();
 		pass->name = Define::Pass::Deferred;
@@ -24,10 +25,10 @@ namespace Render
 		// images
 		FramebufferLogic::CreateColorImage2d(context, pass, samplers);
 		FramebufferLogic::CreateDepthImage2d(context, pass, samplers);
-		FramebufferLogic::CreateInputImage2d(context, pass);
-		FramebufferLogic::CreateInputImage2d(context, pass);
-		FramebufferLogic::CreateInputImage2d(context, pass);
-		FramebufferLogic::CreateInputImage2d(context, pass);
+		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R16G16B16A16_SFLOAT);
+		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R16G16B16A16_SFLOAT);
+		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R8G8B8A8_UNORM);
+		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R16G16B16A16_SFLOAT);
 
 		// subpass count: 2
 		PassLogic::SetSubpassCount(context, pass, 2);
@@ -35,7 +36,7 @@ namespace Render
 		// attachments
 		// attachment0: color
 		PassLogic::CreateColorAttachment(context, pass, 1,
-										 samplers,
+										 surfaceFormat.format, samplers,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 										 {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
 		// attachment1: depth
@@ -43,20 +44,24 @@ namespace Render
 										 samplers);
 		// attachment2: gbuffer-position
 		PassLogic::CreateColorAttachment(context, pass, 0,
-										 samplers,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										 VK_FORMAT_R16G16B16A16_SFLOAT, samplers,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+										 {0.0f, 0.0f, 0.0f, 1.0f});
 		// attachment3: gbuffer-normal
 		PassLogic::CreateColorAttachment(context, pass, 0,
-										 samplers,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										 VK_FORMAT_R16G16B16A16_SFLOAT, samplers,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+										 {0.0f, 0.0f, 0.0f, 1.0f});
 		// attachment4: gbuffer-color
 		PassLogic::CreateColorAttachment(context, pass, 0,
-										 samplers,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										 VK_FORMAT_R8G8B8A8_UNORM, samplers,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+										 {0.0f, 0.0f, 0.0f, 1.0f});
 		// attachment5: gbuffer-material
 		PassLogic::CreateColorAttachment(context, pass, 0,
-										 samplers,
-										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										 VK_FORMAT_R16G16B16A16_SFLOAT, samplers,
+										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+										 {0.0f, 0.0f, 0.0f, 1.0f});
 
 		// subpass0: GeometryPass
 		PassLogic::SetColorAttachment(context, pass, 0,
@@ -76,13 +81,13 @@ namespace Render
 		PassLogic::SetColorAttachment(context, pass, 1,
 									  0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		PassLogic::SetInputAttachment(context, pass, 1,
-									  2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
+									  2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		PassLogic::SetInputAttachment(context, pass, 1,
-									  3, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.5f, 0.5f, 0.0f, 0.0f});
+									  3, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		PassLogic::SetInputAttachment(context, pass, 1,
-									  4, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
+									  4, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		PassLogic::SetInputAttachment(context, pass, 1,
-									  5, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, {0.0f, 0.0f, 0.0f, 0.0f});
+									  5, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		// descriptions
 		PassLogic::SetSubpassDescription(context, pass, 1);
 
