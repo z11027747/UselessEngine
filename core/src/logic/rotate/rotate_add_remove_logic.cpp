@@ -9,7 +9,7 @@ namespace Logic
     void RotateLogic::OnAdd(Context *context, std::shared_ptr<EngineObject> eo)
     {
         // TODO 临时放在这
-        auto targetEO = context->GetEO("Cube");
+        auto targetEO = context->GetEO("Plane");
         BeginRotateAround(context,
                           eo,
                           targetEO, 10);
