@@ -55,8 +55,4 @@ namespace Render
 																	   bindings[0].descriptorType, descriptor->bufferInfos[0]);
 								   });
 	}
-	void MaterialColorDescriptorLogic::Destroy(Context *context,
-											   std::shared_ptr<MaterialInstance> instance)
-	{
-	}
 }

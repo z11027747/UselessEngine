@@ -35,7 +35,7 @@ public:
         inline static std::string LightModel{"light_model"};
         inline static std::string Color{"color"};
 
-        inline static std::string Deferred_LightModel_Geometry{"deferred_light_model_geometry"};
+        inline static std::string Deferred_LightModel{"deferred_light_model"};
         inline static std::string Deferred_LightModel_Lighting{"deferred_light_model_lighting"};
 
         // post process

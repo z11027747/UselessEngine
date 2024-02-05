@@ -51,12 +51,4 @@ namespace Render
 		rasterizationStateCreateInfo.depthBiasClamp = 0.0f;
 		rasterizationStateCreateInfo.depthBiasSlopeFactor = 4.0f;
 	}
-	void MaterialShadowPipelineLogic::SetDepthStencilCreateInfo(Context *context,
-																std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
-	void MaterialShadowPipelineLogic::SetColorBlendStage(Context *context,
-														 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
 }

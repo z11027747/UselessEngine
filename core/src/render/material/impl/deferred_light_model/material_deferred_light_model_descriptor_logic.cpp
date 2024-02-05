@@ -15,7 +15,7 @@
 
 namespace Render
 {
-	void MaterialDeferredLightModelGeometryDescriptorLogic::CreateSetLayout(Context *context,
+	void MaterialDeferredLightModelDescriptorLogic::CreateSetLayout(Context *context,
 																			std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		VkDescriptorSetLayoutBinding albedo = {
@@ -47,7 +47,7 @@ namespace Render
 
 	constexpr int imageSize = 2; // albedo+normalMap
 
-	void MaterialDeferredLightModelGeometryDescriptorLogic::AllocateAndUpdate(Context *context,
+	void MaterialDeferredLightModelDescriptorLogic::AllocateAndUpdate(Context *context,
 																			  std::shared_ptr<MaterialInstance> instance)
 	{
 		auto &globalEO = context->renderGlobalEO;
@@ -98,7 +98,7 @@ namespace Render
 																	   bindings[bufferIdx].descriptorType, descriptor->bufferInfos[0]);
 								   });
 	}
-	void MaterialDeferredLightModelGeometryDescriptorLogic::Destroy(Context *context,
+	void MaterialDeferredLightModelDescriptorLogic::Destroy(Context *context,
 																	std::shared_ptr<MaterialInstance> instance)
 	{
 		auto &descriptor = instance->descriptor;

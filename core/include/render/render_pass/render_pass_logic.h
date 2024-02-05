@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <string>
 #include "render/vk/pass/pass_comp.h"
+#include "render/vk/pipeline/descriptor_comp.h"
 
 class Context;
 
@@ -19,11 +20,13 @@ namespace Render
         static std::shared_ptr<Pass> CreateDeferred(Context *);
         static std::shared_ptr<Pass> CreatePostProcess(Context *);
 
+        static void DestroyAll(Context *);
+
         inline static std::unordered_map<std::string, std::shared_ptr<Descriptor>> descriptorMap{};
 
         static void CreateDeferredDescriptor(Context *);
-        static void CreatePostProcessDescriptor(Context *);
+        static void DestroyDeferredDescriptor(Context *);
 
-        static void DestroyAll(Context *);
+        static void CreatePostProcessDescriptor(Context *);
     };
 }

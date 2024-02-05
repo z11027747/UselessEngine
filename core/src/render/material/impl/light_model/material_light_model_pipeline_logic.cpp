@@ -50,10 +50,6 @@ namespace Render
 			colorDescription,
 			uv0Description};
 	}
-	void MaterialLightModelPipelineLogic::SetViewport(Context *context,
-													  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
 	void MaterialLightModelPipelineLogic::SetRasterizationCreateInfo(Context *context,
 																	 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
@@ -80,9 +76,5 @@ namespace Render
 		depthStencilStateCreateInfo.depthTestEnable = true;
 		depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
 		depthStencilStateCreateInfo.depthWriteEnable = true;
-	}
-	void MaterialLightModelPipelineLogic::SetColorBlendStage(Context *context,
-															 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
 	}
 }

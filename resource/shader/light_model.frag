@@ -143,10 +143,9 @@ void main() {
     vec3 calcNormalWS = vec3(dot(tangentMat0, calcNormalMap), dot(tangentMat1, calcNormalMap), dot(tangentMat2, calcNormalMap));
     calcNormalWS = normalize(calcNormalWS);
 
-    vec3 viewDir = normalize(globalUBO.camera.pos - positionWS);
-
     float shadowAtten = CalcShadow();
 
+    vec3 viewDir = normalize(globalUBO.camera.pos - positionWS);
     vec3 directionLightCol = CalcDirectionLight(baseCol, viewDir, calcNormalWS, shadowAtten);
 
     vec3 pointLightsCol = vec3(0.0);
@@ -155,6 +154,5 @@ void main() {
         pointLightsCol += CalcPointLight(i, baseCol, viewDir, calcNormalWS, positionWS, 1.0);
     }
 
-    // outColor = vec4(directionLightCol, 1.0);
     outColor = vec4((directionLightCol + pointLightsCol) * color, 1.0);
 }

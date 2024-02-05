@@ -60,13 +60,4 @@ namespace Render
 
 		graphicsPipeline->subpass = 1;
 	}
-
-	void MaterialDeferredLightModelLightingDescriptorLogic::AllocateAndUpdate(Context *context,
-																			  std::shared_ptr<MaterialInstance> instance)
-	{
-	}
-	void MaterialDeferredLightModelLightingDescriptorLogic::Destroy(Context *context,
-																	std::shared_ptr<MaterialInstance> instance)
-	{
-	}
 }

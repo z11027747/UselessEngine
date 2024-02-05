@@ -9,7 +9,7 @@
 
 namespace Render
 {
-    void MaterialDeferredLightModelGeometryPipelineLogic::SetVertexAttrDescriptions(Context *context,
+    void MaterialDeferredLightModelPipelineLogic::SetVertexAttrDescriptions(Context *context,
                                                                                     std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         VkVertexInputAttributeDescription positionOSDescription = {
@@ -50,11 +50,7 @@ namespace Render
             colorDescription,
             uv0Description};
     }
-    void MaterialDeferredLightModelGeometryPipelineLogic::SetViewport(Context *context,
-                                                                      std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-    {
-    }
-    void MaterialDeferredLightModelGeometryPipelineLogic::SetRasterizationCreateInfo(Context *context,
+    void MaterialDeferredLightModelPipelineLogic::SetRasterizationCreateInfo(Context *context,
                                                                                      std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &stageInfo = graphicsPipeline->stageInfo;
@@ -62,7 +58,7 @@ namespace Render
         auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
         rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
     }
-    void MaterialDeferredLightModelGeometryPipelineLogic::SetMultisampleCreateInfo(Context *context,
+    void MaterialDeferredLightModelPipelineLogic::SetMultisampleCreateInfo(Context *context,
                                                                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &stageInfo = graphicsPipeline->stageInfo;
@@ -71,7 +67,7 @@ namespace Render
         multisampleStateCreateInfo.sampleShadingEnable = true;
         multisampleStateCreateInfo.minSampleShading = 0.2f;
     }
-    void MaterialDeferredLightModelGeometryPipelineLogic::SetDepthStencilCreateInfo(Context *context,
+    void MaterialDeferredLightModelPipelineLogic::SetDepthStencilCreateInfo(Context *context,
                                                                                     std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &stageInfo = graphicsPipeline->stageInfo;
@@ -81,7 +77,7 @@ namespace Render
         depthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
         depthStencilStateCreateInfo.depthWriteEnable = true;
     }
-    void MaterialDeferredLightModelGeometryPipelineLogic::SetColorBlendStage(Context *context,
+    void MaterialDeferredLightModelPipelineLogic::SetColorBlendStage(Context *context,
                                                                              std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         auto &stageInfo = graphicsPipeline->stageInfo;

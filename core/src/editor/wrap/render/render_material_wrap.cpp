@@ -14,7 +14,7 @@ namespace Editor
 	static const char *pipelineNames[] = {Define::Pipeline::Skybox.c_str(),
 										  Define::Pipeline::Shadow.c_str(),
 										  Define::Pipeline::LightModel.c_str(),
-										  Define::Pipeline::Deferred_LightModel_Geometry.c_str(),
+										  Define::Pipeline::Deferred_LightModel.c_str(),
 										  Define::Pipeline::Color.c_str()};
 	static const int pipelineNameSize = 5;
 
@@ -49,7 +49,7 @@ namespace Editor
 		{
 		}
 		else if (info->pipelineName == Define::Pipeline::LightModel ||
-				 info->pipelineName == Define::Pipeline::Deferred_LightModel_Geometry)
+				 info->pipelineName == Define::Pipeline::Deferred_LightModel)
 		{
 			imageNameIndexs.resize(2);
 			for (auto i = 0; i < 2; i++)
@@ -128,7 +128,7 @@ namespace Editor
 				info->params = {glm::vec4(1.0f)};
 			}
 			else if (info->pipelineName == Define::Pipeline::LightModel ||
-					 info->pipelineName == Define::Pipeline::Deferred_LightModel_Geometry)
+					 info->pipelineName == Define::Pipeline::Deferred_LightModel)
 			{
 				info->imageNames = {Define::Res::Img_White, Define::Res::Img_Bump};
 				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 0.0f)};
@@ -152,7 +152,7 @@ namespace Editor
 			ImGui::ColorEdit4("Color", &params0.x);
 		}
 		else if (info->pipelineName == Define::Pipeline::LightModel ||
-				 info->pipelineName == Define::Pipeline::Deferred_LightModel_Geometry)
+				 info->pipelineName == Define::Pipeline::Deferred_LightModel)
 		{
 			DrawImageByIndex(material, "Albedo", 0);
 			DrawImageByIndex(material, "NomralMap", 1);

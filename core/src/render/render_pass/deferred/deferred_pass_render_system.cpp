@@ -28,7 +28,7 @@ namespace Render
             FramebufferLogic::BeginRenderPass(context, imageIndex, deferredPass);
 
             // subpass0: geometryPass
-            RenderPassSystem::Update(context, imageIndex, deferredPass);
+            RenderPassSystem::Update(context, imageIndex, false);
 
             FramebufferLogic::NextSubpass(context, imageIndex);
 
@@ -37,6 +37,7 @@ namespace Render
             auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
             auto &deferredLightingPipeline = global->pipelineMap[Define::Pipeline::Deferred_LightModel_Lighting];
+
             auto &pipeline = deferredLightingPipeline->pipeline;
             auto &pipelineLayout = deferredLightingPipeline->pipelineLayout;
             vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);

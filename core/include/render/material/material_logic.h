@@ -43,7 +43,7 @@ namespace Render
                                     std::shared_ptr<MaterialInstance>, const std::vector<std::string> &);
 
         static void CreateBuffer(Context *, std::shared_ptr<MaterialInstance>);
-        static void CreateDescriptor(Context *context, std::shared_ptr<MaterialInstance>);
+        static void CreateDescriptor(Context *, std::shared_ptr<MaterialInstance>);
     };
 
     class MaterialPipelineLogic final
@@ -57,13 +57,6 @@ namespace Render
         static void SetColorBlendStage(Context *, std::shared_ptr<GraphicsPipeline>);
     };
 
-    class MaterialGlobalDescriptorLogic final
-    {
-    public:
-        static void Create(Context *);
-        static void Destroy(Context *);
-    };
-
     class MaterialDescriptorLogic final
     {
     public:
@@ -72,5 +65,12 @@ namespace Render
         static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
         static void Update(Context *, std::shared_ptr<MaterialInstance>);
         static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
+    };
+
+    class MaterialGlobalDescriptorLogic final
+    {
+    public:
+        static void Create(Context *);
+        static void Destroy(Context *);
     };
 }

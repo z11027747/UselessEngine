@@ -67,7 +67,7 @@ namespace Render
 		PipelineLogic::Create(context, Define::Pipeline::Skybox, forwardPass);
 		PipelineLogic::Create(context, Define::Pipeline::LightModel, forwardPass);
 		PipelineLogic::Create(context, Define::Pipeline::Color, forwardPass);
-		PipelineLogic::Create(context, Define::Pipeline::Deferred_LightModel_Geometry, deferredPass);
+		PipelineLogic::Create(context, Define::Pipeline::Deferred_LightModel, deferredPass);
 		PipelineLogic::Create(context, Define::Pipeline::Deferred_LightModel_Lighting, deferredPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping, postProcessPass);
@@ -130,6 +130,8 @@ namespace Render
 		}
 
 		PipelineLogic::DestroyAll(context);
+
+		RenderPassLogic::DestroyDeferredDescriptor(context);
 		RenderPassLogic::DestroyAll(context);
 
 		MaterialGlobalDescriptorLogic::Destroy(context);

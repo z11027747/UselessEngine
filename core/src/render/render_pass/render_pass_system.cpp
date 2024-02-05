@@ -8,6 +8,7 @@
 #include "render/mesh/mesh_logic.h"
 #include "render/material/material_logic.h"
 #include "render/render_pass/render_pass_system.h"
+#include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "common/define.h"
 #include "engine_object.h"
@@ -24,22 +25,26 @@ namespace Render
                              const std::string &);
 
     void RenderPassSystem::Update(Context *context,
-                                  uint32_t imageIndex, std::shared_ptr<Pass> pass)
+                                  uint32_t imageIndex, bool isShadow)
     {
+        auto &cameraEO = context->logicMainCameraEO;
+        if (cameraEO == nullptr)
+            return;
+
         SplitPipeline(context);
         SortPipeline();
 
-        auto isShadow = (pass->name == Define::Pass::Shadow);
+        auto camera = cameraEO->GetComponent<Logic::Camera>();
+        auto &cameraPass = camera->passName;
 
-        if (pass->name == Define::Pass::Forward)
+        if (cameraPass == Define::Pass::Forward)
         {
             DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::LightModel);
             DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Color);
         }
-        else if (pass->name == Define::Pass::Deferred)
+        else if (cameraPass == Define::Pass::Deferred)
         {
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_LightModel_Geometry);
-            // DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_LightModel_Lighting);
+            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_LightModel);
         }
     }
 

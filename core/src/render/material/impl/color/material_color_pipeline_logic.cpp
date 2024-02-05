@@ -28,10 +28,6 @@ namespace Render
 			positionOSDescription,
 			colorDescription};
 	}
-	void MaterialColorPipelineLogic::SetViewport(Context *context,
-												 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
 	void MaterialColorPipelineLogic::SetRasterizationCreateInfo(Context *context,
 																std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{

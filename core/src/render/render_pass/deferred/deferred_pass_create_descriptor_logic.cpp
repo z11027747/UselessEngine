@@ -15,7 +15,7 @@
 
 namespace Render
 {
-    constexpr int imageCount = 5;//shadow + gBuffer(position+normal+color+material)
+    constexpr int imageCount = 5; // shadow + gBuffer(position+normal+color+material)
 
     void RenderPassLogic::CreateDeferredDescriptor(Context *context)
     {

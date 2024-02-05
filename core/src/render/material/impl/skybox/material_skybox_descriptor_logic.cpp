@@ -60,8 +60,4 @@ namespace Render
 																	  bindings[0].descriptorType, descriptor->imageInfos[0]);
 								   });
 	}
-	void MaterialSkyboxDescriptorLogic::Destroy(Context *context,
-												std::shared_ptr<MaterialInstance> instance)
-	{
-	}
 }

@@ -21,10 +21,6 @@ namespace Render
 		stageInfo.vertexInputAttributeDescriptions = {
 			positionOSDescription};
 	}
-	void MaterialSkyboxPipelineLogic::SetViewport(Context *context,
-												  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
 	void MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo(Context *context,
 																 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
@@ -41,9 +37,5 @@ namespace Render
 		auto &depthStencilStateCreateInfo = stageInfo.depthStencilStateCreateInfo;
 		depthStencilStateCreateInfo.depthTestEnable = true;
 		depthStencilStateCreateInfo.depthWriteEnable = false;
-	}
-	void MaterialSkyboxPipelineLogic::SetColorBlendStage(Context *context,
-														 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
 	}
 }

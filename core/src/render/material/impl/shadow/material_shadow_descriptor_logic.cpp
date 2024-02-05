@@ -6,16 +6,4 @@
 
 namespace Render
 {
-	void MaterialShadowDescriptorLogic::CreateSetLayout(Context *context,
-														std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-	}
-	void MaterialShadowDescriptorLogic::AllocateAndUpdate(Context *context,
-														  std::shared_ptr<MaterialInstance> instance)
-	{
-	}
-	void MaterialShadowDescriptorLogic::Destroy(Context *context,
-												std::shared_ptr<MaterialInstance> instance)
-	{
-	}
 }

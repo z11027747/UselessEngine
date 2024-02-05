@@ -34,6 +34,41 @@ layout (input_attachment_index = 3, set = 1, binding = 4) uniform subpassInput m
 
 layout (location = 0) out vec4 outColor;
 
+float CalcShadow(vec4 positionLS) {
+    vec4 positionNDCLS = positionLS / positionLS.w;
+
+    if (abs(positionNDCLS.x) > 1.0 ||
+        abs(positionNDCLS.y) > 1.0 ||
+        abs(positionNDCLS.z) > 1.0) {
+        return 1.0;
+    } else {
+        //pcf
+        ivec2 texSize = textureSize(shadowMap, 0);
+        float scale = 1.5;
+        float dx = scale * 1.0 / float(texSize.x);
+        float dy = scale * 1.0 / float(texSize.y);
+
+        int PCF_SIZE = 3;
+        int pcfSizeMinus1 = PCF_SIZE - 1;
+        float kernelSize = 2.0 * pcfSizeMinus1 + 1.0;
+        float numSamples = kernelSize * kernelSize;
+
+        float shadowCount = 0.0;
+        vec2 shadowMapCoord = vec2(positionNDCLS.xy * 0.5 + 0.5);
+
+        for (int x = -pcfSizeMinus1; x <= pcfSizeMinus1; x++) {
+            for (int y = -pcfSizeMinus1; y <= pcfSizeMinus1; y++) {
+                vec2 pcfCoordinate = shadowMapCoord + vec2(dx * x, dy * y);
+                vec3 pcfCoordinatePlusReference = vec3(pcfCoordinate, positionNDCLS.z);
+
+                shadowCount += texture(shadowMap, pcfCoordinatePlusReference).r;
+            }
+        }
+
+        return mix(0.2, 1.0, shadowCount / numSamples);
+    }
+}
+
 vec3 CalcHalfLambert(vec3 baseCol, vec3 N, vec3 L, float intensity) {
     float NdotL = clamp(dot(N, L), 0, 1);
     return baseCol * NdotL * intensity;
@@ -91,15 +126,19 @@ vec3 CalcPointLight(int i, vec3 baseCol, vec3 V, vec3 N, vec3 P, float shadowAtt
 }
 
 void main() {
+    CameraUBO camera = globalUBO.camera;
+    DirectionLightUBO directionLight = globalUBO.directionLight;
 
     vec3 positionWS = subpassLoad(positionAttachment).xyz;
     vec3 normalWS = subpassLoad(normalAttachment).xyz;
     vec3 baseCol = subpassLoad(colorAttachment).rgb;
     vec4 materialParams = subpassLoad(materialAttachment);
 
-    vec3 viewDir = normalize(globalUBO.camera.pos - positionWS);
+    vec4 positionLS = directionLight.projection * directionLight.view * vec4(positionWS, 1.0);
+    float shadowAtten = CalcShadow(positionLS);
 
-    vec3 directionLightCol = CalcDirectionLight(baseCol, viewDir, normalWS, 1.0, materialParams);
+    vec3 viewDir = normalize(camera.pos - positionWS);
+    vec3 directionLightCol = CalcDirectionLight(baseCol, viewDir, normalWS, shadowAtten, materialParams);
 
     vec3 pointLightsCol = vec3(0.0);
     int activePointLights = globalUBO.activePointLights;
@@ -108,5 +147,4 @@ void main() {
     }
 
     outColor = vec4(directionLightCol + pointLightsCol, 1.0);
-
 }
