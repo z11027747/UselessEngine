@@ -54,7 +54,7 @@ Engine
     - [ ] RenderPass
 	    - [x] imgui
 	    - [x] forward
-	    - [ ] deferred
+	    - [x] deferred
 	    - [x] shadow
 	    - [x] post_process
 
@@ -64,7 +64,7 @@ Shader (VkPipeline)
 - [x] skybox
 - [x] shadow
 - [x] light_model
-- [ ] deferred_light_model
+- [x] deferred_light_model
 - [ ] pbr
 - [ ] deferred_pbr
 - [x] color
