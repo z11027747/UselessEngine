@@ -61,7 +61,8 @@ namespace Render
 
 	void PassLogic::CreateDepthAttachment(Context *context,
 										  std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-										  VkSampleCountFlagBits samplers)
+										  VkSampleCountFlagBits samplers,
+										  VkImageLayout layout)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
@@ -76,8 +77,35 @@ namespace Render
 		depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		depthAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		depthAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-		depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+		depthAttachmentDescription.initialLayout = layout;
+		depthAttachmentDescription.finalLayout = layout;
+
+		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
+
+		VkClearValue clearValue = {};
+		clearValue.depthStencil = {1.0f, 0};
+		pass->clearValues.push_back(clearValue);
+	}
+	void PassLogic::CreateDepthStencilAttachment(Context *context,
+												 std::shared_ptr<Pass> pass, uint32_t subpassIndex,
+												 VkSampleCountFlagBits samplers,
+												 VkImageLayout layout)
+	{
+		auto &subpass = pass->subpasses[subpassIndex];
+
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Render::Global>();
+		auto depthStencilFormat = global->depthStencilFormat;
+
+		VkAttachmentDescription depthAttachmentDescription = {};
+		depthAttachmentDescription.format = depthStencilFormat;
+		depthAttachmentDescription.samples = samplers;
+		depthAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		depthAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		depthAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+		depthAttachmentDescription.initialLayout = layout;
+		depthAttachmentDescription.finalLayout = layout;
 
 		pass->attachmentDescriptions.push_back(depthAttachmentDescription);
 
@@ -126,8 +154,8 @@ namespace Render
 	}
 
 	void PassLogic::SetResolveAttachment(Context *context,
-											std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-											uint32_t index)
+										 std::shared_ptr<Pass> pass, uint32_t subpassIndex,
+										 uint32_t index)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 

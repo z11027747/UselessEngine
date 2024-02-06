@@ -10,6 +10,9 @@
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
 #include "render/material/impl/material_deferred_light_model_logic.h"
+#include "render/material/impl/material_deferred_shading_logic.h"
+#include "render/material/impl/material_deferred_volumn_logic.h"
+#include "render/material/impl/material_deferred_point_light_logic.h"
 #include "render/material/impl/material_post_process_logic.h"
 #include "context.h"
 
@@ -21,10 +24,12 @@ namespace Render
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::CreateSetLayout},
-                {Define::Pipeline::Deferred_LightModel_Lighting, MaterialDeferredLightModelLightingDescriptorLogic::CreateSetLayout},
-                {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Deferred_PointLight, MaterialDeferredPointLightDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::CreateSetLayout},
@@ -66,6 +71,9 @@ namespace Render
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::Destroy},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::Destroy},
             };
+
+        if (instance->info == nullptr)
+            return;
 
         auto &name = instance->info->pipelineName;
         auto it = funcMap.find(name);

@@ -27,7 +27,11 @@ namespace Render
 									   uint32_t, VkImageLayout);
 
 		static void CreateDepthAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
-										  VkSampleCountFlagBits);
+										  VkSampleCountFlagBits,
+										  VkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL);
+		static void CreateDepthStencilAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
+												 VkSampleCountFlagBits,
+												 VkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL);
 		static void SetDepthAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
 									   uint32_t);
 
@@ -56,6 +60,7 @@ namespace Render
 		static void GetSwapchainImage2ds(Context *, std::shared_ptr<Pass>);
 		static void CreateColorImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateDepthImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
+		static void CreateDepthStencilImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateResolveImage2d(Context *, std::shared_ptr<Pass>, VkSampleCountFlagBits);
 		static void CreateInputImage2d(Context *, std::shared_ptr<Pass>, VkFormat, VkSampleCountFlagBits = VK_SAMPLE_COUNT_1_BIT);
 		static void CreateBlitImage2d(Context *, std::shared_ptr<Pass>, uint32_t = 4);

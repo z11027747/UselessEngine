@@ -36,7 +36,9 @@ public:
         inline static std::string Color{"color"};
 
         inline static std::string Deferred_LightModel{"deferred_light_model"};
-        inline static std::string Deferred_LightModel_Lighting{"deferred_light_model_lighting"};
+        inline static std::string Deferred_Shading{"deferred_shading"};
+        inline static std::string Deferred_Volumn{"deferred_volumn"};
+        inline static std::string Deferred_PointLight{"deferred_point_light"};
 
         // post process
         inline static std::string PostProcess_ToonMapping{"toon_mapping"};

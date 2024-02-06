@@ -29,5 +29,6 @@ void main() {
     outPosition = vec4(positionWS, 1.0);
     outNormal = vec4(normalize(calcNormalWS), 1.0);
     outColor = vec4(baseCol * color, 1.0);
-    outMaterial = materialUBO.params;
+
+    outMaterial = vec4(materialUBO.params.xyz, 1.0);
 }

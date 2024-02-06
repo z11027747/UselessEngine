@@ -44,6 +44,7 @@ namespace Render
         }
         else if (cameraPass == Define::Pass::Deferred)
         {
+            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_Volumn);
             DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_LightModel);
         }
     }

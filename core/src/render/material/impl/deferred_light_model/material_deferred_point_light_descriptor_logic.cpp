@@ -8,15 +8,15 @@
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/material/impl/material_deferred_light_model_logic.h"
+#include "render/material/impl/material_deferred_point_light_logic.h"
 #include "common/define.h"
 #include "engine_object.h"
 #include "context.h"
 
 namespace Render
 {
-	void MaterialDeferredLightModelLightingDescriptorLogic::CreateSetLayout(Context *context,
-																			std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	void MaterialDeferredPointLightDescriptorLogic::CreateSetLayout(Context *context,
+																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		VkDescriptorSetLayoutBinding shadowMap = {
 			0, // binding
@@ -24,36 +24,43 @@ namespace Render
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding position = {
+		VkDescriptorSetLayoutBinding positionAttachment = {
 			1, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding normal = {
+		VkDescriptorSetLayoutBinding normalAttachment = {
 			2, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding color = {
+		VkDescriptorSetLayoutBinding colorAttachment = {
 			3, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
-		VkDescriptorSetLayoutBinding material = {
+		VkDescriptorSetLayoutBinding materialAttachment = {
 			4, // binding
+			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+
+		VkDescriptorSetLayoutBinding pointlightAttachment = {
+			5, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(shadowMap);
-		bindings.push_back(position);
-		bindings.push_back(normal);
-		bindings.push_back(color);
-		bindings.push_back(material);
+		bindings.push_back(positionAttachment);
+		bindings.push_back(normalAttachment);
+		bindings.push_back(colorAttachment);
+		bindings.push_back(materialAttachment);
+		bindings.push_back(pointlightAttachment);
 
 		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);

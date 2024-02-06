@@ -19,8 +19,10 @@ namespace Render
     {
         inline static std::string type{"Render::PointLight"};
 
+        // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
+
         glm::vec3 color;
-        glm::vec3 clq{1.0f, 0.045f, 0.0075f};
+        glm::vec3 clq{1.0f, 0.7f, 1.8f};
         bool hasShadow{true};
     };
 

@@ -4,7 +4,7 @@ layout(push_constant) uniform Push {
     vec4 params;//Brightness+Saturation+Intensity
 } push;
 
-layout(set = 0, binding = 0) uniform sampler2D blitImage;
+layout (set = 0, binding = 0) uniform sampler2D blitImage;
 
 layout(location = 0) in vec2 uv;
 

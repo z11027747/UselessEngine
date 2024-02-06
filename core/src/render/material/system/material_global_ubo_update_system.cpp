@@ -34,7 +34,7 @@ namespace Render
         }
 
         DirectionLightUBO directionLightUBO = {};
-        PointLightUBO pointLightUBOs[128];
+        PointLightUBO pointLightUBOs[256];
         int activePointLights = 0;
 
         auto &lightEOs = context->renderLightEOs;

@@ -15,8 +15,9 @@ namespace Editor
 										  Define::Pipeline::Shadow.c_str(),
 										  Define::Pipeline::LightModel.c_str(),
 										  Define::Pipeline::Deferred_LightModel.c_str(),
+										  Define::Pipeline::Deferred_Volumn.c_str(),
 										  Define::Pipeline::Color.c_str()};
-	static const int pipelineNameSize = 5;
+	static const int pipelineNameSize = 6;
 
 	static std::vector<int> imageNameIndexs = {};
 	static std::vector<std::string> imageNames = {};
@@ -44,9 +45,6 @@ namespace Editor
 			{
 				imageNameIndexs[i] = FindImageNameIndex(info->imageNames[i]);
 			}
-		}
-		else if (info->pipelineName == Define::Pipeline::Color)
-		{
 		}
 		else if (info->pipelineName == Define::Pipeline::LightModel ||
 				 info->pipelineName == Define::Pipeline::Deferred_LightModel)
@@ -132,6 +130,11 @@ namespace Editor
 			{
 				info->imageNames = {Define::Res::Img_White, Define::Res::Img_Bump};
 				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 1.0f)};
+			}
+			else if (info->pipelineName == Define::Pipeline::Deferred_Volumn)
+			{
+				info->imageNames = {};
+				info->params = {glm::vec4(1.0f)};
 			}
 
 			FindImageNameIndexsByPipelineName(material);

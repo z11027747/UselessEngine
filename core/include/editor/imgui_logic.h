@@ -20,6 +20,7 @@ namespace Editor
     const std::string Descriptor_Deferred_Normal = "deferred_gbuffer-normal";
     const std::string Descriptor_Deferred_Color = "deferred_gbuffer-color";
     const std::string Descriptor_Deferred_Material = "deferred_gbuffer-material";
+    const std::string Descriptor_Deferred_LightVolunm = "deferred_gbuffer-lightvolumn";
     
     const std::string Descriptor_Shadow = "shadow";
     const std::string Descriptor_PostProcess = "post_process";

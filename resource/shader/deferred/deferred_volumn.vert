@@ -31,11 +31,9 @@ layout (push_constant) uniform Push {
 } push;
 
 layout (location = 0) in vec3 inPositionOS;
-layout (location = 1) in vec3 inColor;
-
-layout (location = 0) out vec3 fragColor;
 
 void main() {
-    gl_Position = globalUBO.camera.projection * globalUBO.camera.view * push.model * vec4(inPositionOS, 1.0);
-    fragColor = inColor;
+    CameraUBO camera = globalUBO.camera;
+
+    gl_Position = camera.projection * camera.view * push.model * vec4(inPositionOS, 1.0);
 }

@@ -68,7 +68,9 @@ namespace Render
 		PipelineLogic::Create(context, Define::Pipeline::LightModel, forwardPass);
 		PipelineLogic::Create(context, Define::Pipeline::Color, forwardPass);
 		PipelineLogic::Create(context, Define::Pipeline::Deferred_LightModel, deferredPass);
-		PipelineLogic::Create(context, Define::Pipeline::Deferred_LightModel_Lighting, deferredPass);
+		PipelineLogic::Create(context, Define::Pipeline::Deferred_Shading, deferredPass);
+		PipelineLogic::Create(context, Define::Pipeline::Deferred_Volumn, deferredPass);
+		PipelineLogic::Create(context, Define::Pipeline::Deferred_PointLight, deferredPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping, postProcessPass);
 		PipelineLogic::Create(context, Define::Pipeline::PostProcess_Global, postProcessPass);

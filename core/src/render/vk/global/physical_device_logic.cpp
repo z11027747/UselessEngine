@@ -53,8 +53,12 @@ namespace Render
 		global->msaaSamples = GetMaxUsableSampleCount(context);
 
 		global->depthFormat = FindSupportedFormat(context,
-												  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+												  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D16_UNORM},
 												  VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+
+		global->depthStencilFormat = FindSupportedFormat(context,
+														 {VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+														 VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
 	bool PhysicalDeviceLogic::CheckType(const VkPhysicalDevice &physicalDevice,

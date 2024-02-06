@@ -15,7 +15,7 @@
 
 namespace Render
 {
-    constexpr int imageCount = 5; // shadow + gBuffer(position+normal+color+material)
+    constexpr int imageCount = 6; // shadow + gBuffer(position+normal+color+material+pointlight)
 
     void RenderPassLogic::CreateDeferredDescriptor(Context *context)
     {
@@ -23,7 +23,7 @@ namespace Render
         auto global = globalEO->GetComponent<Global>();
 
         auto &deferredPass = global->passMap[Define::Pass::Deferred];
-        auto &deferredLightingPipeline = global->pipelineMap[Define::Pipeline::Deferred_LightModel_Lighting];
+        auto &deferredLightingPipeline = global->pipelineMap[Define::Pipeline::Deferred_Shading];
 
         auto descriptor = std::make_shared<Descriptor>();
 

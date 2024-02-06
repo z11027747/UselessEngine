@@ -24,33 +24,53 @@ namespace Render
         auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
         if (mainCameraEO->active && mainCamera->passName == Define::Pass::Deferred)
         {
+            auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
             auto &deferredPass = global->passMap[Define::Pass::Deferred];
-            FramebufferLogic::BeginRenderPass(context, imageIndex, deferredPass);
+            auto &deferredDescriptor = RenderPassLogic::descriptorMap[Define::Pass::Deferred];
 
             // subpass0: geometryPass
-            RenderPassSystem::Update(context, imageIndex, false);
+            FramebufferLogic::BeginRenderPass(context, imageIndex, deferredPass);
+            {
+                RenderPassSystem::Update(context, imageIndex, false);
+            }
 
+            // subpass1: pointlightPass
             FramebufferLogic::NextSubpass(context, imageIndex);
+            {
+                auto &deferredPointLightPipeline = global->pipelineMap[Define::Pipeline::Deferred_PointLight];
+                auto &pipeline = deferredPointLightPipeline->pipeline;
+                auto &pipelineLayout = deferredPointLightPipeline->pipelineLayout;
+                vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-            // subpass1: lightingPass
-            auto &deferredDescriptor = RenderPassLogic::descriptorMap[Define::Pass::Deferred];
-            auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+                std::vector<VkDescriptorSet> descriptorSets;
+                descriptorSets.push_back(global->globalDescriptor->set);
+                descriptorSets.push_back(deferredDescriptor->set);
 
-            auto &deferredLightingPipeline = global->pipelineMap[Define::Pipeline::Deferred_LightModel_Lighting];
+                vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
+                                        static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(),
+                                        0, nullptr);
 
-            auto &pipeline = deferredLightingPipeline->pipeline;
-            auto &pipelineLayout = deferredLightingPipeline->pipelineLayout;
-            vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+                vkCmdDraw(vkCmdBuffer, 3, 1, 0, 0);
+            }
 
-            std::vector<VkDescriptorSet> descriptorSets;
-            descriptorSets.push_back(global->globalDescriptor->set);
-            descriptorSets.push_back(deferredDescriptor->set);
+            // subpass2: shadingPass
+            FramebufferLogic::NextSubpass(context, imageIndex);
+            {
+                auto &deferredShadingPipeline = global->pipelineMap[Define::Pipeline::Deferred_Shading];
+                auto &pipeline = deferredShadingPipeline->pipeline;
+                auto &pipelineLayout = deferredShadingPipeline->pipelineLayout;
+                vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-            vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
-                                    static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(),
-                                    0, nullptr);
+                std::vector<VkDescriptorSet> descriptorSets;
+                descriptorSets.push_back(global->globalDescriptor->set);
+                descriptorSets.push_back(deferredDescriptor->set);
 
-            vkCmdDraw(vkCmdBuffer, 3, 1, 0, 0);
+                vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
+                                        static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(),
+                                        0, nullptr);
+
+                vkCmdDraw(vkCmdBuffer, 3, 1, 0, 0);
+            }
 
             FramebufferLogic::EndRenderPass(context, imageIndex);
         }

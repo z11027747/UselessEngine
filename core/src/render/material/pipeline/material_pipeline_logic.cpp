@@ -9,6 +9,9 @@
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
 #include "render/material/impl/material_deferred_light_model_logic.h"
+#include "render/material/impl/material_deferred_shading_logic.h"
+#include "render/material/impl/material_deferred_volumn_logic.h"
+#include "render/material/impl/material_deferred_point_light_logic.h"
 #include "render/material/impl/material_post_process_logic.h"
 #include "context.h"
 
@@ -22,6 +25,7 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetVertexAttrDescriptions},
+                {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetVertexAttrDescriptions},
             };
@@ -55,7 +59,9 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetRasterizationCreateInfo},
-                {Define::Pipeline::Deferred_LightModel_Lighting, MaterialDeferredLightModelLightingPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Deferred_PointLight, MaterialDeferredPointLightPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo},
             };
@@ -72,7 +78,6 @@ namespace Render
             funcMap{
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetMultisampleCreateInfo},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetMultisampleCreateInfo},
-                {Define::Pipeline::Deferred_LightModel_Lighting, MaterialDeferredLightModelLightingPipelineLogic::SetMultisampleCreateInfo},
             };
 
         auto &name = graphicsPipeline->name;
@@ -87,6 +92,10 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingPipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::Deferred_PointLight, MaterialDeferredPointLightPipelineLogic::SetDepthStencilCreateInfo},
             };
 
         auto &name = graphicsPipeline->name;
@@ -101,6 +110,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetColorBlendStage},
+                {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetColorBlendStage},
             };
 
         auto &name = graphicsPipeline->name;

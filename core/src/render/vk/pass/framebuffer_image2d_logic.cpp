@@ -72,7 +72,35 @@ namespace Render
 			// layout
 			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL};
+		auto depthImage2d = ImageLogic::CreateByInfo(context,
+													 imageCreateInfo);
 
+		pass->depthImage2d = depthImage2d;
+	}
+
+	void FramebufferLogic::CreateDepthStencilImage2d(Context *context,
+													 std::shared_ptr<Pass> pass,
+													 VkSampleCountFlagBits samplers)
+	{
+		auto &globalEO = context->renderGlobalEO;
+		auto global = globalEO->GetComponent<Global>();
+		auto depthStencilFormat = global->depthStencilFormat;
+
+		ImageCreateInfo imageCreateInfo = {
+			depthStencilFormat, {pass->extent.width, pass->extent.height, 0}, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT,
+			// image
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			0,
+			1,
+			VK_IMAGE_VIEW_TYPE_2D,
+			1,
+			samplers,
+			// memory
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			// layout
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL};
 		auto depthImage2d = ImageLogic::CreateByInfo(context,
 													 imageCreateInfo);
 

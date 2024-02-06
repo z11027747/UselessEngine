@@ -17,12 +17,8 @@ namespace Editor
 			return;
 		}
 
-		if (ImGui::ColorEdit3("Ambient", &directionLight->ambient.x))
-		{
-		}
-		if (ImGui::ColorEdit3("Color", &directionLight->color.x))
-		{
-		}
+		ImGui::ColorEdit3("Ambient", &directionLight->ambient.x);
+		ImGui::ColorEdit3("Color", &directionLight->color.x);
 
 		ImGui::Checkbox("HasShadow", &directionLight->hasShadow);
 	}

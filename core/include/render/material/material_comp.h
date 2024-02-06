@@ -41,7 +41,7 @@ namespace Render
 	{
 		alignas(16) CameraUBO camera;
 		alignas(16) DirectionLightUBO directionLight;
-		alignas(16) PointLightUBO pointLights[128];
+		alignas(16) PointLightUBO pointLights[256];
 		alignas(4) int activePointLights;
 	};
 
