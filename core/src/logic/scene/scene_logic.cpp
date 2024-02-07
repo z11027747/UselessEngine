@@ -1,17 +1,13 @@
 
-#include "render/light/light_comp.h"
 #include "render/material/material_comp.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/post_process/post_process_logic.h"
 #include "logic/transform/transform_logic.h"
-#include "logic/camera/camera_logic.h"
+#include "logic/camera/camera_comp.h"
 #include "logic/scene/scene_logic.h"
-#include "common/define.h"
 #include "editor/axis/axis_comp.h"
-#include "editor/imgui_logic.h"
-#include "editor/system.h"
-#include "context.h"
-#include "engine_object.h"
+#include "define.hpp"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Logic
 {
@@ -75,7 +71,7 @@ namespace Logic
         auto parentEO = std::make_shared<EngineObject>();
         parentEO->name = Define::EOName::Axis;
         parentEO->active = false;
-        parentEO->hideInHierarchy = true;
+        // parentEO->hideInHierarchy = true;
         parentEO->save = false;
         parentEO->dontDestroy = true;
 

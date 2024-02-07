@@ -8,7 +8,7 @@
 
 namespace Common
 {
-	class LogSystem final
+	class Log final
 	{
 	public:
 		template <typename... Args>

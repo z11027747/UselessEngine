@@ -1,8 +1,9 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <memory>
 #include <string>
+#include <glm/glm.hpp>
+#include <json/json11.hpp>
 #include "render/mesh/mesh_comp.h"
 
 class Context;
@@ -35,5 +36,12 @@ namespace Render
         static void LoadObj(Context *, std::shared_ptr<MeshInstance>);
         static void CalcBoundingSphere(Context *, std::shared_ptr<MeshInstance>);
         static void CreateBuffer(Context *, std::shared_ptr<MeshInstance>);
+    };
+
+    class MeshJson final
+    {
+    public:
+        static std::shared_ptr<void> Parse(const json11::Json &);
+        static json11::Json Serialize(std::shared_ptr<void>);
     };
 }

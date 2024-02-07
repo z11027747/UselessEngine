@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
-#include "common/log_system.h"
+#include "common/log.hpp"
 
 namespace Render
 {
@@ -59,7 +59,7 @@ namespace Render
     {
         if (ret != VK_SUCCESS)
         {
-            Common::LogSystem::Exception("imgui: ", ToString(ret));
+            Common::Log::Exception("imgui: ", ToString(ret));
         }
     }
 
@@ -67,7 +67,7 @@ namespace Render
     {
         if (ret != VK_SUCCESS)
         {
-            Common::LogSystem::Exception(info, ": ", ToString(ret));
+            Common::Log::Exception(info, ": ", ToString(ret));
         }
     }
 
@@ -79,11 +79,11 @@ namespace Render
     {
         if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         {
-            Common::LogSystem::Exception("Vk userCallback: ", pCallbackData->pMessage);
+            Common::Log::Exception("Vk userCallback: ", pCallbackData->pMessage);
         }
         else
         {
-            Common::LogSystem::Debug("Vk userCallback: ", pCallbackData->pMessage);
+            Common::Log::Debug("Vk userCallback: ", pCallbackData->pMessage);
         }
 
         return VK_FALSE;

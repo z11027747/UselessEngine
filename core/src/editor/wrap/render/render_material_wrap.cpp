@@ -3,10 +3,10 @@
 #include <memory>
 #include <iostream>
 #include "render/material/material_comp.h"
-#include "common/define.h"
+#include "define.hpp"
 #include "editor/wrap/component_wrap.h"
 #include "editor/window.h"
-#include "context.h"
+#include "context.hpp"
 
 namespace Editor
 {

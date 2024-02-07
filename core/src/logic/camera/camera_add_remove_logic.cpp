@@ -1,7 +1,7 @@
 
 #include "logic/camera/camera_logic.h"
-#include "context.h"
-#include "engine_object.h"
+#include "context.hpp"
+#include "engine_object.hpp"
 
 namespace Logic
 {

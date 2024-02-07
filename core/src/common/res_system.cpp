@@ -5,7 +5,7 @@
 #include <image/stb_image.h>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "common/res_system.h"
-#include "common/log_system.h"
+#include "common/log.hpp"
 
 namespace Common
 {
@@ -58,7 +58,7 @@ namespace Common
 			auto data = stbi_load(fileName.data(), &w, &h, &comp, STBI_rgb_alpha);
 			if (!data)
 			{
-				LogSystem::Exception("failed to load texture image!");
+				Log::Exception("failed to load texture image!");
 			}
 
 			ResImage img = {};
@@ -83,7 +83,7 @@ namespace Common
 
 			if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.data()))
 			{
-				LogSystem::Exception(err);
+				Log::Exception(err);
 			}
 
 			ResObj obj = {};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <json/json11.hpp>
 #include "logic/camera/camera_comp.h"
 
 class Context;
@@ -18,5 +19,12 @@ namespace Logic
 		static void UpdateProjection(Context *, std::shared_ptr<Camera>);
 
 		static glm::vec3 TransformNdcToWorld(Context *, const glm::vec3 &);
+	};
+
+	class CameraJson final
+	{
+	public:
+		static std::shared_ptr<void> Parse(const json11::Json &);
+		static json11::Json Serialize(std::shared_ptr<void>);
 	};
 }

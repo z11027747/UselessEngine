@@ -2,8 +2,8 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/global/global_logic.h"
 #include "render/vk/logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {

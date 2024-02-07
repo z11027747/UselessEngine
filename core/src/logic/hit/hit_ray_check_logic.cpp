@@ -5,9 +5,9 @@
 #include "logic/transform/transform_logic.h"
 #include "logic/hit/hit_ray_logic.h"
 #include "logic/camera/camera_logic.h"
-#include "common/log_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "common/log.hpp"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Logic
 {

@@ -3,8 +3,8 @@
 #include "render/mesh/mesh_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/mesh/mesh_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {

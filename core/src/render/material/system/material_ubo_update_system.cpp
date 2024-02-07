@@ -4,8 +4,8 @@
 #include "render/material/material_comp.h"
 #include "render/material/material_system.h"
 #include "render/material/material_logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 class Context;
 

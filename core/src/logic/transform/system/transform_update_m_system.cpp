@@ -1,8 +1,8 @@
 
 #include "logic/transform/transform_logic.h"
 #include "logic/transform/transform_system.h"
-#include "context.h"
-#include "engine_object.h"
+#include "context.hpp"
+#include "engine_object.hpp"
 
 namespace Logic
 {

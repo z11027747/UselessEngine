@@ -4,7 +4,12 @@ class Context;
 
 namespace Render
 {
-    class MaterialInstanceCreateSystem final
+    class MaterialCreateSystem final
+    {
+    public:
+        static void Create(Context *);
+    };
+    class MaterialInstanceUpdateSystem final
     {
     public:
         static void Update(Context *context);

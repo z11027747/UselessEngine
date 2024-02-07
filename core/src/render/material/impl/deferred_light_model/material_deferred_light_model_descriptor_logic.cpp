@@ -9,9 +9,9 @@
 #include "render/vk/image/sampler_logic.h"
 #include "render/mesh/mesh_comp.h"
 #include "render/material/impl/material_deferred_light_model_logic.h"
-#include "common/define.h"
-#include "engine_object.h"
-#include "context.h"
+#include "define.hpp"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {

@@ -3,10 +3,10 @@
 #include "render/vk/pass/pass_logic.h"
 #include "render/light/light_comp.h"
 #include "render/render_pass/render_pass_system.h"
-#include "common/define.h"
+#include "define.hpp"
 #include "editor/system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 class Context;
 

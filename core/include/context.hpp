@@ -6,9 +6,9 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include "common/define.h"
-#include "common/reflection/type.h"
-#include "engine_object.h"
+#include "define.hpp"
+#include "engine_component.hpp"
+#include "engine_object.hpp"
 
 class Context final
 {
@@ -68,26 +68,26 @@ public:
 	void AddComponent(std::shared_ptr<EngineObject> eo, std::shared_ptr<T> comp)
 	{
 		eo->AddComponent<T>(comp);
-		Common::Type::OnAdd(T::type, this, eo);
+        EngineComponent::OnAdd(T::type, this, eo);
 	}
 	void AddComponent(std::shared_ptr<EngineObject> eo,
 					  const std::string &type, std::shared_ptr<void> comp)
 	{
 		eo->AddComponent(type, comp);
-		Common::Type::OnAdd(type, this, eo);
+        EngineComponent::OnAdd(type, this, eo);
 	}
 
 	template <typename T>
 	void RemoveComponent(std::shared_ptr<EngineObject> eo)
 	{
 		eo->RemoveComponent<T>();
-		Common::Type::OnRemove(T::type, this, eo);
+        EngineComponent::OnRemove(T::type, this, eo);
 	}
 	void AddComponent(std::shared_ptr<EngineObject> eo,
 					  const std::string &type)
 	{
 		eo->RemoveComponent(type);
-		Common::Type::OnRemove(type, this, eo);
+        EngineComponent::OnRemove(type, this, eo);
 	}
 
 	// scene

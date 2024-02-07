@@ -8,13 +8,13 @@
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
-#include "common/define.h"
+#include "define.hpp"
 #include "editor/imgui_logic.h"
 #include "editor/system.h"
 #include "editor/imgui_demo/imgui_impl_glfw.h"
 #include "editor/imgui_demo/imgui_impl_vulkan.h"
-#include "context.h"
-#include "engine_object.h"
+#include "context.hpp"
+#include "engine_object.hpp"
 
 namespace Editor
 {

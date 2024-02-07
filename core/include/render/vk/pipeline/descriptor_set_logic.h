@@ -7,8 +7,8 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/descriptor_comp.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {

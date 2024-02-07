@@ -7,8 +7,8 @@
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/buffer/buffer_set_logic.h"
 #include "common/res_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace std
 {

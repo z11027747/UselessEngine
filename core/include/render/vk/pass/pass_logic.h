@@ -36,7 +36,8 @@ namespace Render
 									   uint32_t);
 
 		static void CreateResolveAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
-											VkImageLayout, VkImageLayout);
+											VkImageLayout, VkImageLayout,
+											VkClearColorValue && = {0.0f, 0.0f, 0.0f, 0.0f});
 		static void SetResolveAttachment(Context *, std::shared_ptr<Pass>, uint32_t,
 										 uint32_t = 2u);
 

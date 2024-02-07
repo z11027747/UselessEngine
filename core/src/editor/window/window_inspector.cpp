@@ -7,11 +7,10 @@
 #include "logic/move/move_logic.h"
 #include "editor/wrap/component_wrap.h"
 #include "editor/wrap/component_wrap_mapping.h"
-#include "editor/json/component_json.h"
 #include "editor/window.h"
-#include "common/reflection/type.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_component.hpp"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Editor
 {
@@ -104,7 +103,7 @@ namespace Editor
 				{
 					// std::cout << "Add Component Click!" << std::endl;
 					auto componentType = std::string(addComponentTypes[addComponentTypeIndex]);
-					auto component = Common::Type::Create(componentType);
+					auto component = EngineComponent::Create(componentType);
 					context->AddComponent(selectEO,
 										  componentType, component);
 

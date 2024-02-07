@@ -8,7 +8,7 @@
 #include "render/vk/pipeline/descriptor_comp.h"
 #include "render/vk/image/image_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
-#include "common/define.h"
+#include "define.hpp"
 
 namespace Render
 {

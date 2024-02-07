@@ -3,8 +3,8 @@
 #include "logic/move/move_comp.h"
 #include "logic/move/move_logic.h"
 #include "logic/move/move_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Logic
 {

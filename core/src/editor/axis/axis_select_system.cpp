@@ -5,9 +5,9 @@
 #include "logic/camera/camera_logic.h"
 #include "editor/axis/axis_system.h"
 #include "editor/window.h"
-#include "common/log_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "common/log.hpp"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Editor
 {
@@ -69,7 +69,7 @@ namespace Editor
 
                 auto distance = glm::distance(mainCameraTransform->worldPosition, selectTransform->worldPosition);
                 auto moveSpeed = distance * 0.6f;
-                // Common::LogSystem::Debug(moveSpeed);
+                // Common::Log::Debug(moveSpeed);
 
                 auto offsetX = (float)currX - lastX;
                 auto offsetY = lastY - (float)currY;

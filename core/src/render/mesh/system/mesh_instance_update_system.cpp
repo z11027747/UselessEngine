@@ -3,8 +3,8 @@
 #include "render/mesh/mesh_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/mesh/mesh_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {
@@ -23,7 +23,7 @@ namespace Render
         }
     }
 
-    void MeshInstanceCreateSystem::Update(Context *context)
+    void MeshInstanceUpdateSystem::Update(Context *context)
     {
         auto &meshEOs = context->renderMeshEOs;
         for (const auto &meshEO : meshEOs)

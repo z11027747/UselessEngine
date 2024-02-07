@@ -1,8 +1,8 @@
 
 #include "editor/axis/axis_comp.h"
 #include "editor/axis/axis_logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Editor
 {

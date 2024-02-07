@@ -1,7 +1,7 @@
 
 #include <imgui/imgui.h>
 #include "editor/window.h"
-#include "context.h"
+#include "context.hpp"
 
 namespace Editor
 {

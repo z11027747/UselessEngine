@@ -7,14 +7,14 @@
 
 namespace Common
 {
-	struct ResImage
+	struct ResImage final
 	{
 		int width;
 		int height;
 		unsigned char *data;
 	};
 
-	struct ResObj
+	struct ResObj final
 	{
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;

@@ -3,8 +3,8 @@
 #include "render/vk/global/global_logic.h"
 #include "render/vk/logic.h"
 #include "render/vk/logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {
@@ -105,7 +105,7 @@ namespace Render
 		uint32_t minor = VK_VERSION_MINOR(apiVersion);
 		uint32_t patch = VK_VERSION_PATCH(apiVersion);
 
-		Common::LogSystem::Info("VkInstance ApiVersion: " + std::to_string(major) + "." + std::to_string(minor) + "." + std::to_string(patch));
+		Common::Log::Info("VkInstance ApiVersion: " + std::to_string(major) + "." + std::to_string(minor) + "." + std::to_string(patch));
 
 		return apiVersion;
 	}

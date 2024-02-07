@@ -25,24 +25,24 @@ public:
 	std::map<std::string, std::shared_ptr<void>> componentMap{};
 
 	template <typename T>
-	bool HasComponent() const
+	inline bool HasComponent() const
 	{
 		auto it = componentMap.find(T::type);
 		return (it != componentMap.end());
 	}
 
 	template <typename T>
-	void AddComponent(std::shared_ptr<T> comp)
+	inline void AddComponent(std::shared_ptr<T> comp)
 	{
 		AddComponent(T::type, comp);
 	}
-	void AddComponent(const std::string &type, std::shared_ptr<void> comp)
+	inline void AddComponent(const std::string &type, std::shared_ptr<void> comp)
 	{
 		componentMap[type] = comp;
 	}
 
 	template <typename T>
-	std::shared_ptr<T> GetComponent() const
+	inline std::shared_ptr<T> GetComponent() const
 	{
 		auto it = componentMap.find(T::type);
 		if (it != componentMap.end())
@@ -54,11 +54,11 @@ public:
 	}
 
 	template <typename T>
-	void RemoveComponent()
+	inline void RemoveComponent()
 	{
 		RemoveComponent(T::type);
 	}
-	void RemoveComponent(const std::string &type)
+	inline void RemoveComponent(const std::string &type)
 	{
 		auto it = componentMap.find(type);
 		if (it != componentMap.end())
@@ -67,7 +67,7 @@ public:
 		}
 	}
 
-	void RemoveAllComponents()
+	inline void RemoveAllComponents()
 	{
 		componentMap.clear();
 	}

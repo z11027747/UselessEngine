@@ -1,11 +1,14 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /utf-8")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
+set(CMAKE_C_FLAGS "/utf-8")
+set(CMAKE_CXX_FLAGS "/utf-8")
+
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(PROJ "UselessEngine")
 project (${PROJ})
-
-set(CMAKE_CXX_STANDARD 17)
 
 include_directories(${PROJECT_SOURCE_DIR}/3rd)
 include_directories(${PROJECT_SOURCE_DIR}/core/include)
@@ -21,7 +24,7 @@ set_target_properties(${PROJ} PROPERTIES COMPILE_FLAGS "/EHsc")
 
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
-if (CMAKE_GENERATOR MATCHES "Visual Studio 17 2022")
+if (MSVC)
 	target_link_libraries(${PROJ} 
 		${PROJECT_SOURCE_DIR}/lib/glfw-vc2022/glfw3.lib
 		${PROJECT_SOURCE_DIR}/lib/vulkan/vulkan-1.lib)

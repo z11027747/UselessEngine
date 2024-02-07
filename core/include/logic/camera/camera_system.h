@@ -1,10 +1,14 @@
 #pragma once
 
 class Context;
-class EngineObject;
 
 namespace Logic
 {
+    class CameraCreateSystem final
+    {
+    public:
+        static void Create(Context *);
+    };
     class CameraUpdateVPSystem final
     {
     public:

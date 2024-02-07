@@ -6,8 +6,8 @@ class Context;
 
 namespace Editor
 {
-    struct Axis final
-    {
+	struct Axis final
+	{
 		inline static std::string type{"Editor::Axis"};
-    };
+	};
 }

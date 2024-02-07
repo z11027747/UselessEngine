@@ -26,6 +26,7 @@ namespace Logic
 		CameraMode mode;
 		float fov;
 		float size;
+
 		std::string passName;
 	};
 }

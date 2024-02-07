@@ -4,8 +4,8 @@
 #include "render/vk/pass/pass_logic.h"
 #include "render/vk/logic.h"
 #include "render/render_pass/render_pass_logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {
@@ -42,7 +42,8 @@ namespace Render
 										 msaaSamples);
 		// attachment2: resolve
 		PassLogic::CreateResolveAttachment(context, pass, 0,
-										   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+										   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+										   {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
 
 		// subpass0 LightingPass
 		PassLogic::SetColorAttachment(context, pass, 0,

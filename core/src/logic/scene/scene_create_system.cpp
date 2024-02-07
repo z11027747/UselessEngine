@@ -1,17 +1,16 @@
 
 #include "logic/scene/scene_system.h"
 #include "logic/scene/scene_logic.h"
-#include "common/define.h"
-#include "context.h"
-#include "engine_object.h"
+#include "define.hpp"
+#include "context.hpp"
+#include "engine_object.hpp"
 
 namespace Logic
 {
-    void SceneInitSystem::Create(Context *context)
+    void SceneCreateSystem::Create(Context *context)
     {
         SceneLogic::CreateMainCamera(context);
         // SceneLogic::CreateSkybox(context);
         SceneLogic::CreateAxis(context);
     }
-
 }

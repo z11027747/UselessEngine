@@ -7,8 +7,8 @@
 #include "editor/wrap/component_wrap.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/camera/camera_logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Editor
 {
@@ -81,12 +81,20 @@ namespace Editor
 		auto clearValueSize = pass->clearValues.size();
 		for (auto i = 0; i < clearValueSize; i++)
 		{
-			ImGui::Text("Color: %d", i);
-			ImGui::PushID(i * 10);
-			auto &clearColorValue = pass->clearValues[i];
-			ImGui::ColorEdit4("##Color", &clearColorValue.color.float32[0]);
-			ImGui::SliderFloat2("##Depth", &clearColorValue.depthStencil.depth, 0.0f, 0.1f);
-			ImGui::PopID();
+			ImGui::Text("Attachment: %d", i);
+
+			auto &attachmentDescription = pass->attachmentDescriptions[i];
+			if(attachmentDescription.format == global->depthFormat || 
+				attachmentDescription.format == global->depthStencilFormat)
+			{
+				auto &clearValue = pass->clearValues[i];
+				ImGui::SliderFloat2("##Depth", &clearValue.depthStencil.depth, 0.0f, 0.1f);
+			}
+			else 
+			{
+				auto &clearValue = pass->clearValues[i];
+				ImGui::ColorEdit4("##Color", &clearValue.color.float32[0]);
+			}
 		}
 	}
 }

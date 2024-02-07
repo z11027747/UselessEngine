@@ -4,8 +4,8 @@
 #include "render/vk/logic.h"
 #include "render/vk/pass/pass_logic.h"
 #include "render/render_pass/render_pass_logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {

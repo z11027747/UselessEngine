@@ -3,8 +3,8 @@
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/mesh/mesh_comp.h"
 #include "render/material/impl/material_color_logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {

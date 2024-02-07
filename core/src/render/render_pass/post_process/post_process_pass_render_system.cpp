@@ -10,10 +10,10 @@
 #include "render/post_process/post_process_comp.h"
 #include "render/post_process/post_process_logic.h"
 #include "logic/camera/camera_comp.h"
-#include "common/define.h"
+#include "define.hpp"
 #include "editor/system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 class Context;
 

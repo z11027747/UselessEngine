@@ -2,8 +2,8 @@
 #include "logic/transform/transform_comp.h"
 #include "logic/rotate/rotate_logic.h"
 #include "logic/rotate/rotate_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Logic
 {

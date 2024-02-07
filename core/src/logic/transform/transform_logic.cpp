@@ -6,8 +6,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include <memory>
 #include "logic/transform/transform_logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Logic
 {

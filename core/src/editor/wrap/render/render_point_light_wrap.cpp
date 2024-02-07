@@ -4,7 +4,7 @@
 #include <iostream>
 #include "render/light/light_comp.h"
 #include "editor/wrap/component_wrap.h"
-#include "context.h"
+#include "context.hpp"
 
 namespace Editor
 {

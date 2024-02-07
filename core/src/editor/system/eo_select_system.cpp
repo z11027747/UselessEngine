@@ -5,8 +5,8 @@
 #include "logic/camera/camera_logic.h"
 #include "editor/system.h"
 #include "editor/window.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Editor
 {

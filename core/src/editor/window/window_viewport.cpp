@@ -6,12 +6,12 @@
 #include "render/vk/pass/pass_comp.h"
 #include "render/post_process/post_process_comp.h"
 #include "logic/camera/camera_comp.h"
-#include "common/define.h"
+#include "define.hpp"
 #include "editor/window.h"
 #include "editor/system.h"
 #include "editor/imgui_logic.h"
-#include "context.h"
-#include "engine_object.h"
+#include "context.hpp"
+#include "engine_object.hpp"
 
 namespace Editor
 {

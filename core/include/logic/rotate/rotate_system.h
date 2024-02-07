@@ -4,6 +4,11 @@ class Context;
 
 namespace Logic
 {
+    class RotateCreateSystem final
+    {
+    public:
+        static void Create(Context *);
+    };
     class RotateAroundSystem final
     {
     public:

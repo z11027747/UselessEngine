@@ -10,10 +10,10 @@
 #include "logic/system.h"
 #include "editor/system.h"
 #include "editor/imgui_logic.h"
-#include "editor/json/component_json.h"
 #include "common/res_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "engine_component.hpp"
+#include "context.hpp"
 
 void Context::Create()
 {
@@ -23,23 +23,6 @@ void Context::Create()
 
 void Context::Update()
 {
-    // 切换场景
-    //  TODO 先放这
-    if (!newSceneName.empty())
-    {
-        DestroyAllEOs();
-
-        auto lines = Common::ResSystem::ReadAllLines("resource/scene/" + newSceneName);
-        for (const auto &line : lines)
-        {
-            std::string err;
-            auto jObj = json11::Json::parse(line, err);
-            auto eo = Editor::EOFromJson(this, jObj);
-            AddEO(eo);
-        }
-        newSceneName.clear();
-    }
-
     Render::System::Update(this);
     Logic::System::Update(this);
     Editor::System::Update(this);
@@ -53,15 +36,8 @@ void Context::Destroy()
 
 void Context::AddEO(std::shared_ptr<EngineObject> eo)
 {
-    // auto &componentMap = eo->componentMap;
-    // for (const auto &kv : componentMap)
-    // {
-    //     auto &type = kv.first;
-    //     Common::Type::OnAdd(type, this, eo);
-    // }
-
     allEOs.push_back(eo);
-    allEOMap.emplace(eo->name, eo);
+    allEOMap[eo->name] = eo;
 }
 
 std::shared_ptr<EngineObject> Context::GetEO(const std::string &name)
@@ -75,7 +51,7 @@ void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
     for (const auto &kv : componentMap)
     {
         auto &type = kv.first;
-        Common::Type::OnRemove(type, this, eo);
+        EngineComponent::OnRemove(type, this, eo);
     }
     eo->RemoveAllComponents();
 
@@ -88,10 +64,23 @@ void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
 
 void Context::DestroyAllEOs()
 {
+    std::vector<std::shared_ptr<EngineObject>> dontDestroys = {};
+
     for (const auto &eo : allEOs)
     {
+        if (eo->dontDestroy)
+        {
+            dontDestroys.push_back(eo);
+            continue;
+        }
         DestroyEO(eo, false);
     }
     allEOs.clear();
     allEOMap.clear();
+
+    for (const auto &eo : dontDestroys)
+    {
+        allEOs.push_back(eo);
+        allEOMap[eo->name] = eo;
+    }
 }

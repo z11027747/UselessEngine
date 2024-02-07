@@ -5,7 +5,7 @@
 #include <iostream>
 #include "render/post_process/post_process_comp.h"
 #include "editor/wrap/component_wrap.h"
-#include "context.h"
+#include "context.hpp"
 
 namespace Editor
 {

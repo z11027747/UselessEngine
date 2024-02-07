@@ -6,8 +6,8 @@
 #include "render/material/material_system.h"
 #include "logic/camera/camera_logic.h"
 #include "logic/transform/transform_comp.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 class Context;
 

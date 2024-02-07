@@ -1,7 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cstdlib>
-#include "context.h"
+#include "context.hpp"
 
 void size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);

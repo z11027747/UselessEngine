@@ -9,8 +9,8 @@
 #include "render/mesh/mesh_comp.h"
 #include "render/material/material_logic.h"
 #include "common/res_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {

@@ -5,8 +5,8 @@
 #include "logic/transform/transform_logic.h"
 #include "editor/window.h"
 #include "editor/system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Editor
 {

@@ -4,8 +4,8 @@
 #include "render/vk/logic.h"
 #include "render/vk/pass/pass_logic.h"
 #include "render/render_pass/render_pass_logic.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {
@@ -128,7 +128,8 @@ namespace Render
 
 	void PassLogic::CreateResolveAttachment(Context *context,
 											std::shared_ptr<Pass> pass, uint32_t subpassIndex,
-											VkImageLayout initLayout, VkImageLayout finalLayout)
+											VkImageLayout initLayout, VkImageLayout finalLayout,
+											VkClearColorValue &&clearColorValue)
 	{
 		auto &subpass = pass->subpasses[subpassIndex];
 
@@ -149,7 +150,7 @@ namespace Render
 		pass->attachmentDescriptions.push_back(resolveAttachmentDescription);
 
 		VkClearValue clearValue = {};
-		clearValue.color = {0.0f, 0.0f, 0.0f, 0.0f};
+		clearValue.color = clearColorValue;
 		pass->clearValues.push_back(clearValue);
 	}
 

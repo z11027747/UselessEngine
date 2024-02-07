@@ -8,18 +8,20 @@
 #include "render/vk/pass/pass_logic.h"
 #include "render/vk/pipeline/pipeline_logic.h"
 #include "render/light/light_comp.h"
+#include "render/light/light_system.h"
 #include "render/render_pass/render_pass_logic.h"
 #include "render/render_pass/render_pass_system.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/mesh/mesh_system.h"
 #include "render/material/material_logic.h"
 #include "render/material/material_system.h"
+#include "render/post_process/post_process_system.h"
 #include "render/system.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "editor/system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Render
 {
@@ -81,6 +83,12 @@ namespace Render
 		MeshInstanceLogic::CreateCache(context);
 		MaterialInstanceLogic::CreateCache(context);
 
+		// ======================= new
+		LightCreateSystem::Create(context);
+		MaterialCreateSystem::Create(context);
+		MeshCreateSystem::Create(context);
+		PostProcessCreateSystem::Create(context);
+
 		Editor::System::Create(context);
 	}
 
@@ -90,8 +98,8 @@ namespace Render
 		auto global = globalEO->GetComponent<Global>();
 
 		{
-			MeshInstanceCreateSystem::Update(context);
-			MaterialInstanceCreateSystem::Update(context);
+			MeshInstanceUpdateSystem::Update(context);
+			MaterialInstanceUpdateSystem::Update(context);
 		}
 
 		CmdSubmitLogic::BatchAll(context);

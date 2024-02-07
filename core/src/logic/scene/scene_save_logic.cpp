@@ -1,18 +1,17 @@
-#pragma once
 
-#include <memory>
-#include <unordered_map>
-#include <typeindex>
-#include <functional>
-#include <json/json11.hpp>
-#include "common/reflection/type_json.h"
-#include "engine_object.h"
-#include "context.h"
+#include "logic/scene/scene_system.h"
+#include "logic/scene/scene_logic.h"
+#include "define.hpp"
+#include "engine_component.hpp"
+#include "engine_object.hpp"
+#include "context.hpp"
 
-namespace Editor
+namespace Logic
 {
-    static std::shared_ptr<EngineObject> EOFromJson(Context *context, const json11::Json &jObj)
+    std::shared_ptr<EngineObject> SceneJsonLogic::ParseLine(Context *context, const json11::Json &j)
     {
+        auto jObj = j.object_items();
+
         auto eo = std::make_shared<EngineObject>();
         eo->name = jObj["name"].string_value();
         eo->active = jObj["active"].bool_value();
@@ -22,7 +21,7 @@ namespace Editor
         for (const auto &componentJObj : components)
         {
             auto &type = componentJObj["type"].string_value();
-            auto component = Common::TypeJson::From(type, componentJObj);
+            auto component = EngineComponent::JsonParse(type, componentJObj);
             if (component != nullptr)
                 context->AddComponent(eo, type, component);
         }
@@ -30,7 +29,7 @@ namespace Editor
         return eo;
     }
 
-    static std::string EOToJson(Context *context, std::shared_ptr<EngineObject> eo)
+    std::string SceneJsonLogic::SerializeEO(Context *context, std::shared_ptr<EngineObject> eo)
     {
         json11::Json::array componentJObjArr = {};
 
@@ -39,17 +38,17 @@ namespace Editor
         {
             auto type = kv.first;
             auto &component = kv.second;
-            auto componentJObj = Common::TypeJson::To(type, component);
+            auto componentJObj = EngineComponent::JsonSerialize(type, component);
             componentJObjArr.push_back(componentJObj);
         }
 
-        json11::Json::object eoJObj = {
+        json11::Json::object jObj = {
             {"name", eo->name},
             {"active", eo->active},
             {"hideInHierarchy", eo->hideInHierarchy},
             {"components", componentJObjArr}};
 
-        auto j = json11::Json(eoJObj);
+        auto j = json11::Json(jObj);
         return j.dump();
     }
 }

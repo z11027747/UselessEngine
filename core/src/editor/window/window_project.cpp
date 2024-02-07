@@ -3,12 +3,12 @@
 #include <filesystem>
 #include <imgui/imgui.h>
 #include <json/json11.hpp>
+#include "logic/scene/scene_logic.h"
 #include "editor/window.h"
-#include "editor/json/component_json.h"
-#include "common/log_system.h"
+#include "common/log.hpp"
 #include "common/res_system.h"
-#include "engine_object.h"
-#include "context.h"
+#include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Editor
 {
@@ -164,14 +164,14 @@ namespace Editor
                 {
                     auto &eo = allEOs[i];
 
-                    auto eoJson = EOToJson(context, eo);
+                    auto eoJson = Logic::SceneJsonLogic::SerializeEO(context, eo);
                     sceneJson += eoJson;
 
                     if (i != allEOSize - 1)
                         sceneJson += "\n";
                 }
 
-                // Common::LogSystem::Info(sceneJson);
+                // Common::Log::Info(sceneJson);
                 Common::ResSystem::WriteFile("resource/scene/" + std::string(sceneName), sceneJson);
             }
 

@@ -3,12 +3,14 @@
 #include "editor/axis/axis_system.h"
 #include "editor/system.h"
 #include "editor/window.h"
-#include "context.h"
+#include "context.hpp"
 
 namespace Editor
 {
 	void System::Create(Context *context)
 	{
+		AxisCreateSystem::Create(context);
+
 		ImGuiLogic::CreateImGui(context);
 		ImGuiLogic::CreateDescriptorSetLayout(context);
 		ImGuiLogic::CreateDescriptors(context);
