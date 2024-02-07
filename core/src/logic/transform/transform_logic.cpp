@@ -19,7 +19,7 @@ namespace Logic
 		transform->localEulerAngles = ea;
 		transform->localScale = glm::vec3(1.0f);
 
-		eo->AddComponent<Transform>(transform);
+		eo->_AddComponent<Transform>(transform);
 	}
 	void TransformLogic::Add(std::shared_ptr<EngineObject> eo,
 							 const glm::vec3 &p, const glm::vec3 &ea, const glm::vec3 &s)
@@ -29,7 +29,7 @@ namespace Logic
 		transform->localEulerAngles = ea;
 		transform->localScale = s;
 
-		eo->AddComponent<Transform>(transform);
+		eo->_AddComponent<Transform>(transform);
 	}
 
 	void TransformLogic::SetScale(std::shared_ptr<EngineObject> eo, const glm::vec3 &s)

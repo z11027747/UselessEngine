@@ -39,6 +39,7 @@ namespace Render
 
         if (cameraPass == Define::Pass::Forward)
         {
+            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Skybox);
             DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::LightModel);
             DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Color);
         }

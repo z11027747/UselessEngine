@@ -67,27 +67,27 @@ public:
 	template <typename T>
 	void AddComponent(std::shared_ptr<EngineObject> eo, std::shared_ptr<T> comp)
 	{
-		eo->AddComponent<T>(comp);
-        EngineComponent::OnAdd(T::type, this, eo);
+		eo->_AddComponent<T>(comp);
+		EngineComponent::OnAdd(T::type, this, eo);
 	}
 	void AddComponent(std::shared_ptr<EngineObject> eo,
 					  const std::string &type, std::shared_ptr<void> comp)
 	{
-		eo->AddComponent(type, comp);
-        EngineComponent::OnAdd(type, this, eo);
+		eo->_AddComponent(type, comp);
+		EngineComponent::OnAdd(type, this, eo);
 	}
 
 	template <typename T>
 	void RemoveComponent(std::shared_ptr<EngineObject> eo)
 	{
-		eo->RemoveComponent<T>();
-        EngineComponent::OnRemove(T::type, this, eo);
+		eo->_RemoveComponent<T>();
+		EngineComponent::OnRemove(T::type, this, eo);
 	}
-	void AddComponent(std::shared_ptr<EngineObject> eo,
-					  const std::string &type)
+	void RemoveComponent(std::shared_ptr<EngineObject> eo,
+						 const std::string &type)
 	{
-		eo->RemoveComponent(type);
-        EngineComponent::OnRemove(type, this, eo);
+		eo->_RemoveComponent(type);
+		EngineComponent::OnRemove(type, this, eo);
 	}
 
 	// scene

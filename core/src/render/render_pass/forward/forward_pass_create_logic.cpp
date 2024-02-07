@@ -36,14 +36,14 @@ namespace Render
 		PassLogic::CreateColorAttachment(context, pass, 0,
 										 surfaceFormat, msaaSamples,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
+										 {0.1921569f, 0.3019608f, 0.4745098f, 1.0f});
 		// attachment1: depth
 		PassLogic::CreateDepthAttachment(context, pass, 0,
 										 msaaSamples);
 		// attachment2: resolve
 		PassLogic::CreateResolveAttachment(context, pass, 0,
 										   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										   {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
+										   {0.1921569f, 0.3019608f, 0.4745098f, 1.0f});
 
 		// subpass0 LightingPass
 		PassLogic::SetColorAttachment(context, pass, 0,

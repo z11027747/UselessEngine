@@ -35,7 +35,7 @@ namespace Render
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &depthStencilStateCreateInfo = stageInfo.depthStencilStateCreateInfo;
-		depthStencilStateCreateInfo.depthTestEnable = true;
+		depthStencilStateCreateInfo.depthTestEnable = false;
 		depthStencilStateCreateInfo.depthWriteEnable = false;
 	}
 }

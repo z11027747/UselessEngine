@@ -53,7 +53,7 @@ void Context::DestroyEO(std::shared_ptr<EngineObject> eo, bool remove)
         auto &type = kv.first;
         EngineComponent::OnRemove(type, this, eo);
     }
-    eo->RemoveAllComponents();
+    eo->_RemoveAllComponents();
 
     if (remove)
     {

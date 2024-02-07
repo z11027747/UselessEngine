@@ -39,7 +39,7 @@ namespace Render
         }
         deletes.clear();
 
-        globalEO->RemoveComponent<MaterialInstanceCache>();
+        context->RemoveComponent<MaterialInstanceCache>(globalEO);
     }
 
     static int Id_Material = 0;

@@ -8,28 +8,28 @@
 
 namespace Logic
 {
-    static void UpdateMoveFollow(Context *context,
-                                 std::shared_ptr<EngineObject> eo)
-    {
-        auto moveFollow = eo->GetComponent<MoveFollow>();
-        auto targetEO = moveFollow->targetEO;
-        auto &offset = moveFollow->offset;
-
-        auto transform = eo->GetComponent<Transform>();
-        auto targetTransform = targetEO->GetComponent<Transform>();
-
-        transform->localPosition = targetTransform->worldPosition + offset;
-    }
-
     void MoveFollowSystem::Update(Context *context)
     {
         auto &logicMoveEOs = context->logicMoveEOs;
         for (const auto &moveEO : logicMoveEOs)
         {
-            if (!moveEO->HasComponent<MoveFollow>())
-                continue;
+            auto transform = moveEO->GetComponent<Transform>();
+            auto moveFollow = moveEO->GetComponent<MoveFollow>();
+            auto &offset = moveFollow->offset;
 
-            UpdateMoveFollow(context, moveEO);
+            auto targetEO = moveFollow->targetEO;
+            if (targetEO != nullptr)
+            {
+                auto targetTransform = targetEO->GetComponent<Transform>();
+                if (targetTransform != nullptr)
+                {
+                    transform->localPosition = targetTransform->worldPosition + offset;
+                    continue;
+                }
+            }
+
+            // invalid
+            context->RemoveComponent<MoveFollow>(moveEO);
         }
     }
 }

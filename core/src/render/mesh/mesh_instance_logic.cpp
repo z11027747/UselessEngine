@@ -57,7 +57,7 @@ namespace Render
         }
         deletes.clear();
 
-        globalEO->RemoveComponent<MeshInstanceCache>();
+        context->RemoveComponent<MeshInstanceCache>(globalEO);
     }
 
     std::shared_ptr<MeshInstance> MeshInstanceLogic::Get(Context *context,

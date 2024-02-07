@@ -39,14 +39,14 @@ namespace Render
 		PassLogic::CreateColorAttachment(context, pass, 2,
 										 surfaceFormat, msaaSamples,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
+										 {0.1921569f, 0.3019608f, 0.4745098f, 1.0f});
 		// attachment1: depth+stencil
 		PassLogic::CreateDepthStencilAttachment(context, pass, 0,
 												VK_SAMPLE_COUNT_1_BIT);
 		// attachment2: resolve
 		PassLogic::CreateResolveAttachment(context, pass, 2,
 										   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										   {0.1921569f, 0.3019608f, 0.4745098f, 0.0f});
+										   {0.1921569f, 0.3019608f, 0.4745098f, 1.0f});
 		// attachment3: gbuffer-position
 		PassLogic::CreateColorAttachment(context, pass, 0,
 										 VK_FORMAT_R16G16B16A16_SFLOAT, VK_SAMPLE_COUNT_1_BIT,

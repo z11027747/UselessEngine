@@ -71,7 +71,7 @@ namespace Logic
         auto parentEO = std::make_shared<EngineObject>();
         parentEO->name = Define::EOName::Axis;
         parentEO->active = false;
-        // parentEO->hideInHierarchy = true;
+        parentEO->hideInHierarchy = true;
         parentEO->save = false;
         parentEO->dontDestroy = true;
 
@@ -85,20 +85,20 @@ namespace Logic
                           Define::EOName::AxisX,
                           glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f),
                           parentEO,
-                          glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+                          glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
         // y
         CreateAxis_Single(context,
                           Define::EOName::AxisY,
                           glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(-90.0f, 0.0f, 0.0f),
                           parentEO,
-                          glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+                          glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
         // z
         CreateAxis_Single(context,
                           Define::EOName::AxisZ,
                           glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f),
                           parentEO,
-                          glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+                          glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
     }
 }
