@@ -10,8 +10,10 @@ namespace Editor
 {
     template <>
     void ComponentWrap<Logic::RotateAround>::Draw(Context *context,
-                                                  std::shared_ptr<Logic::RotateAround> rotateAround, bool isInit)
+                                                  std::shared_ptr<void> component, bool isInit)
     {
+        auto rotateAround = std::static_pointer_cast<Logic::RotateAround>(component);
+
         if (isInit)
         {
             return;

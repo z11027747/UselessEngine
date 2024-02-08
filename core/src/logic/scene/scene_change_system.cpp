@@ -8,7 +8,7 @@
 
 namespace Logic
 {
-    void SceneChangeUpdateSystem::Update(Context *context)
+    void SceneChangeSystem::Update(Context *context)
     {
         if (context->newSceneName.empty())
             return;

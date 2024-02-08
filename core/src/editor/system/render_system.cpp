@@ -1,9 +1,9 @@
 
 #include <vulkan/vulkan.h>
-#include "editor/imgui_demo/imgui_impl_glfw.h"
-#include "editor/imgui_demo/imgui_impl_vulkan.h"
 #include "render/vk/global/global_comp.h"
-#include "editor/imgui_logic.h"
+#include "editor/imgui/imgui_impl_glfw.h"
+#include "editor/imgui/imgui_impl_vulkan.h"
+#include "editor/imgui/imgui_logic.h"
 #include "editor/system.h"
 #include "editor/window.h"
 #include "engine_object.hpp"

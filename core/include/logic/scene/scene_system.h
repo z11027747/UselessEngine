@@ -9,7 +9,7 @@ namespace Logic
     public:
         static void Create(Context *);
     };
-    class SceneChangeUpdateSystem final
+    class SceneChangeSystem final
     {
     public:
         static void Update(Context *);

@@ -6,7 +6,7 @@
 #include "render/mesh/mesh_logic.h"
 #include "editor/wrap/component_wrap.h"
 #include "editor/window.h"
-#include "editor/imgui_logic.h"
+#include "editor/imgui/imgui_logic.h"
 #include "context.hpp"
 
 namespace Editor
@@ -38,8 +38,10 @@ namespace Editor
 
 	template <>
 	void ComponentWrap<Render::Mesh>::Draw(Context *context,
-										   std::shared_ptr<Render::Mesh> mesh, bool isInit)
+										   std::shared_ptr<void> component, bool isInit)
 	{
+		auto mesh = std::static_pointer_cast<Render::Mesh>(component);
+
 		if (isInit)
 		{
 			DrawInit(context, mesh);

@@ -14,8 +14,9 @@ namespace Editor
 
 	template <>
 	void ComponentWrap<Render::PostProcess>::Draw(Context *context,
-												  std::shared_ptr<Render::PostProcess> postProcess, bool isInit)
+												  std::shared_ptr<void> component, bool isInit)
 	{
+		auto postProcess = std::static_pointer_cast<Render::PostProcess>(component);
 
 		auto &toonMappingParams = postProcess->toonMappingParams;
 		auto &bloomParams = postProcess->bloomParams;

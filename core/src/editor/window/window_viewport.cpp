@@ -9,7 +9,7 @@
 #include "define.hpp"
 #include "editor/window.h"
 #include "editor/system.h"
-#include "editor/imgui_logic.h"
+#include "editor/imgui/imgui_logic.h"
 #include "context.hpp"
 #include "engine_object.hpp"
 

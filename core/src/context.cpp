@@ -9,7 +9,6 @@
 #include "logic/scene/scene_logic.h"
 #include "logic/system.h"
 #include "editor/system.h"
-#include "editor/imgui_logic.h"
 #include "common/res_system.h"
 #include "engine_object.hpp"
 #include "engine_component.hpp"

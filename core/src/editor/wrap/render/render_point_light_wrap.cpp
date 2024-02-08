@@ -10,16 +10,16 @@ namespace Editor
 {
 	template <>
 	void ComponentWrap<Render::PointLight>::Draw(Context *context,
-												 std::shared_ptr<Render::PointLight> pointLight, bool isInit)
+												 std::shared_ptr<void> component, bool isInit)
 	{
+		auto pointLight = std::static_pointer_cast<Render::PointLight>(component);
+
 		if (isInit)
 		{
 			return;
 		}
 
-		if (ImGui::ColorEdit3("Color", &pointLight->color.x))
-		{
-		}
+		ImGui::ColorEdit3("Color", &pointLight->color.x);
 
 		ImGui::InputFloat("Constant", &pointLight->clq.x);
 		ImGui::InputFloat("Linear", &pointLight->clq.y);

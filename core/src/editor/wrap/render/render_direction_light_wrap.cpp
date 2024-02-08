@@ -10,8 +10,10 @@ namespace Editor
 {
 	template <>
 	void ComponentWrap<Render::DirectionLight>::Draw(Context *context,
-													 std::shared_ptr<Render::DirectionLight> directionLight, bool isInit)
+													 std::shared_ptr<void> component, bool isInit)
 	{
+		auto directionLight = std::static_pointer_cast<Render::DirectionLight>(component);
+
 		if (isInit)
 		{
 			return;

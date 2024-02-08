@@ -2,11 +2,16 @@
 #include <imgui/imgui.h>
 #include <memory>
 #include <iostream>
+#include "render/light/light_comp.h"
+#include "render/material/material_comp.h"
 #include "render/mesh/mesh_comp.h"
+#include "render/post_process/post_process_comp.h"
+#include "logic/transform/transform_comp.h"
+#include "logic/camera/camera_comp.h"
+#include "logic/rotate/rotate_comp.h"
 #include "logic/move/move_comp.h"
 #include "logic/move/move_logic.h"
 #include "editor/wrap/component_wrap.h"
-#include "editor/wrap/component_wrap_mapping.h"
 #include "editor/window.h"
 #include "engine_component.hpp"
 #include "engine_object.hpp"
@@ -44,21 +49,26 @@ namespace Editor
 		{
 			auto type = kv.first;
 			auto &component = kv.second;
-			DrawWrap(context, type, component, true);
+			ComponentWrapMapping::Draw(context, type, component, true);
 		}
 	}
 
 	static int addComponentTypeIndex = -1;
-	static const char *addComponentTypes[] = {
-		// logic
-		Logic::Camera::type.c_str(), Logic::Transform::type.c_str(),
-		Logic::MoveFowrard::type.c_str(), Logic::MoveFollow::type.c_str(),
-		Logic::RotateAround::type.c_str(),
-		// render
-		Render::DirectionLight::type.c_str(), Render::PointLight::type.c_str(), Render::SpotLight::type.c_str(),
-		Render::Material::type.c_str(),
-		Render::Mesh::type.c_str(),
-		Render::PostProcess::type.c_str()};
+	static const char *addComponentTypes[] =
+		{
+			// logic
+			Logic::Camera::type.c_str(),
+			Logic::Transform::type.c_str(),
+			Logic::MoveFowrard::type.c_str(),
+			Logic::MoveFollow::type.c_str(),
+			Logic::RotateAround::type.c_str(),
+			// render
+			Render::DirectionLight::type.c_str(),
+			Render::PointLight::type.c_str(),
+			Render::SpotLight::type.c_str(),
+			Render::Material::type.c_str(),
+			Render::Mesh::type.c_str(),
+			Render::PostProcess::type.c_str()};
 
 	void Window::DrawInspector(Context *context)
 	{
@@ -79,14 +89,14 @@ namespace Editor
 					auto type = kv.first;
 					auto &component = kv.second;
 
-					if (!HasWrap(context, type))
+					if (!ComponentWrapMapping::Has(type))
 						continue;
 
 					ImGui::PushID(type.c_str());
 					ImGui::SetNextItemOpen(true);
 					if (ImGui::TreeNode("Comp: &s", type.c_str()))
 					{
-						DrawWrap(context, type, component, false);
+						ComponentWrapMapping::Draw(context, type, component, false);
 
 						ImGui::TreePop();
 					}
@@ -96,7 +106,8 @@ namespace Editor
 				ImGui::SeparatorText("End");
 
 				ImGui::SetNextItemWidth(200.0f);
-				ImGui::Combo("##addComponentTypes", &addComponentTypeIndex, addComponentTypes, IM_ARRAYSIZE(addComponentTypes));
+				ImGui::Combo("##addComponentTypes",
+							 &addComponentTypeIndex, addComponentTypes, IM_ARRAYSIZE(addComponentTypes));
 				ImGui::SameLine();
 
 				if (ImGui::Button("Add Component"))

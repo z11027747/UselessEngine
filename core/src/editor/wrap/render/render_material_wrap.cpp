@@ -11,13 +11,16 @@
 namespace Editor
 {
 	static int pipelineNameIndex = -1;
-	static const char *pipelineNames[] = {Define::Pipeline::Skybox.c_str(),
-										  Define::Pipeline::Shadow.c_str(),
-										  Define::Pipeline::LightModel.c_str(),
-										  Define::Pipeline::Deferred_LightModel.c_str(),
-										  Define::Pipeline::Deferred_Volumn.c_str(),
-										  Define::Pipeline::Color.c_str()};
+
 	static const int pipelineNameSize = 6;
+	static const char *pipelineNames[] =
+		{
+			Define::Pipeline::Skybox.c_str(),
+			Define::Pipeline::Shadow.c_str(),
+			Define::Pipeline::LightModel.c_str(),
+			Define::Pipeline::Deferred_LightModel.c_str(),
+			Define::Pipeline::Deferred_Volumn.c_str(),
+			Define::Pipeline::Color.c_str()};
 
 	static std::vector<int> imageNameIndexs = {};
 	static std::vector<std::string> imageNames = {};
@@ -98,8 +101,10 @@ namespace Editor
 
 	template <>
 	void ComponentWrap<Render::Material>::Draw(Context *context,
-											   std::shared_ptr<Render::Material> material, bool isInit)
+											   std::shared_ptr<void> component, bool isInit)
 	{
+		auto material = std::static_pointer_cast<Render::Material>(component);
+
 		if (isInit)
 		{
 			DrawInit(context, material);

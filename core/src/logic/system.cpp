@@ -28,7 +28,7 @@ namespace Logic
 		CameraUpdateVPSystem::Update(context);
 		MoveFollowSystem::Update(context);
 		RotateAroundSystem::Update(context);
-		SceneChangeUpdateSystem::Update(context);
+		SceneChangeSystem::Update(context);
 	}
 	void System::Destroy(Context *context)
 	{

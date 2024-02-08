@@ -5,7 +5,7 @@
 #include "editor/wrap/component_wrap.h"
 #include "logic/transform/transform_comp.h"
 #include "editor/system.h"
-#include "editor/imgui_logic.h"
+#include "editor/imgui/imgui_logic.h"
 #include "context.hpp"
 
 namespace Editor
@@ -14,8 +14,10 @@ namespace Editor
 
 	template <>
 	void ComponentWrap<Logic::Transform>::Draw(Context *context,
-											   std::shared_ptr<Logic::Transform> transform, bool isInit)
+											   std::shared_ptr<void> component, bool isInit)
 	{
+		auto transform = std::static_pointer_cast<Logic::Transform>(component);
+
 		if (isInit)
 		{
 			return;
