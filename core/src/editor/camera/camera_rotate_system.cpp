@@ -1,10 +1,9 @@
 
+#include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
-#include "logic/camera/camera_logic.h"
-#include "logic/camera/camera_system.h"
 #include "logic/transform/transform_logic.h"
-#include "editor/window.h"
-#include "editor/system.h"
+#include "editor/camera/camera_system.hpp"
+#include "editor/window/window_logic.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
 
@@ -15,7 +14,7 @@ namespace Editor
 
     void CameraRotateSystem::Update(Context *context)
     {
-        if (!Editor::Window::IsInViewport(context))
+        if (!WindowLogic::IsInViewport(context))
             return;
 
         auto &mainCamera = context->logicMainCameraEO;

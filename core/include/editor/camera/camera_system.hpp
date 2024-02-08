@@ -4,12 +4,13 @@ class Context;
 
 namespace Editor
 {
-    class AxisSelectSystem final
+    class CameraMoveSystem final
     {
     public:
-        static bool Update(Context *);
+        static void Update(Context *);
     };
-    class EOSelectSystem final
+
+    class CameraRotateSystem final
     {
     public:
         static void Update(Context *);

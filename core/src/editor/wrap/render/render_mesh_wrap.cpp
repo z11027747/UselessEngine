@@ -5,7 +5,7 @@
 #include "render/mesh/mesh_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "editor/wrap/component_wrap.h"
-#include "editor/window.h"
+#include "editor/window/window_logic.hpp"
 #include "editor/imgui/imgui_logic.h"
 #include "context.hpp"
 
@@ -20,7 +20,7 @@ namespace Editor
 	{
 		objNameIndex = -1;
 		objNames.clear();
-		Window::GetDirectoryFiles("resource/obj", objNames);
+		WindowLogic::GetDirectoryFiles("resource/obj", objNames);
 
 		auto it = std::find(objNames.begin(), objNames.end(), mesh->info->objName);
 		if (it != objNames.end())

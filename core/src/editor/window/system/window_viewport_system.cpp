@@ -6,39 +6,16 @@
 #include "render/vk/pass/pass_comp.h"
 #include "render/post_process/post_process_comp.h"
 #include "logic/camera/camera_comp.h"
-#include "define.hpp"
-#include "editor/window.h"
-#include "editor/system.h"
+#include "editor/window/window_system.hpp"
+#include "editor/window/window_logic.hpp"
 #include "editor/imgui/imgui_logic.h"
-#include "context.hpp"
+#include "define.hpp"
 #include "engine_object.hpp"
+#include "context.hpp"
 
 namespace Editor
 {
-    static bool focuesd;
-    static ImVec2 pos;
-    static ImVec2 size;
-
-    bool Window::IsInViewport(Context *context)
-    {
-        return focuesd;
-    }
-
-    void Window::ToViewportNdcXY(Context *context,
-                                 float &x, float &y)
-    {
-        auto &style = ImGui::GetStyle();
-
-        // viewport space
-        x = x - pos.x - style.WindowPadding.x;
-        y = (size.y + pos.y) - y - style.WindowPadding.y;
-
-        // ndc space
-        x = 2.0f * x / size.x - 1.0f;
-        y = 2.0f * y / (size.y - pos.y) - 1.0f;
-    }
-
-    void Window::DrawViewport(Context *context)
+    void WindowViewportSystem::Update(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
@@ -95,13 +72,13 @@ namespace Editor
                              ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
             }
 
-            focuesd = ImGui::IsWindowFocused();
-            pos = ImGui::GetWindowPos();
-            size = ImGui::GetWindowSize();
+            WindowLogic::viewportFocuesd = ImGui::IsWindowFocused();
+            WindowLogic::viewportPos = ImGui::GetWindowPos();
+            WindowLogic::viewportSize = ImGui::GetWindowSize();
 
             ImGui::SetNextItemAllowOverlap();
             ImGui::SetCursorPos(ImGui::GetWindowContentRegionMin());
-            ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Viewport Size: %.fx%.f", size.x, size.y);
+            ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Viewport Size: %.fx%.f", WindowLogic::viewportSize.x, WindowLogic::viewportSize.y);
         }
         ImGui::End();
 

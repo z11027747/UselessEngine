@@ -1,11 +1,11 @@
 
 #include <imgui/imgui.h>
-#include "editor/window.h"
+#include "editor/window/window_system.hpp"
 #include "context.hpp"
 
 namespace Editor
 {
-	void Window::DrawMenuBar(Context *context)
+	void WindowMenuBarSystem::Update(Context *context)
 	{
 		if (ImGui::BeginMenuBar())
 		{

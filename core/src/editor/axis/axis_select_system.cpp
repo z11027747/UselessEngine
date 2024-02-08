@@ -1,10 +1,10 @@
 
 #include <GLFW/glfw3.h>
 #include "logic/transform/transform_logic.h"
+#include "logic/camera/camera_comp.h"
 #include "logic/hit/hit_ray_logic.h"
-#include "logic/camera/camera_logic.h"
 #include "editor/axis/axis_system.h"
-#include "editor/window.h"
+#include "editor/window/window_logic.hpp"
 #include "common/log.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
@@ -23,16 +23,16 @@ namespace Editor
         double currX, currY;
         glfwGetCursorPos(window, &currX, &currY);
 
-        auto selectEO = Window::GetSelectEO();
+        auto selectEO = WindowLogic::GetSelectEO();
 
-        if (Window::IsInViewport(context) && selectEO != nullptr)
+        if (WindowLogic::IsInViewport(context) && selectEO != nullptr)
         {
             auto isMousePress = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS);
             auto isMouseRelease = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_RELEASE);
 
             auto ndcX = (float)currX;
             auto ndcY = (float)currY;
-            Window::ToViewportNdcXY(context, ndcX, ndcY);
+            WindowLogic::ToViewportNdcXY(context, ndcX, ndcY);
 
             auto ray = Logic::HitRayCheckLogic::CalcaRayFromNdc(context, ndcX, ndcY);
             std::shared_ptr<EngineObject> currAxisHitEO = nullptr;

@@ -1,10 +1,8 @@
 
 #include <GLFW/glfw3.h>
-#include "logic/transform/transform_logic.h"
 #include "logic/hit/hit_ray_logic.h"
-#include "logic/camera/camera_logic.h"
-#include "editor/system.h"
-#include "editor/window.h"
+#include "editor/axis/axis_system.h"
+#include "editor/window/window_logic.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
 
@@ -14,7 +12,7 @@ namespace Editor
 
     void EOSelectSystem::Update(Context *context)
     {
-        if (!Window::IsInViewport(context))
+        if (!WindowLogic::IsInViewport(context))
             return;
 
         auto &window = context->window;
@@ -29,12 +27,12 @@ namespace Editor
         {
             auto ndcX = (float)currX;
             auto ndcY = (float)currY;
-            Window::ToViewportNdcXY(context, ndcX, ndcY);
+            WindowLogic::ToViewportNdcXY(context, ndcX, ndcY);
 
             auto tempHitEO = Logic::HitRayCheckLogic::TestFromNdc(context, ndcX, ndcY);
             if (tempHitEO != nullptr)
             {
-                Window::SetSelectEO(context, tempHitEO);
+                WindowLogic::SetSelectEO(context, tempHitEO);
             }
         }
 

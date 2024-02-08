@@ -4,7 +4,8 @@
 #include <imgui/imgui.h>
 #include <json/json11.hpp>
 #include "logic/scene/scene_logic.h"
-#include "editor/window.h"
+#include "editor/window/window_system.hpp"
+#include "editor/window/window_logic.hpp"
 #include "common/log.hpp"
 #include "common/res_system.h"
 #include "engine_object.hpp"
@@ -12,51 +13,6 @@
 
 namespace Editor
 {
-    // resource -> obj|shader|spv|texture
-    static std::unordered_map<std::string, std::vector<std::string>> directory2subs = {};
-    // resource/obj -> xxxx.obj
-    static std::unordered_map<std::string, std::vector<std::string>> directory2files = {};
-
-    void Window::GetDirectoryFiles(const std::string &directoryName, std::vector<std::string> &fileNames)
-    {
-        auto &subs = directory2subs[directoryName];
-        for (auto &sub : subs)
-        {
-            auto &subFiles = directory2files[directoryName + "/" + sub];
-            for (auto &subFile : subFiles)
-            {
-                auto subFileName = (directoryName + "/" + sub + "/" + subFile);
-                fileNames.push_back(subFileName);
-            }
-        }
-
-        auto &files = directory2files[directoryName];
-        for (auto &file : files)
-        {
-            auto fileName = (directoryName + "/" + file);
-            fileNames.push_back(fileName);
-        }
-    }
-
-    static void RefreshDirectory(const std::string &directoryName)
-    {
-        for (const auto &entry : std::filesystem::directory_iterator(directoryName))
-        {
-            if (std::filesystem::is_directory(entry.status()))
-            {
-                auto chilDirectoryName = entry.path().filename().string();
-                directory2subs[directoryName].push_back(chilDirectoryName);
-                RefreshDirectory(directoryName + "/" + chilDirectoryName);
-            }
-
-            if (std::filesystem::is_regular_file(entry.status()))
-            {
-                auto fileName = entry.path().filename().string();
-                directory2files[directoryName].push_back(fileName);
-            }
-        }
-    }
-
     static std::string selectFileName = "";
     static char sceneName[32] = "new.scene";
 
@@ -65,6 +21,9 @@ namespace Editor
     {
         if (ImGui::TreeNode(directoryName.c_str()))
         {
+            auto &directory2subs = WindowLogic::directory2subs;
+            auto &directory2files = WindowLogic::directory2files;
+
             if (directory2subs.count(directoryFullName) > 0)
             {
                 auto &directorySubs = directory2subs[directoryFullName];
@@ -135,13 +94,13 @@ namespace Editor
 
     static bool isInited = false;
 
-    void Window::DrawProject(Context *context)
+    void WindowProjectSystem::Update(Context *context)
     {
         if (ImGui::Begin("Project", NULL))
         {
             if (!isInited)
             {
-                RefreshDirectory("resource");
+                WindowLogic::RefreshDirectory("resource");
                 isInited = true;
             }
 
@@ -171,7 +130,6 @@ namespace Editor
                         sceneJson += "\n";
                 }
 
-                // Common::Log::Info(sceneJson);
                 Common::ResSystem::WriteFile("resource/scene/" + std::string(sceneName), sceneJson);
             }
 

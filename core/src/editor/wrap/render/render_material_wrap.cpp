@@ -5,7 +5,7 @@
 #include "render/material/material_comp.h"
 #include "define.hpp"
 #include "editor/wrap/component_wrap.h"
-#include "editor/window.h"
+#include "editor/window/window_logic.hpp"
 #include "context.hpp"
 
 namespace Editor
@@ -76,7 +76,7 @@ namespace Editor
 
 		imageNameIndexs.clear();
 		imageNames.clear();
-		Window::GetDirectoryFiles("resource/texture", imageNames);
+		WindowLogic::GetDirectoryFiles("resource/texture", imageNames);
 
 		imageNameCStrs.clear();
 		for (auto &imageName : imageNames)

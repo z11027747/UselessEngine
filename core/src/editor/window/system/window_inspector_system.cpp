@@ -8,51 +8,17 @@
 #include "render/post_process/post_process_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/camera/camera_comp.h"
-#include "logic/rotate/rotate_comp.h"
 #include "logic/move/move_comp.h"
-#include "logic/move/move_logic.h"
+#include "logic/rotate/rotate_comp.h"
 #include "editor/wrap/component_wrap.h"
-#include "editor/window.h"
+#include "editor/window/window_system.hpp"
+#include "editor/window/window_logic.hpp"
 #include "engine_component.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
 
 namespace Editor
 {
-	static std::shared_ptr<EngineObject> selectEO = nullptr;
-
-	std::shared_ptr<EngineObject> Window::GetSelectEO()
-	{
-		return selectEO;
-	}
-
-	void Window::SetSelectEO(Context *context, std::shared_ptr<EngineObject> eo)
-	{
-		selectEO = eo;
-
-		auto validEO = (eo->name != Define::EOName::MainCamera &&
-						eo->name != Define::EOName::Skybox &&
-						eo->name != Define::EOName::AxisX &&
-						eo->name != Define::EOName::AxisY &&
-						eo->name != Define::EOName::AxisZ);
-
-		auto axisEO = context->GetEO(Define::EOName::Axis);
-		axisEO->active = validEO;
-
-		if (validEO)
-			Logic::MoveLogic::BeginFollow(context,
-										  axisEO,
-										  eo, glm::vec3(0.0f));
-
-		auto &componentMap = selectEO->componentMap;
-		for (const auto &kv : componentMap)
-		{
-			auto type = kv.first;
-			auto &component = kv.second;
-			ComponentWrapMapping::Draw(context, type, component, true);
-		}
-	}
-
 	static int addComponentTypeIndex = -1;
 	static const char *addComponentTypes[] =
 		{
@@ -70,10 +36,11 @@ namespace Editor
 			Render::Mesh::type.c_str(),
 			Render::PostProcess::type.c_str()};
 
-	void Window::DrawInspector(Context *context)
+	void WindowInspectorSystem::Update(Context *context)
 	{
 		if (ImGui::Begin("Inspector", NULL))
 		{
+			auto selectEO = WindowLogic::GetSelectEO();
 			if (selectEO == nullptr)
 			{
 				ImGui::Text("Please Select an EngineObject");
@@ -119,7 +86,7 @@ namespace Editor
 										  componentType, component);
 
 					// for refresh
-					SetSelectEO(context, selectEO);
+					WindowLogic::SetSelectEO(context, selectEO);
 				}
 			}
 		}

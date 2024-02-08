@@ -3,15 +3,15 @@
 #include "render/vk/global/global_comp.h"
 #include "editor/imgui/imgui_impl_glfw.h"
 #include "editor/imgui/imgui_impl_vulkan.h"
-#include "editor/imgui/imgui_logic.h"
-#include "editor/system.h"
-#include "editor/window.h"
+#include "editor/imgui/imgui_system.hpp"
+#include "editor/window/window_logic.hpp"
+#include "editor/window/window_system.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
 
 namespace Editor
 {
-    void RenderSystem::Update(Context *context, uint32_t imageIndex)
+    void ImGuiRenderPassSystem::Draw(Context *context, uint32_t imageIndex)
     {
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -36,20 +36,23 @@ namespace Editor
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         window_flags |= ImGuiWindowFlags_NoBackground;
 
-        bool p_open = true;
-        if (ImGui::Begin("##DockSpace-FullScreen", &p_open, window_flags))
+        ImGui::Begin("##DockSpace-FullScreen", NULL, window_flags);
+
+        auto &io = ImGui::GetIO();
+        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
         {
-            auto &io = ImGui::GetIO();
-            if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-            {
-                auto dockspace_id = ImGui::GetID("MyDockSpace");
-                ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-            }
-
-            Window::Draw(context);
+            auto dockspace_id = ImGui::GetID("MyDockSpace");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
         }
-        ImGui::End();
 
+        WindowMenuBarSystem::Update(context);
+        WindowHierachySystem::Update(context);
+        WindowInspectorSystem::Update(context);
+        WindowViewportSystem::Update(context);
+        WindowConsoleSystem::Update(context);
+        WindowProjectSystem::Update(context);
+
+        ImGui::End();
         ImGui::PopStyleVar(2);
 
         auto &globalEO = context->renderGlobalEO;
@@ -60,5 +63,4 @@ namespace Editor
         auto *main_draw_data = ImGui::GetDrawData();
         ImGui_ImplVulkan_RenderDrawData(main_draw_data, vkCmdBuffer);
     }
-
 }

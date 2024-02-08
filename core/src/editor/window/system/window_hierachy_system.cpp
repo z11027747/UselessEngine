@@ -4,7 +4,8 @@
 #include <iostream>
 #include "logic/transform/transform_comp.h"
 #include "logic/transform/transform_logic.h"
-#include "editor/window.h"
+#include "editor/window/window_system.hpp"
+#include "editor/window/window_logic.hpp"
 #include "context.hpp"
 #include "engine_object.hpp"
 
@@ -20,15 +21,16 @@ namespace Editor
 		ImGui::Checkbox("##active", &eo->active);
 		ImGui::SameLine();
 
-		if (ImGui::Selectable(eo->name.data(), Window::GetSelectEO() == eo))
+		auto selectEO = WindowLogic::GetSelectEO();
+		if (ImGui::Selectable(eo->name.data(), selectEO == eo))
 		{
-			Window::SetSelectEO(context, eo);
+			WindowLogic::SetSelectEO(context, eo);
 		}
 
 		ImGui::PopID();
 	}
 
-	void Window::DrawHierachy(Context *context)
+	void WindowHierachySystem::Update(Context *context)
 	{
 		if (ImGui::Begin("Hierarchy", NULL))
 		{

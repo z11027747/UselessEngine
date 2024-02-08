@@ -1,13 +1,13 @@
 
 #include <imgui/imgui.h>
-#include "editor/window.h"
+#include "editor/window/window_system.hpp"
 #include "context.hpp"
 
 namespace Editor
 {
     static ImGuiTextFilter filter{};
 
-    void Window::DrawConsole(Context *context)
+    void WindowConsoleSystem::Update(Context *context)
     {
         if (ImGui::Begin("Console", NULL))
         {
@@ -41,7 +41,6 @@ namespace Editor
                 }
             }
             ImGui::EndChild();
-
         }
         ImGui::End();
     }

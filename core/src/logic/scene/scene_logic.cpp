@@ -4,7 +4,6 @@
 #include "logic/transform/transform_logic.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/scene/scene_logic.h"
-#include "editor/axis/axis_comp.h"
 #include "define.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
@@ -57,11 +56,8 @@ namespace Logic
         material->info->params = {param};
         material->info->renderQueue = Define::RenderQueue::Geometry + 50;
 
-        auto axis = std::make_shared<Editor::Axis>();
-
         context->AddComponent(eo, mesh);
         context->AddComponent(eo, material);
-        context->AddComponent(eo, axis);
 
         context->AddEO(eo);
     }
