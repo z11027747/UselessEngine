@@ -85,5 +85,7 @@ namespace Render
 
 		std::unordered_map<std::string, std::shared_ptr<Image>> sharedImageMap{};
 		std::vector<std::shared_ptr<MaterialInstance>> deletes{};
+
+		std::unordered_map<std::string, std::shared_ptr<MaterialInstance>> globalInstanceMap{};
 	};
 }

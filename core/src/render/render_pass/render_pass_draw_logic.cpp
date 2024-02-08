@@ -1,13 +1,11 @@
 #pragma once
 
-#include <vector>
-#include <unordered_map>
 #include <algorithm>
 #include "vulkan/vulkan.h"
 #include "render/vk/global/global_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/material/material_logic.h"
-#include "render/render_pass/render_pass_system.h"
+#include "render/render_pass/render_pass_logic.h"
 #include "logic/camera/camera_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "define.hpp"
@@ -24,8 +22,8 @@ namespace Render
                              uint32_t, bool,
                              const std::string &);
 
-    void RenderPassSystem::Update(Context *context,
-                                  uint32_t imageIndex, bool isShadow)
+    void RenderPassLogic::Draw(Context *context,
+                               uint32_t imageIndex, bool isShadow)
     {
         auto &mainCameraEO = context->logicMainCameraEO;
         if (mainCameraEO == nullptr)

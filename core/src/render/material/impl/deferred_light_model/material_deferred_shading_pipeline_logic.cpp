@@ -3,7 +3,7 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/material/impl/material_deferred_shading_logic.h"
+#include "render/material/impl/material_deferred_logic.h"
 #include "engine_object.hpp"
 #include "context.hpp"
 

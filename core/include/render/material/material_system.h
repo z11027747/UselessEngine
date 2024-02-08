@@ -9,16 +9,16 @@ namespace Render
     public:
         static void Create(Context *);
     };
-    class MaterialInstanceUpdateSystem final
-    {
-    public:
-        static void Update(Context *context);
-    };
-
     class MaterialDestroySystem final
     {
     public:
         static void Destroy(Context *context);
+    };
+
+    class MaterialInstanceUpdateSystem final
+    {
+    public:
+        static void Update(Context *context);
     };
 
     class MaterialUBOUpdateSystem final

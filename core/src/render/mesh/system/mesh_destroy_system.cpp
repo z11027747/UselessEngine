@@ -15,5 +15,8 @@ namespace Render
         {
             MeshLogic::TryDestroyEO(context, meshEO);
         }
+        meshEOs.clear();
+
+        MeshInstanceLogic::DestroyCache(context);
     }
 }

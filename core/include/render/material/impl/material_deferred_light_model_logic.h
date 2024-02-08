@@ -17,7 +17,6 @@ namespace Render
         static void SetDepthStencilCreateInfo(Context *, std::shared_ptr<GraphicsPipeline>);
         static void SetColorBlendStage(Context *, std::shared_ptr<GraphicsPipeline>);
     };
-
     class MaterialDeferredLightModelDescriptorLogic final
     {
     public:

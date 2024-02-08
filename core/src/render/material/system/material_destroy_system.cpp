@@ -1,4 +1,5 @@
 
+#include "render/vk/pipeline/pipeline_logic.h"
 #include "render/material/material_comp.h"
 #include "render/material/material_logic.h"
 #include "render/material/material_system.h"
@@ -14,5 +15,12 @@ namespace Render
         {
             MaterialLogic::TryDestroyEO(context, materialEO);
         }
+        materialEOs.clear();
+
+        MaterialInstanceLogic::DestroyCache(context);
+        
+        MaterialGlobalDescriptorLogic::Destroy(context);
+
+        PipelineLogic::DestroyAll(context);
     }
 }

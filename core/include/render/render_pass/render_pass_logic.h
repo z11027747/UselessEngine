@@ -22,11 +22,6 @@ namespace Render
 
         static void DestroyAll(Context *);
 
-        inline static std::unordered_map<std::string, std::shared_ptr<Descriptor>> descriptorMap{};
-
-        static void CreateDeferredDescriptor(Context *);
-        static void DestroyDeferredDescriptor(Context *);
-
-        static void CreatePostProcessDescriptor(Context *);
+        static void Draw(Context *, uint32_t, bool);
     };
 }

@@ -14,5 +14,7 @@ namespace Render
         REGIST_CREATE(Mesh);
         REGIST_ADD_REMOVE(Mesh, MeshLogic);
         REGIST_JSON(Mesh, MeshJson);
+
+		MeshInstanceLogic::CreateCache(context);
     }
 }

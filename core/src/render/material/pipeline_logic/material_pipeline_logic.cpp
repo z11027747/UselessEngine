@@ -9,9 +9,7 @@
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
 #include "render/material/impl/material_deferred_light_model_logic.h"
-#include "render/material/impl/material_deferred_shading_logic.h"
-#include "render/material/impl/material_deferred_volumn_logic.h"
-#include "render/material/impl/material_deferred_point_light_logic.h"
+#include "render/material/impl/material_deferred_logic.h"
 #include "render/material/impl/material_post_process_logic.h"
 #include "context.hpp"
 

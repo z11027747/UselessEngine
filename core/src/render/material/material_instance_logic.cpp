@@ -30,6 +30,7 @@ namespace Render
             auto &sharedImage = kv.second;
             ImageLogic::Destroy(context, sharedImage);
         }
+        sharedImageMap.clear();
 
         // TODO 没用的应该及时删除
         auto &deletes = instanceCache->deletes;
@@ -38,6 +39,14 @@ namespace Render
             Destroy(context, instance);
         }
         deletes.clear();
+
+        auto &globalInstanceMap = instanceCache->globalInstanceMap;
+        for (auto &kv : globalInstanceMap)
+        {
+            auto &globalInstance = kv.second;
+            Destroy(context, globalInstance);
+        }
+        globalInstanceMap.clear();
 
         context->RemoveComponent<MaterialInstanceCache>(globalEO);
     }

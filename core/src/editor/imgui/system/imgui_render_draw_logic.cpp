@@ -11,7 +11,7 @@
 
 namespace Editor
 {
-    void ImGuiRenderPassSystem::Draw(Context *context, uint32_t imageIndex)
+    void ImGuiRenderPassLogic::Draw(Context *context, uint32_t imageIndex)
     {
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();

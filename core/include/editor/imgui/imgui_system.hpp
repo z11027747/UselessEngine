@@ -17,7 +17,7 @@ namespace Editor
         static void Destroy(Context *);
     };
 
-    class ImGuiRenderPassSystem final
+    class ImGuiRenderPassLogic final
     {
     public:
         static void Draw(Context *, uint32_t);

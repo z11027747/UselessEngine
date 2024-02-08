@@ -8,7 +8,7 @@
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/material/impl/material_deferred_volumn_logic.h"
+#include "render/material/impl/material_deferred_logic.h"
 #include "define.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"

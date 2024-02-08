@@ -3,6 +3,7 @@
 #include "render/vk/pass/pass_logic.h"
 #include "render/light/light_comp.h"
 #include "render/render_pass/render_pass_system.h"
+#include "render/render_pass/render_pass_logic.h"
 #include "define.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
@@ -23,10 +24,9 @@ namespace Render
         {
             auto &directionLightEO = context->renderLightEOs[0];
             auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
-
             if (directionLightEO->active && directionLight->hasShadow)
             {
-                RenderPassSystem::Update(context, imageIndex, true);
+                RenderPassLogic::Draw(context, imageIndex, true);
             }
         }
 

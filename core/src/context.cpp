@@ -1,22 +1,16 @@
 
-#include "render/light/light_comp.h"
-#include "render/mesh/mesh_comp.h"
-#include "render/mesh/mesh_logic.h"
-#include "render/material/material_logic.h"
+#include "render/vk/global/global_logic.h"
 #include "render/system.h"
-#include "logic/move/move_comp.h"
-#include "logic/rotate/rotate_logic.h"
-#include "logic/scene/scene_logic.h"
 #include "logic/system.h"
 #include "editor/system.h"
-#include "common/res_system.h"
-#include "engine_object.hpp"
 #include "engine_component.hpp"
+#include "engine_object.hpp"
 #include "context.hpp"
 
 void Context::Create()
 {
     Render::System::Create(this);
+    Editor::System::Create(this);
     Logic::System::Create(this);
 }
 
@@ -29,8 +23,12 @@ void Context::Update()
 
 void Context::Destroy()
 {
-    Render::System::Destroy(this);
+    // waitidle
+    Render::LogicalDeviceLogic::WaitIdle(this);
+
     Logic::System::Destroy(this);
+    Editor::System::Destroy(this);
+    Render::System::Destroy(this);
 }
 
 void Context::AddEO(std::shared_ptr<EngineObject> eo)

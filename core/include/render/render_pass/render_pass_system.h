@@ -7,6 +7,17 @@ class Context;
 
 namespace Render
 {
+    class RenderPassCreateSystem final
+    {
+    public:
+        static void Create(Context *);
+    };
+    class RenderPassDestroySystem final
+    {
+    public:
+        static void Destroy(Context *);
+    };
+
     class ImGuiPassRenderSystem final
     {
     public:
