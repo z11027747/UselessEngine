@@ -1,6 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <memory>
 #include "render/material/material_comp.h"
 

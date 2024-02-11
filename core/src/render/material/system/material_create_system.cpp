@@ -24,21 +24,24 @@ namespace Render
 
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
-
         auto &passMap = global->passMap;
+        
         auto shadowPass = passMap[Define::Pass::Shadow];
-        auto forwardPass = passMap[Define::Pass::Forward];
-        auto deferredPass = passMap[Define::Pass::Deferred];
-        auto postProcessPass = passMap[Define::Pass::PostProcess];
-
         PipelineLogic::Create(context, Define::Pipeline::Shadow, shadowPass);
+
+        auto forwardPass = passMap[Define::Pass::Forward];
         PipelineLogic::Create(context, Define::Pipeline::Skybox, forwardPass);
         PipelineLogic::Create(context, Define::Pipeline::LightModel, forwardPass);
         PipelineLogic::Create(context, Define::Pipeline::Color, forwardPass);
+        PipelineLogic::Create(context, Define::Pipeline::Dissolve, forwardPass);
+
+        auto deferredPass = passMap[Define::Pass::Deferred];
         PipelineLogic::Create(context, Define::Pipeline::Deferred_LightModel, deferredPass);
         PipelineLogic::Create(context, Define::Pipeline::Deferred_Shading, deferredPass);
         PipelineLogic::Create(context, Define::Pipeline::Deferred_Volumn, deferredPass);
         PipelineLogic::Create(context, Define::Pipeline::Deferred_PointLight, deferredPass);
+
+        auto postProcessPass = passMap[Define::Pass::PostProcess];
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping, postProcessPass);
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_Global, postProcessPass);

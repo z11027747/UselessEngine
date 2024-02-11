@@ -7,16 +7,16 @@ class Context;
 
 namespace Render
 {
-    class MaterialLightModelPipelineLogic final
+    class MaterialDissolvePipelineLogic final
     {
     public:
         static void SetVertexAttrDescriptions(Context *, std::shared_ptr<GraphicsPipeline>);
         static void SetRasterizationCreateInfo(Context *, std::shared_ptr<GraphicsPipeline>);
-        static void SetMultisampleCreateInfo(Context *, std::shared_ptr<GraphicsPipeline>);
         static void SetDepthStencilCreateInfo(Context *, std::shared_ptr<GraphicsPipeline>);
+        static void SetColorBlendStage(Context *, std::shared_ptr<GraphicsPipeline>);
     };
 
-    class MaterialLightModelDescriptorLogic final
+    class MaterialDissolveDescriptorLogic final
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);

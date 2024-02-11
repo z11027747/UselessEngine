@@ -12,7 +12,7 @@ namespace Editor
 {
 	static int pipelineNameIndex = -1;
 
-	static const int pipelineNameSize = 6;
+	static const int pipelineNameSize = 7;
 	static const char *pipelineNames[] =
 		{
 			Define::Pipeline::Skybox.c_str(),
@@ -20,7 +20,8 @@ namespace Editor
 			Define::Pipeline::LightModel.c_str(),
 			Define::Pipeline::Deferred_LightModel.c_str(),
 			Define::Pipeline::Deferred_Volumn.c_str(),
-			Define::Pipeline::Color.c_str()};
+			Define::Pipeline::Color.c_str(),
+			Define::Pipeline::Dissolve.c_str()};
 
 	static std::vector<int> imageNameIndexs = {};
 	static std::vector<std::string> imageNames = {};
@@ -54,6 +55,14 @@ namespace Editor
 		{
 			imageNameIndexs.resize(2);
 			for (auto i = 0; i < 2; i++)
+			{
+				imageNameIndexs[i] = FindImageNameIndex(info->imageNames[i]);
+			}
+		}
+		else if (info->pipelineName == Define::Pipeline::Dissolve)
+		{
+			imageNameIndexs.resize(3);
+			for (auto i = 0; i < 3; i++)
 			{
 				imageNameIndexs[i] = FindImageNameIndex(info->imageNames[i]);
 			}
@@ -136,6 +145,11 @@ namespace Editor
 				info->imageNames = {Define::Res::Img_White, Define::Res::Img_Bump};
 				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 1.0f)};
 			}
+			if (info->pipelineName == Define::Pipeline::Dissolve)
+			{
+				info->imageNames.resize(3, Define::Res::Img_White);
+				info->params = {glm::vec4(1.0f)};
+			}
 			else if (info->pipelineName == Define::Pipeline::Deferred_Volumn)
 			{
 				info->imageNames = {};
@@ -145,6 +159,7 @@ namespace Editor
 			FindImageNameIndexsByPipelineName(material);
 		}
 
+		ImGui::Spacing();
 		if (info->pipelineName == Define::Pipeline::Skybox)
 		{
 			DrawImageByIndex(material, "+x", 0);
@@ -170,6 +185,18 @@ namespace Editor
 			ImGui::DragFloat("DiffuseIntensity", &params0.x, 0.01f);
 			ImGui::DragFloat("SpecualrShininess", &params0.y, 0.1f);
 			ImGui::DragFloat("SpecularIntensity", &params0.z, 0.01f);
+			ImGui::PopItemWidth();
+		}
+		else if (info->pipelineName == Define::Pipeline::Dissolve)
+		{
+			DrawImageByIndex(material, "Albedo", 0);
+			DrawImageByIndex(material, "Dissolve", 1);
+			DrawImageByIndex(material, "Ramp", 2);
+
+			ImGui::PushItemWidth(150);
+			auto &params0 = info->params[0];
+			ImGui::SliderFloat("Clip", &params0.x, 0.0f, 1.0f);
+			ImGui::SliderFloat("Alpha", &params0.y, 0.0f, 1.0f);
 			ImGui::PopItemWidth();
 		}
 

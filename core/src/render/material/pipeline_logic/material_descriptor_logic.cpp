@@ -6,6 +6,7 @@
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "render/material/material_logic.h"
 #include "render/material/impl/material_light_model_logic.h"
+#include "render/material/impl/material_dissolve_logic.h"
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
@@ -21,9 +22,10 @@ namespace Render
     {
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<GraphicsPipeline>)>>
             funcMap{
-                {Define::Pipeline::Color, MaterialColorDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Color, MaterialColorDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnDescriptorLogic::CreateSetLayout},
@@ -52,6 +54,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::AllocateAndUpdate},
@@ -69,6 +72,7 @@ namespace Render
         static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialInstance>)>>
             funcMap{
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::Destroy},
+                {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::Destroy},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::Destroy},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::Destroy},
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::Destroy},

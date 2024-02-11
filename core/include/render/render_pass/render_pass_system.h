@@ -43,10 +43,4 @@ namespace Render
     public:
         static void Update(Context *, uint32_t);
     };
-
-    class RenderPassSystem final
-    {
-    public:
-        static void Update(Context *, uint32_t, bool);
-    };
 };

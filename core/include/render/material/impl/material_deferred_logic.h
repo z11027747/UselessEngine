@@ -1,6 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <memory>
 #include "render/material/material_comp.h"
 
@@ -8,6 +7,7 @@ class Context;
 
 namespace Render
 {
+    // 光体积
     class MaterialDeferredVolumnPipelineLogic final
     {
     public:
@@ -23,6 +23,7 @@ namespace Render
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
     };
 
+    // 点光计算（根据光体积）
     class MaterialDeferredPointLightPipelineLogic final
     {
     public:
@@ -37,6 +38,7 @@ namespace Render
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
     };
 
+    // 最后的光照着色
     class MaterialDeferredShadingPipelineLogic final
     {
     public:

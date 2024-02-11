@@ -122,6 +122,8 @@ namespace Editor
                 for (auto i = 0; i < allEOSize; i++)
                 {
                     auto &eo = allEOs[i];
+                    if (!eo->save)
+                        continue;
 
                     auto eoJson = Logic::SceneJsonLogic::SerializeEO(context, eo);
                     sceneJson += eoJson;

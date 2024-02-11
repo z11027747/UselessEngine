@@ -34,6 +34,7 @@ public:
         inline static std::string Shadow{"shadow"};
         inline static std::string LightModel{"light_model"};
         inline static std::string Color{"color"};
+        inline static std::string Dissolve{"dissolve"};
 
         inline static std::string Deferred_LightModel{"deferred_light_model"};
         inline static std::string Deferred_Shading{"deferred_shading"};
