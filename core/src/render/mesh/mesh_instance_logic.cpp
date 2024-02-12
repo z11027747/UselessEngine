@@ -117,21 +117,24 @@ namespace Render
         auto &attrib = resObj.attrib;
         auto &shapes = resObj.shapes;
 
+        auto hasNormal = false;
+
         std::vector<Render::Vertex> uniqueVertices;
 
         for (const auto &shape : shapes)
         {
             for (const auto &index : shape.mesh.indices)
             {
-                auto vi = index.vertex_index;
-                auto ni = index.normal_index;
-                auto ui = index.texcoord_index;
+                auto vi = index.vertex_index;   // v
+                auto ni = index.normal_index;   // vn
+                auto ui = index.texcoord_index; // vt
 
                 Render::Vertex vertex = {};
                 vertex.positionOS = {attrib.vertices[3 * vi + 0], attrib.vertices[3 * vi + 1], attrib.vertices[3 * vi + 2]};
-                vertex.positionOS.x *= -1;
+                vertex.positionOS.x *= -1; // 适配unity
                 if (attrib.normals.size() > 0)
                 {
+                    hasNormal = true;
                     vertex.normalOS = {attrib.normals[3 * ni + 0], attrib.normals[3 * ni + 1], attrib.normals[3 * ni + 2]};
                     vertex.normalOS.x *= -1;
                 }
@@ -148,24 +151,27 @@ namespace Render
         auto uniqueVertexSize = static_cast<uint32_t>(uniqueVertices.size());
 
         // calc tangent
-        for (auto i = 0u; i < uniqueVertexSize - 2; i += 3)
+        if (hasNormal)
         {
-            auto &v1 = uniqueVertices[i + 0];
-            auto &v2 = uniqueVertices[i + 1];
-            auto &v3 = uniqueVertices[i + 2];
-
-            auto deltaPos1 = v2.positionOS - v1.positionOS;
-            auto deltaPos2 = v3.positionOS - v1.positionOS;
-            auto deltaUV1 = v2.uv0 - v1.uv0;
-            auto deltaUV2 = v3.uv0 - v1.uv0;
-
-            auto det = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-            if (det != 0.0f)
+            for (auto i = 0u; i < uniqueVertexSize; i += 3)
             {
-                auto tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) / det;
-                v1.tangentOS = glm::normalize(tangent);
-                v2.tangentOS = v1.tangentOS;
-                v3.tangentOS = v1.tangentOS;
+                auto &v1 = uniqueVertices[i + 0];
+                auto &v2 = uniqueVertices[i + 1];
+                auto &v3 = uniqueVertices[i + 2];
+
+                auto deltaPos1 = v2.positionOS - v1.positionOS;
+                auto deltaPos2 = v3.positionOS - v1.positionOS;
+                auto deltaUV1 = v2.uv0 - v1.uv0;
+                auto deltaUV2 = v3.uv0 - v1.uv0;
+
+                auto det = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+                if (det != 0.0f)
+                {
+                    auto tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) / det;
+                    v1.tangentOS = glm::normalize(tangent);
+                    v2.tangentOS = v1.tangentOS;
+                    v3.tangentOS = v1.tangentOS;
+                }
             }
         }
 
@@ -173,15 +179,44 @@ namespace Render
         std::vector<uint16_t> indices;
         std::unordered_map<Render::Vertex, uint16_t> uniqueVertexIndex = {};
 
-        for (auto i = 0u; i < uniqueVertexSize; i++)
+        // TODO 水特殊处理逻辑 临时
+        auto isWater = (instance->info->objName == "resource/obj/water/water_30x30.obj");
+        if (isWater)
         {
-            auto &vertex = uniqueVertices[i];
-            if (uniqueVertexIndex.count(vertex) == 0)
+            for (auto i = 0u; i < uniqueVertexSize; i++)
             {
-                uniqueVertexIndex[vertex] = static_cast<uint16_t>(vertices.size());
-                vertices.push_back(vertex);
+                indices.push_back(vertices.size());
+                vertices.push_back(uniqueVertices[i]);
             }
-            indices.push_back(uniqueVertexIndex[vertex]);
+            std::vector<Render::Vertex> originalVertices = vertices;
+            for (auto i = 0u; i < uniqueVertexSize; i += 6)
+            {
+                auto &v0 = originalVertices[i + 0]; // 0
+                auto &v1 = originalVertices[i + 1]; // 1
+                auto &v2 = originalVertices[i + 2]; // 2
+                auto &v5 = originalVertices[i + 5]; // 3
+                
+                vertices[i+0].positionOS = v0.positionOS; vertices[i+0].normalOS = v1.positionOS; vertices[i+0].tangentOS = v2.positionOS;
+                vertices[i+1].positionOS = v1.positionOS; vertices[i+1].normalOS = v2.positionOS; vertices[i+1].tangentOS = v0.positionOS;
+                vertices[i+2].positionOS = v2.positionOS; vertices[i+2].normalOS = v0.positionOS; vertices[i+2].tangentOS = v1.positionOS;
+                
+                vertices[i+3].positionOS = v0.positionOS; vertices[i+3].normalOS = v2.positionOS; vertices[i+3].tangentOS = v5.positionOS;
+                vertices[i+4].positionOS = v2.positionOS; vertices[i+4].normalOS = v5.positionOS; vertices[i+4].tangentOS = v0.positionOS;
+                vertices[i+5].positionOS = v5.positionOS; vertices[i+5].normalOS = v0.positionOS; vertices[i+5].tangentOS = v2.positionOS;
+            }
+        }
+        else
+        {
+            for (auto i = 0u; i < uniqueVertexSize; i++)
+            {
+                auto &vertex = uniqueVertices[i];
+                if (uniqueVertexIndex.count(vertex) == 0)
+                {
+                    uniqueVertexIndex[vertex] = static_cast<uint16_t>(vertices.size());
+                    vertices.push_back(vertex);
+                }
+                indices.push_back(uniqueVertexIndex[vertex]);
+            }
         }
 
         instance->vertices = std::move(vertices);

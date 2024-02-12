@@ -9,6 +9,7 @@
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_light_model_logic.h"
 #include "render/material/impl/material_dissolve_logic.h"
+#include "render/material/impl/material_water_logic.h"
 #include "render/material/impl/material_deferred_light_model_logic.h"
 #include "render/material/impl/material_deferred_logic.h"
 #include "render/material/impl/material_post_process_logic.h"
@@ -26,6 +27,7 @@ namespace Render
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Dissolve, MaterialDissolvePipelineLogic::SetVertexAttrDescriptions},
+                {Define::Pipeline::Water, MaterialWaterPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetVertexAttrDescriptions},
             };
@@ -61,6 +63,7 @@ namespace Render
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Dissolve, MaterialDissolvePipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::Water, MaterialWaterPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetRasterizationCreateInfo},
@@ -94,6 +97,7 @@ namespace Render
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Dissolve, MaterialDissolvePipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::Water, MaterialWaterPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetDepthStencilCreateInfo},
@@ -112,6 +116,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::Dissolve, MaterialDissolvePipelineLogic::SetColorBlendStage},
+                {Define::Pipeline::Water, MaterialWaterPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetColorBlendStage},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetColorBlendStage},
             };

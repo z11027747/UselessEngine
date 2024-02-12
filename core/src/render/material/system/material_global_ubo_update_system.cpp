@@ -84,6 +84,7 @@ namespace Render
             globalUBO.pointLights[i] = pointLightUBOs[i];
         }
         globalUBO.activePointLights = activePointLights;
+        globalUBO.currTime = context->currTime;
 
         auto &globalBuffer = global->globalBuffer;
         BufferSetLogic::Set(context,

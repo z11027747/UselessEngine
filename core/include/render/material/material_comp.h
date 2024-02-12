@@ -43,11 +43,13 @@ namespace Render
 		alignas(16) DirectionLightUBO directionLight;
 		alignas(16) PointLightUBO pointLights[256];
 		alignas(4) int activePointLights;
+		alignas(4) float currTime;
 	};
 
 	struct MaterialUBO final
 	{
-		glm::vec4 params;
+		glm::vec4 params0;
+		glm::vec4 params1;
 	};
 
 	struct MaterialInfo final

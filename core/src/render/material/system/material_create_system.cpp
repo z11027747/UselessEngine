@@ -34,6 +34,7 @@ namespace Render
         PipelineLogic::Create(context, Define::Pipeline::LightModel, forwardPass);
         PipelineLogic::Create(context, Define::Pipeline::Color, forwardPass);
         PipelineLogic::Create(context, Define::Pipeline::Dissolve, forwardPass);
+        PipelineLogic::Create(context, Define::Pipeline::Water, forwardPass);
 
         auto deferredPass = passMap[Define::Pass::Deferred];
         PipelineLogic::Create(context, Define::Pipeline::Deferred_LightModel, deferredPass);

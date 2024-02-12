@@ -12,7 +12,7 @@ namespace Editor
 {
 	static int pipelineNameIndex = -1;
 
-	static const int pipelineNameSize = 7;
+	static const int pipelineNameSize = 8;
 	static const char *pipelineNames[] =
 		{
 			Define::Pipeline::Skybox.c_str(),
@@ -21,7 +21,8 @@ namespace Editor
 			Define::Pipeline::Deferred_LightModel.c_str(),
 			Define::Pipeline::Deferred_Volumn.c_str(),
 			Define::Pipeline::Color.c_str(),
-			Define::Pipeline::Dissolve.c_str()};
+			Define::Pipeline::Dissolve.c_str(),
+			Define::Pipeline::Water.c_str()};
 
 	static std::vector<int> imageNameIndexs = {};
 	static std::vector<std::string> imageNames = {};
@@ -150,6 +151,11 @@ namespace Editor
 				info->imageNames.resize(3, Define::Res::Img_White);
 				info->params = {glm::vec4(1.0f)};
 			}
+			if (info->pipelineName == Define::Pipeline::Dissolve)
+			{
+				info->imageNames = {};
+				info->params = {glm::vec4(1.0f), glm::vec4(1.0f)};
+			}
 			else if (info->pipelineName == Define::Pipeline::Deferred_Volumn)
 			{
 				info->imageNames = {};
@@ -197,6 +203,20 @@ namespace Editor
 			auto &params0 = info->params[0];
 			ImGui::SliderFloat("Clip", &params0.x, 0.0f, 1.0f);
 			ImGui::SliderFloat("Alpha", &params0.y, 0.0f, 1.0f);
+			ImGui::PopItemWidth();
+		}
+		else if (info->pipelineName == Define::Pipeline::Water)
+		{
+			ImGui::PushItemWidth(150);
+			auto &params0 = info->params[0];
+			ImGui::InputFloat("Angle", &params0.x);
+			ImGui::SliderFloat("Steepness01", &params0.y, 0.0f, 1.0f);
+			ImGui::InputFloat("Length", &params0.z);
+			ImGui::InputFloat("Speed", &params0.w);
+			auto &params1 = info->params[1];
+			ImGui::InputFloat("DiffuseIntensity", &params1.x);
+			ImGui::InputFloat("SpecularShininess", &params1.y);
+			ImGui::InputFloat("SpecularIntensity", &params1.z);
 			ImGui::PopItemWidth();
 		}
 

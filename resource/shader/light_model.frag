@@ -116,7 +116,7 @@ vec3 CalcDirectionLight(vec3 baseCol, vec3 V, vec3 N, float shadowAtten) {
     return lightAmbient + (diffuse + specular) * shadowAtten;
 }
 
-vec3 CalcPointLight(int i, vec3 baseCol, vec3 V, vec3 N,  vec3 P,float shadowAtten) {
+vec3 CalcPointLight(int i, vec3 baseCol, vec3 V, vec3 N, vec3 P, float shadowAtten) {
     PointLight pointLight = globalUBO.pointLights[i];
 
     vec3 lightColor = pointLight.color;

@@ -8,6 +8,7 @@
 #include "render/material/impl/material_light_model_logic.h"
 #include "render/material/impl/material_dissolve_logic.h"
 #include "render/material/impl/material_color_logic.h"
+#include "render/material/impl/material_water_logic.h"
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_skybox_logic.h"
 #include "render/material/impl/material_deferred_light_model_logic.h"
@@ -26,6 +27,7 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::Water, MaterialWaterDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnDescriptorLogic::CreateSetLayout},
@@ -55,6 +57,7 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::Water, MaterialWaterDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::AllocateAndUpdate},
@@ -73,6 +76,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::Destroy},
                 {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::Destroy},
+                {Define::Pipeline::Water, MaterialWaterDescriptorLogic::Destroy},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::Destroy},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::Destroy},
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::Destroy},
