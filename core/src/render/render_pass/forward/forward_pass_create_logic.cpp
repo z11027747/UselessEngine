@@ -31,8 +31,8 @@ namespace Render
 		// count: 1
 		PassLogic::SetSubpassCount(context, pass, 1);
 
-		// attachments
-		// attachment0: color
+		//  attachments
+		//  attachment0: color
 		PassLogic::CreateColorAttachment(context, pass, 0,
 										 surfaceFormat, msaaSamples,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
@@ -45,14 +45,14 @@ namespace Render
 										   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 										   {0.1921569f, 0.3019608f, 0.4745098f, 1.0f});
 
-		// subpass0 LightingPass
+		// subpass0
 		PassLogic::SetColorAttachment(context, pass, 0,
 									  0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		PassLogic::SetDepthAttachment(context, pass, 0,
 									  1);
 		PassLogic::SetResolveAttachment(context, pass, 0,
 										2);
-		// description0
+		// description1
 		PassLogic::SetSubpassDescription(context, pass, 0);
 
 		// dependency: external->0

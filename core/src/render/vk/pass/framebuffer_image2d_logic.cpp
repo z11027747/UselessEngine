@@ -75,7 +75,7 @@ namespace Render
 		auto depthImage2d = ImageLogic::CreateByInfo(context,
 													 imageCreateInfo);
 
-		pass->depthImage2d = depthImage2d;
+		pass->depthImage2ds.push_back(depthImage2d);
 	}
 
 	void FramebufferLogic::CreateDepthStencilImage2d(Context *context,
@@ -104,7 +104,7 @@ namespace Render
 		auto depthImage2d = ImageLogic::CreateByInfo(context,
 													 imageCreateInfo);
 
-		pass->depthImage2d = depthImage2d;
+		pass->depthImage2ds.push_back(depthImage2d);
 	}
 
 	void FramebufferLogic::CreateResolveImage2d(Context *context,
@@ -213,10 +213,12 @@ namespace Render
 	void FramebufferLogic::DestroyDepthImage2d(Context *context,
 											   std::shared_ptr<Pass> pass)
 	{
-		if (pass->depthImage2d != nullptr)
+		auto &depthImage2ds = pass->depthImage2ds;
+		for (const auto &depthImage2d : depthImage2ds)
 		{
-			ImageLogic::Destroy(context, pass->depthImage2d);
+			ImageLogic::Destroy(context, depthImage2d);
 		}
+		depthImage2ds.clear();
 	}
 
 	void FramebufferLogic::DestroyResolveImage2d(Context *context,

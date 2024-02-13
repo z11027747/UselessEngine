@@ -28,9 +28,9 @@ namespace Render
 				auto colorImageIndex = (pass->isGetSwapchainImage) ? i : 0;
 				attachments.push_back(pass->colorImage2ds[colorImageIndex]->vkImageView);
 			}
-			if (pass->depthImage2d != nullptr)
+			for (const auto &depthImage2d : pass->depthImage2ds)
 			{
-				attachments.push_back(pass->depthImage2d->vkImageView);
+				attachments.push_back(depthImage2d->vkImageView);
 			}
 			if (pass->resolveImage2d != nullptr)
 			{

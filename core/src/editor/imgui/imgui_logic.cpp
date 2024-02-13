@@ -148,7 +148,7 @@ namespace Editor
         }
         //shadow
         {
-            auto &depthImage2d = global->passMap[Define::Pass::Shadow]->depthImage2d;
+            auto &depthImage2d = global->passMap[Define::Pass::Shadow]->depthImage2ds[0];
             descriptorMap[Descriptor_Shadow] = CreateDescriptor(context, depthImage2d);
         }
         //postprocess

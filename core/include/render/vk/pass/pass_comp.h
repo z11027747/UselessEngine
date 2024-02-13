@@ -31,7 +31,7 @@ namespace Render
 
 		bool isGetSwapchainImage;
 		std::vector<std::shared_ptr<Image>> colorImage2ds;
-		std::shared_ptr<Image> depthImage2d;
+		std::vector<std::shared_ptr<Image>> depthImage2ds;
 		std::shared_ptr<Image> resolveImage2d;
 		std::vector<std::shared_ptr<Image>> inputImage2ds;
 

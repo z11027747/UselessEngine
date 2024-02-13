@@ -14,13 +14,19 @@ namespace Render
 	void MaterialWaterDescriptorLogic::CreateSetLayout(Context *context,
 													   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkDescriptorSetLayoutBinding materialUBO = {
+		VkDescriptorSetLayoutBinding depth = {
 			0, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+		VkDescriptorSetLayoutBinding materialUBO = {
+			1, // binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			1,
-			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT};
+			VK_SHADER_STAGE_VERTEX_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
+		bindings.push_back(depth);
 		bindings.push_back(materialUBO);
 
 		graphicsPipeline->descriptorBindings = bindings;
@@ -41,6 +47,15 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
+		//TODO
+		auto &shadowPass = global->passMap[Define::Pass::Shadow];
+
+		VkDescriptorImageInfo imageInfo = {
+			global->globalSamplerClamp,
+			shadowPass->depthImage2ds[0]->vkImageView,
+			shadowPass->depthImage2ds[0]->layout};
+		descriptor->imageInfos.push_back(imageInfo);
+
 		VkDescriptorBufferInfo bufferInfo = {
 			instance->buffer->vkBuffer,
 			0,
@@ -53,9 +68,10 @@ namespace Render
 								   [=](std::vector<VkWriteDescriptorSet> &writes)
 								   {
 									   auto &bindings = graphicsPipeline->descriptorBindings;
-									   auto bufferIdx = 0;
-									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, bufferIdx,
-																	   bindings[bufferIdx].descriptorType, descriptor->bufferInfos[0]);
+									   DescriptorSetLogic::WriteImage(writes, descriptor->set, 0,
+																	  bindings[0].descriptorType, descriptor->imageInfos[0]);
+									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, 1,
+																	   bindings[1].descriptorType, descriptor->bufferInfos[0]);
 								   });
 	}
 	void MaterialWaterDescriptorLogic::Destroy(Context *context,

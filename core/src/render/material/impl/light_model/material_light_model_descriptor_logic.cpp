@@ -73,8 +73,8 @@ namespace Render
 
 		VkDescriptorImageInfo shadowImageInfo = {
 			depthImageSampler,
-			shadowPass->depthImage2d->vkImageView,
-			shadowPass->depthImage2d->layout};
+			shadowPass->depthImage2ds[0]->vkImageView,
+			shadowPass->depthImage2ds[0]->layout};
 
 		descriptor->imageInfos.push_back(shadowImageInfo);
 

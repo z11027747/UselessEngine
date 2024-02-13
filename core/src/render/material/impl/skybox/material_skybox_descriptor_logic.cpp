@@ -47,7 +47,6 @@ namespace Render
 			global->globalSamplerClamp,
 			instance->images[0]->vkImageView,
 			instance->images[0]->layout};
-
 		descriptor->imageInfos.push_back(imageInfo);
 
 		instance->descriptor = descriptor;
