@@ -1,6 +1,8 @@
+
 #version 450
 #extension GL_GOOGLE_include_directive : enable
 #include "./include/global_ubo.glsl"
+#include "./include/light.glsl"
 
 layout (set = 1, binding = 1) uniform MaterialUBO {
     vec4 params_wave; //water Angle+Steepness01+length
@@ -19,23 +21,6 @@ layout (location = 3) in vec3 color;
 layout (location = 0) out vec3 fragColor;
 layout (location = 1) out vec2 fragPositionSS;
 layout (location = 2) out vec3 fragPositionVS;
-
-vec3 CalcHalfLambert(vec3 baseCol, vec3 N, vec3 L, float intensity) {
-    float NdotL = clamp(dot(N, L), 0, 1);
-    return baseCol * NdotL * intensity;
-}
-vec3 SafeNormalize(vec3 normal) {
-    float magSq = dot(normal, normal);
-    if (magSq == 0) {
-        return vec3(0.0);
-    }
-    return normalize(normal);
-}
-vec3 CalcBlingPhone(vec3 baseCol, vec3 V, vec3 N, vec3 L, float shininess, float intensity) {
-    vec3 H = SafeNormalize(V + L);
-    float NdotH = clamp(dot(N, H), 0, 1);
-    return baseCol * pow(NdotH, shininess) * intensity;
-}
 
 vec3 GerstnerWave(float speed) {
     vec4 params_wave = materialUBO.params_wave;
