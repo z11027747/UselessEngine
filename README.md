@@ -68,6 +68,7 @@ Shader (VkPipeline)
 - [ ] pbr
 - [ ] deferred_pbr
 - [x] color
+- [x] water
 - [x] post_process::toon_mapping
 - [x] post_process::bloom
 - [ ] post_process::SSAO
