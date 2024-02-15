@@ -43,8 +43,9 @@ namespace Render
         PipelineLogic::Create(context, Define::Pipeline::Deferred_PointLight, deferredPass);
 
         auto postProcessPass = passMap[Define::Pass::PostProcess];
-        PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping, postProcessPass);
+        PipelineLogic::Create(context, Define::Pipeline::PostProcess_GaussBlur, postProcessPass);
+        PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_Global, postProcessPass);
 
         MaterialInstanceLogic::CreateCache(context);

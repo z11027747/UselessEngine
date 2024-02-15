@@ -32,8 +32,9 @@ namespace Render
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_PointLight, MaterialDeferredPointLightDescriptorLogic::CreateSetLayout},
-                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::PostProcess_GaussBlur, MaterialPostProcessDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::CreateSetLayout},
             };
 

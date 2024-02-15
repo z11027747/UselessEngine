@@ -9,7 +9,7 @@ layout (set = 1, binding = 2) uniform MaterialUBO {
     vec4 params; //light diffuseIntensity+specualrShininess+specularIntensity
 } materialUBO;
 
-layout (location = 0) in vec4 positionWS;//w iw depth
+layout (location = 0) in vec4 positionWS; //w is depth
 layout (location = 1) in vec3 tangentMat0;
 layout (location = 2) in vec3 tangentMat1;
 layout (location = 3) in vec3 tangentMat2;
@@ -28,11 +28,10 @@ void main() {
     vec3 calcNormalWS = vec3(dot(tangentMat0, calcNormalMap), dot(tangentMat1, calcNormalMap), dot(tangentMat2, calcNormalMap));
     calcNormalWS = normalize(calcNormalWS);
 
-    outPosition.xyz = positionWS.xyz;
-    outPosition.w = LinearizeDepth(positionWS.w);
-
+    outPosition = vec4(positionWS.xyz, 1.0);
     outNormal = vec4(normalize(calcNormalWS), 1.0);
     outColor = vec4(baseCol * color, 1.0);
 
-    outMaterial = vec4(materialUBO.params.xyz, 1.0);
+    outMaterial.xyz = materialUBO.params.xyz;
+    outMaterial.w = LinearizeDepth(positionWS.w);
 }

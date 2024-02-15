@@ -15,6 +15,12 @@ namespace Render
         auto toonMappingParamsZ = (float)toonMappingParamsJArr.at(2).number_value();
         auto toonMappingParamsW = (float)toonMappingParamsJArr.at(3).number_value();
 
+        auto &gaussBlurParamsJArr = jObj["gaussBlurParams"].array_items();
+        auto gaussBlurParamsX = (float)gaussBlurParamsJArr.at(0).number_value();
+        auto gaussBlurParamsY = (float)gaussBlurParamsJArr.at(1).number_value();
+        auto gaussBlurParamsZ = (float)gaussBlurParamsJArr.at(2).number_value();
+        auto gaussBlurParamsW = (float)gaussBlurParamsJArr.at(3).number_value();
+
         auto &bloomParamsJArr = jObj["bloomParams"].array_items();
         auto bloomParamsX = (float)bloomParamsJArr.at(0).number_value();
         auto bloomParamsY = (float)bloomParamsJArr.at(1).number_value();
@@ -23,6 +29,7 @@ namespace Render
 
         auto postProcess = std::make_shared<Render::PostProcess>();
         postProcess->toonMappingParams = glm::vec4(toonMappingParamsX, toonMappingParamsY, toonMappingParamsZ, toonMappingParamsW);
+        postProcess->gaussBlurParams = glm::vec4(gaussBlurParamsX, gaussBlurParamsY, gaussBlurParamsZ, gaussBlurParamsW);
         postProcess->bloomParams = glm::vec4(bloomParamsX, bloomParamsY, bloomParamsZ, bloomParamsW);
 
         return postProcess;
@@ -33,13 +40,17 @@ namespace Render
         auto postProcess = std::static_pointer_cast<Render::PostProcess>(component);
 
         auto &toonMappingParams = postProcess->toonMappingParams;
-        auto toonMappingParamsJArr = json11::Json::array{toonMappingParams.x, toonMappingParams.y, toonMappingParams.z, toonMappingParams.w};
+        auto &gaussBlurParams = postProcess->gaussBlurParams;
         auto &bloomParams = postProcess->bloomParams;
+
+        auto toonMappingParamsJArr = json11::Json::array{toonMappingParams.x, toonMappingParams.y, toonMappingParams.z, toonMappingParams.w};
+        auto gaussBlurParamsJArr = json11::Json::array{gaussBlurParams.x, gaussBlurParams.y, gaussBlurParams.z, gaussBlurParams.w};
         auto bloomParamsJArr = json11::Json::array{bloomParams.x, bloomParams.y, bloomParams.z, bloomParams.w};
 
         auto jObj = json11::Json::object{
             {"type", Render::PostProcess::type},
             {"toonMappingParams", toonMappingParamsJArr},
+            {"gaussBlurParams", gaussBlurParamsJArr},
             {"bloomParams", bloomParamsJArr}};
 
         auto j = json11::Json(jObj);

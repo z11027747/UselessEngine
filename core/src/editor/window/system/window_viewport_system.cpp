@@ -58,7 +58,7 @@ namespace Editor
                 auto max = ImGui::GetWindowContentRegionMax();
                 auto pos = ImVec2(min.x, max.y - size.y - fontHeight);
                 ImGui::SetCursorPos(pos);
-                ImGui::Text("gBuffer (position, normal, color, material)");
+                ImGui::Text("gBuffer (position, normal, color)");
                 ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred_Position), size,
                              ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
                 ImGui::SameLine();
@@ -66,9 +66,6 @@ namespace Editor
                              ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
                 ImGui::SameLine();
                 ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred_Color), size,
-                             ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
-                ImGui::SameLine();
-                ImGui::Image(ImGuiLogic::GetDescriptorSet(Descriptor_Deferred_Material), size,
                              ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
             }
 

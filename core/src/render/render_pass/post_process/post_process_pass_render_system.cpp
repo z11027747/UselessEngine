@@ -20,8 +20,8 @@ class Context;
 
 namespace Render
 {
-    // TODO Mipmap当模糊
-    inline static void BlitResolveImageAndGenMipmaps(Context *context)
+    // 兼容 forward和deferred pass
+    inline static void BlitResolveImage(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -46,9 +46,8 @@ namespace Render
 
         ImageLogic::TransitionLayout(context, dstImage2d,
                                      VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
-
-        ImageLogic::GenerateMipmapsAndTransitionLayout(context, srcImage2d,
-                                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        ImageLogic::TransitionLayout(context, srcImage2d,
+                                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, srcImage2d->mipLevels);
 
         CmdSubmitLogic::BatchAll(context);
     }
@@ -79,42 +78,54 @@ namespace Render
 
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
+        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
+
         auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
-        FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
-
-        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
         auto &postProcessDescriptor = instanceCache->globalInstanceMap[Define::Pass::PostProcess]->descriptor;
 
         // toon mapping
-        auto &toonMappingParams = postProcess->toonMappingParams;
+        FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
         {
+            auto &toonMappingParams = postProcess->toonMappingParams;
             auto &toonMappingPipeline = global->pipelineMap[Define::Pipeline::PostProcess_ToonMapping];
             DrawPipeline(vkCmdBuffer,
                          toonMappingPipeline,
                          postProcessDescriptor, toonMappingParams);
         }
 
+        BlitResolveImage(context);
+
+        // gauss blur
         FramebufferLogic::NextSubpass(context, imageIndex);
+        {
+            auto &gaussBlurParams = postProcess->gaussBlurParams;
+            auto &graphicsPipeline = global->pipelineMap[Define::Pipeline::PostProcess_GaussBlur];
+            DrawPipeline(vkCmdBuffer,
+                         graphicsPipeline,
+                         postProcessDescriptor, gaussBlurParams);
+        }
 
         // bloom
-        auto &bloomParams = postProcess->bloomParams;
+        FramebufferLogic::NextSubpass(context, imageIndex);
         {
-            BlitResolveImageAndGenMipmaps(context);
 
+            auto &bloomParams = postProcess->bloomParams;
             auto &graphicsPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
             DrawPipeline(vkCmdBuffer,
                          graphicsPipeline,
                          postProcessDescriptor, bloomParams);
         }
 
+        // global
         FramebufferLogic::NextSubpass(context, imageIndex);
-
-        auto &globalPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Global];
-        DrawPipeline(vkCmdBuffer,
-                     globalPipeline,
-                     postProcessDescriptor, glm::vec4(0.0f));
+        {
+            auto &globalPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Global];
+            DrawPipeline(vkCmdBuffer,
+                         globalPipeline,
+                         postProcessDescriptor, glm::vec4(0.0f));
+        }
 
         FramebufferLogic::EndRenderPass(context, imageIndex);
     }

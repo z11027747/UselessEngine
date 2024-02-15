@@ -10,6 +10,7 @@
 namespace Editor
 {
 	static bool enableToonMapping = false;
+	static bool enableGaussBlur = false;
 	static bool enableBloom = false;
 
 	template <>
@@ -19,12 +20,14 @@ namespace Editor
 		auto postProcess = std::static_pointer_cast<Render::PostProcess>(component);
 
 		auto &toonMappingParams = postProcess->toonMappingParams;
+		auto &gaussBlurParams = postProcess->gaussBlurParams;
 		auto &bloomParams = postProcess->bloomParams;
 
 		if (isInit)
 		{
-			enableToonMapping = (postProcess->toonMappingParams.w == 1.0f);
-			enableBloom = (postProcess->bloomParams.w == 1.0f);
+			enableToonMapping = (toonMappingParams.w == 1.0f);
+			enableGaussBlur = (gaussBlurParams.w == 1.0f);
+			enableBloom = (bloomParams.w == 1.0f);
 			return;
 		}
 
@@ -41,15 +44,26 @@ namespace Editor
 		}
 
 		ImGui::Spacing();
+		if (ImGui::Checkbox("Gauss Blur", &enableGaussBlur))
+		{
+			gaussBlurParams.w = enableGaussBlur ? 1.0f : 0.0f;
+		}
+		if (enableGaussBlur)
+		{
+			ImGui::SliderFloat("Scale", &gaussBlurParams.x, 0.0f, 10.0f);
+			ImGui::SliderFloat("Strength", &gaussBlurParams.y, 0.0f, 10.0f);
+			ImGui::SliderFloat("Direction", &gaussBlurParams.z, 0.0f, 1.0f);
+		}
+
+		ImGui::Spacing();
 		if (ImGui::Checkbox("Bloom", &enableBloom))
 		{
 			bloomParams.w = enableBloom ? 1.0f : 0.0f;
 		}
 		if (enableBloom)
 		{
-			ImGui::SliderFloat("Scale", &bloomParams.x, 0.0f, 30.0f);
-			ImGui::SliderFloat("Threshold", &bloomParams.y, 0.0f, 1.0f);
-			ImGui::InputFloat("Intensity", &bloomParams.z);
+			ImGui::SliderFloat("Threshold", &bloomParams.x, 0.0f, 1.0f);
+			ImGui::InputFloat("Intensity", &bloomParams.y);
 		}
 	}
 }

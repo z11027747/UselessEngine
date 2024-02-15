@@ -2,13 +2,10 @@
 #version 450
 
 layout (push_constant) uniform Push {
-    vec4 params;//Scale+Threshold+Intensity
+    vec4 params;//Threshold+Intensity
 } push;
 
-layout (set = 0, binding = 0) uniform sampler2D blitImage;
-layout (input_attachment_index = 0, set = 0, binding = 1) uniform subpassInput toonMappingAttachment;
-
-layout (location = 0) in vec2 uv;
+layout (input_attachment_index = 0, set = 0, binding = 2) uniform subpassInput gaussBlurAttachment;
 
 layout (location = 0) out vec4 outColor;
 
@@ -17,55 +14,15 @@ float Luma(vec3 col) {
 }
 
 void main() {
-    ivec2 texSize = textureSize(blitImage, 0);
+    float lumaThresold = push.params.x;
+    float intensity = push.params.y;
 
-    float scale = push.params.x;
-    float lumaThresold = push.params.y;
-    float intensity = push.params.z;
-    
     float enabled = push.params.w;
-    if (enabled <= 0) {
-        discard;
+    if (enabled > 0) {
+        vec3 blurCol = subpassLoad(gaussBlurAttachment).rgb;
+        float luma = clamp(Luma(blurCol) - lumaThresold, 0, 1);
+        outColor = vec4(vec3(blurCol * luma * intensity), 1.0);
+    } else {
+        outColor = vec4(vec3(0.0), 1.0);
     }
-
-    float dx = scale * 1.0 / float(texSize.x);
-    float dy = scale * 1.0 / float(texSize.y);
-
-    int mipLevel = 4;
-
-    // Take 13 samples around current texel:
-    // === ('e' is the current texel) ===
-    // a - b - c
-    // - j - k -
-    // d - e - f
-    // - l - m -
-    // g - h - i
-    vec3 a = texture(blitImage, vec2(uv.x - 2 * dx, uv.y + 2 * dy), mipLevel).rgb;
-    vec3 b = texture(blitImage, vec2(uv.x, uv.y + 2 * dy), mipLevel).rgb;
-    vec3 c = texture(blitImage, vec2(uv.x + 2 * dx, uv.y + 2 * dy), mipLevel).rgb;
-
-    vec3 d = texture(blitImage, vec2(uv.x - 2 * dx, uv.y), mipLevel).rgb;
-    vec3 e = texture(blitImage, vec2(uv.x, uv.y), mipLevel).rgb;
-    vec3 f = texture(blitImage, vec2(uv.x + 2 * dx, uv.y), mipLevel).rgb;
-
-    vec3 g = texture(blitImage, vec2(uv.x - 2 * dx, uv.y - 2 * dy), mipLevel).rgb;
-    vec3 h = texture(blitImage, vec2(uv.x, uv.y - 2 * dy), mipLevel).rgb;
-    vec3 i = texture(blitImage, vec2(uv.x + 2 * dx, uv.y - 2 * dy), mipLevel).rgb;
-
-    vec3 j = texture(blitImage, vec2(uv.x - dx, uv.y + dy), mipLevel).rgb;
-    vec3 k = texture(blitImage, vec2(uv.x + dx, uv.y + dy), mipLevel).rgb;
-    vec3 l = texture(blitImage, vec2(uv.x - dx, uv.y - dy), mipLevel).rgb;
-    vec3 m = texture(blitImage, vec2(uv.x + dx, uv.y - dy), mipLevel).rgb;
-
-    vec3 blurColor = vec3(0);
-    blurColor.rgb = e * 0.125;
-    blurColor.rgb += (a + c + g + i) * 0.03125;
-    blurColor.rgb += (b + d + f + h) * 0.0625;
-    blurColor.rgb += (j + k + l + m) * 0.125;
-
-    vec3 toonMappingCol = subpassLoad(toonMappingAttachment).rgb;
-    
-    float luma = clamp(Luma(toonMappingCol) - lumaThresold, 0, 1);
-
-    outColor = vec4(vec3(blurColor * luma * intensity), 1.0);
 }

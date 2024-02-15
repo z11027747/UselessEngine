@@ -26,8 +26,13 @@ namespace Render
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-		VkDescriptorSetLayoutBinding bloomAttachment = {
+		VkDescriptorSetLayoutBinding gaussBlurAttachment = {
 			2, // binding
+			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+		VkDescriptorSetLayoutBinding bloomAttachment = {
+			3, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
@@ -35,6 +40,7 @@ namespace Render
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(resolveImage);
 		bindings.push_back(toonMappingAttachment);
+		bindings.push_back(gaussBlurAttachment);
 		bindings.push_back(bloomAttachment);
 
 		graphicsPipeline->descriptorBindings = bindings;
@@ -45,17 +51,21 @@ namespace Render
 		{
 			graphicsPipeline->subpass = 0;
 		}
-		else if (graphicsPipeline->name == Define::Pipeline::PostProcess_Bloom)
+		else if (graphicsPipeline->name == Define::Pipeline::PostProcess_GaussBlur)
 		{
 			graphicsPipeline->subpass = 1;
 		}
-		else if (graphicsPipeline->name == Define::Pipeline::PostProcess_Global)
+		else if (graphicsPipeline->name == Define::Pipeline::PostProcess_Bloom)
 		{
 			graphicsPipeline->subpass = 2;
 		}
+		else if (graphicsPipeline->name == Define::Pipeline::PostProcess_Global)
+		{
+			graphicsPipeline->subpass = 3;
+		}
 	}
 
-	constexpr int imageCount = 3; // blit + toonmapping+bloom
+	constexpr int imageCount = 4; // blit + toonmapping+gaussblur+bloom
 
 	void MaterialPostProcessDescriptorLogic::AllocateAndUpdate(Context *context,
 															   std::shared_ptr<MaterialInstance> materialInstance)
