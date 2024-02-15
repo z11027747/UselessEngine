@@ -60,7 +60,7 @@ namespace Render
 		// description1
 		PassLogic::SetSubpassDescription(context, pass, 1);
 
-		// subpass2
+		// subpass2: global
 		PassLogic::SetColorAttachment(context, pass, 2,
 									  0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		PassLogic::SetInputAttachment(context, pass, 2,
@@ -70,6 +70,11 @@ namespace Render
 		// description0
 		PassLogic::SetSubpassDescription(context, pass, 2);
 
+		// dependency: external->0
+		PassLogic::AddSubpassDependency(context, pass,
+										VK_SUBPASS_EXTERNAL, 0,
+										VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_ACCESS_NONE,
+										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 		// dependency: 0->1
 		PassLogic::AddSubpassDependency(context, pass,
 										0, 1,
@@ -80,15 +85,10 @@ namespace Render
 										1, 2,
 										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
 										VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_INPUT_ATTACHMENT_READ_BIT);
-		// dependency: external->0
+		// dependency: 2->external
 		PassLogic::AddSubpassDependency(context, pass,
-										VK_SUBPASS_EXTERNAL, 0,
-										VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_ACCESS_NONE,
-										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
-		// dependency: 0->external
-		PassLogic::AddSubpassDependency(context, pass,
-										0, VK_SUBPASS_EXTERNAL,
-										VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+										2, VK_SUBPASS_EXTERNAL,
+										VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_NONE,
 										VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_NONE);
 		PassLogic::Create(context, pass);
 

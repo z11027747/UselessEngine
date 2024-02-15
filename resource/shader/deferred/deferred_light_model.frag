@@ -1,5 +1,6 @@
 
 #version 450
+#include "../include/depth.glsl"
 
 layout (set = 1, binding = 0) uniform sampler2D albedo;
 layout (set = 1, binding = 1) uniform sampler2D normalMap;
@@ -8,7 +9,7 @@ layout (set = 1, binding = 2) uniform MaterialUBO {
     vec4 params; //light diffuseIntensity+specualrShininess+specularIntensity
 } materialUBO;
 
-layout (location = 0) in vec3 positionWS;
+layout (location = 0) in vec4 positionWS;//w iw depth
 layout (location = 1) in vec3 tangentMat0;
 layout (location = 2) in vec3 tangentMat1;
 layout (location = 3) in vec3 tangentMat2;
@@ -27,7 +28,9 @@ void main() {
     vec3 calcNormalWS = vec3(dot(tangentMat0, calcNormalMap), dot(tangentMat1, calcNormalMap), dot(tangentMat2, calcNormalMap));
     calcNormalWS = normalize(calcNormalWS);
 
-    outPosition = vec4(positionWS, 1.0);
+    outPosition.xyz = positionWS.xyz;
+    outPosition.w = LinearizeDepth(positionWS.w);
+
     outNormal = vec4(normalize(calcNormalWS), 1.0);
     outColor = vec4(baseCol * color, 1.0);
 

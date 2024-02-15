@@ -20,6 +20,7 @@ class Context;
 
 namespace Render
 {
+    // TODO Mipmap当模糊
     inline static void BlitResolveImageAndGenMipmaps(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
@@ -88,7 +89,6 @@ namespace Render
 
         // toon mapping
         auto &toonMappingParams = postProcess->toonMappingParams;
-        if (toonMappingParams.w == 1.0f)
         {
             auto &toonMappingPipeline = global->pipelineMap[Define::Pipeline::PostProcess_ToonMapping];
             DrawPipeline(vkCmdBuffer,
@@ -100,7 +100,6 @@ namespace Render
 
         // bloom
         auto &bloomParams = postProcess->bloomParams;
-        if (bloomParams.w == 1.0f)
         {
             BlitResolveImageAndGenMipmaps(context);
 

@@ -20,6 +20,14 @@ void main() {
     ivec2 texSize = textureSize(blitImage, 0);
 
     float scale = push.params.x;
+    float lumaThresold = push.params.y;
+    float intensity = push.params.z;
+    
+    float enabled = push.params.w;
+    if (enabled <= 0) {
+        discard;
+    }
+
     float dx = scale * 1.0 / float(texSize.x);
     float dy = scale * 1.0 / float(texSize.y);
 
@@ -56,11 +64,8 @@ void main() {
     blurColor.rgb += (j + k + l + m) * 0.125;
 
     vec3 toonMappingCol = subpassLoad(toonMappingAttachment).rgb;
-
-    float lumaThresold = push.params.y;
+    
     float luma = clamp(Luma(toonMappingCol) - lumaThresold, 0, 1);
-
-    float intensity = push.params.z;
 
     outColor = vec4(vec3(blurColor * luma * intensity), 1.0);
 }

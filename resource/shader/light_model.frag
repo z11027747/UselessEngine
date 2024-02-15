@@ -39,7 +39,7 @@ void main() {
     vec3 pointLightsCol = vec3(0.0);
     int activePointLights = globalUBO.activePointLights;
     for (int i = 0; i < activePointLights; i++) {
-        pointLightsCol += CalcPointLight(i, baseCol, viewDir, calcNormalWS, positionWS, shadowAtten, materialUBO.params);
+        pointLightsCol += CalcPointLight(i, baseCol, viewDir, calcNormalWS, positionWS, 1.0, materialUBO.params);
     }
 
     outColor = vec4((directionLightCol + pointLightsCol) * color, 1.0);
