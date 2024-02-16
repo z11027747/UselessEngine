@@ -1,22 +1,22 @@
 
 #version 450
 
-layout (push_constant) uniform Push {
-    vec4 params;//scale+strength+direction
-} push;
+layout (set = 1, binding = 0) uniform sampler2D blitImage;
 
-layout (set = 0, binding = 0) uniform sampler2D blitImage;
+layout (push_constant) uniform Push {
+    mat4 params;//scale+strength+direction
+} push;
 
 layout (location = 0) in vec2 uv;
 
 layout (location = 0) out vec4 outColor;
 
 void main() {
-    float scale = push.params.x;
-    float strength = push.params.y;
-    float direction = push.params.z;
+    float scale = push.params[0].x;
+    float strength = push.params[0].y;
+    float direction = push.params[0].z;
 
-    float enabled = push.params.w;
+    float enabled = push.params[0].w;
     if (enabled > 0) {
         float weight[5];
         weight[0] = 0.227027;

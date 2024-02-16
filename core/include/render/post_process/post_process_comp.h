@@ -21,7 +21,7 @@ namespace Render
     constexpr int ssaoNoiseDim = 4;
     struct PostProcess_SSAOUBO final
     {
-        glm::vec3 samples[ssaoKernelSize];
-        glm::vec4 noiseR[ssaoKernelSize];
+        glm::vec4 samples[ssaoKernelSize];
+        glm::vec4 noiseValues[ssaoNoiseDim * ssaoNoiseDim];
     };
 }

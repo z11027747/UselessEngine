@@ -51,22 +51,45 @@ namespace Render
 
         CmdSubmitLogic::BatchAll(context);
     }
-    inline static void DrawPipeline(VkCommandBuffer vkCmdBuffer,
-                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline,
-                                    std::shared_ptr<Descriptor> descriptor, glm::vec4 &params)
+    inline static void DrawPipeline(Context *context, uint32_t imageIndex,
+                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline, glm::mat4 &params)
     {
+        auto &globalEO = context->renderGlobalEO;
+        auto global = globalEO->GetComponent<Global>();
+        auto &globalDescriptor = global->globalDescriptor;
+        auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+
         auto &pipeline = graphicsPipeline->pipeline;
         auto &pipelineLayout = graphicsPipeline->pipelineLayout;
         vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
+        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
+        auto &instanceDescriptor = instanceCache->globalInstanceMap[graphicsPipeline->name]->descriptor;
+
+        std::vector<VkDescriptorSet> descriptorSets;
+        descriptorSets.push_back(globalDescriptor->set);
+        descriptorSets.push_back(instanceDescriptor->set);
         vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
-                                1, &descriptor->set,
+                                static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(),
                                 0, nullptr);
 
         vkCmdPushConstants(vkCmdBuffer, pipelineLayout,
-                           VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(glm::vec4), &params);
+                           VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(glm::mat4), &params);
 
         vkCmdDraw(vkCmdBuffer, 3, 1, 0, 0);
+    }
+    inline static void DrawPipeline(Context *context, uint32_t imageIndex,
+                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline, glm::vec4 &params)
+    {
+        auto paramsMat4 = glm::mat4(params, glm::vec4(), glm::vec4(), glm::vec4());
+        DrawPipeline(context, imageIndex,
+                     graphicsPipeline, paramsMat4);
+    }
+    inline static void DrawPipeline(Context *context, uint32_t imageIndex,
+                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+    {
+        DrawPipeline(context, imageIndex,
+                     graphicsPipeline, glm::mat4());
     }
 
     void PostProcessPassRenderSystem::Update(Context *context, uint32_t imageIndex)
@@ -78,9 +101,6 @@ namespace Render
 
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
-        auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
-
-        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
 
         BlitResolveImage(context);
@@ -88,6 +108,9 @@ namespace Render
         // SSAO
         FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
         {
+            auto &SSAOPipeline = global->pipelineMap[Define::Pipeline::PostProcess_SSAO];
+            DrawPipeline(context, imageIndex,
+                         SSAOPipeline);
         }
 
         // toon mapping
@@ -95,10 +118,8 @@ namespace Render
         {
             auto &toonMappingParams = postProcess->toonMappingParams;
             auto &toonMappingPipeline = global->pipelineMap[Define::Pipeline::PostProcess_ToonMapping];
-            auto &toonMappingDescriptor = instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_ToonMapping]->descriptor;
-            DrawPipeline(vkCmdBuffer,
-                         toonMappingPipeline,
-                         toonMappingDescriptor, toonMappingParams);
+            DrawPipeline(context, imageIndex,
+                         toonMappingPipeline, toonMappingParams);
         }
 
         // gauss blur
@@ -106,10 +127,8 @@ namespace Render
         {
             auto &gaussBlurParams = postProcess->gaussBlurParams;
             auto &gaussBlurPipeline = global->pipelineMap[Define::Pipeline::PostProcess_GaussBlur];
-            auto &gaussBlurDescriptor = instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_GaussBlur]->descriptor;
-            DrawPipeline(vkCmdBuffer,
-                         gaussBlurPipeline,
-                         gaussBlurDescriptor, gaussBlurParams);
+            DrawPipeline(context, imageIndex,
+                         gaussBlurPipeline, gaussBlurParams);
         }
 
         // bloom
@@ -117,20 +136,16 @@ namespace Render
         {
             auto &bloomParams = postProcess->bloomParams;
             auto &bloomPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
-            auto &bloomDescriptor = instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_Bloom]->descriptor;
-            DrawPipeline(vkCmdBuffer,
-                         bloomPipeline,
-                         bloomDescriptor, bloomParams);
+            DrawPipeline(context, imageIndex,
+                         bloomPipeline, bloomParams);
         }
 
         // global
         FramebufferLogic::NextSubpass(context, imageIndex);
         {
             auto &globalPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Global];
-            auto &globalDescriptor = instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_Global]->descriptor;
-            DrawPipeline(vkCmdBuffer,
-                         globalPipeline,
-                         globalDescriptor, glm::vec4(0.0f));
+            DrawPipeline(context, imageIndex,
+                         globalPipeline);
         }
 
         FramebufferLogic::EndRenderPass(context, imageIndex);

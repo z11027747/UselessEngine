@@ -23,8 +23,6 @@ layout (location = 5) out vec2 fragUV0;
 void main() {
     CameraUBO camera = globalUBO.camera;
 
-    fragPositionWS.xyz = (push.model * vec4(positionOS, 1.0)).xyz;
-
     //TODO 懒得算M的逆矩阵的转置矩阵了
     vec3 fragNormalWS = (push.model * vec4(normalOS, 0.0)).xyz;
     vec3 fragTangentWS = (push.model * vec4(tangentOS, 0.0)).xyz;
@@ -39,8 +37,10 @@ void main() {
     fragColor = color;
     fragUV0 = uv0;
 
-    vec4 positionCS = camera.projection * camera.view * push.model * vec4(positionOS, 1.0);
-    fragPositionWS.w = positionCS.z;
-    
-    gl_Position = positionCS;
+    vec3 positionWS = (push.model * vec4(positionOS, 1.0)).xyz;
+    vec3 positionVS = (camera.view * vec4(positionWS, 1.0)).xyz;
+    gl_Position = camera.projection * vec4(positionVS, 1.0);
+
+    fragPositionWS.xyz = positionWS;
+    fragPositionWS.w = positionVS.z;
 }

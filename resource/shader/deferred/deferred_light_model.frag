@@ -33,5 +33,5 @@ void main() {
     outColor = vec4(baseCol * color, 1.0);
 
     outMaterial.xyz = materialUBO.params.xyz;
-    outMaterial.w = LinearizeDepth(positionWS.w);
+    outMaterial.w = (positionWS.w);
 }

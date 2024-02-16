@@ -49,7 +49,6 @@ namespace Render
 	}
 
 	constexpr int imageCount = 4; // SSAO+toonmapping+gaussblur+bloom
-
 	void MaterialPostProcessGlobalDescriptorLogic::AllocateAndUpdate(Context *context,
 																	 std::shared_ptr<MaterialInstance> materialInstance)
 	{

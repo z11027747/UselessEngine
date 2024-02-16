@@ -3,11 +3,12 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 #include "render/vk/global/global_comp.h"
-#include "render/vk/buffer/buffer_set_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/vk/pipeline/descriptor_set_logic.h"
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "render/vk/pipeline/pipeline_comp.h"
+#include "render/vk/buffer/buffer_set_logic.h"
+#include "render/vk/image/image_logic.h"
 #include "render/material/impl/material_post_process_logic.h"
 #include "render/material/material_logic.h"
 #include "render/post_process/post_process_comp.h"
@@ -21,7 +22,7 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 
-		VkDescriptorSetLayoutBinding gBufferPosition = {
+		VkDescriptorSetLayoutBinding gBufferPositionDepth = {
 			0, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
@@ -31,15 +32,27 @@ namespace Render
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-		VkDescriptorSetLayoutBinding ssaoUBO = {
+		VkDescriptorSetLayoutBinding gBufferDepth = {
 			2, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+		VkDescriptorSetLayoutBinding noise = {
+			3, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+		VkDescriptorSetLayoutBinding ssaoUBO = {
+			4, // binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
-		bindings.push_back(gBufferPosition);
+		bindings.push_back(gBufferPositionDepth);
 		bindings.push_back(gBufferNormal);
+		bindings.push_back(gBufferDepth);
+		bindings.push_back(noise);
 		bindings.push_back(ssaoUBO);
 
 		graphicsPipeline->descriptorBindings = bindings;
@@ -47,6 +60,7 @@ namespace Render
 		graphicsPipeline->subpass = 0;
 	}
 
+	constexpr int imageCount = 4; // SSAO+toonmapping+gaussblur+bloom
 	static float lerp(float a, float b, float f)
 	{
 		return a + f * (b - a);
@@ -67,18 +81,35 @@ namespace Render
 
 		auto &deferredPass = global->passMap[Define::Pass::Deferred];
 
-		VkDescriptorImageInfo gBufferPositionImageInfo = {
+		VkDescriptorImageInfo gBufferPositionDepthImageInfo = {
 			global->globalSamplerClamp,
 			deferredPass->inputImage2ds[0]->vkImageView,
 			deferredPass->inputImage2ds[0]->layout};
-		descriptor->imageInfos.push_back(gBufferPositionImageInfo);
+		descriptor->imageInfos.push_back(gBufferPositionDepthImageInfo);
 
-		VkDescriptorImageInfo gBufferNormal = {
+		VkDescriptorImageInfo gBufferNormalImageInfo = {
 			global->globalSamplerClamp,
 			deferredPass->inputImage2ds[1]->vkImageView,
 			deferredPass->inputImage2ds[1]->layout};
-		descriptor->imageInfos.push_back(gBufferNormal);
+		descriptor->imageInfos.push_back(gBufferNormalImageInfo);
 
+		VkDescriptorImageInfo gBufferDepthImageInfo = {
+			global->globalSamplerClamp,
+			deferredPass->inputImage2ds[3]->vkImageView,
+			deferredPass->inputImage2ds[3]->layout};
+		descriptor->imageInfos.push_back(gBufferDepthImageInfo);
+
+		// noise
+		MaterialInstanceLogic::GetOrCreateImage(context, instance,
+												"resource/texture/dissolve/dissolve.png");
+
+		VkDescriptorImageInfo noiseImageInfo = {
+			global->globalSamplerClamp,
+			instance->images[0]->vkImageView,
+			instance->images[0]->layout};
+		descriptor->imageInfos.push_back(noiseImageInfo);
+
+		// ubo
 		auto uboSize = sizeof(PostProcess_SSAOUBO);
 		MaterialInstanceLogic::CreateBuffer(context, instance, uboSize);
 
@@ -92,17 +123,19 @@ namespace Render
 								   [=](std::vector<VkWriteDescriptorSet> &writes)
 								   {
 									   auto &bindings = postProcessPipeline->descriptorBindings;
-									   DescriptorSetLogic::WriteImage(writes, descriptor->set, 0,
-																	  bindings[0].descriptorType, descriptor->imageInfos[0]);
-									   DescriptorSetLogic::WriteImage(writes, descriptor->set, 1,
-																	  bindings[1].descriptorType, descriptor->imageInfos[1]);
-									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, 2,
-																	   bindings[2].descriptorType, descriptor->bufferInfos[0]);
+									   for (auto imageIdx = 0; imageIdx < imageCount; imageIdx++)
+									   {
+										   DescriptorSetLogic::WriteImage(writes, descriptor->set, imageIdx,
+																		  bindings[imageIdx].descriptorType, descriptor->imageInfos[imageIdx]);
+									   }
+									   auto bufferIdx = imageCount;
+									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, bufferIdx,
+																	   bindings[bufferIdx].descriptorType, descriptor->bufferInfos[0]);
 								   });
 
 		instance->descriptor = descriptor;
 
-		// update ssao ubo
+		// update ssaoUBO
 		PostProcess_SSAOUBO ssaoUBO = {};
 
 		// Sample kernel
@@ -127,7 +160,7 @@ namespace Render
 		// Random noise
 		for (auto i = 0; i < ssaoNoiseDim * ssaoNoiseDim; i++)
 		{
-			ssaoUBO.noiseR[i] = glm::vec4(
+			ssaoUBO.noiseValues[i] = glm::vec4(
 				rndDist(rndEngine) * 2.0f - 1.0f,
 				rndDist(rndEngine) * 2.0f - 1.0f,
 				0.0f,
