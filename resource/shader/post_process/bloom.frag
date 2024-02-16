@@ -2,7 +2,7 @@
 #version 450
 
 layout (push_constant) uniform Push {
-    mat4 params;//Threshold+Intensity
+    vec4 params;//Threshold+Intensity
 } push;
 
 layout (input_attachment_index = 0, set = 1, binding = 0) uniform subpassInput gaussBlurAttachment;
@@ -14,10 +14,10 @@ float Luma(vec3 col) {
 }
 
 void main() {
-    float lumaThresold = push.params[0].x;
-    float intensity = push.params[0].y;
+    float lumaThresold = push.params.x;
+    float intensity = push.params.y;
 
-    float enabled = push.params[0].w;
+    float enabled = push.params.w;
     if (enabled > 0) {
         vec3 blurCol = subpassLoad(gaussBlurAttachment).rgb;
         float luma = clamp(Luma(blurCol) - lumaThresold, 0, 1);

@@ -9,6 +9,7 @@
 
 namespace Editor
 {
+	static bool enableSSAO = false;
 	static bool enableToonMapping = false;
 	static bool enableGaussBlur = false;
 	static bool enableBloom = false;
@@ -19,16 +20,29 @@ namespace Editor
 	{
 		auto postProcess = std::static_pointer_cast<Render::PostProcess>(component);
 
+		auto &SSAOParams = postProcess->SSAOParams;
 		auto &toonMappingParams = postProcess->toonMappingParams;
 		auto &gaussBlurParams = postProcess->gaussBlurParams;
 		auto &bloomParams = postProcess->bloomParams;
 
 		if (isInit)
 		{
+			enableSSAO = (SSAOParams.w == 1.0f);
 			enableToonMapping = (toonMappingParams.w == 1.0f);
 			enableGaussBlur = (gaussBlurParams.w == 1.0f);
 			enableBloom = (bloomParams.w == 1.0f);
 			return;
+		}
+
+		ImGui::Spacing();
+		if (ImGui::Checkbox("SSAO (Only4DeferredPass)", &enableSSAO))
+		{
+			SSAOParams.w = enableSSAO ? 1.0f : 0.0f;
+		}
+		if (enableSSAO)
+		{
+			ImGui::SliderFloat("Radius", &SSAOParams.x, 0.0f, 2.0f);
+			ImGui::SliderFloat("Bias", &SSAOParams.y, 0.0f, 0.1f);
 		}
 
 		ImGui::Spacing();

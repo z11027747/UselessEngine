@@ -14,5 +14,5 @@ void main() {
     vec3 gaussBlurCol = subpassLoad(gaussBlurAttachment).rgb;
     vec3 bloomCol = subpassLoad(bloomAttachment).rgb;
 
-    outColor = vec4(SSAOCol, 1.0);
+    outColor = vec4(SSAOCol * (toonMappingCol + bloomCol), 1.0);
 }

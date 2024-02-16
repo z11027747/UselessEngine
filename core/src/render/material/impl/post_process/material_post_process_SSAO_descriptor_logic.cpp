@@ -37,13 +37,8 @@ namespace Render
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-		VkDescriptorSetLayoutBinding noise = {
-			3, // binding
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			1,
-			VK_SHADER_STAGE_FRAGMENT_BIT};
 		VkDescriptorSetLayoutBinding ssaoUBO = {
-			4, // binding
+			3, // binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
@@ -52,7 +47,6 @@ namespace Render
 		bindings.push_back(gBufferPositionDepth);
 		bindings.push_back(gBufferNormal);
 		bindings.push_back(gBufferDepth);
-		bindings.push_back(noise);
 		bindings.push_back(ssaoUBO);
 
 		graphicsPipeline->descriptorBindings = bindings;
@@ -60,7 +54,7 @@ namespace Render
 		graphicsPipeline->subpass = 0;
 	}
 
-	constexpr int imageCount = 4; // SSAO+toonmapping+gaussblur+bloom
+	constexpr int imageCount = 3; // gBuffer position+normal+depth
 	static float lerp(float a, float b, float f)
 	{
 		return a + f * (b - a);
@@ -98,16 +92,6 @@ namespace Render
 			deferredPass->inputImage2ds[3]->vkImageView,
 			deferredPass->inputImage2ds[3]->layout};
 		descriptor->imageInfos.push_back(gBufferDepthImageInfo);
-
-		// noise
-		MaterialInstanceLogic::GetOrCreateImage(context, instance,
-												"resource/texture/dissolve/dissolve.png");
-
-		VkDescriptorImageInfo noiseImageInfo = {
-			global->globalSamplerClamp,
-			instance->images[0]->vkImageView,
-			instance->images[0]->layout};
-		descriptor->imageInfos.push_back(noiseImageInfo);
 
 		// ubo
 		auto uboSize = sizeof(PostProcess_SSAOUBO);

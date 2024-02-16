@@ -1,12 +1,15 @@
-
 float near = 0.1;
 float far = 100.0;
 
-float LinearizeDepth(float z) {
-    float z_ndc = z * 2.0 - 1.0;
-    return (2.0 * near * far) / (far + near - z_ndc * (far - near));
+//    2nf
+// ————————————
+// n+f - z*(f-n)
+
+float LinearizeDepth(float depth01) {
+    float z = depth01 * 2.0 - 1.0; //ndc
+    return (2.0 * near * far) / (far + near - z * (far - near));
 }
 
-float Linearize01Depth(float linearZ) {  
-    return (linearZ - near) / (far - near);  
+float ViewSpace01Depth(float viewZ) {
+    return (viewZ - near) / (far - near);
 }

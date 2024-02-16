@@ -52,7 +52,7 @@ namespace Render
         CmdSubmitLogic::BatchAll(context);
     }
     inline static void DrawPipeline(Context *context, uint32_t imageIndex,
-                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline, glm::mat4 &params)
+                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline, glm::vec4 &params)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -74,22 +74,15 @@ namespace Render
                                 0, nullptr);
 
         vkCmdPushConstants(vkCmdBuffer, pipelineLayout,
-                           VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(glm::mat4), &params);
+                           VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(glm::vec4), &params);
 
         vkCmdDraw(vkCmdBuffer, 3, 1, 0, 0);
-    }
-    inline static void DrawPipeline(Context *context, uint32_t imageIndex,
-                                    std::shared_ptr<GraphicsPipeline> graphicsPipeline, glm::vec4 &params)
-    {
-        auto paramsMat4 = glm::mat4(params, glm::vec4(), glm::vec4(), glm::vec4());
-        DrawPipeline(context, imageIndex,
-                     graphicsPipeline, paramsMat4);
     }
     inline static void DrawPipeline(Context *context, uint32_t imageIndex,
                                     std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
         DrawPipeline(context, imageIndex,
-                     graphicsPipeline, glm::mat4());
+                     graphicsPipeline, glm::vec4());
     }
 
     void PostProcessPassRenderSystem::Update(Context *context, uint32_t imageIndex)
@@ -108,9 +101,10 @@ namespace Render
         // SSAO
         FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
         {
+            auto &SSAOParams = postProcess->SSAOParams;
             auto &SSAOPipeline = global->pipelineMap[Define::Pipeline::PostProcess_SSAO];
             DrawPipeline(context, imageIndex,
-                         SSAOPipeline);
+                         SSAOPipeline, SSAOParams);
         }
 
         // toon mapping

@@ -41,7 +41,7 @@ namespace Render
 		PassLogic::CreateColorAttachment(context, pass, 0,
 										 VK_FORMAT_R8G8B8A8_UNORM, VK_SAMPLE_COUNT_1_BIT,
 										 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-										 {0.0f, 0.0f, 0.0f, 1.0f});
+										 {1.0f, 1.0f, 1.0f, 1.0f});
 		// attachment2: toonmapping
 		PassLogic::CreateColorAttachment(context, pass, 1,
 										 VK_FORMAT_R8G8B8A8_UNORM, VK_SAMPLE_COUNT_1_BIT,

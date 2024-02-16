@@ -4,7 +4,7 @@
 layout (set = 1, binding = 0) uniform sampler2D blitImage;
 
 layout (push_constant) uniform Push {
-    mat4 params;//Brightness+Saturation+Intensity
+    vec4 params;//Brightness+Saturation+Intensity
 } push;
 
 layout (location = 0) in vec2 uv;
@@ -18,11 +18,11 @@ float Luma(vec3 col) {
 void main() {
     vec3 col = texture(blitImage, uv).rgb;
 
-    float brightness = push.params[0].x;
-    float saturation = push.params[0].y;
-    float contrast = push.params[0].z;
+    float brightness = push.params.x;
+    float saturation = push.params.y;
+    float contrast = push.params.z;
 
-    float enabled = push.params[0].w;
+    float enabled = push.params.w;
     if (enabled > 0) {
         col = col * brightness;
         col = mix(vec3(Luma(col)), col, saturation);
