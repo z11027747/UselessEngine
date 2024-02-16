@@ -78,53 +78,59 @@ namespace Render
 
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
-        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
-
         auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
 
+        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
-        auto &postProcessDescriptor = instanceCache->globalInstanceMap[Define::Pass::PostProcess]->descriptor;
+
+        BlitResolveImage(context);
+
+        // SSAO
+        FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
+        {
+        }
 
         // toon mapping
-        FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
+        FramebufferLogic::NextSubpass(context, imageIndex);
         {
             auto &toonMappingParams = postProcess->toonMappingParams;
             auto &toonMappingPipeline = global->pipelineMap[Define::Pipeline::PostProcess_ToonMapping];
+            auto &toonMappingDescriptor = instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_ToonMapping]->descriptor;
             DrawPipeline(vkCmdBuffer,
                          toonMappingPipeline,
-                         postProcessDescriptor, toonMappingParams);
+                         toonMappingDescriptor, toonMappingParams);
         }
-
-        BlitResolveImage(context);
 
         // gauss blur
         FramebufferLogic::NextSubpass(context, imageIndex);
         {
             auto &gaussBlurParams = postProcess->gaussBlurParams;
-            auto &graphicsPipeline = global->pipelineMap[Define::Pipeline::PostProcess_GaussBlur];
+            auto &gaussBlurPipeline = global->pipelineMap[Define::Pipeline::PostProcess_GaussBlur];
+            auto &gaussBlurDescriptor = instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_GaussBlur]->descriptor;
             DrawPipeline(vkCmdBuffer,
-                         graphicsPipeline,
-                         postProcessDescriptor, gaussBlurParams);
+                         gaussBlurPipeline,
+                         gaussBlurDescriptor, gaussBlurParams);
         }
 
         // bloom
         FramebufferLogic::NextSubpass(context, imageIndex);
         {
-
             auto &bloomParams = postProcess->bloomParams;
-            auto &graphicsPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
+            auto &bloomPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
+            auto &bloomDescriptor = instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_Bloom]->descriptor;
             DrawPipeline(vkCmdBuffer,
-                         graphicsPipeline,
-                         postProcessDescriptor, bloomParams);
+                         bloomPipeline,
+                         bloomDescriptor, bloomParams);
         }
 
         // global
         FramebufferLogic::NextSubpass(context, imageIndex);
         {
             auto &globalPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Global];
+            auto &globalDescriptor = instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_Global]->descriptor;
             DrawPipeline(vkCmdBuffer,
                          globalPipeline,
-                         postProcessDescriptor, glm::vec4(0.0f));
+                         globalDescriptor, glm::vec4(0.0f));
         }
 
         FramebufferLogic::EndRenderPass(context, imageIndex);

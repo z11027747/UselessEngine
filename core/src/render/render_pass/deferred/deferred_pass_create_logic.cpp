@@ -25,7 +25,7 @@ namespace Render
 		FramebufferLogic::CreateColorImage2d(context, pass, msaaSamples);
 		FramebufferLogic::CreateDepthStencilImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
 		FramebufferLogic::CreateResolveImage2d(context, pass, VK_SAMPLE_COUNT_1_BIT);
-		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R16G16B16A16_SFLOAT, VK_SAMPLE_COUNT_1_BIT); // pos
+		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R16G16B16A16_SFLOAT, VK_SAMPLE_COUNT_1_BIT); // position
 		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R16G16B16A16_SFLOAT, VK_SAMPLE_COUNT_1_BIT); // normal
 		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R8G8B8A8_UNORM, VK_SAMPLE_COUNT_1_BIT);	   // color
 		FramebufferLogic::CreateInputImage2d(context, pass, VK_FORMAT_R16G16B16A16_SFLOAT, VK_SAMPLE_COUNT_1_BIT); // material

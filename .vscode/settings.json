@@ -80,6 +80,7 @@
         "any": "cpp",
         "numeric": "cpp",
         "ranges": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "random": "cpp"
     }
 }

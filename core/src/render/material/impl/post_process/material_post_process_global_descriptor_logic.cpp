@@ -10,15 +10,15 @@
 
 namespace Render
 {
-	void MaterialPostProcessDescriptorLogic::CreateSetLayout(Context *context,
-															 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	void MaterialPostProcessGlobalDescriptorLogic::CreateSetLayout(Context *context,
+																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 
-		VkDescriptorSetLayoutBinding resolveImage = {
+		VkDescriptorSetLayoutBinding SSAOAttachment = {
 			0, // binding
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 		VkDescriptorSetLayoutBinding toonMappingAttachment = {
@@ -38,37 +38,20 @@ namespace Render
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
-		bindings.push_back(resolveImage);
+		bindings.push_back(SSAOAttachment);
 		bindings.push_back(toonMappingAttachment);
 		bindings.push_back(gaussBlurAttachment);
 		bindings.push_back(bloomAttachment);
 
 		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
-
-		// subpass index
-		if (graphicsPipeline->name == Define::Pipeline::PostProcess_ToonMapping)
-		{
-			graphicsPipeline->subpass = 0;
-		}
-		else if (graphicsPipeline->name == Define::Pipeline::PostProcess_GaussBlur)
-		{
-			graphicsPipeline->subpass = 1;
-		}
-		else if (graphicsPipeline->name == Define::Pipeline::PostProcess_Bloom)
-		{
-			graphicsPipeline->subpass = 2;
-		}
-		else if (graphicsPipeline->name == Define::Pipeline::PostProcess_Global)
-		{
-			graphicsPipeline->subpass = 3;
-		}
+		graphicsPipeline->subpass = 4;
 	}
 
-	constexpr int imageCount = 4; // blit + toonmapping+gaussblur+bloom
+	constexpr int imageCount = 4; // SSAO+toonmapping+gaussblur+bloom
 
-	void MaterialPostProcessDescriptorLogic::AllocateAndUpdate(Context *context,
-															   std::shared_ptr<MaterialInstance> materialInstance)
+	void MaterialPostProcessGlobalDescriptorLogic::AllocateAndUpdate(Context *context,
+																	 std::shared_ptr<MaterialInstance> materialInstance)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -81,13 +64,7 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, postProcessPipeline->descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
-		VkDescriptorImageInfo blitImageInfo = {
-			global->globalSamplerClamp,
-			postProcessPass->colorImage2ds[1]->vkImageView,
-			postProcessPass->colorImage2ds[1]->layout};
-		descriptor->imageInfos.push_back(blitImageInfo);
-
-		for (auto i = 0; i < imageCount - 1; i++)
+		for (auto i = 0; i < imageCount; i++)
 		{
 			VkDescriptorImageInfo inputAttachmentInfo = {
 				global->globalSamplerClamp,
@@ -109,8 +86,8 @@ namespace Render
 
 		materialInstance->descriptor = descriptor;
 	}
-	void MaterialPostProcessDescriptorLogic::Destroy(Context *context,
-													 std::shared_ptr<MaterialInstance> materialInstance)
+	void MaterialPostProcessGlobalDescriptorLogic::Destroy(Context *context,
+														   std::shared_ptr<MaterialInstance> materialInstance)
 	{
 	}
 }

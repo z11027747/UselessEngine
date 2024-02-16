@@ -23,31 +23,26 @@ namespace Render
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding positionAttachment = {
 			1, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding normalAttachment = {
 			2, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding colorAttachment = {
 			3, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding materialAttachment = {
 			4, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding pointlightAttachment = {
 			5, // binding
 			VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,

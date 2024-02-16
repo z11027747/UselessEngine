@@ -25,7 +25,7 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
         auto &passMap = global->passMap;
-        
+
         auto shadowPass = passMap[Define::Pass::Shadow];
         PipelineLogic::Create(context, Define::Pipeline::Shadow, shadowPass);
 
@@ -43,6 +43,7 @@ namespace Render
         PipelineLogic::Create(context, Define::Pipeline::Deferred_PointLight, deferredPass);
 
         auto postProcessPass = passMap[Define::Pass::PostProcess];
+        PipelineLogic::Create(context, Define::Pipeline::PostProcess_SSAO, postProcessPass);
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping, postProcessPass);
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_GaussBlur, postProcessPass);
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
@@ -52,14 +53,21 @@ namespace Render
 
         auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
 
-        auto postProcessMaterialInfo = std::make_shared<MaterialInfo>();
-        postProcessMaterialInfo->pipelineName = Define::Pipeline::PostProcess_Global;
-        instanceCache->globalInstanceMap[Define::Pass::PostProcess] =
-            MaterialInstanceLogic::Create(context, postProcessMaterialInfo);
+        // post-process global instance
+        auto postProcessSSAOInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_SSAO);
+        auto postProcessToonMappingInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping);
+        auto postProcessGaussBlurInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_GaussBlur);
+        auto postProcessBloomInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_Bloom);
+        auto postProcessGlobalInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_Global);
 
-        auto deferredMaterialInfo = std::make_shared<MaterialInfo>();
-        deferredMaterialInfo->pipelineName = Define::Pipeline::Deferred_Shading;
-        instanceCache->globalInstanceMap[Define::Pass::Deferred] =
-            MaterialInstanceLogic::Create(context, deferredMaterialInfo);
+        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_SSAO] = postProcessSSAOInstance;
+        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_ToonMapping] = postProcessToonMappingInstance;
+        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_GaussBlur] = postProcessGaussBlurInstance;
+        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_Bloom] = postProcessBloomInstance;
+        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_Global] = postProcessGlobalInstance;
+
+        // deferred global instance
+        auto deferredShadingInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::Deferred_Shading);
+        instanceCache->globalInstanceMap[Define::Pass::Deferred] = deferredShadingInstance;
     }
 }

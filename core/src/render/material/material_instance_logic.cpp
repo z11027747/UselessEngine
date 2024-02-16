@@ -54,6 +54,13 @@ namespace Render
     static int Id_Material = 0;
 
     std::shared_ptr<MaterialInstance> MaterialInstanceLogic::Create(Context *context,
+                                                                    const std::string &pipelineName)
+    {
+        auto info = std::make_shared<MaterialInfo>();
+        info->pipelineName = pipelineName;
+        return Create(context, info);
+    }
+    std::shared_ptr<MaterialInstance> MaterialInstanceLogic::Create(Context *context,
                                                                     std::shared_ptr<MaterialInfo> info)
     {
         auto instance = std::make_shared<MaterialInstance>();
@@ -248,6 +255,11 @@ namespace Render
                                              std::shared_ptr<MaterialInstance> instance)
     {
         auto uboSize = sizeof(MaterialUBO);
+        CreateBuffer(context, instance, uboSize);
+    }
+    void MaterialInstanceLogic::CreateBuffer(Context *context,
+                                             std::shared_ptr<MaterialInstance> instance, size_t uboSize)
+    {
         auto buffer = BufferLogic::Create(context,
                                           uboSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);

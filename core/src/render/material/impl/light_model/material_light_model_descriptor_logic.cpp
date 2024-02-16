@@ -23,19 +23,16 @@ namespace Render
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding albedo = {
 			1, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding normalMap = {
 			2, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-
 		VkDescriptorSetLayoutBinding materialUBO = {
 			3, // binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,

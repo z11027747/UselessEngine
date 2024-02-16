@@ -32,10 +32,10 @@ namespace Render
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_PointLight, MaterialDeferredPointLightDescriptorLogic::CreateSetLayout},
-                {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessDescriptorLogic::CreateSetLayout},
-                {Define::Pipeline::PostProcess_GaussBlur, MaterialPostProcessDescriptorLogic::CreateSetLayout},
-                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessDescriptorLogic::CreateSetLayout},
-                {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessToonMappingDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::PostProcess_GaussBlur, MaterialPostProcessGaussBlurDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessBloomDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::PostProcess_Global, MaterialPostProcessGlobalDescriptorLogic::CreateSetLayout},
             };
 
         auto &name = graphicsPipeline->name;
@@ -61,7 +61,10 @@ namespace Render
                 {Define::Pipeline::Water, MaterialWaterDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::AllocateAndUpdate},
-                {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessToonMappingDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::PostProcess_GaussBlur, MaterialPostProcessGaussBlurDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessBloomDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::PostProcess_Global, MaterialPostProcessGlobalDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::AllocateAndUpdate},
             };
 
@@ -80,7 +83,10 @@ namespace Render
                 {Define::Pipeline::Water, MaterialWaterDescriptorLogic::Destroy},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::Destroy},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingDescriptorLogic::Destroy},
-                {Define::Pipeline::PostProcess_Global, MaterialPostProcessDescriptorLogic::Destroy},
+                {Define::Pipeline::PostProcess_ToonMapping, MaterialPostProcessToonMappingDescriptorLogic::Destroy},
+                {Define::Pipeline::PostProcess_GaussBlur, MaterialPostProcessGaussBlurDescriptorLogic::Destroy},
+                {Define::Pipeline::PostProcess_Bloom, MaterialPostProcessBloomDescriptorLogic::Destroy},
+                {Define::Pipeline::PostProcess_Global, MaterialPostProcessGlobalDescriptorLogic::Destroy},
             };
 
         if (instance->info == nullptr)

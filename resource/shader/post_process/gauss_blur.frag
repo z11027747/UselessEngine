@@ -2,7 +2,7 @@
 #version 450
 
 layout (push_constant) uniform Push {
-    vec4 params;//scale+strength+direction 1+1.5+0
+    vec4 params;//scale+strength+direction
 } push;
 
 layout (set = 0, binding = 0) uniform sampler2D blitImage;

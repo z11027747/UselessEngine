@@ -43,7 +43,7 @@ public:
         inline static std::string Deferred_PointLight{"deferred_point_light"};
 
         // post process
-        inline static std::string PostProcess_SSAO{"ssao"};
+        inline static std::string PostProcess_SSAO{"SSAO"};
         inline static std::string PostProcess_ToonMapping{"toon_mapping"};
         inline static std::string PostProcess_GaussBlur{"gauss_blur"};
         inline static std::string PostProcess_Bloom{"bloom"};

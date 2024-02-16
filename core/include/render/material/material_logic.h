@@ -28,7 +28,9 @@ namespace Render
         static void DestroyCache(Context *);
 
         static std::shared_ptr<MaterialInstance> Create(Context *,
-                                                        std::shared_ptr<MaterialInfo> info);
+                                                        const std::string &);
+        static std::shared_ptr<MaterialInstance> Create(Context *,
+                                                        std::shared_ptr<MaterialInfo>);
         static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
         static void SetDestroy(Context *, std::shared_ptr<MaterialInstance>);
 
@@ -42,6 +44,7 @@ namespace Render
         static void CreateImageCube(Context *,
                                     std::shared_ptr<MaterialInstance>, const std::vector<std::string> &);
 
+        static void CreateBuffer(Context *, std::shared_ptr<MaterialInstance>, size_t);
         static void CreateBuffer(Context *, std::shared_ptr<MaterialInstance>);
         static void CreateDescriptor(Context *, std::shared_ptr<MaterialInstance>);
     };
