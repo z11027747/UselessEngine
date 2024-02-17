@@ -1,5 +1,5 @@
 # UselessEngine
- 没用的3d引擎
+ 没用的3d引擎（基于Vulkan，非专业C++选手）
  施工中。
 
 Basic
@@ -20,8 +20,8 @@ Basic
 Engine
 ----
 
-- [ ] Editor (a lot,but hide details)
-- [ ] Logic (a lot,but hide details)
+- [x] Editor (hide details)
+- [x] Logic (hide details)
 - [ ] Render
     - [ ] Light
 	    - [x] direction light
@@ -50,11 +50,12 @@ Shader (VkPipeline)
 - [x] water
 - [x] post_process::toon_mapping
 - [x] post_process::bloom
-- [ ] post_process::SSAO
+- [x] post_process::SSAO
 - [x] post_process::global
 
-Preview
+Preview (See the screenshots folder for details)
 -----
-![image](https://github.com/z11027747/UselessEngine/assets/24534845/eb98c6b4-746b-4091-84ac-b28069847b8f)
+![water](https://github.com/z11027747/UselessEngine/assets/24534845/c4e4f12a-edc7-417c-b95a-a562d8ba4cd8)
+
 
 
