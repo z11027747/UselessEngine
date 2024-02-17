@@ -80,7 +80,6 @@ namespace Render
         }
 
         CreateBuffer(context, instance);
-
         CreateDescriptor(context, instance);
 
         return instance;
