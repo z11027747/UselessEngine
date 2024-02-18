@@ -1,11 +1,10 @@
 
 #include <iostream>
 #include <fstream>
+#include "common/log.hpp"
 #define STB_IMAGE_IMPLEMENTATION
-#include <image/stb_image.h>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "common/res_system.h"
-#include "common/log.hpp"
 
 namespace Common
 {
@@ -76,15 +75,25 @@ namespace Common
 		auto it = imgMap.find(fileName);
 		if (it == imgMap.end())
 		{
-			tinyobj::attrib_t attrib;
-			std::vector<tinyobj::shape_t> shapes;
-			std::vector<tinyobj::material_t> materials;
-			std::string err;
+			tinyobj::ObjReader reader;
+			tinyobj::ObjReaderConfig reader_config;
+			reader_config.vertex_color = false;
 
-			if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.data()))
+			if (!reader.ParseFromFile(fileName, reader_config))
 			{
-				Log::Exception(err);
+				if (!reader.Error().empty())
+				{
+					Log::Exception(fileName, "==> Obj LoadError: ", reader.Error());
+				}
 			}
+
+			if (!reader.Warning().empty())
+			{
+				Log::Debug(fileName, "==> Obj LoadWarning: ", reader.Warning());
+			}
+
+			auto &attrib = reader.GetAttrib();
+			auto &shapes = reader.GetShapes();
 
 			ResObj obj = {};
 			obj.attrib = attrib;

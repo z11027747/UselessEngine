@@ -3,7 +3,8 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
-#include <obj/tiny_obj_loader.h>
+#include <stb/stb_image.h>
+#include <tinyobjloader/tiny_obj_loader.h>
 
 namespace Common
 {
