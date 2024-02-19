@@ -2,7 +2,7 @@
 #include <iostream>
 #include <filesystem>
 #include <imgui/imgui.h>
-#include "logic/move/move_logic.h"
+#include "logic/transform/transform_logic.h"
 #include "editor/wrap/component_wrap.h"
 #include "editor/window/window_system.hpp"
 #include "editor/window/window_logic.hpp"
@@ -62,7 +62,7 @@ namespace Editor
 
         // viewport space
         x = x - viewportPos.x - style.WindowPadding.x;
-        y = (viewportPos.y + viewportPos.y) - y - style.WindowPadding.y;
+        y = (viewportPos.y + viewportSize.y) - y - style.WindowPadding.y;
 
         // ndc space
         x = 2.0f * x / viewportSize.x - 1.0f;

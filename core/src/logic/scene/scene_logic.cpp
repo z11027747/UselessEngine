@@ -60,6 +60,7 @@ namespace Logic
         context->AddComponent(eo, material);
 
         context->AddEO(eo);
+        context->editorAxisEOs.push_back(eo);
     }
 
     void SceneLogic::CreateAxis(Context *context)
@@ -73,6 +74,10 @@ namespace Logic
 
         Logic::TransformLogic::Add(parentEO,
                                    glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.5f));
+
+        auto scaleKeep = std::make_shared<Logic::ScaleKeep>();
+        context->AddComponent(parentEO, scaleKeep);
+        scaleKeep->initDistance = 10.0f; // special dist
 
         context->AddEO(parentEO);
 

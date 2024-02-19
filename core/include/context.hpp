@@ -46,6 +46,7 @@ public:
 	std::shared_ptr<EngineObject> logicMainCameraEO;
 	std::vector<std::shared_ptr<EngineObject>> logicMoveEOs;
 	std::vector<std::shared_ptr<EngineObject>> logicRotateEOs;
+	std::vector<std::shared_ptr<EngineObject>> logicScaleEOs;
 
 	// editor
 	std::vector<std::shared_ptr<EngineObject>> editorAxisEOs;

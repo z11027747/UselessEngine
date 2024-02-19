@@ -11,7 +11,7 @@ namespace Logic
     class HitRayCheckLogic final
     {
     public:
-        static HitRay CalcaRayFromNdc(Context *, float, float);
+        static HitRay CalcRayFromNdc(Context *, float, float);
         static std::shared_ptr<EngineObject> TestFromNdc(Context *, float, float);
 
         static bool Test(Context *,

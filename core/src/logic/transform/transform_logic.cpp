@@ -94,4 +94,16 @@ namespace Logic
 		parentTransform->childEONames.push_back(childEO->name);
 	}
 
+	float TransformLogic::Distance(std::shared_ptr<EngineObject> aEO, std::shared_ptr<EngineObject> bEO)
+	{
+		auto aTransform = aEO->GetComponent<Logic::Transform>();
+		auto bTransform = bEO->GetComponent<Logic::Transform>();
+
+		auto &aPosition = aTransform->worldPosition;
+		auto &bPosition = bTransform->worldPosition;
+
+		auto distance = glm::distance(aPosition, bPosition);
+		return distance;
+	}
+
 }

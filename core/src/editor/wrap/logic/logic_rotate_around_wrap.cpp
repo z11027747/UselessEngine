@@ -2,7 +2,7 @@
 #include <imgui/imgui.h>
 #include <memory>
 #include "editor/wrap/component_wrap.h"
-#include "logic/rotate/rotate_comp.h"
+#include "logic/transform/transform_comp.h"
 #include "engine_object.hpp"
 #include "context.hpp"
 

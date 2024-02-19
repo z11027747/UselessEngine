@@ -34,7 +34,7 @@ namespace Editor
             auto ndcY = (float)currY;
             WindowLogic::ToViewportNdcXY(context, ndcX, ndcY);
 
-            auto ray = Logic::HitRayCheckLogic::CalcaRayFromNdc(context, ndcX, ndcY);
+            auto ray = Logic::HitRayCheckLogic::CalcRayFromNdc(context, ndcX, ndcY);
             std::shared_ptr<EngineObject> currAxisHitEO = nullptr;
 
             auto &axisEOs = context->editorAxisEOs;
@@ -67,8 +67,7 @@ namespace Editor
 
                 auto selectTransform = selectEO->GetComponent<Logic::Transform>();
 
-                auto distance = glm::distance(mainCameraTransform->worldPosition, selectTransform->worldPosition);
-                auto moveSpeed = distance * 0.6f;
+                auto moveSpeed = 10.0f;
                 // Common::Log::Debug(moveSpeed);
 
                 auto offsetX = (float)currX - lastX;

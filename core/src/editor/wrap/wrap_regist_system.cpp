@@ -6,7 +6,6 @@
 #include "render/post_process/post_process_comp.h"
 #include "logic/transform/transform_comp.h"
 #include "logic/camera/camera_comp.h"
-#include "logic/rotate/rotate_comp.h"
 #include "editor/wrap/wrap_system.hpp"
 #include "editor/wrap/component_wrap.h"
 #include "context.hpp"
