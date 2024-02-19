@@ -20,13 +20,13 @@ Basic
 Engine
 ----
 
-- [x] Editor (hide details)
-- [x] Logic (hide details)
-- [ ] Render
-    - [ ] Light
+- [x] Editor ( ... )
+- [x] Logic ( ... )
+- [x] Render
+    - [x] Light
 	    - [x] direction light
 	    - [x] point light
-	    - [ ] spot light
+	    - [x] spot light
     - [x] Material
     - [x] Mesh
     - [x] PostProcess
