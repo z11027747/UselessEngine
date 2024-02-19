@@ -14,7 +14,7 @@ layout (location = 0) out vec4 outColor;
 
 void main() {
     CameraUBO camera = globalUBO.camera;
-    DirectionLightUBO directionLight = globalUBO.directionLight;
+    // DirectionLightUBO directionLight = globalUBO.directionLight;
 
     vec3 positionWS = subpassLoad(positionAttachment).xyz;
     vec3 normalWS = subpassLoad(normalAttachment).xyz;

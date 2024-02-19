@@ -19,6 +19,7 @@ namespace Editor
         REGIST_WRAP(Logic::RotateAround);
         REGIST_WRAP(Render::DirectionLight);
         REGIST_WRAP(Render::PointLight);
+        REGIST_WRAP(Render::SpotLight);
         REGIST_WRAP(Render::Mesh);
         REGIST_WRAP(Render::Material);
         REGIST_WRAP(Render::PostProcess);

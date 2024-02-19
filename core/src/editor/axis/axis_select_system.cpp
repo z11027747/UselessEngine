@@ -13,7 +13,7 @@ namespace Editor
 {
     static std::shared_ptr<EngineObject> lastAxisEO = nullptr;
     static float lastX, lastY = 0.0f;
-    // static float moveSpeed = 10.0f;
+    static float moveSpeed = 10.0f;
 
     bool AxisSelectSystem::Update(Context *context)
     {
@@ -66,9 +66,6 @@ namespace Editor
                 auto mainCameraTransform = mainCameraEO->GetComponent<Logic::Transform>();
 
                 auto selectTransform = selectEO->GetComponent<Logic::Transform>();
-
-                auto moveSpeed = 10.0f;
-                // Common::Log::Debug(moveSpeed);
 
                 auto offsetX = (float)currX - lastX;
                 auto offsetY = lastY - (float)currY;

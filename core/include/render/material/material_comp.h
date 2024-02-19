@@ -31,10 +31,20 @@ namespace Render
 	struct PointLightUBO final
 	{
 		alignas(16) glm::vec3 pos;
-		alignas(16) glm::mat4 view;
-		alignas(16) glm::mat4 projection;
+		// alignas(16) glm::mat4 view;
+		// alignas(16) glm::mat4 projection;
 		alignas(16) glm::vec3 col;
 		alignas(16) glm::vec3 clq;
+	};
+
+	struct SpotLightUBO final
+	{
+		alignas(16) glm::vec3 dir;
+		alignas(16) glm::vec3 pos;
+		// alignas(16) glm::mat4 view;
+		// alignas(16) glm::mat4 projection;
+		alignas(16) glm::vec3 col;
+		alignas(16) glm::vec4 cutOff;
 	};
 
 	struct GlobalUBO final
@@ -43,6 +53,8 @@ namespace Render
 		alignas(16) DirectionLightUBO directionLight;
 		alignas(16) PointLightUBO pointLights[256];
 		alignas(4) int activePointLights;
+		alignas(16) SpotLightUBO spotLights[4];
+		alignas(4) int activeSpotLights;
 		alignas(4) float currTime;
 	};
 

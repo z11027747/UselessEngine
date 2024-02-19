@@ -19,9 +19,9 @@ namespace Render
     {
         inline static std::string type{"Render::PointLight"};
 
-        // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
-
         glm::vec3 color;
+
+        // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
         glm::vec3 clq{1.0f, 0.7f, 1.8f};
         bool hasShadow{true};
     };
@@ -29,5 +29,9 @@ namespace Render
     struct SpotLight final
     {
         inline static std::string type{"Render::SpotLight"};
+
+        glm::vec3 color;
+        glm::vec4 cutOff; // xy cos(rad), zw deg
+        bool hasShadow{true};
     };
 }

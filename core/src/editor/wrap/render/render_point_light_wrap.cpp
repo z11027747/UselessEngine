@@ -25,6 +25,6 @@ namespace Editor
 		ImGui::InputFloat("Linear", &pointLight->clq.y);
 		ImGui::InputFloat("Quadratic", &pointLight->clq.z, 0.0f, 0.0f, "%.4f");
 
-		ImGui::Checkbox("HasShadow", &pointLight->hasShadow);
+		// ImGui::Checkbox("HasShadow", &pointLight->hasShadow);
 	}
 }

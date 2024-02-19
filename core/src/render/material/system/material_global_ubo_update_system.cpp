@@ -27,7 +27,7 @@ namespace Render
             auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
 
             cameraUBO = {
-                mainCameraTransform->localPosition,
+                mainCameraTransform->worldPosition,
                 mainCamera->view,
                 mainCamera->projection,
             };
@@ -36,6 +36,8 @@ namespace Render
         DirectionLightUBO directionLightUBO = {};
         PointLightUBO pointLightUBOs[256];
         int activePointLights = 0;
+        SpotLightUBO spotLightUBOs[4];
+        int activeSpotLights = 0;
 
         auto &lightEOs = context->renderLightEOs;
         auto lightEOSize = lightEOs.size();
@@ -52,7 +54,7 @@ namespace Render
                 auto directionLight = lightEO->GetComponent<Render::DirectionLight>();
 
                 directionLightUBO = {
-                    -directionLightTransform->forward,
+                    directionLightTransform->forward,
                     directionLightCamera->view,
                     directionLightCamera->projection,
                     directionLight->ambient,
@@ -67,12 +69,29 @@ namespace Render
 
                 pointLightUBOs[activePointLights] = {
                     pointLightTransform->worldPosition,
-                    glm::mat4(1.0f), // pointLightCamera->view,
-                    glm::mat4(1.0f), // pointLightCamera->projection,
+                    // pointLightCamera->view,
+                    // pointLightCamera->projection,
                     pointLight->color,
                     pointLight->clq,
                 };
                 activePointLights++;
+            }
+
+            if (lightEO->HasComponent<Render::SpotLight>())
+            {
+                auto spotLightTransform = lightEO->GetComponent<Logic::Transform>();
+                // auto spotLightCamera = lightEO->GetComponent<Logic::Camera>();
+                auto spotLight = lightEO->GetComponent<Render::SpotLight>();
+
+                spotLightUBOs[activeSpotLights] = {
+                    spotLightTransform->forward,
+                    spotLightTransform->worldPosition,
+                    // spotLightCamera->view,
+                    // spotLightCamera->projection,
+                    spotLight->color,
+                    spotLight->cutOff,
+                };
+                activeSpotLights++;
             }
         }
 
@@ -84,6 +103,11 @@ namespace Render
             globalUBO.pointLights[i] = pointLightUBOs[i];
         }
         globalUBO.activePointLights = activePointLights;
+        for (auto i = 0; i < activeSpotLights; i++)
+        {
+            globalUBO.spotLights[i] = spotLightUBOs[i];
+        }
+        globalUBO.activeSpotLights = activeSpotLights;
         globalUBO.currTime = context->currTime;
 
         auto &globalBuffer = global->globalBuffer;

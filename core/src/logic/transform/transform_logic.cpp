@@ -57,7 +57,9 @@ namespace Logic
 		auto transform = eo->GetComponent<Logic::Transform>();
 
 		auto translation = glm::translate(glm::mat4(1.0f), transform->localPosition);
-		auto rotation = glm::toMat4(glm::quat(glm::radians(transform->localEulerAngles)));
+		auto localEulerAngles_rad = glm::radians(transform->localEulerAngles);
+		auto rotation = glm::yawPitchRoll(localEulerAngles_rad.y, localEulerAngles_rad.x, localEulerAngles_rad.z);
+		// auto rotation = glm::toMat4(glm::quat(glm::radians(transform->localEulerAngles)));
 		auto scale = glm::scale(glm::mat4(1.0f), transform->localScale);
 
 		auto model = translation * rotation * scale;

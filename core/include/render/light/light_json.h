@@ -18,4 +18,10 @@ namespace Render
         static std::shared_ptr<void> Parse(const json11::Json &);
         static json11::Json Serialize(std::shared_ptr<void>);
     };
+    class SpotLightJson final
+    {
+    public:
+        static std::shared_ptr<void> Parse(const json11::Json &);
+        static json11::Json Serialize(std::shared_ptr<void>);
+    };
 }

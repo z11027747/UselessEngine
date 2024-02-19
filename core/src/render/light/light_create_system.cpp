@@ -21,5 +21,7 @@ namespace Render
         REGIST_JSON(PointLight, PointLightJson);
 
         REGIST_CREATE(SpotLight);
+        REGIST_ADD_REMOVE(SpotLight, LightLogic);
+        REGIST_JSON(SpotLight, SpotLightJson);
     }
 }
