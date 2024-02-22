@@ -12,12 +12,13 @@ namespace Editor
 {
 	static int pipelineNameIndex = -1;
 
-	static const int pipelineNameSize = 8;
+	static const int pipelineNameSize = 9;
 	static const char *pipelineNames[] =
 		{
 			Define::Pipeline::Skybox.c_str(),
 			Define::Pipeline::Shadow.c_str(),
 			Define::Pipeline::LightModel.c_str(),
+			Define::Pipeline::PBR_Simplest.c_str(),
 			Define::Pipeline::Deferred_LightModel.c_str(),
 			Define::Pipeline::Deferred_Volumn.c_str(),
 			Define::Pipeline::Color.c_str(),
@@ -191,6 +192,14 @@ namespace Editor
 			ImGui::DragFloat("DiffuseIntensity", &params0.x, 0.01f);
 			ImGui::DragFloat("SpecualrShininess", &params0.y, 0.1f);
 			ImGui::DragFloat("SpecularIntensity", &params0.z, 0.01f);
+			ImGui::PopItemWidth();
+		}
+		else if (info->pipelineName == Define::Pipeline::PBR_Simplest)
+		{
+			ImGui::PushItemWidth(150);
+			auto &params0 = info->params[0];
+			ImGui::SliderFloat("Roughness", &params0.x, 0.05f, 1.0f);
+			ImGui::SliderFloat("Metallic", &params0.y, 0.1f, 1.0f);
 			ImGui::PopItemWidth();
 		}
 		else if (info->pipelineName == Define::Pipeline::Dissolve)

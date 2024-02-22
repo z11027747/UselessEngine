@@ -44,15 +44,6 @@ namespace Render
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
 		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 	}
-	void MaterialPBRSimplestPipelineLogic::SetMultisampleCreateInfo(Context *context,
-																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-		auto &stageInfo = graphicsPipeline->stageInfo;
-
-		auto &multisampleStateCreateInfo = stageInfo.multisampleStateCreateInfo;
-		multisampleStateCreateInfo.sampleShadingEnable = true;
-		multisampleStateCreateInfo.minSampleShading = 0.2f;
-	}
 	void MaterialPBRSimplestPipelineLogic::SetDepthStencilCreateInfo(Context *context,
 																	 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{

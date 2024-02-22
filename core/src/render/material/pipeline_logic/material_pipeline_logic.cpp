@@ -8,6 +8,7 @@
 #include "render/material/impl/material_shadow_logic.h"
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_light_model_logic.h"
+#include "render/material/impl/material_pbr_simplest_logic.h"
 #include "render/material/impl/material_dissolve_logic.h"
 #include "render/material/impl/material_water_logic.h"
 #include "render/material/impl/material_deferred_light_model_logic.h"
@@ -25,6 +26,7 @@ namespace Render
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetVertexAttrDescriptions},
+                {Define::Pipeline::PBR_Simplest, MaterialPBRSimplestPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Dissolve, MaterialDissolvePipelineLogic::SetVertexAttrDescriptions},
                 {Define::Pipeline::Water, MaterialWaterPipelineLogic::SetVertexAttrDescriptions},
@@ -63,6 +65,7 @@ namespace Render
                 {Define::Pipeline::Skybox, MaterialSkyboxPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Shadow, MaterialShadowPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetRasterizationCreateInfo},
+                {Define::Pipeline::PBR_Simplest, MaterialPBRSimplestPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Dissolve, MaterialDissolvePipelineLogic::SetRasterizationCreateInfo},
                 {Define::Pipeline::Water, MaterialWaterPipelineLogic::SetRasterizationCreateInfo},
@@ -100,6 +103,8 @@ namespace Render
                 {Define::Pipeline::Color, MaterialColorPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Dissolve, MaterialDissolvePipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Water, MaterialWaterPipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetDepthStencilCreateInfo},
+                {Define::Pipeline::PBR_Simplest, MaterialPBRSimplestPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetDepthStencilCreateInfo},

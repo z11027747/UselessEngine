@@ -6,6 +6,7 @@
 #include "render/vk/pipeline/descriptor_set_layout_logic.h"
 #include "render/material/material_logic.h"
 #include "render/material/impl/material_light_model_logic.h"
+#include "render/material/impl/material_pbr_simplest_logic.h"
 #include "render/material/impl/material_dissolve_logic.h"
 #include "render/material/impl/material_color_logic.h"
 #include "render/material/impl/material_water_logic.h"
@@ -26,6 +27,7 @@ namespace Render
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::CreateSetLayout},
+                {Define::Pipeline::PBR_Simplest, MaterialPBRSimplestDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Water, MaterialWaterDescriptorLogic::CreateSetLayout},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::CreateSetLayout},
@@ -58,6 +60,7 @@ namespace Render
             funcMap{
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
+                {Define::Pipeline::PBR_Simplest, MaterialPBRSimplestDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Water, MaterialWaterDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelDescriptorLogic::AllocateAndUpdate},
