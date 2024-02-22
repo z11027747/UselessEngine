@@ -23,10 +23,13 @@ namespace Render
         if (context->renderLightEOs.size() > 0)
         {
             auto &directionLightEO = context->renderLightEOs[0];
-            auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
-            if (directionLightEO->active && directionLight->hasShadow)
+            if (directionLightEO->HasComponent<Render::DirectionLight>())
             {
-                RenderPassLogic::Draw(context, imageIndex, true);
+                auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
+                if (directionLightEO->active && directionLight->hasShadow)
+                {
+                    RenderPassLogic::Draw(context, imageIndex, true);
+                }
             }
         }
 

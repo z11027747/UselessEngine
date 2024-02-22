@@ -28,7 +28,6 @@ void main() {
 
     fragPositionWS = (push.model * vec4(positionOS, 1.0)).xyz;
 
-    //TODO 懒得算M的逆矩阵的转置矩阵了
     fragNormalWS = (push.model * vec4(normalOS, 0.0)).xyz;
     vec3 fragTangentWS = (push.model * vec4(tangentOS, 0.0)).xyz;
 
@@ -41,7 +40,7 @@ void main() {
 
     fragColor = color;
     fragUV0 = uv0;
-    fragPositionLS = directionLight.projection * directionLight.view * push.model * vec4(positionOS, 1.0);
+    fragPositionLS = directionLight.projection * directionLight.view * vec4(fragPositionWS, 1.0);
 
-    gl_Position = camera.projection * camera.view * push.model * vec4(positionOS, 1.0);
+    gl_Position = camera.projection * camera.view * vec4(fragPositionWS, 1.0);
 }
