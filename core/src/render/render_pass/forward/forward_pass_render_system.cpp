@@ -27,9 +27,9 @@ namespace Render
             auto &forwardPass = global->passMap[Define::Pass::Forward];
             FramebufferLogic::BeginRenderPass(context, imageIndex, forwardPass);
             {
-                RenderPassLogic::Draw(context, imageIndex, false);
+                RenderPassLogic::Draw(context, false);
             }
-            FramebufferLogic::EndRenderPass(context, imageIndex);
+            FramebufferLogic::EndRenderPass(context);
         }
     }
 }

@@ -28,11 +28,11 @@ namespace Render
                 auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
                 if (directionLightEO->active && directionLight->hasShadow)
                 {
-                    RenderPassLogic::Draw(context, imageIndex, true);
+                    RenderPassLogic::Draw(context, true);
                 }
             }
         }
 
-        FramebufferLogic::EndRenderPass(context, imageIndex);
+        FramebufferLogic::EndRenderPass(context);
     }
 }

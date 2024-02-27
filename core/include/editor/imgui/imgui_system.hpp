@@ -20,6 +20,6 @@ namespace Editor
     class ImGuiRenderPassLogic final
     {
     public:
-        static void Draw(Context *, uint32_t);
+        static void Draw(Context *);
     };
 }

@@ -19,40 +19,49 @@ void main() {
     PointLight pointLights[256] = globalUBO.pointLights;
     int activePointLights = globalUBO.activePointLights;
 
+    vec3 albedo = color;
     float roughness = materialUBO.params.x;
     float metallic = materialUBO.params.y;
 
     vec3 N = normalize(normalWS);
     vec3 V = normalize(camera.pos - positionWS);
 
+    vec3 F0 = mix(vec3(0.04), albedo, metallic);
+
     vec3 Lo = vec3(0.0);
     for (int i = 0; i < activePointLights; i++) {
-        vec3 L = normalize(pointLights[i].pos - positionWS);
+        PointLight pointLight = pointLights[i];
+
+        vec3 L = normalize(pointLight.pos - positionWS);
         vec3 H = normalize(V + L);
 
-        float dotNV = clamp(dot(N, V), 0.0, 1.0);
-        float dotNL = clamp(dot(N, L), 0.0, 1.0);
-        // float dotLH = clamp(dot(L, H), 0.0, 1.0);
-        float dotNH = clamp(dot(N, H), 0.0, 1.0);
+        float distance = length(pointLight.pos - positionWS);
+        float attenuation = 1.0 / (distance * distance);
 
-        if (dotNL > 0.0) {
-            float rroughness = max(0.05, roughness);
+        vec3 radiance = pointLight.color * attenuation;
 
-            float D = D_GGX(dotNH, roughness);
-            vec3 F0 = mix(vec3(0.04), color, metallic);
-            vec3 F = F_Schlick(dotNV, F0);
-            float G = G_SchlicksmithGGX(dotNL, dotNV, rroughness);
+        float NDF = DistributionGGX(N, H, roughness);
+        float G = GeometrySmith(N, V, L, roughness);
+        vec3 F = FresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
-            vec3 spec = D * F * G / (4.0 * dotNL * dotNV);
-            Lo += spec * dotNL * pointLights[i].color;
-        }
+        vec3 numerator = NDF * G * F;
+        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+        vec3 specular = numerator / denominator;
+
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;
+
+        float NdotL = clamp(dot(N, L), 0.0, 1.0);
+
+        Lo += (kD * color / PI + specular) * radiance * NdotL;
     }
 
-    vec3 ambient = color * 0.02;
-    vec3 color = ambient + Lo;
+    vec3 ambient = albedo * vec3(0.03);
+    vec3 finalColor = ambient + Lo;
 
-	// Gamma correct
-    color = pow(color, vec3(1.0 / 2.2));
+    finalColor = finalColor / (finalColor + vec3(1.0)); // HDR tonemapping
+    finalColor = pow(finalColor, vec3(1.0 / 2.2)); // Gamma correct
 
-    outColor = vec4(color, 1.0);
+    outColor = vec4(finalColor, 1.0);
 }

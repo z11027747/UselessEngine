@@ -18,14 +18,14 @@ namespace Render
         SwapchainLogic::WaitFence(context);
 
         auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
-        SwapchainLogic::BeginCmd(context, imageIndex);
+        SwapchainLogic::BeginCmd(context);
 
         return imageIndex;
     }
 
     void VkRenderSystem::EndUpdate(Context *context, uint32_t imageIndex)
     {
-        SwapchainLogic::EndAndSubmitCmd(context, imageIndex);
+        SwapchainLogic::EndAndSubmitCmd(context);
         SwapchainLogic::Present(context, imageIndex);
     }
 }

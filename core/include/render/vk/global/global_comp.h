@@ -16,7 +16,7 @@ namespace Render
 	struct Global final
 	{
 		inline static std::string type{"Render::Global"};
-		
+
 		VkInstance instance;
 
 		bool enabledDebug;
@@ -40,11 +40,12 @@ namespace Render
 		std::vector<std::shared_ptr<Image>> swapchainImages;
 		std::vector<VkCommandBuffer> swapchainCmdBuffers;
 
+		uint32_t maxConcurrentFrame{2};
+		
 		uint32_t currFrame;
-		uint32_t maxFrameInFlight;
-		std::vector<VkFence> inFlightFences;
-		std::vector<VkSemaphore> imageAvailableSemaphores;
-		std::vector<VkSemaphore> renderFinishedSemaphores;
+		std::vector<VkFence> waitFences;
+		std::vector<VkSemaphore> presentCompleteSemaphores;
+		std::vector<VkSemaphore> renderCompleteSemaphores;
 
 		VkCommandPool vkPool;
 		VkDescriptorPool descriptorPool;

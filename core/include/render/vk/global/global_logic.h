@@ -90,8 +90,8 @@ namespace Render
         static uint32_t AcquireImageIndex(Context *);
 
         static void AllocateCmd(Context *);
-        static VkCommandBuffer &BeginCmd(Context *, uint32_t);
-        static void EndAndSubmitCmd(Context *, uint32_t);
+        static VkCommandBuffer &BeginCmd(Context *);
+        static void EndAndSubmitCmd(Context *);
         static void Present(Context *, uint32_t);
     };
 

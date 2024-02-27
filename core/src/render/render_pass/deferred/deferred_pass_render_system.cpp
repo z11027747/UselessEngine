@@ -44,7 +44,8 @@ namespace Render
         auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
         if (mainCameraEO->active && mainCamera->passName == Define::Pass::Deferred)
         {
-            auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+            auto currFrame = global->currFrame;
+            auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
             auto &deferredPass = global->passMap[Define::Pass::Deferred];
 
             auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
@@ -53,11 +54,11 @@ namespace Render
             // subpass0: geometryPass
             FramebufferLogic::BeginRenderPass(context, imageIndex, deferredPass);
             {
-                RenderPassLogic::Draw(context, imageIndex, false);
+                RenderPassLogic::Draw(context, false);
             }
 
             // subpass1: pointlightPass
-            FramebufferLogic::NextSubpass(context, imageIndex);
+            FramebufferLogic::NextSubpass(context);
             {
                 auto &deferredPointLightPipeline = global->pipelineMap[Define::Pipeline::Deferred_PointLight];
                 DrawPipeline(vkCmdBuffer,
@@ -66,7 +67,7 @@ namespace Render
             }
 
             // subpass2: shadingPass
-            FramebufferLogic::NextSubpass(context, imageIndex);
+            FramebufferLogic::NextSubpass(context);
             {
                 auto &deferredShadingPipeline = global->pipelineMap[Define::Pipeline::Deferred_Shading];
                 DrawPipeline(vkCmdBuffer,
@@ -74,7 +75,7 @@ namespace Render
                              global->globalDescriptor, deferredDescriptor);
             }
 
-            FramebufferLogic::EndRenderPass(context, imageIndex);
+            FramebufferLogic::EndRenderPass(context);
         }
     }
 }

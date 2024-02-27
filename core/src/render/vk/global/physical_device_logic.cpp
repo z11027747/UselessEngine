@@ -204,10 +204,14 @@ namespace Render
 		std::vector<VkPresentModeKHR> presentModes(presentModeCount);
 		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.data());
 
-		for (auto &presentMode : presentModes)
+		auto vsync = true;
+		if (!vsync)
 		{
-			if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR)
-				return presentMode;
+			for (auto &presentMode : presentModes)
+			{
+				if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+					return presentMode;
+			}
 		}
 
 		return VK_PRESENT_MODE_FIFO_KHR;
@@ -224,6 +228,7 @@ namespace Render
 
 		auto counts = std::min(physicalDeviceProperties.limits.framebufferColorSampleCounts,
 							   physicalDeviceProperties.limits.framebufferDepthSampleCounts);
+
 		if (counts & VK_SAMPLE_COUNT_64_BIT)
 			return VK_SAMPLE_COUNT_64_BIT;
 

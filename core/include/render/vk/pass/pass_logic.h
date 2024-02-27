@@ -72,7 +72,7 @@ namespace Render
 		static void DestroyInputImage2ds(Context *, std::shared_ptr<Pass>);
 
 		static void BeginRenderPass(Context *, uint32_t, std::shared_ptr<Pass>);
-		static void NextSubpass(Context *, uint32_t);
-		static void EndRenderPass(Context *, uint32_t);
+		static void NextSubpass(Context *);
+		static void EndRenderPass(Context *);
 	};
 }

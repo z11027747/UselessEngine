@@ -18,12 +18,10 @@ namespace Render
 
     static void SplitPipeline(Context *);
     static void SortPipeline();
-    static void DrawPipeline(Context *,
-                             uint32_t, bool,
+    static void DrawPipeline(Context *, bool,
                              const std::string &);
 
-    void RenderPassLogic::Draw(Context *context,
-                               uint32_t imageIndex, bool isShadow)
+    void RenderPassLogic::Draw(Context *context, bool isShadow)
     {
         auto &mainCameraEO = context->logicMainCameraEO;
         if (mainCameraEO == nullptr)
@@ -37,17 +35,17 @@ namespace Render
 
         if (cameraPass == Define::Pass::Forward)
         {
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Skybox);
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::LightModel);
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::PBR_Simplest);
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Dissolve);
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Color);
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Water);
+            DrawPipeline(context, isShadow, Define::Pipeline::Skybox);
+            DrawPipeline(context, isShadow, Define::Pipeline::LightModel);
+            DrawPipeline(context, isShadow, Define::Pipeline::PBR_Simplest);
+            DrawPipeline(context, isShadow, Define::Pipeline::Dissolve);
+            DrawPipeline(context, isShadow, Define::Pipeline::Color);
+            DrawPipeline(context, isShadow, Define::Pipeline::Water);
         }
         else if (cameraPass == Define::Pass::Deferred)
         {
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_Volumn);
-            DrawPipeline(context, imageIndex, isShadow, Define::Pipeline::Deferred_LightModel);
+            DrawPipeline(context, isShadow, Define::Pipeline::Deferred_Volumn);
+            DrawPipeline(context, isShadow, Define::Pipeline::Deferred_LightModel);
         }
     }
 
@@ -90,8 +88,7 @@ namespace Render
         }
     }
 
-    static void DrawPipeline(Context *context,
-                             uint32_t imageIndex, bool isShadow,
+    static void DrawPipeline(Context *context, bool isShadow,
                              const std::string &pipelineName)
     {
         auto it = materialEOMap.find(pipelineName);
@@ -100,7 +97,8 @@ namespace Render
 
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
-        auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+        auto currFrame = global->currFrame;
+        auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
 
         auto &graphicsPipeline = global->pipelineMap[!isShadow ? pipelineName : Define::Pipeline::Shadow];
         auto &pipeline = graphicsPipeline->pipeline;

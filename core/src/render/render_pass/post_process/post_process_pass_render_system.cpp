@@ -51,13 +51,14 @@ namespace Render
 
         CmdSubmitLogic::BatchAll(context);
     }
-    inline static void DrawPipeline(Context *context, uint32_t imageIndex,
+    inline static void DrawPipeline(Context *context,
                                     std::shared_ptr<GraphicsPipeline> graphicsPipeline, glm::vec4 &params)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
         auto &globalDescriptor = global->globalDescriptor;
-        auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+        auto currFrame = global->currFrame;
+        auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
 
         auto &pipeline = graphicsPipeline->pipeline;
         auto &pipelineLayout = graphicsPipeline->pipelineLayout;
@@ -78,10 +79,10 @@ namespace Render
 
         vkCmdDraw(vkCmdBuffer, 3, 1, 0, 0);
     }
-    inline static void DrawPipeline(Context *context, uint32_t imageIndex,
+    inline static void DrawPipeline(Context *context,
                                     std::shared_ptr<GraphicsPipeline> graphicsPipeline)
     {
-        DrawPipeline(context, imageIndex,
+        DrawPipeline(context,
                      graphicsPipeline, glm::vec4());
     }
 
@@ -103,45 +104,45 @@ namespace Render
         {
             auto &SSAOParams = postProcess->SSAOParams;
             auto &SSAOPipeline = global->pipelineMap[Define::Pipeline::PostProcess_SSAO];
-            DrawPipeline(context, imageIndex,
+            DrawPipeline(context,
                          SSAOPipeline, SSAOParams);
         }
 
         // toon mapping
-        FramebufferLogic::NextSubpass(context, imageIndex);
+        FramebufferLogic::NextSubpass(context);
         {
             auto &toonMappingParams = postProcess->toonMappingParams;
             auto &toonMappingPipeline = global->pipelineMap[Define::Pipeline::PostProcess_ToonMapping];
-            DrawPipeline(context, imageIndex,
+            DrawPipeline(context,
                          toonMappingPipeline, toonMappingParams);
         }
 
         // gauss blur
-        FramebufferLogic::NextSubpass(context, imageIndex);
+        FramebufferLogic::NextSubpass(context);
         {
             auto &gaussBlurParams = postProcess->gaussBlurParams;
             auto &gaussBlurPipeline = global->pipelineMap[Define::Pipeline::PostProcess_GaussBlur];
-            DrawPipeline(context, imageIndex,
+            DrawPipeline(context,
                          gaussBlurPipeline, gaussBlurParams);
         }
 
         // bloom
-        FramebufferLogic::NextSubpass(context, imageIndex);
+        FramebufferLogic::NextSubpass(context);
         {
             auto &bloomParams = postProcess->bloomParams;
             auto &bloomPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Bloom];
-            DrawPipeline(context, imageIndex,
+            DrawPipeline(context,
                          bloomPipeline, bloomParams);
         }
 
         // global
-        FramebufferLogic::NextSubpass(context, imageIndex);
+        FramebufferLogic::NextSubpass(context);
         {
             auto &globalPipeline = global->pipelineMap[Define::Pipeline::PostProcess_Global];
-            DrawPipeline(context, imageIndex,
+            DrawPipeline(context,
                          globalPipeline);
         }
 
-        FramebufferLogic::EndRenderPass(context, imageIndex);
+        FramebufferLogic::EndRenderPass(context);
     }
 }

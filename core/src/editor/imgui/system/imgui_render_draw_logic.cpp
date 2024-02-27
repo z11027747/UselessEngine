@@ -11,7 +11,7 @@
 
 namespace Editor
 {
-    void ImGuiRenderPassLogic::Draw(Context *context, uint32_t imageIndex)
+    void ImGuiRenderPassLogic::Draw(Context *context)
     {
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -57,7 +57,8 @@ namespace Editor
 
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Render::Global>();
-        auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+		auto currFrame = global->currFrame;
+        auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
 
         ImGui::Render();
         auto *main_draw_data = ImGui::GetDrawData();

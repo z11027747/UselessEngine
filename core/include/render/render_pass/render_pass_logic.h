@@ -22,6 +22,6 @@ namespace Render
 
         static void DestroyAll(Context *);
 
-        static void Draw(Context *, uint32_t, bool);
+        static void Draw(Context *, bool);
     };
 }

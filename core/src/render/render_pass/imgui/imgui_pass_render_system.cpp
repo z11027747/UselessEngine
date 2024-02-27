@@ -19,8 +19,8 @@ namespace Render
         auto &imGuiPass = global->passMap[Define::Pass::ImGui];
         FramebufferLogic::BeginRenderPass(context, imageIndex, imGuiPass);
         {
-            Editor::ImGuiRenderPassLogic::Draw(context, imageIndex);
+            Editor::ImGuiRenderPassLogic::Draw(context);
         }
-        FramebufferLogic::EndRenderPass(context, imageIndex);
+        FramebufferLogic::EndRenderPass(context);
     }
 }

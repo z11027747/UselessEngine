@@ -75,7 +75,8 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 		auto &surfaceCapabilities = global->surfaceCapabilities;
-		auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+		auto currFrame = global->currFrame;
+		auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
 
 		auto &renderPass = pass->renderPass;
 		auto &frameBuffer = pass->frameBuffers[imageIndex];
@@ -94,20 +95,22 @@ namespace Render
 		vkCmdBeginRenderPass(vkCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void FramebufferLogic::NextSubpass(Context *context, uint32_t imageIndex)
+	void FramebufferLogic::NextSubpass(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
-		auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+		auto currFrame = global->currFrame;
+		auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
 
 		vkCmdNextSubpass(vkCmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void FramebufferLogic::EndRenderPass(Context *context, uint32_t imageIndex)
+	void FramebufferLogic::EndRenderPass(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
-		auto &vkCmdBuffer = global->swapchainCmdBuffers[imageIndex];
+		auto currFrame = global->currFrame;
+		auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
 
 		vkCmdEndRenderPass(vkCmdBuffer);
 	}
