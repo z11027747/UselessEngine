@@ -16,6 +16,7 @@ layout (location = 0) out vec4 outColor;
 
 void main() {
     CameraUBO camera = globalUBO.camera;
+    DirectionLightUBO directionLight = globalUBO.directionLight;
     PointLight pointLights[256] = globalUBO.pointLights;
     int activePointLights = globalUBO.activePointLights;
 
@@ -29,6 +30,32 @@ void main() {
     vec3 F0 = mix(vec3(0.04), albedo, metallic);
 
     vec3 Lo = vec3(0.0);
+
+    //directionLight
+    {
+        vec3 L = normalize(-directionLight.dir);
+        vec3 H = normalize(V + L);
+
+        vec3 radiance = directionLight.color;
+
+        float NDF = DistributionGGX(N, H, roughness);
+        float G = GeometrySmith(N, V, L, roughness);
+        vec3 F = FresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
+
+        vec3 numerator = NDF * G * F;
+        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+        vec3 specular = numerator / denominator;
+
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;
+
+        float NdotL = max(dot(N, L), 0.0);
+
+        float litPercentage = 1.0; //TODO
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL * litPercentage;
+    }
+
     for (int i = 0; i < activePointLights; i++) {
         PointLight pointLight = pointLights[i];
 
@@ -57,11 +84,13 @@ void main() {
         Lo += (kD * color / PI + specular) * radiance * NdotL;
     }
 
-    vec3 ambient = albedo * vec3(0.03);
+    vec3 ambient = directionLight.ambient;
     vec3 finalColor = ambient + Lo;
 
-    finalColor = finalColor / (finalColor + vec3(1.0)); // HDR tonemapping
-    finalColor = pow(finalColor, vec3(1.0 / 2.2)); // Gamma correct
+    // HDR tonemapping
+    finalColor = finalColor / (finalColor + vec3(1.0));
+    // Gamma correct
+    finalColor = pow(finalColor, vec3(1.0 / 2.2));
 
-    outColor = vec4(finalColor, 1.0);
+    outColor = vec4(albedo * finalColor, 1.0);
 }
