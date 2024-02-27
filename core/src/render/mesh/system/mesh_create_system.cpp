@@ -16,5 +16,6 @@ namespace Render
         REGIST_JSON(Mesh, MeshJson);
 
 		MeshInstanceLogic::CreateCache(context);
+		MeshInstanceLogic::CreateVertexInstances(context);
     }
 }

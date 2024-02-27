@@ -88,6 +88,7 @@ namespace Render
         }
     }
 
+    static VkDeviceSize offsets[] = {0};
     static void DrawPipeline(Context *context, bool isShadow,
                              const std::string &pipelineName)
     {
@@ -97,6 +98,7 @@ namespace Render
 
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
+
         auto currFrame = global->currFrame;
         auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
 
@@ -121,14 +123,18 @@ namespace Render
             if (isShadow && !materialInfo->castShadow)
                 continue;
 
-            auto vertexBuffer = meshInstance->vertexBuffer->vkBuffer;
-            auto indexBuffer = meshInstance->indexBuffer->vkBuffer;
-            auto indexSize = static_cast<uint32_t>(meshInstance->indices.size());
+            auto vertexBuffer = meshInstance->vertexBuffer;
+            vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, &vertexBuffer->vkBuffer, offsets);
 
-            VkBuffer vertexBuffers[] = {vertexBuffer};
-            VkDeviceSize offsets[] = {0};
-            vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, vertexBuffers, offsets);
-            vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+            // if (useInstancing)
+            // {
+            //     auto instanceCache = globalEO->GetComponent<MeshInstanceCache>();
+            //     auto &vertexInstanceBuffer = instanceCache->vertexInstanceBuffer;
+            //     vkCmdBindVertexBuffers(vkCmdBuffer, 1, 1, &vertexInstanceBuffer->vkBuffer, offsets);
+            // }
+
+            auto indexBuffer = meshInstance->indexBuffer;
+            vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
 
             vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
 
@@ -145,6 +151,7 @@ namespace Render
                                     static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(),
                                     0, nullptr);
 
+            auto indexSize = static_cast<uint32_t>(meshInstance->indices.size());
             vkCmdDrawIndexed(vkCmdBuffer, indexSize, 1, 0, 0, 0);
         }
     }

@@ -27,6 +27,13 @@ namespace Render
         }
     };
 
+    struct VertexInstance final
+    {
+        glm::vec3 pos;
+        glm::vec3 eul;
+        float scale{1.0f};
+    };
+
     struct BoundingSphere final
     {
         glm::vec3 center;
@@ -55,7 +62,7 @@ namespace Render
 
     struct Mesh final
     {
-		inline static std::string type{"Render::Mesh"};
+        inline static std::string type{"Render::Mesh"};
 
         std::shared_ptr<MeshInfo> info{std::make_shared<MeshInfo>()};
         std::shared_ptr<MeshInstance> instance;
@@ -63,9 +70,13 @@ namespace Render
 
     struct MeshInstanceCache final
     {
-		inline static std::string type{"Render::MeshInstanceCache"};
+        inline static std::string type{"Render::MeshInstanceCache"};
 
         std::unordered_map<std::string, std::shared_ptr<MeshInstance>> sharedMap{};
         std::vector<std::shared_ptr<MeshInstance>> deletes{};
+
+        //gpu instancing
+        std::vector<VertexInstance> vertexInstances{};
+        std::shared_ptr<Buffer> vertexInstanceBuffer;
     };
 }

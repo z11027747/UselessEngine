@@ -36,6 +36,9 @@ namespace Render
         static void LoadObj(Context *, std::shared_ptr<MeshInstance>);
         static void CalcBoundingSphere(Context *, std::shared_ptr<MeshInstance>);
         static void CreateBuffer(Context *, std::shared_ptr<MeshInstance>);
+
+        static void CreateVertexInstances(Context *);
+        static void UpdateVertexInstanceBuffer(Context *);
     };
 
     class MeshJson final

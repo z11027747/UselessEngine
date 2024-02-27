@@ -6,8 +6,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "render/vk/pipeline/descriptor_comp.h"
-#include "render/vk/image/image_comp.h"
 #include "render/vk/buffer/buffer_comp.h"
+#include "render/vk/image/image_comp.h"
 #include "define.hpp"
 
 namespace Render
@@ -72,6 +72,7 @@ namespace Render
 		bool isImageCube{false};
 		bool castShadow{false};
 		int renderQueue{Define::RenderQueue::Geometry};
+		bool useInstancing{false};
 
 		bool hasChanged{false};
 	};
@@ -101,5 +102,8 @@ namespace Render
 		std::vector<std::shared_ptr<MaterialInstance>> deletes{};
 
 		std::unordered_map<std::string, std::shared_ptr<MaterialInstance>> globalInstanceMap{};
+		
+		//instancing
+		std::shared_ptr<Buffer> instancingBuffer;
 	};
 }

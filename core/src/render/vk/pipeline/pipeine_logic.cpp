@@ -163,13 +163,17 @@ namespace Render
 		if (vertexInputAttributeDescriptions.empty())
 			return;
 
-		auto &vertexBindingDescription = stageInfo.vertexBindingDescription;
-		vertexBindingDescription.binding = 0;
-		vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		vertexBindingDescription.stride = sizeof(Render::Vertex);
+		VkVertexInputBindingDescription bindingVertex = {
+			0, sizeof(Render::Vertex), VK_VERTEX_INPUT_RATE_VERTEX};
+		VkVertexInputBindingDescription bindingInstance = {
+			1, sizeof(Render::VertexInstance), VK_VERTEX_INPUT_RATE_INSTANCE};
 
-		vertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
-		vertexInputStateCreateInfo.pVertexBindingDescriptions = &vertexBindingDescription;
+		auto &vertexBindingDescriptions = stageInfo.vertexBindingDescriptions;
+		vertexBindingDescriptions.push_back(bindingVertex);
+		vertexBindingDescriptions.push_back(bindingInstance);
+
+		vertexInputStateCreateInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(vertexBindingDescriptions.size());
+		vertexInputStateCreateInfo.pVertexBindingDescriptions = vertexBindingDescriptions.data();
 		vertexInputStateCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInputAttributeDescriptions.size());
 		vertexInputStateCreateInfo.pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data();
 	}
