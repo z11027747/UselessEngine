@@ -7,11 +7,10 @@
 
 namespace Render
 {
-
 	void LogicalDeviceLogic::Create(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &physicalDevice = global->physicalDevice;
 		auto physicalQueueFamilyIndex = global->physicalQueueFamilyIndex;
 
@@ -56,7 +55,7 @@ namespace Render
 	void LogicalDeviceLogic::Destroy(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		vkDestroyDevice(logicalDevice, nullptr);
 	}
@@ -64,7 +63,7 @@ namespace Render
 	VkDevice &LogicalDeviceLogic::Get(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		return logicalDevice;
 	}
@@ -72,9 +71,8 @@ namespace Render
 	void LogicalDeviceLogic::WaitIdle(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		vkDeviceWaitIdle(logicalDevice);
 	}
-
 }

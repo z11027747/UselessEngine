@@ -18,7 +18,7 @@ namespace Render
 							   const std::string &name, std::shared_ptr<Pass> pass)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		auto graphicsPipeline = std::make_shared<GraphicsPipeline>();
@@ -69,7 +69,7 @@ namespace Render
 								std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		PipelineLayoutLogic::Destroy(context, graphicsPipeline);
@@ -84,7 +84,7 @@ namespace Render
 	void PipelineLogic::DestroyAll(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 
 		for (const auto &kv : global->pipelineMap)
 		{
@@ -97,7 +97,7 @@ namespace Render
 										  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		auto &name = graphicsPipeline->name;
@@ -193,7 +193,7 @@ namespace Render
 											std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
 		auto &stageInfo = graphicsPipeline->stageInfo;

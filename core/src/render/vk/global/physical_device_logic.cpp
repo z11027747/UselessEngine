@@ -10,7 +10,7 @@ namespace Render
 	bool PhysicalDeviceLogic::Find(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &instance = global->instance;
 
 		uint32_t tempPhysicalDeviceCount;
@@ -46,7 +46,7 @@ namespace Render
 	void PhysicalDeviceLogic::GetInfo(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		global->surfaceFormat = GetFormat(context);
 		global->surfacePresentMode = GetPresentMode(context);
 		global->surfaceCapabilities = GetCapbilities(context);
@@ -108,7 +108,7 @@ namespace Render
 												 uint32_t typeFilter, VkMemoryPropertyFlags propertiesFlags)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &physicalDevice = global->physicalDevice;
 
 		VkPhysicalDeviceMemoryProperties memProperties;
@@ -131,7 +131,7 @@ namespace Render
 													  VkImageTiling tiling, VkFormatFeatureFlags features)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &physicalDevice = global->physicalDevice;
 
 		for (auto format : candidates)
@@ -156,7 +156,7 @@ namespace Render
 	VkSurfaceFormatKHR PhysicalDeviceLogic::GetFormat(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &physicalDevice = global->physicalDevice;
 		auto &surface = global->surface;
 
@@ -181,7 +181,7 @@ namespace Render
 	VkSurfaceCapabilitiesKHR PhysicalDeviceLogic::GetCapbilities(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &physicalDevice = global->physicalDevice;
 		auto &surface = global->surface;
 
@@ -194,7 +194,7 @@ namespace Render
 	VkPresentModeKHR PhysicalDeviceLogic::GetPresentMode(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &physicalDevice = global->physicalDevice;
 		auto &surface = global->surface;
 
@@ -220,7 +220,7 @@ namespace Render
 	VkSampleCountFlagBits PhysicalDeviceLogic::GetMaxUsableSampleCount(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &physicalDevice = global->physicalDevice;
 
 		VkPhysicalDeviceProperties physicalDeviceProperties;

@@ -12,7 +12,7 @@ namespace Render
 	void DescriptorPoolLogic::Create(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		VkDescriptorPoolCreateInfo createInfo = {};
@@ -37,7 +37,7 @@ namespace Render
 	void DescriptorPoolLogic::Destroy(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 		auto &descriptorPool = global->descriptorPool;
 

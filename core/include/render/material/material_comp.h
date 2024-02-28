@@ -102,8 +102,5 @@ namespace Render
 		std::vector<std::shared_ptr<MaterialData>> deletes{};
 
 		std::unordered_map<std::string, std::shared_ptr<MaterialData>> globalInstanceMap{};
-
-		// instancing
-		std::shared_ptr<Buffer> instancingBuffer;
 	};
 }

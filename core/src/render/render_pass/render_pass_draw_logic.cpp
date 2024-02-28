@@ -88,7 +88,8 @@ namespace Render
         }
     }
 
-    static VkDeviceSize offsets[] = {0};
+    static VkDeviceSize defaultOffset[] = {0};
+
     static void DrawPipeline(Context *context, bool isShadow,
                              const std::string &pipelineName)
     {
@@ -124,7 +125,7 @@ namespace Render
                 continue;
 
             auto vertexBuffer = meshData->vertexBuffer;
-            vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, &vertexBuffer->vkBuffer, offsets);
+            vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, &vertexBuffer->vkBuffer, defaultOffset);
 
             auto indexBuffer = meshData->indexBuffer;
             vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);

@@ -67,7 +67,7 @@ namespace Render
 		auto &subpass = pass->subpasses[subpassIndex];
 
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto depthFormat = global->depthFormat;
 
 		VkAttachmentDescription depthAttachmentDescription = {};
@@ -94,7 +94,7 @@ namespace Render
 		auto &subpass = pass->subpasses[subpassIndex];
 
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto depthStencilFormat = global->depthStencilFormat;
 
 		VkAttachmentDescription depthAttachmentDescription = {};
@@ -134,7 +134,7 @@ namespace Render
 		auto &subpass = pass->subpasses[subpassIndex];
 
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto surfaceFormat = global->surfaceFormat;
 
 		VkAttachmentDescription resolveAttachmentDescription = {};

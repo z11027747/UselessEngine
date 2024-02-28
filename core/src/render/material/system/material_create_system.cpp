@@ -52,7 +52,6 @@ namespace Render
 
         MaterialLogic::CreateCache(context);
 
-
         // post-process global instance
         auto postProcessSSAOInstance = MaterialLogic::Create(context, Define::Pipeline::PostProcess_SSAO);
         auto postProcessToonMappingInstance = MaterialLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping);

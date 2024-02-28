@@ -13,7 +13,7 @@ namespace Render
 							   bool enabledDebug)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 
 		VkInstanceCreateInfo instanceCreateInfo = {};
 		instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO; // 最后会转成void*存，需要定义类型
@@ -53,14 +53,14 @@ namespace Render
 	void InstanceLogic::Destroy(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		vkDestroyInstance(global->instance, nullptr);
 	}
 
 	void InstanceLogic::CreateDebugCallback(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &instance = global->instance;
 
 		VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
@@ -82,7 +82,7 @@ namespace Render
 	void InstanceLogic::DestroyDebugCallback(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &instance = global->instance;
 		auto &debugUtilsMessenger = global->debugUtilsMessenger;
 

@@ -13,7 +13,7 @@ namespace Render
 													   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &currentExtent = global->surfaceCapabilities.currentExtent;
 
 		auto &stageInfo = graphicsPipeline->stageInfo;

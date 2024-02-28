@@ -11,7 +11,7 @@ namespace Render
 	{
 		auto &window = context->window;
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &instance = global->instance;
 
 		VkSurfaceKHR surface;
@@ -24,7 +24,7 @@ namespace Render
 	void SurfaceLogic::Destroy(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &instance = global->instance;
 		auto &surface = global->surface;
 
@@ -36,7 +36,7 @@ namespace Render
 									uint32_t queueFamilyIndex)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &surface = global->surface;
 
 		VkBool32 support;

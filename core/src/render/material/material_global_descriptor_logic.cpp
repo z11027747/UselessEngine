@@ -17,7 +17,7 @@ namespace Render
     void MaterialGlobalDescriptorLogic::Create(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
-        auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
         auto &logicalDevice = global->logicalDevice;
         auto swapchainImageCount = global->swapchainImageCount;
 
@@ -69,7 +69,7 @@ namespace Render
     void MaterialGlobalDescriptorLogic::Destroy(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
-        auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 
         DescriptorSetLayoutLogic::Destroy(context, global->globalDescriptorSetLayout);
         BufferLogic::Destroy(context, global->globalBuffer);

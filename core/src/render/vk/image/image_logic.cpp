@@ -38,7 +38,7 @@ namespace Render
 							std::shared_ptr<Image> image, ImageCreateInfo &createInfo)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		VkImageCreateInfo vkCreateInfo = {};
@@ -86,7 +86,7 @@ namespace Render
 							 std::shared_ptr<Image> image)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyImage(logicalDevice, image->vkImage, nullptr);
@@ -103,7 +103,7 @@ namespace Render
 								VkImageViewType viewType, VkImageAspectFlags aspectMask, uint32_t layerCount, uint32_t mipLevels)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		auto format = image->format;
@@ -132,7 +132,7 @@ namespace Render
 								 std::shared_ptr<Image> image)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroyImageView(logicalDevice, image->vkImageView, nullptr);

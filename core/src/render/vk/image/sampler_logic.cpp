@@ -12,7 +12,7 @@ namespace Render
 								   uint32_t minMipLevels, uint32_t maxMipLevels)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		VkSamplerCreateInfo createInfo = {};
@@ -52,7 +52,7 @@ namespace Render
 	VkSampler SamplerLogic::CreateDepth(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		VkSamplerCreateInfo createInfo = {};
@@ -83,7 +83,7 @@ namespace Render
 	void SamplerLogic::Destroy(Context *context, VkSampler &sampler)
 	{
 		auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Render::Global>();
+		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
 
 		vkDestroySampler(logicalDevice, sampler, nullptr);
