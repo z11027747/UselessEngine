@@ -20,6 +20,6 @@ namespace Render
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
-        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
+        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialData>);
     };
 }

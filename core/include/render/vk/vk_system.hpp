@@ -17,10 +17,15 @@ namespace Render
         static void Destroy(Context *);
     };
 
-    class VkRenderSystem final
+    class VkBeginRenderSystem final
     {
     public:
-        static uint32_t BeginUpdate(Context *);
-        static void EndUpdate(Context *, uint32_t);
+        static void Update(Context *);
+    };
+
+    class VkEndRenderSystem final
+    {
+    public:
+        static void Update(Context *);
     };
 }

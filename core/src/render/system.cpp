@@ -28,13 +28,16 @@ namespace Render
 		MaterialInstanceUpdateSystem::Update(context);
 		MaterialGlobalUBOUpdateSystem::Update(context);
 		MaterialUBOUpdateSystem::Update(context);
-		auto imageIndex = VkRenderSystem::BeginUpdate(context);
-		ShadowPassRenderSystem::Update(context, imageIndex);
-		ForwardPassRenderSystem::Update(context, imageIndex);
-		DeferredPassRenderSystem::Update(context, imageIndex);
-		PostProcessPassRenderSystem::Update(context, imageIndex);
-		ImGuiPassRenderSystem::Update(context, imageIndex);
-		VkRenderSystem::EndUpdate(context, imageIndex);
+
+		VkBeginRenderSystem::Update(context);
+		{
+			ShadowPassRenderSystem::Update(context);
+			ForwardPassRenderSystem::Update(context);
+			DeferredPassRenderSystem::Update(context);
+			PostProcessPassRenderSystem::Update(context);
+			ImGuiPassRenderSystem::Update(context);
+		}
+		VkEndRenderSystem::Update(context);
 	}
 	void System::Destroy(Context *context)
 	{

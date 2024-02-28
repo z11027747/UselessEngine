@@ -12,7 +12,7 @@
 namespace Logic
 {
     HitRay HitRayCheckLogic::CalcRayFromNdc(Context *context,
-                                             float ndcX, float ndcY)
+                                            float ndcX, float ndcY)
     {
         auto worldPos_near = CameraLogic::TransformNdcToWorld(context, glm::vec3(ndcX, ndcY, 0.0f));
         auto worldPos_far = CameraLogic::TransformNdcToWorld(context, glm::vec3(ndcX, ndcY, 1.0f));
@@ -76,8 +76,9 @@ namespace Logic
         auto hitTransform = hitEO->GetComponent<Transform>();
         auto hitMesh = hitEO->GetComponent<Render::Mesh>();
 
-        auto &meshInstance = hitMesh->instance;
-        auto &boundingSphere = meshInstance->boundingSphere;
+        auto &meshData = hitMesh->data;
+        auto &boundingSphere = meshData->boundingSphere;
+
         auto position = boundingSphere.center + hitTransform->worldPosition;
         auto radius = boundingSphere.radius * hitTransform->worldScale.x;
 

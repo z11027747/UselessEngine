@@ -8,24 +8,21 @@
 
 namespace Render
 {
-    uint32_t VkRenderSystem::BeginUpdate(Context *context)
+    void VkBeginRenderSystem::Update(Context *context)
     {
         CmdSubmitLogic::BatchAll(context);
-
         BufferLogic::DestroyAllTemps(context);
         CmdPoolLogic::DestroyAllTempBuffers(context);
 
         SwapchainLogic::WaitFence(context);
 
-        auto imageIndex = SwapchainLogic::AcquireImageIndex(context);
+        SwapchainLogic::AcquireImageIndex(context);
         SwapchainLogic::BeginCmd(context);
-
-        return imageIndex;
     }
 
-    void VkRenderSystem::EndUpdate(Context *context, uint32_t imageIndex)
+    void VkEndRenderSystem::Update(Context *context)
     {
         SwapchainLogic::EndAndSubmitCmd(context);
-        SwapchainLogic::Present(context, imageIndex);
+        SwapchainLogic::Present(context);
     }
 }

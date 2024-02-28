@@ -29,9 +29,9 @@ namespace Render
 
     struct VertexInstance final
     {
-        glm::vec3 pos;
-        glm::vec3 eul;
-        float scale{1.0f};
+        alignas(16) glm::vec3 pos;
+        alignas(16) glm::vec3 eul;
+        alignas(4) float scale{1.0f};
     };
 
     struct BoundingSphere final
@@ -49,7 +49,7 @@ namespace Render
         bool hasChanged{false};
     };
 
-    struct MeshInstance final
+    struct MeshData final
     {
         int id;
         std::shared_ptr<MeshInfo> info; // ref
@@ -65,17 +65,17 @@ namespace Render
         inline static std::string type{"Render::Mesh"};
 
         std::shared_ptr<MeshInfo> info{std::make_shared<MeshInfo>()};
-        std::shared_ptr<MeshInstance> instance;
+        std::shared_ptr<MeshData> data;
     };
 
-    struct MeshInstanceCache final
+    struct MeshCache final
     {
-        inline static std::string type{"Render::MeshInstanceCache"};
+        inline static std::string type{"Render::MeshCache"};
 
-        std::unordered_map<std::string, std::shared_ptr<MeshInstance>> sharedMap{};
-        std::vector<std::shared_ptr<MeshInstance>> deletes{};
+        std::unordered_map<std::string, std::shared_ptr<MeshData>> sharedMap{};
+        std::vector<std::shared_ptr<MeshData>> deletes{};
 
-        //gpu instancing
+        // gpu instancing
         std::vector<VertexInstance> vertexInstances{};
         std::shared_ptr<Buffer> vertexInstanceBuffer;
     };

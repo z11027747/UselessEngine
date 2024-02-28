@@ -18,24 +18,20 @@ namespace Render
         static void OnRemove(Context *, std::shared_ptr<EngineObject>);
 
         static bool IsShared(Context *, std::shared_ptr<Mesh>);
-        static void TryDestroyEO(Context *, std::shared_ptr<EngineObject>);
-    };
 
-    class MeshInstanceLogic final
-    {
-    public:
+        static void TryDestroyEO(Context *, std::shared_ptr<EngineObject>);
+        static void SetDestroy(Context *, std::shared_ptr<MeshData>);
+        static void Destroy(Context *, std::shared_ptr<MeshData>);
+
+        static std::shared_ptr<MeshData> Get(Context *, std::shared_ptr<MeshInfo>);
+        static std::shared_ptr<MeshData> Create(Context *, std::shared_ptr<MeshInfo>);
+
+        static void LoadObj(Context *, std::shared_ptr<MeshData>);
+        static void CalcBoundingSphere(Context *, std::shared_ptr<MeshData>);
+        static void CreateBuffer(Context *, std::shared_ptr<MeshData>);
+
         static void CreateCache(Context *context);
         static void DestroyCache(Context *context);
-
-        static std::shared_ptr<MeshInstance> Get(Context *, std::shared_ptr<MeshInfo>);
-        static std::shared_ptr<MeshInstance> Create(Context *, std::shared_ptr<MeshInfo>);
-
-        static void Destroy(Context *, std::shared_ptr<MeshInstance>);
-        static void SetDestroy(Context *, std::shared_ptr<MeshInstance>);
-
-        static void LoadObj(Context *, std::shared_ptr<MeshInstance>);
-        static void CalcBoundingSphere(Context *, std::shared_ptr<MeshInstance>);
-        static void CreateBuffer(Context *, std::shared_ptr<MeshInstance>);
 
         static void CreateVertexInstances(Context *);
         static void UpdateVertexInstanceBuffer(Context *);

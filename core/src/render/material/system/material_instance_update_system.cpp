@@ -19,19 +19,18 @@ namespace Render
             if (info->pipelineName.empty())
                 continue;
 
-            if (material->instance == nullptr)
+            if (material->data == nullptr)
             {
-                material->instance = MaterialInstanceLogic::Create(context, info);
+                material->data = MaterialLogic::Create(context, info);
             }
 
             if (info->hasChanged)
             {
-                auto &oldInstance = material->instance;
-                oldInstance->info = nullptr;
-                MaterialInstanceLogic::SetDestroy(context, oldInstance);
+                auto &oldData = material->data;
+                oldData->info = nullptr;
+                MaterialLogic::SetDestroy(context, oldData);
 
-                material->instance = MaterialInstanceLogic::Create(context,
-                                                                   info);
+                material->data = MaterialLogic::Create(context, info);
 
                 info->hasChanged = false;
             }

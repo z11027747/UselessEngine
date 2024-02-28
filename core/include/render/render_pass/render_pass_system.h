@@ -21,26 +21,26 @@ namespace Render
     class ImGuiPassRenderSystem final
     {
     public:
-        static void Update(Context *, uint32_t);
+        static void Update(Context *);
     };
     class ShadowPassRenderSystem final
     {
     public:
-        static void Update(Context *, uint32_t);
+        static void Update(Context *);
     };
     class ForwardPassRenderSystem final
     {
     public:
-        static void Update(Context *, uint32_t);
+        static void Update(Context *);
     };
     class DeferredPassRenderSystem final
     {
     public:
-        static void Update(Context *, uint32_t);
+        static void Update(Context *);
     };
     class PostProcessPassRenderSystem final
     {
     public:
-        static void Update(Context *, uint32_t);
+        static void Update(Context *);
     };
 };

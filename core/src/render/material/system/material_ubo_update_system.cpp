@@ -30,10 +30,9 @@ namespace Render
             if (materialInfo->params.size() > 1)
                 materialUBO.params1 = materialInfo->params[1];
 
-            auto &buffer = material->instance->buffer;
+            auto &materialBuffer = material->data->buffer;
             BufferSetLogic::Set(context,
-                                buffer,
-                                materialUBO);
+                                materialBuffer, materialUBO);
         }
     }
 }

@@ -50,25 +50,25 @@ namespace Render
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_Bloom, postProcessPass);
         PipelineLogic::Create(context, Define::Pipeline::PostProcess_Global, postProcessPass);
 
-        MaterialInstanceLogic::CreateCache(context);
+        MaterialLogic::CreateCache(context);
 
-        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
 
         // post-process global instance
-        auto postProcessSSAOInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_SSAO);
-        auto postProcessToonMappingInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping);
-        auto postProcessGaussBlurInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_GaussBlur);
-        auto postProcessBloomInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_Bloom);
-        auto postProcessGlobalInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::PostProcess_Global);
+        auto postProcessSSAOInstance = MaterialLogic::Create(context, Define::Pipeline::PostProcess_SSAO);
+        auto postProcessToonMappingInstance = MaterialLogic::Create(context, Define::Pipeline::PostProcess_ToonMapping);
+        auto postProcessGaussBlurInstance = MaterialLogic::Create(context, Define::Pipeline::PostProcess_GaussBlur);
+        auto postProcessBloomInstance = MaterialLogic::Create(context, Define::Pipeline::PostProcess_Bloom);
+        auto postProcessGlobalInstance = MaterialLogic::Create(context, Define::Pipeline::PostProcess_Global);
 
-        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_SSAO] = postProcessSSAOInstance;
-        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_ToonMapping] = postProcessToonMappingInstance;
-        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_GaussBlur] = postProcessGaussBlurInstance;
-        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_Bloom] = postProcessBloomInstance;
-        instanceCache->globalInstanceMap[Define::Pipeline::PostProcess_Global] = postProcessGlobalInstance;
+        auto materialCache = globalEO->GetComponent<MaterialCache>();
+        materialCache->globalInstanceMap[Define::Pipeline::PostProcess_SSAO] = postProcessSSAOInstance;
+        materialCache->globalInstanceMap[Define::Pipeline::PostProcess_ToonMapping] = postProcessToonMappingInstance;
+        materialCache->globalInstanceMap[Define::Pipeline::PostProcess_GaussBlur] = postProcessGaussBlurInstance;
+        materialCache->globalInstanceMap[Define::Pipeline::PostProcess_Bloom] = postProcessBloomInstance;
+        materialCache->globalInstanceMap[Define::Pipeline::PostProcess_Global] = postProcessGlobalInstance;
 
         // deferred global instance
-        auto deferredShadingInstance = MaterialInstanceLogic::Create(context, Define::Pipeline::Deferred_Shading);
-        instanceCache->globalInstanceMap[Define::Pass::Deferred] = deferredShadingInstance;
+        auto deferredShadingInstance = MaterialLogic::Create(context, Define::Pipeline::Deferred_Shading);
+        materialCache->globalInstanceMap[Define::Pass::Deferred] = deferredShadingInstance;
     }
 }

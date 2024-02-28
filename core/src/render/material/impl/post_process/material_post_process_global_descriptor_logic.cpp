@@ -50,7 +50,7 @@ namespace Render
 
 	constexpr int imageCount = 4; // SSAO+toonmapping+gaussblur+bloom
 	void MaterialPostProcessGlobalDescriptorLogic::AllocateAndUpdate(Context *context,
-																	 std::shared_ptr<MaterialInstance> materialInstance)
+																	 std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -83,10 +83,10 @@ namespace Render
 									   }
 								   });
 
-		materialInstance->descriptor = descriptor;
+		data->descriptor = descriptor;
 	}
 	void MaterialPostProcessGlobalDescriptorLogic::Destroy(Context *context,
-														   std::shared_ptr<MaterialInstance> materialInstance)
+														   std::shared_ptr<MaterialData> data)
 	{
 	}
 }

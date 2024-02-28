@@ -61,7 +61,7 @@ namespace Render
 		return a + f * (b - a);
 	}
 	void MaterialPostProcessSSAODescriptorLogic::AllocateAndUpdate(Context *context,
-																   std::shared_ptr<MaterialInstance> instance)
+																   std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -94,17 +94,17 @@ namespace Render
 			deferredPass->inputImage2ds[3]->layout};
 		descriptor->imageInfos.push_back(gBufferDepthImageInfo);
 
-		if (instance->buffer != nullptr)
-			BufferLogic::Destroy(context, instance->buffer);
+		if (data->buffer != nullptr)
+			BufferLogic::Destroy(context, data->buffer);
 
 		// ubo
 		auto uboSize = sizeof(PostProcess_SSAOUBO);
-		MaterialInstanceLogic::CreateBuffer(context, instance, uboSize);
+		MaterialLogic::CreateBuffer(context, data, uboSize);
 
 		VkDescriptorBufferInfo bufferInfo = {
-			instance->buffer->vkBuffer,
+			data->buffer->vkBuffer,
 			0,
-			instance->buffer->size};
+			data->buffer->size};
 		descriptor->bufferInfos.push_back(bufferInfo);
 
 		DescriptorSetLogic::Update(context,
@@ -121,7 +121,7 @@ namespace Render
 																	   bindings[bufferIdx].descriptorType, descriptor->bufferInfos[0]);
 								   });
 
-		instance->descriptor = descriptor;
+		data->descriptor = descriptor;
 
 		// update ssaoUBO
 		PostProcess_SSAOUBO ssaoUBO = {};
@@ -155,13 +155,13 @@ namespace Render
 				0.0f);
 		}
 
-		auto &buffer = instance->buffer;
+		auto &buffer = data->buffer;
 		BufferSetLogic::Set(context,
 							buffer,
 							ssaoUBO);
 	}
 	void MaterialPostProcessSSAODescriptorLogic::Destroy(Context *context,
-														 std::shared_ptr<MaterialInstance> materialInstance)
+														 std::shared_ptr<MaterialData> data)
 	{
 	}
 }

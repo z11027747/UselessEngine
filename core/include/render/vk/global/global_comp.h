@@ -19,7 +19,7 @@ namespace Render
 
 		VkInstance instance;
 
-		bool enabledDebug;
+		bool enabledDebug{true};
 		VkDebugUtilsMessengerEXT debugUtilsMessenger;
 
 		VkPhysicalDevice physicalDevice;
@@ -40,8 +40,10 @@ namespace Render
 		std::vector<std::shared_ptr<Image>> swapchainImages;
 		std::vector<VkCommandBuffer> swapchainCmdBuffers;
 
-		uint32_t maxConcurrentFrame{2};
-		
+		const uint32_t maxConcurrentFrame = 2;
+
+		std::vector<uint32_t> swapchainImageIndexs;
+
 		uint32_t currFrame;
 		std::vector<VkFence> waitFences;
 		std::vector<VkSemaphore> presentCompleteSemaphores;

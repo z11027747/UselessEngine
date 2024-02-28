@@ -17,7 +17,7 @@ namespace Render
         }
         materialEOs.clear();
 
-        MaterialInstanceLogic::DestroyCache(context);
+        MaterialLogic::DestroyCache(context);
         
         MaterialGlobalDescriptorLogic::Destroy(context);
 

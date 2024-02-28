@@ -29,12 +29,12 @@ namespace Render
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 	void MaterialSkyboxDescriptorLogic::AllocateAndUpdate(Context *context,
-														  std::shared_ptr<MaterialInstance> instance)
+														  std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 
-		auto &info = instance->info;
+		auto &info = data->info;
 		auto &graphicsPipeline = global->pipelineMap[info->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
@@ -45,11 +45,11 @@ namespace Render
 
 		VkDescriptorImageInfo imageInfo = {
 			global->globalSamplerClamp,
-			instance->images[0]->vkImageView,
-			instance->images[0]->layout};
+			data->images[0]->vkImageView,
+			data->images[0]->layout};
 		descriptor->imageInfos.push_back(imageInfo);
 
-		instance->descriptor = descriptor;
+		data->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
 								   [=](std::vector<VkWriteDescriptorSet> &writes)

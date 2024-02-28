@@ -10,7 +10,7 @@
 namespace Render
 {
 	void MaterialPostProcessPipelineLogic::SetViewport(Context *context,
-															std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+													   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();

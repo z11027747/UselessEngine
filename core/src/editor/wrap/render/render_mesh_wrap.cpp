@@ -57,12 +57,12 @@ namespace Editor
 			meshInfo->hasChanged = true;
 		}
 
-		auto &meshInstance = mesh->instance;
-		if (meshInstance != nullptr)
+		auto &meshData = mesh->data;
+		if (meshData != nullptr)
 		{
-			ImGui::Text("InstanceId: %d", meshInstance->id);
+			ImGui::Text("InstanceId: %d", meshData->id);
 
-			auto &boundingSphere = meshInstance->boundingSphere;
+			auto &boundingSphere = meshData->boundingSphere;
 
 			ImGui::Spacing();
 			ImGui::Text("BoundingSphere");

@@ -17,8 +17,8 @@ namespace Render
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 		auto &logicalDevice = global->logicalDevice;
-		auto swapchainImageCount = global->swapchainImageCount;
 
+		auto swapchainImageCount = global->swapchainImageCount;
 		for (auto i = 0u; i < swapchainImageCount; i++)
 		{
 			std::vector<VkImageView> attachments = {};
@@ -70,18 +70,18 @@ namespace Render
 	}
 
 	void FramebufferLogic::BeginRenderPass(Context *context,
-										   uint32_t imageIndex, std::shared_ptr<Pass> pass)
+										   std::shared_ptr<Pass> pass)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
-		auto &surfaceCapabilities = global->surfaceCapabilities;
+
 		auto currFrame = global->currFrame;
 		auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
-
-		auto &renderPass = pass->renderPass;
-		auto &frameBuffer = pass->frameBuffers[imageIndex];
+		auto imageIndex = global->swapchainImageIndexs[currFrame];
 
 		auto &clearValues = pass->clearValues;
+		auto &renderPass = pass->renderPass;
+		auto &frameBuffer = pass->frameBuffers[imageIndex];
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

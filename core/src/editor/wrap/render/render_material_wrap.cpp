@@ -122,7 +122,7 @@ namespace Editor
 			return;
 		}
 
-		ImGui::Text("InstanceId: %d", material->instance->id);
+		ImGui::Text("InstanceId: %d", material->data->id);
 
 		auto &info = material->info;
 		if (ImGui::Combo("##pipelineNames",

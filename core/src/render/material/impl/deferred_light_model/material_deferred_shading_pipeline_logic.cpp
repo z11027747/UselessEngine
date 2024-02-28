@@ -17,10 +17,4 @@ namespace Render
         auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
         rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
     }
-	void MaterialDeferredShadingPipelineLogic::SetDepthStencilCreateInfo(Context *context,
-															   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-		auto &stageInfo = graphicsPipeline->stageInfo;
-
-	}
 }

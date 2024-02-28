@@ -12,27 +12,27 @@ class Context;
 
 namespace Render
 {
-    void ShadowPassRenderSystem::Update(Context *context, uint32_t imageIndex)
+    void ShadowPassRenderSystem::Update(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
 
         auto &shadowPass = global->passMap[Define::Pass::Shadow];
-        FramebufferLogic::BeginRenderPass(context, imageIndex, shadowPass);
-
-        if (context->renderLightEOs.size() > 0)
+        FramebufferLogic::BeginRenderPass(context, shadowPass);
         {
-            auto &directionLightEO = context->renderLightEOs[0];
-            if (directionLightEO->HasComponent<Render::DirectionLight>())
+            if (context->renderLightEOs.size() > 0)
             {
-                auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
-                if (directionLightEO->active && directionLight->hasShadow)
+                auto &directionLightEO = context->renderLightEOs[0];
+                if (directionLightEO->HasComponent<Render::DirectionLight>())
                 {
-                    RenderPassLogic::Draw(context, true);
+                    auto directionLight = directionLightEO->GetComponent<Render::DirectionLight>();
+                    if (directionLightEO->active && directionLight->hasShadow)
+                    {
+                        RenderPassLogic::Draw(context, true);
+                    }
                 }
             }
         }
-
         FramebufferLogic::EndRenderPass(context);
     }
 }

@@ -54,9 +54,9 @@ namespace Render
             DescriptorSetLayoutLogic::Destroy(context, descriptorSetLayout);
     }
     void MaterialDescriptorLogic::AllocateAndUpdate(Context *context,
-                                                    std::shared_ptr<MaterialInstance> instance)
+                                                    std::shared_ptr<MaterialData> data)
     {
-        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialInstance>)>>
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialData>)>>
             funcMap{
                 {Define::Pipeline::Color, MaterialColorDescriptorLogic::AllocateAndUpdate},
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::AllocateAndUpdate},
@@ -73,15 +73,15 @@ namespace Render
                 {Define::Pipeline::Skybox, MaterialSkyboxDescriptorLogic::AllocateAndUpdate},
             };
 
-        auto &name = instance->info->pipelineName;
+        auto &name = data->info->pipelineName;
         auto it = funcMap.find(name);
         if (it != funcMap.end())
-            funcMap[name](context, instance);
+            funcMap[name](context, data);
     }
     void MaterialDescriptorLogic::Destroy(Context *context,
-                                          std::shared_ptr<MaterialInstance> instance)
+                                          std::shared_ptr<MaterialData> data)
     {
-        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialInstance>)>>
+        static std::unordered_map<std::string, std::function<void(Context *, std::shared_ptr<MaterialData>)>>
             funcMap{
                 {Define::Pipeline::LightModel, MaterialLightModelDescriptorLogic::Destroy},
                 {Define::Pipeline::Dissolve, MaterialDissolveDescriptorLogic::Destroy},
@@ -95,12 +95,12 @@ namespace Render
                 {Define::Pipeline::PostProcess_Global, MaterialPostProcessGlobalDescriptorLogic::Destroy},
             };
 
-        if (instance->info == nullptr)
+        if (data->info == nullptr)
             return;
 
-        auto &name = instance->info->pipelineName;
+        auto &name = data->info->pipelineName;
         auto it = funcMap.find(name);
         if (it != funcMap.end())
-            funcMap[name](context, instance);
+            funcMap[name](context, data);
     }
 }

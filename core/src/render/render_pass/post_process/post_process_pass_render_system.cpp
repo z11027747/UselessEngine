@@ -64,8 +64,8 @@ namespace Render
         auto &pipelineLayout = graphicsPipeline->pipelineLayout;
         vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-        auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
-        auto &instanceDescriptor = instanceCache->globalInstanceMap[graphicsPipeline->name]->descriptor;
+        auto materialCache = globalEO->GetComponent<MaterialCache>();
+        auto &instanceDescriptor = materialCache->globalInstanceMap[graphicsPipeline->name]->descriptor;
 
         std::vector<VkDescriptorSet> descriptorSets;
         descriptorSets.push_back(globalDescriptor->set);
@@ -86,7 +86,7 @@ namespace Render
                      graphicsPipeline, glm::vec4());
     }
 
-    void PostProcessPassRenderSystem::Update(Context *context, uint32_t imageIndex)
+    void PostProcessPassRenderSystem::Update(Context *context)
     {
         auto &mainCameraEO = context->logicMainCameraEO;
         auto postProcess = mainCameraEO->GetComponent<PostProcess>();
@@ -95,12 +95,13 @@ namespace Render
 
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
+
         auto &postProcessPass = global->passMap[Define::Pass::PostProcess];
 
         BlitResolveImage(context);
 
         // SSAO
-        FramebufferLogic::BeginRenderPass(context, imageIndex, postProcessPass);
+        FramebufferLogic::BeginRenderPass(context, postProcessPass);
         {
             auto &SSAOParams = postProcess->SSAOParams;
             auto &SSAOPipeline = global->pipelineMap[Define::Pipeline::PostProcess_SSAO];

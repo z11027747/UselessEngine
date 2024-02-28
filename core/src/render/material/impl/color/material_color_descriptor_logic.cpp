@@ -25,12 +25,12 @@ namespace Render
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 	void MaterialColorDescriptorLogic::AllocateAndUpdate(Context *context,
-														 std::shared_ptr<MaterialInstance> instance)
+														 std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 
-		auto &info = instance->info;
+		auto &info = data->info;
 		auto &graphicsPipeline = global->pipelineMap[info->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
@@ -40,12 +40,12 @@ namespace Render
 		descriptor->set = descriptorSet;
 
 		VkDescriptorBufferInfo bufferInfo = {
-			instance->buffer->vkBuffer,
+			data->buffer->vkBuffer,
 			0,
-			instance->buffer->size};
+			data->buffer->size};
 		descriptor->bufferInfos.push_back(bufferInfo);
 
-		instance->descriptor = descriptor;
+		data->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
 								   [=](std::vector<VkWriteDescriptorSet> &writes)

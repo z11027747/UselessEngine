@@ -17,35 +17,35 @@ namespace Render
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
-        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
-        static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
+        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialData>);
+        static void Destroy(Context *, std::shared_ptr<MaterialData>);
     };
     class MaterialPostProcessToonMappingDescriptorLogic final
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
-        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
-        static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
+        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialData>);
+        static void Destroy(Context *, std::shared_ptr<MaterialData>);
     };
     class MaterialPostProcessGaussBlurDescriptorLogic final
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
-        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
-        static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
+        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialData>);
+        static void Destroy(Context *, std::shared_ptr<MaterialData>);
     };
     class MaterialPostProcessBloomDescriptorLogic final
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
-        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
-        static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
+        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialData>);
+        static void Destroy(Context *, std::shared_ptr<MaterialData>);
     };
     class MaterialPostProcessGlobalDescriptorLogic final
     {
     public:
         static void CreateSetLayout(Context *, std::shared_ptr<GraphicsPipeline>);
-        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialInstance>);
-        static void Destroy(Context *, std::shared_ptr<MaterialInstance>);
+        static void AllocateAndUpdate(Context *, std::shared_ptr<MaterialData>);
+        static void Destroy(Context *, std::shared_ptr<MaterialData>);
     };
 }

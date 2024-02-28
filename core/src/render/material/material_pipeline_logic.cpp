@@ -106,7 +106,6 @@ namespace Render
                 {Define::Pipeline::LightModel, MaterialLightModelPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::PBR_Simplest, MaterialPBRSimplestPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_LightModel, MaterialDeferredLightModelPipelineLogic::SetDepthStencilCreateInfo},
-                {Define::Pipeline::Deferred_Shading, MaterialDeferredShadingPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_Volumn, MaterialDeferredVolumnPipelineLogic::SetDepthStencilCreateInfo},
                 {Define::Pipeline::Deferred_PointLight, MaterialDeferredPointLightPipelineLogic::SetDepthStencilCreateInfo},
             };

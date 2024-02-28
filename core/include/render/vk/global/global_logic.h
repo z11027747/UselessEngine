@@ -87,12 +87,12 @@ namespace Render
         static void DestroySemaphores(Context *);
 
         static void WaitFence(Context *);
-        static uint32_t AcquireImageIndex(Context *);
+        static void AcquireImageIndex(Context *);
 
         static void AllocateCmd(Context *);
         static VkCommandBuffer &BeginCmd(Context *);
         static void EndAndSubmitCmd(Context *);
-        static void Present(Context *, uint32_t);
+        static void Present(Context *);
     };
 
     class DescriptorPoolLogic final

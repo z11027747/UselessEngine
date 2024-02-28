@@ -47,12 +47,12 @@ namespace Render
 
 	constexpr int imageSize = 3; // albedo+dissolve+ramp
 	void MaterialDissolveDescriptorLogic::AllocateAndUpdate(Context *context,
-															std::shared_ptr<MaterialInstance> instance)
+															std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
 
-		auto &info = instance->info;
+		auto &info = data->info;
 		auto &graphicsPipeline = global->pipelineMap[info->pipelineName];
 		auto &descriptorSetLayout = graphicsPipeline->descriptorSetLayout;
 
@@ -63,24 +63,24 @@ namespace Render
 
 		for (auto i = 0; i < imageSize; i++)
 		{
-			auto &image = instance->images[i];
+			auto &image = data->images[i];
 			auto imageSamplerWithMipMap = SamplerLogic::Create(context, false,
 															   0, image->mipLevels);
 
 			VkDescriptorImageInfo imageInfo = {
 				imageSamplerWithMipMap,
-				instance->images[i]->vkImageView,
-				instance->images[i]->layout};
+				data->images[i]->vkImageView,
+				data->images[i]->layout};
 			descriptor->imageInfos.push_back(imageInfo);
 		}
 
 		VkDescriptorBufferInfo bufferInfo = {
-			instance->buffer->vkBuffer,
+			data->buffer->vkBuffer,
 			0,
-			instance->buffer->size};
+			data->buffer->size};
 		descriptor->bufferInfos.push_back(bufferInfo);
 
-		instance->descriptor = descriptor;
+		data->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
 								   [=](std::vector<VkWriteDescriptorSet> &writes)
@@ -97,9 +97,9 @@ namespace Render
 								   });
 	}
 	void MaterialDissolveDescriptorLogic::Destroy(Context *context,
-												  std::shared_ptr<MaterialInstance> instance)
+												  std::shared_ptr<MaterialData> data)
 	{
-		auto &descriptor = instance->descriptor;
+		auto &descriptor = data->descriptor;
 		for (auto i = 0; i < imageSize; i++)
 		{
 			SamplerLogic::Destroy(context, descriptor->imageInfos[i].sampler);

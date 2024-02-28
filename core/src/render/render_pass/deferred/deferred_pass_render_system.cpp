@@ -32,7 +32,7 @@ namespace Render
         vkCmdDraw(vkCmdBuffer, 3, 1, 0, 0);
     }
 
-    void DeferredPassRenderSystem::Update(Context *context, uint32_t imageIndex)
+    void DeferredPassRenderSystem::Update(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -44,15 +44,16 @@ namespace Render
         auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
         if (mainCameraEO->active && mainCamera->passName == Define::Pass::Deferred)
         {
-            auto currFrame = global->currFrame;
-            auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
             auto &deferredPass = global->passMap[Define::Pass::Deferred];
 
-            auto instanceCache = globalEO->GetComponent<MaterialInstanceCache>();
-            auto &deferredDescriptor = instanceCache->globalInstanceMap[Define::Pass::Deferred]->descriptor;
+            auto currFrame = global->currFrame;
+            auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
+
+            auto materialCache = globalEO->GetComponent<MaterialCache>();
+            auto &deferredDescriptor = materialCache->globalInstanceMap[Define::Pass::Deferred]->descriptor;
 
             // subpass0: geometryPass
-            FramebufferLogic::BeginRenderPass(context, imageIndex, deferredPass);
+            FramebufferLogic::BeginRenderPass(context, deferredPass);
             {
                 RenderPassLogic::Draw(context, false);
             }

@@ -23,7 +23,7 @@ namespace Render
 		VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
 		swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		swapchainCreateInfo.surface = surface;
-		swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount;// + 1;
+		swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + 1;
 		swapchainCreateInfo.imageFormat = surfaceFormat.format;
 		swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
 		swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
@@ -75,6 +75,7 @@ namespace Render
 			global->swapchainImages.push_back(swapchainImage2d);
 		}
 		global->swapchainImageCount = swapchainImageCount;
+		global->swapchainImageIndexs.resize(global->maxConcurrentFrame);
 	}
 
 	void SwapchainLogic::DestroyImageViews(Context *context)
@@ -192,21 +193,21 @@ namespace Render
 		vkResetFences(logicalDevice, 1, &waitFence);
 	}
 
-	uint32_t SwapchainLogic::AcquireImageIndex(Context *context)
+	void SwapchainLogic::AcquireImageIndex(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
 		auto &logicalDevice = global->logicalDevice;
+
 		auto &swapchain = global->swapchain;
+
 		auto currFrame = global->currFrame;
+		auto &imageIndex = global->swapchainImageIndexs[currFrame];
 		auto &presentCompleteSemaphore = global->presentCompleteSemaphores[currFrame];
 
-		uint32_t imageIndex;
 		auto acquireNextRet = vkAcquireNextImageKHR(logicalDevice, swapchain, UINT64_MAX,
 													presentCompleteSemaphore, nullptr, &imageIndex);
 		CheckRet(acquireNextRet, "vkAcquireNextImageKHR");
-
-		return imageIndex;
 	}
 
 	void SwapchainLogic::AllocateCmd(Context *context)
@@ -268,7 +269,7 @@ namespace Render
 		CheckRet(submitRet, "vkQueueSubmit");
 	}
 
-	void SwapchainLogic::Present(Context *context, uint32_t imageIndex)
+	void SwapchainLogic::Present(Context *context)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Render::Global>();
@@ -277,6 +278,7 @@ namespace Render
 
 		auto maxConcurrentFrame = global->maxConcurrentFrame;
 		auto &currFrame = global->currFrame;
+		auto &imageIndex = global->swapchainImageIndexs[currFrame];
 		auto &renderCompleteSemaphore = global->renderCompleteSemaphores[currFrame];
 
 		VkPresentInfoKHR presentInfo = {};

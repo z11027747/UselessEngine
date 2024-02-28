@@ -12,12 +12,13 @@ class Context;
 
 namespace Render
 {
-    void ImGuiPassRenderSystem::Update(Context *context, uint32_t imageIndex)
+    void ImGuiPassRenderSystem::Update(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
+
         auto &imGuiPass = global->passMap[Define::Pass::ImGui];
-        FramebufferLogic::BeginRenderPass(context, imageIndex, imGuiPass);
+        FramebufferLogic::BeginRenderPass(context, imGuiPass);
         {
             Editor::ImGuiRenderPassLogic::Draw(context);
         }

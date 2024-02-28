@@ -77,7 +77,7 @@ namespace Render
 		bool hasChanged{false};
 	};
 
-	struct MaterialInstance final
+	struct MaterialData final
 	{
 		int id;
 		std::shared_ptr<MaterialInfo> info{nullptr};  // ref
@@ -91,19 +91,19 @@ namespace Render
 		inline static std::string type{"Render::Material"};
 
 		std::shared_ptr<MaterialInfo> info{std::make_shared<MaterialInfo>()};
-		std::shared_ptr<MaterialInstance> instance;
+		std::shared_ptr<MaterialData> data;
 	};
 
-	struct MaterialInstanceCache final
+	struct MaterialCache final
 	{
-		inline static std::string type{"Render::MaterialInstanceCache"};
+		inline static std::string type{"Render::MaterialCache"};
 
 		std::unordered_map<std::string, std::shared_ptr<Image>> sharedImageMap{};
-		std::vector<std::shared_ptr<MaterialInstance>> deletes{};
+		std::vector<std::shared_ptr<MaterialData>> deletes{};
 
-		std::unordered_map<std::string, std::shared_ptr<MaterialInstance>> globalInstanceMap{};
-		
-		//instancing
+		std::unordered_map<std::string, std::shared_ptr<MaterialData>> globalInstanceMap{};
+
+		// instancing
 		std::shared_ptr<Buffer> instancingBuffer;
 	};
 }

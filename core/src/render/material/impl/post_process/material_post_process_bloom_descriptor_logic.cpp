@@ -31,7 +31,7 @@ namespace Render
 	}
 
 	void MaterialPostProcessBloomDescriptorLogic::AllocateAndUpdate(Context *context,
-																	std::shared_ptr<MaterialInstance> materialInstance)
+																	std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -58,10 +58,10 @@ namespace Render
 																	  bindings[0].descriptorType, descriptor->imageInfos[0]);
 								   });
 
-		materialInstance->descriptor = descriptor;
+		data->descriptor = descriptor;
 	}
 	void MaterialPostProcessBloomDescriptorLogic::Destroy(Context *context,
-														  std::shared_ptr<MaterialInstance> materialInstance)
+														  std::shared_ptr<MaterialData> data)
 	{
 	}
 }

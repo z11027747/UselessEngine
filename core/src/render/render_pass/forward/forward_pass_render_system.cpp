@@ -12,7 +12,7 @@ class Context;
 
 namespace Render
 {
-    void ForwardPassRenderSystem::Update(Context *context, uint32_t imageIndex)
+    void ForwardPassRenderSystem::Update(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto global = globalEO->GetComponent<Global>();
@@ -25,7 +25,7 @@ namespace Render
         if (mainCameraEO->active && mainCamera->passName == Define::Pass::Forward)
         {
             auto &forwardPass = global->passMap[Define::Pass::Forward];
-            FramebufferLogic::BeginRenderPass(context, imageIndex, forwardPass);
+            FramebufferLogic::BeginRenderPass(context, forwardPass);
             {
                 RenderPassLogic::Draw(context, false);
             }

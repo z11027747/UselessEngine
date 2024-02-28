@@ -17,6 +17,6 @@ namespace Render
         }
         meshEOs.clear();
 
-        MeshInstanceLogic::DestroyCache(context);
+        MeshLogic::DestroyCache(context);
     }
 }

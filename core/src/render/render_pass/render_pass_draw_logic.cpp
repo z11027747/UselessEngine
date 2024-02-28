@@ -111,47 +111,40 @@ namespace Render
         for (const auto &materialEO : materialEOs)
         {
             auto transform = materialEO->GetComponent<Logic::Transform>();
-            auto &model = transform->model;
+            auto &transformModel = transform->model;
 
             auto mesh = materialEO->GetComponent<Render::Mesh>();
-            auto &meshInstance = mesh->instance;
             auto &meshInfo = mesh->info;
+            auto &meshData = mesh->data;
 
             auto material = materialEO->GetComponent<Render::Material>();
-            auto &materialInstance = material->instance;
             auto &materialInfo = material->info;
+            auto &materialData = material->data;
             if (isShadow && !materialInfo->castShadow)
                 continue;
 
-            auto vertexBuffer = meshInstance->vertexBuffer;
+            auto vertexBuffer = meshData->vertexBuffer;
             vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, &vertexBuffer->vkBuffer, offsets);
 
-            // if (useInstancing)
-            // {
-            //     auto instanceCache = globalEO->GetComponent<MeshInstanceCache>();
-            //     auto &vertexInstanceBuffer = instanceCache->vertexInstanceBuffer;
-            //     vkCmdBindVertexBuffers(vkCmdBuffer, 1, 1, &vertexInstanceBuffer->vkBuffer, offsets);
-            // }
-
-            auto indexBuffer = meshInstance->indexBuffer;
+            auto indexBuffer = meshData->indexBuffer;
             vkCmdBindIndexBuffer(vkCmdBuffer, indexBuffer->vkBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-            vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &model);
+            vkCmdPushConstants(vkCmdBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &transformModel);
 
             std::vector<VkDescriptorSet> descriptorSets;
             descriptorSets.push_back(global->globalDescriptor->set);
 
             if (!isShadow)
             {
-                if (materialInstance->descriptor != nullptr)
-                    descriptorSets.push_back(materialInstance->descriptor->set);
+                if (materialData->descriptor != nullptr)
+                    descriptorSets.push_back(materialData->descriptor->set);
             }
 
             vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
                                     static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(),
                                     0, nullptr);
 
-            auto indexSize = static_cast<uint32_t>(meshInstance->indices.size());
+            auto indexSize = static_cast<uint32_t>(meshData->indices.size());
             vkCmdDrawIndexed(vkCmdBuffer, indexSize, 1, 0, 0, 0);
         }
     }

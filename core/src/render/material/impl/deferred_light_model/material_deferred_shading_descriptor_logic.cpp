@@ -66,7 +66,7 @@ namespace Render
 	constexpr int imageCount = 6; // shadow + gBuffer(position+normal+color+material+pointlight)
 
 	void MaterialDeferredShadingDescriptorLogic::AllocateAndUpdate(Context *context,
-																   std::shared_ptr<MaterialInstance> materialInstance)
+																   std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -108,12 +108,12 @@ namespace Render
 									   }
 								   });
 
-		materialInstance->descriptor = descriptor;
+		data->descriptor = descriptor;
 	}
 	void MaterialDeferredShadingDescriptorLogic::Destroy(Context *context,
-														 std::shared_ptr<MaterialInstance> materialInstance)
+														 std::shared_ptr<MaterialData> data)
 	{
-		auto &descriptor = materialInstance->descriptor;
+		auto &descriptor = data->descriptor;
 		SamplerLogic::Destroy(context, descriptor->imageInfos[0].sampler);
 	}
 }
