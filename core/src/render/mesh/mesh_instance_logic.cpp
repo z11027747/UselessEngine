@@ -37,5 +37,14 @@ namespace Render
         BufferSetLogic::SetVector(context,
                                   vertexInstanceBuffer, vertexInstances);
     }
+    void MeshLogic::DestroyVertexInstances(Context *context)
+    {
+        auto &globalEO = context->renderGlobalEO;
+        auto meshCache = globalEO->GetComponent<MeshCache>();
+
+        auto &vertexInstanceBuffer = meshCache->vertexInstanceBuffer;
+        BufferLogic::Destroy(context,
+                             vertexInstanceBuffer);
+    }
 
 }

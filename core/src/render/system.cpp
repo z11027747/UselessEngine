@@ -19,7 +19,6 @@ namespace Render
 		MaterialCreateSystem::Create(context);
 		MeshCreateSystem::Create(context);
 		LightCreateSystem::Create(context);
-		MeshCreateSystem::Create(context);
 		PostProcessCreateSystem::Create(context);
 	}
 	void System::Update(Context *context)

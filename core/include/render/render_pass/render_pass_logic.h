@@ -20,8 +20,6 @@ namespace Render
         static std::shared_ptr<Pass> CreateDeferred(Context *);
         static std::shared_ptr<Pass> CreatePostProcess(Context *);
 
-        static void DestroyAll(Context *);
-
         static void Draw(Context *, bool);
     };
 }

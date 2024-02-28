@@ -30,11 +30,12 @@ namespace Render
         static void CalcBoundingSphere(Context *, std::shared_ptr<MeshData>);
         static void CreateBuffer(Context *, std::shared_ptr<MeshData>);
 
-        static void CreateCache(Context *context);
-        static void DestroyCache(Context *context);
+        static void CreateCache(Context *);
+        static void DestroyCache(Context *);
 
         static void CreateVertexInstances(Context *);
         static void UpdateVertexInstanceBuffer(Context *);
+        static void DestroyVertexInstances(Context *);
     };
 
     class MeshJson final
