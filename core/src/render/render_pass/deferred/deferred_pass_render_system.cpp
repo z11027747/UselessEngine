@@ -50,7 +50,7 @@ namespace Render
             auto &vkCmdBuffer = global->swapchainCmdBuffers[currFrame];
 
             auto materialCache = globalEO->GetComponent<MaterialCache>();
-            auto &deferredDescriptor = materialCache->globalInstanceMap[Define::Pass::Deferred]->descriptor;
+            auto &deferredDescriptor = materialCache->globalDataMap[Define::Pass::Deferred]->descriptor;
 
             // subpass0: geometryPass
             FramebufferLogic::BeginRenderPass(context, deferredPass);

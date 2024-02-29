@@ -8,13 +8,13 @@
 
 namespace Render
 {
-    inline static void GetOrCreateInstance(Context *context,
-                                           std::shared_ptr<Render::Mesh> mesh, bool isShared)
+    inline static void GetOrCreateData(Context *context,
+                                       std::shared_ptr<Render::Mesh> mesh, bool isShared)
     {
         mesh->data = (isShared) ? MeshLogic::Get(context, mesh->info) : MeshLogic::Create(context, mesh->info);
     }
 
-    void MeshInstanceUpdateSystem::Update(Context *context)
+    void MeshDataUpdateSystem::Update(Context *context)
     {
         auto &meshEOs = context->renderMeshEOs;
         for (const auto &meshEO : meshEOs)
@@ -29,7 +29,7 @@ namespace Render
 
             if (mesh->data == nullptr)
             {
-                GetOrCreateInstance(context, mesh, isShared);
+                GetOrCreateData(context, mesh, isShared);
             }
 
             if (meshInfo->hasChanged)
@@ -37,7 +37,7 @@ namespace Render
                 if (!isShared)
                     MeshLogic::SetDestroy(context, mesh->data);
 
-                GetOrCreateInstance(context, mesh, isShared);
+                GetOrCreateData(context, mesh, isShared);
                 meshInfo->hasChanged = false;
             }
         }

@@ -9,7 +9,7 @@ namespace Render
     public:
         static void Create(Context *);
     };
-    class MeshInstanceUpdateSystem final
+    class MeshDataUpdateSystem final
     {
     public:
         static void Update(Context *context);

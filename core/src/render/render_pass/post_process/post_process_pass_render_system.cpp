@@ -65,11 +65,12 @@ namespace Render
         vkCmdBindPipeline(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
         auto materialCache = globalEO->GetComponent<MaterialCache>();
-        auto &instanceDescriptor = materialCache->globalInstanceMap[graphicsPipeline->name]->descriptor;
+        auto &postProcessData = materialCache->globalDataMap[graphicsPipeline->name]->descriptor;
 
         std::vector<VkDescriptorSet> descriptorSets;
         descriptorSets.push_back(globalDescriptor->set);
-        descriptorSets.push_back(instanceDescriptor->set);
+        descriptorSets.push_back(postProcessData->set);
+
         vkCmdBindDescriptorSets(vkCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
                                 static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(),
                                 0, nullptr);

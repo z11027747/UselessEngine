@@ -31,19 +31,19 @@ namespace Render
 
         // TODO 没用的应该及时删除
         auto &deletes = materialCache->deletes;
-        for (auto &instance : deletes)
+        for (auto &data : deletes)
         {
-            Destroy(context, instance);
+            Destroy(context, data);
         }
         deletes.clear();
 
-        auto &globalInstanceMap = materialCache->globalInstanceMap;
-        for (auto &kv : globalInstanceMap)
+        auto &globalDataMap = materialCache->globalDataMap;
+        for (auto &kv : globalDataMap)
         {
-            auto &globalInstance = kv.second;
-            Destroy(context, globalInstance);
+            auto &globalData = kv.second;
+            Destroy(context, globalData);
         }
-        globalInstanceMap.clear();
+        globalDataMap.clear();
 
         context->RemoveComponent<MaterialCache>(globalEO);
     }

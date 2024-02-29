@@ -75,8 +75,10 @@ namespace Render
         std::unordered_map<std::string, std::shared_ptr<MeshData>> sharedMap{};
         std::vector<std::shared_ptr<MeshData>> deletes{};
 
-        // gpu instancing
+		// instance
         std::vector<VertexInstance> vertexInstances{};
         std::shared_ptr<Buffer> vertexInstanceBuffer;
+        const uint32_t maxInstanceCount = 1024;
+        uint32_t currInstance;
     };
 }

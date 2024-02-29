@@ -9,14 +9,14 @@
 
 namespace Render
 {
-    constexpr int instanceCount = 1024;
     void MeshLogic::CreateVertexInstances(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
         auto meshCache = globalEO->GetComponent<MeshCache>();
 
         auto &vertexInstances = meshCache->vertexInstances;
-        vertexInstances.resize(instanceCount);
+        auto maxInstanceCount = meshCache->maxInstanceCount;
+        vertexInstances.resize(maxInstanceCount);
 
         auto vertexInstanceSize = static_cast<VkDeviceSize>(sizeof(VertexInstance) * vertexInstances.size());
 

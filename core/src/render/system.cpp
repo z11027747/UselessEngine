@@ -23,10 +23,11 @@ namespace Render
 	}
 	void System::Update(Context *context)
 	{
-		MeshInstanceUpdateSystem::Update(context);
-		MaterialInstanceUpdateSystem::Update(context);
+		MeshDataUpdateSystem::Update(context);
+		MaterialDataUpdateSystem::Update(context);
 		MaterialGlobalUBOUpdateSystem::Update(context);
 		MaterialUBOUpdateSystem::Update(context);
+		MaterialInstanceUpdateSystem::Update(context);
 
 		VkBeginRenderSystem::Update(context);
 		{

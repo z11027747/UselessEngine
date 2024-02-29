@@ -124,6 +124,9 @@ namespace Render
             if (isShadow && !materialInfo->castShadow)
                 continue;
 
+            if (material->useInstance)
+                continue;
+
             auto vertexBuffer = meshData->vertexBuffer;
             vkCmdBindVertexBuffers(vkCmdBuffer, 0, 1, &vertexBuffer->vkBuffer, defaultOffset);
 

@@ -72,7 +72,6 @@ namespace Render
 		bool isImageCube{false};
 		bool castShadow{false};
 		int renderQueue{Define::RenderQueue::Geometry};
-		bool useInstancing{false};
 
 		bool hasChanged{false};
 	};
@@ -92,6 +91,8 @@ namespace Render
 
 		std::shared_ptr<MaterialInfo> info{std::make_shared<MaterialInfo>()};
 		std::shared_ptr<MaterialData> data;
+
+		bool useInstance{false};
 	};
 
 	struct MaterialCache final
@@ -101,6 +102,9 @@ namespace Render
 		std::unordered_map<std::string, std::shared_ptr<Image>> sharedImageMap{};
 		std::vector<std::shared_ptr<MaterialData>> deletes{};
 
-		std::unordered_map<std::string, std::shared_ptr<MaterialData>> globalInstanceMap{};
+		std::unordered_map<std::string, std::shared_ptr<MaterialData>> globalDataMap{};
+
+		// instance
+		std::unordered_map<std::string, std::shared_ptr<MaterialData>> instanceDataMap{};
 	};
 }

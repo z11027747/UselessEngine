@@ -66,6 +66,7 @@ namespace Render
         auto &globalEO = context->renderGlobalEO;
         auto materialCache = globalEO->GetComponent<MaterialCache>();
 
+        data->info = nullptr;
         materialCache->deletes.push_back(data);
     }
 
