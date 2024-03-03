@@ -28,33 +28,33 @@ namespace Render
 			VK_FORMAT_R32G32B32_SFLOAT,
 			offsetof(Render::Vertex, color)};
 
-		// instancing
-		VkVertexInputAttributeDescription instancePosDescription = {
-			3, // location
-			1, // binding
-			VK_FORMAT_R32G32B32_SFLOAT,
-			offsetof(Render::VertexInstance, pos)};
-		VkVertexInputAttributeDescription instanceEulDescription = {
-			4, // location
-			1, // binding
-			VK_FORMAT_R32G32B32_SFLOAT,
-			offsetof(Render::VertexInstance, eul)};
-		VkVertexInputAttributeDescription instanceScaleDescription = {
-			5, // location
-			1, // binding
-			VK_FORMAT_R32_SFLOAT,
-			offsetof(Render::VertexInstance, scale)};
+		// // instancing
+		// VkVertexInputAttributeDescription instancePosDescription = {
+		// 	3, // location
+		// 	1, // binding
+		// 	VK_FORMAT_R32G32B32_SFLOAT,
+		// 	offsetof(Render::VertexInstance, pos)};
+		// VkVertexInputAttributeDescription instanceEulDescription = {
+		// 	4, // location
+		// 	1, // binding
+		// 	VK_FORMAT_R32G32B32_SFLOAT,
+		// 	offsetof(Render::VertexInstance, eul)};
+		// VkVertexInputAttributeDescription instanceScaleDescription = {
+		// 	5, // location
+		// 	1, // binding
+		// 	VK_FORMAT_R32_SFLOAT,
+		// 	offsetof(Render::VertexInstance, scale)};
 
 		auto &stageInfo = graphicsPipeline->stageInfo;
 		stageInfo.vertexInputAttributeDescriptions = {
 			positionOSDescription,
 			normalOSDescription,
 			colorDescription,
-
-			// instancing
-			instancePosDescription,
-			instanceEulDescription,
-			instanceScaleDescription};
+			// // instancing
+			// instancePosDescription,
+			// instanceEulDescription,
+			// instanceScaleDescription
+		};
 	}
 	void MaterialPBRSimplestPipelineLogic::SetRasterizationCreateInfo(Context *context,
 																	  std::shared_ptr<GraphicsPipeline> graphicsPipeline)

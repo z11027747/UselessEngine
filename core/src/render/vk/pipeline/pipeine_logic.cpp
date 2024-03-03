@@ -165,12 +165,12 @@ namespace Render
 
 		VkVertexInputBindingDescription bindingVertex = {
 			0, sizeof(Render::Vertex), VK_VERTEX_INPUT_RATE_VERTEX};
-		VkVertexInputBindingDescription bindingInstance = {
-			1, sizeof(Render::VertexInstance), VK_VERTEX_INPUT_RATE_INSTANCE};
+		// VkVertexInputBindingDescription bindingInstance = {
+		// 	1, sizeof(Render::VertexInstance), VK_VERTEX_INPUT_RATE_INSTANCE};
 
 		auto &vertexBindingDescriptions = stageInfo.vertexBindingDescriptions;
 		vertexBindingDescriptions.push_back(bindingVertex);
-		vertexBindingDescriptions.push_back(bindingInstance);
+		// vertexBindingDescriptions.push_back(bindingInstance);
 
 		vertexInputStateCreateInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(vertexBindingDescriptions.size());
 		vertexInputStateCreateInfo.pVertexBindingDescriptions = vertexBindingDescriptions.data();
