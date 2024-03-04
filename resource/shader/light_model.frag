@@ -33,7 +33,7 @@ void main() {
 
     float shadowAtten = CalcShadow(positionLS, shadowMap);
 
-    vec3 viewDir = normalize(globalUBO.camera.pos - positionWS);
+    vec3 viewDir = normalize(globalUBO.camera.pos.xyz - positionWS);
     vec3 directionLightCol = CalcDirectionLight(baseCol, viewDir, calcNormalWS, shadowAtten, materialUBO.params);
 
     vec3 pointLightsCol = vec3(0.0);

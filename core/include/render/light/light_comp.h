@@ -15,13 +15,12 @@ namespace Render
         bool hasShadow{true};
     };
 
+    // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
     struct PointLight final
     {
         inline static std::string type{"Render::PointLight"};
 
         glm::vec3 color;
-
-        // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
         glm::vec3 clq{1.0f, 0.7f, 1.8f};
         bool hasShadow{true};
     };

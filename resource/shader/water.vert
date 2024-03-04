@@ -56,7 +56,7 @@ void main() {
     vec3 positionWSAvg = (push.model * vec4(positionOSAvg, 1.0)).xyz;
 
     vec3 lightDir = normalize(vec3(-0.5, 0.7, -0.5));//normalize(directionLight.dir);
-    vec3 viewDir = normalize(globalUBO.camera.pos - positionWSAvg);
+    vec3 viewDir = normalize(globalUBO.camera.pos.xyz - positionWSAvg);
 
     float diffuseIntensity = materialUBO.params_light.x;
     float specualrShininess = materialUBO.params_light.y;

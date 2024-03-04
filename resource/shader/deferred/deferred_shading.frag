@@ -27,7 +27,7 @@ void main() {
    
     float shadowAtten = CalcShadow(positionLS, shadowMap);
 
-    vec3 viewDir = normalize(camera.pos - positionWS);
+    vec3 viewDir = normalize(camera.pos.xyz - positionWS);
     vec3 directionLightCol = CalcDirectionLight(baseCol, viewDir, normalWS, shadowAtten, materialParams);
 
     vec3 pointLightsCol = subpassLoad(pointlightAttachment).rgb;

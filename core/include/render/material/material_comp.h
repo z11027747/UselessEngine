@@ -14,48 +14,48 @@ namespace Render
 {
 	struct CameraUBO final
 	{
-		alignas(16) glm::vec3 pos;
-		alignas(16) glm::mat4 view;
-		alignas(16) glm::mat4 projection;
+		glm::vec4 pos;
+		glm::mat4 view;
+		glm::mat4 projection;
 	};
 
 	struct DirectionLightUBO final
 	{
-		alignas(16) glm::vec3 dir;
-		alignas(16) glm::mat4 view;
-		alignas(16) glm::mat4 projection;
-		alignas(16) glm::vec3 ambient;
-		alignas(16) glm::vec3 col;
+		glm::vec4 dir;
+		glm::mat4 view;
+		glm::mat4 projection;
+		glm::vec4 ambient;
+		glm::vec4 col;
 	};
 
 	struct PointLightUBO final
 	{
-		alignas(16) glm::vec3 pos;
-		// alignas(16) glm::mat4 view;
-		// alignas(16) glm::mat4 projection;
-		alignas(16) glm::vec3 col;
-		alignas(16) glm::vec3 clq;
+		glm::vec4 pos;
+		// glm::mat4 view;
+		// glm::mat4 projection;
+		glm::vec4 col;
+		glm::vec4 clq;
 	};
 
 	struct SpotLightUBO final
 	{
-		alignas(16) glm::vec3 dir;
-		alignas(16) glm::vec3 pos;
-		// alignas(16) glm::mat4 view;
-		// alignas(16) glm::mat4 projection;
-		alignas(16) glm::vec3 col;
-		alignas(16) glm::vec4 cutOff;
+		glm::vec4 dir;
+		glm::vec4 pos;
+		// glm::mat4 view;
+		// glm::mat4 projection;
+		glm::vec4 col;
+		glm::vec4 cutOff;
 	};
 
 	struct GlobalUBO final
 	{
-		alignas(16) CameraUBO camera;
-		alignas(16) DirectionLightUBO directionLight;
-		alignas(16) PointLightUBO pointLights[256];
-		alignas(4) int activePointLights;
-		alignas(16) SpotLightUBO spotLights[4];
-		alignas(4) int activeSpotLights;
-		alignas(4) float currTime;
+		CameraUBO camera;
+		DirectionLightUBO directionLight;
+		PointLightUBO pointLights[256];
+		int activePointLights;
+		SpotLightUBO spotLights[4];
+		int activeSpotLights;
+		float currTime;
 	};
 
 	struct MaterialUBO final

@@ -204,7 +204,7 @@ namespace Render
 		std::vector<VkPresentModeKHR> presentModes(presentModeCount);
 		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.data());
 
-		auto vsync = true;
+		auto vsync = false;
 		if (!vsync)
 		{
 			for (auto &presentMode : presentModes)

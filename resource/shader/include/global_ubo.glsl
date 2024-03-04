@@ -1,37 +1,37 @@
 
 struct CameraUBO {
-    vec3 pos;
+    vec4 pos; //xyz
     mat4 view;
     mat4 projection;
 };
 struct DirectionLightUBO {
-    vec3 dir;
+    vec4 dir; //xyz
     mat4 view;
     mat4 projection;
-    vec3 ambient;
-    vec3 color;
+    vec4 ambient; //rgb
+    vec4 color; //rgb
 };
-struct PointLight {
-    vec3 pos;
+struct PointLightUBO {
+    vec4 pos; //xyz
     // mat4 view;
     // mat4 projection;
-    vec3 color;
-    vec3 clq;
+    vec4 color; //rgb
+    vec4 clq; //rgb
 };
-struct SpotLight {
-    vec3 dir;
-    vec3 pos;
+struct SpotLightUBO {
+    vec4 dir; //xyz
+    vec4 pos; //xyz
     // mat4 view;
     // mat4 projection;
-    vec3 color;
+    vec4 color; //rgb
     vec4 cutOff;
 };
 layout (set = 0, binding = 0) uniform GlobalUBO {
     CameraUBO camera;
     DirectionLightUBO directionLight;
-    PointLight pointLights[256];
+    PointLightUBO pointLights[256];
     int activePointLights;
-    SpotLight spotLights[4];
+    SpotLightUBO spotLights[4];
     int activeSpotLights;
     float currTime;
 } globalUBO;

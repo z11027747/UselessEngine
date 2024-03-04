@@ -13,6 +13,11 @@ class Context;
 
 namespace Render
 {
+    inline static glm::vec4 ToVec4(glm::vec3 v3)
+    {
+        return glm::vec4(v3.x, v3.y, v3.z, 0.0f);
+    }
+
     void MaterialGlobalUBOUpdateSystem::Update(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
@@ -27,7 +32,7 @@ namespace Render
             auto mainCamera = mainCameraEO->GetComponent<Logic::Camera>();
 
             cameraUBO = {
-                mainCameraTransform->worldPosition,
+                glm::vec4(mainCameraTransform->worldPosition, 0.0f),
                 mainCamera->view,
                 mainCamera->projection,
             };
@@ -54,11 +59,11 @@ namespace Render
                 auto directionLight = lightEO->GetComponent<Render::DirectionLight>();
 
                 directionLightUBO = {
-                    directionLightTransform->forward,
+                    ToVec4(directionLightTransform->forward),
                     directionLightCamera->view,
                     directionLightCamera->projection,
-                    directionLight->ambient,
-                    directionLight->color};
+                    ToVec4(directionLight->ambient),
+                    ToVec4(directionLight->color)};
             }
 
             if (lightEO->HasComponent<Render::PointLight>())
@@ -68,11 +73,11 @@ namespace Render
                 auto pointLight = lightEO->GetComponent<Render::PointLight>();
 
                 pointLightUBOs[activePointLights] = {
-                    pointLightTransform->worldPosition,
+                    ToVec4(pointLightTransform->worldPosition),
                     // pointLightCamera->view,
                     // pointLightCamera->projection,
-                    pointLight->color,
-                    pointLight->clq,
+                    ToVec4(pointLight->color),
+                    ToVec4(pointLight->clq),
                 };
                 activePointLights++;
             }
@@ -84,11 +89,11 @@ namespace Render
                 auto spotLight = lightEO->GetComponent<Render::SpotLight>();
 
                 spotLightUBOs[activeSpotLights] = {
-                    spotLightTransform->forward,
-                    spotLightTransform->worldPosition,
+                    ToVec4(spotLightTransform->forward),
+                    ToVec4(spotLightTransform->worldPosition),
                     // spotLightCamera->view,
                     // spotLightCamera->projection,
-                    spotLight->color,
+                    ToVec4(spotLight->color),
                     spotLight->cutOff,
                 };
                 activeSpotLights++;

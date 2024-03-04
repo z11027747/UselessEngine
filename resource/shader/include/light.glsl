@@ -20,9 +20,9 @@ vec3 CalcBlingPhone(vec3 baseCol, vec3 V, vec3 N, vec3 L, float shininess, float
 vec3 CalcDirectionLight(vec3 baseCol, vec3 V, vec3 N, float shadowAtten, vec4 materialParams) {
     DirectionLightUBO directionLight = globalUBO.directionLight;
 
-    vec3 lightDir = normalize(-directionLight.dir);
-    vec3 lightAmbient = directionLight.ambient;
-    vec3 lightColor = directionLight.color;
+    vec3 lightDir = normalize(-directionLight.dir.xyz);
+    vec3 lightAmbient = directionLight.ambient.rgb;
+    vec3 lightColor = directionLight.color.rgb;
 
     float diffuseIntensity = materialParams.x;
     float specualrShininess = materialParams.y;
@@ -35,10 +35,10 @@ vec3 CalcDirectionLight(vec3 baseCol, vec3 V, vec3 N, float shadowAtten, vec4 ma
 }
 
 vec3 CalcPointLight(int i, vec3 baseCol, vec3 V, vec3 N, vec3 P, float shadowAtten, vec4 materialParams) {
-    PointLight pointLight = globalUBO.pointLights[i];
+    PointLightUBO pointLight = globalUBO.pointLights[i];
 
-    vec3 lightColor = pointLight.color;
-    vec3 lightPos = pointLight.pos;
+    vec3 lightColor = pointLight.color.rgb;
+    vec3 lightPos = pointLight.pos.xyz;
 
     float dist = distance(lightPos, P);
     float atten = 1.0 /
@@ -56,17 +56,17 @@ vec3 CalcPointLight(int i, vec3 baseCol, vec3 V, vec3 N, vec3 P, float shadowAtt
 }
 
 vec3 CalcSpotLight(int i, vec3 baseCol, vec3 V, vec3 N, vec3 P, float shadowAtten, vec4 materialParams) {
-    SpotLight spotLight = globalUBO.spotLights[i];
+    SpotLightUBO spotLight = globalUBO.spotLights[i];
 
-    vec3 L = normalize(spotLight.pos - P);
+    vec3 L = normalize(spotLight.pos.xyz - P);
 
-    vec3 lightDir = normalize(spotLight.dir);
+    vec3 lightDir = normalize(spotLight.dir.xyz);
     float lightCutOff = spotLight.cutOff.x;
     float lightOuterCutOff = spotLight.cutOff.y;
 
     float theta = dot(-L, lightDir);
     if (theta > lightCutOff) {
-        vec3 lightColor = spotLight.color;
+        vec3 lightColor = spotLight.color.rgb;
 
         float diffuseIntensity = materialParams.x;
         float specualrShininess = materialParams.y;

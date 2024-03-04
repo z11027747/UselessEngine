@@ -23,7 +23,7 @@ void main() {
 
     // vec4 positionLS = directionLight.projection * directionLight.view * vec4(positionWS, 1.0);
 
-    vec3 viewDir = normalize(camera.pos - positionWS);
+    vec3 viewDir = normalize(camera.pos.xyz - positionWS);
     
     vec3 pointLightsCol = vec3(0.0);
     int activePointLights = globalUBO.activePointLights;
