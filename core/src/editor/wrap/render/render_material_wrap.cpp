@@ -147,6 +147,11 @@ namespace Editor
 				info->imageNames = {Define::Res::Img_White, Define::Res::Img_Bump};
 				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 1.0f)};
 			}
+			else if (info->pipelineName == Define::Pipeline::PBR_Simplest)
+			{
+				info->imageNames = {};
+				info->params = {glm::vec4(1.0f), glm::vec4(1.0f)};
+			}
 			if (info->pipelineName == Define::Pipeline::Dissolve)
 			{
 				info->imageNames.resize(3, Define::Res::Img_White);
@@ -201,6 +206,9 @@ namespace Editor
 			ImGui::SliderFloat("Roughness", &params0.x, 0.05f, 1.0f);
 			ImGui::SliderFloat("Metallic", &params0.y, 0.1f, 1.0f);
 			ImGui::PopItemWidth();
+
+			auto &params1 = info->params[1];
+			ImGui::ColorEdit4("Albedo BaseColor", &params1.x);
 		}
 		else if (info->pipelineName == Define::Pipeline::Dissolve)
 		{

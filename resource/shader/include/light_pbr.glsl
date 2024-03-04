@@ -19,23 +19,18 @@ float Diffuse_BRDF() {
 
 // D 法线分布函数 
 float D_GGX(float NdotH, float roughness) {
-    float a = roughness * roughness;
-    float a2 = a * a;
-    float NdotH2 = NdotH * NdotH;
-
-    float nom = a2;
-    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-    denom = PI * denom * denom;
-
-    return nom / denom;
+    float alpha = roughness * roughness;
+    float alpha2 = alpha * alpha;
+    float denom = NdotH * NdotH * (alpha2 - 1.0) + 1.0;
+    return (alpha2) / (PI * denom * denom);
 }
 // G 几何函数 
 float G_SchlicksmithGGX(float NdotL, float NdotV, float roughness) {
     float r = (roughness + 1.0);
     float k = (r * r) / 8.0;
-    float ggx1 = NdotL / (NdotL * (1.0 - k) + k);
-    float ggx2 = NdotV / (NdotV * (1.0 - k) + k);
-    return ggx1 * ggx2;
+    float GL = NdotL / (NdotL * (1.0 - k) + k);
+    float GV = NdotV / (NdotV * (1.0 - k) + k);
+    return GL * GV;
 }
 // F 菲涅尔方程
 vec3 F_Schlick(float cosTheta, vec3 F0) {
@@ -44,29 +39,25 @@ vec3 F_Schlick(float cosTheta, vec3 F0) {
 }
 
 vec3 Specular_BRDF(float NdotL, float NdotV, float NdotH, vec3 F, float roughness) {
-
     float rroughness = max(0.05, roughness);
 
     float D = D_GGX(NdotH, rroughness);
     float G = G_SchlicksmithGGX(NdotL, NdotV, rroughness);
 
-    vec3 L = vec3(0.0);
-    if (NdotL > 0) {
-        L += D * F * G / (4.0 * NdotL * NdotV);
-    }
-
-    return L;
+    return D * F * G / (4.0 * NdotL * NdotV + 0.001);
 }
 
 // ========================
 
 //点光 明确知道所有可能的入射光线方向我们知道只有x个方向个入射光线会影响片段的着色，不用积分球数值解
-vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 V, vec3 N, vec3 P, vec4 materialParams) {
+vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 N, vec3 P, vec4 materialParams) {
+    CameraUBO camera = globalUBO.camera;
     PointLightUBO pointLight = globalUBO.pointLights[i];
 
     float roughness = materialParams.x;
     float metallic = materialParams.y;
 
+    vec3 V = normalize(camera.pos.xyz - P);
     vec3 L = normalize(pointLight.pos.xyz - P);
     vec3 H = normalize(V + L);
 
@@ -76,18 +67,21 @@ vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 V, vec3 N, vec3 P, vec4 materia
 
     float distance = length(pointLight.pos.xyz - P);
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = pointLight.color.rgb * attenuation;
-
-    float diffuseBRDF = Diffuse_BRDF();
+    float intensity = 5;
+    vec3 radiance = pointLight.color.rgb * intensity * attenuation;
 
     // 0°入射角的反射率 绝缘体大概是0.04
     vec3 F0 = mix(vec3(0.04), albedo, metallic);
     vec3 F = F_Schlick(NdotV, F0);
+
+    float diffuseBRDF = Diffuse_BRDF();
     vec3 specularBRDF = Specular_BRDF(NdotL, NdotV, NdotH, F, roughness);
 
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
 
+    // return (kD * albedo * diffuseBRDF) * radiance * NdotL;
+    // return (specularBRDF) * radiance * NdotL;
     return (kD * albedo * diffuseBRDF + specularBRDF) * radiance * NdotL;
 }
