@@ -77,7 +77,7 @@ namespace Logic
 
         auto scaleKeep = std::make_shared<Logic::ScaleKeep>();
         context->AddComponent(parentEO, scaleKeep);
-        scaleKeep->initDistance = 10.0f; // special dist
+        scaleKeep->initDistance = 15.0f; // special dist
 
         context->AddEO(parentEO);
 

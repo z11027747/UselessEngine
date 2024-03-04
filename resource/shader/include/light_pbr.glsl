@@ -50,8 +50,12 @@ vec3 Specular_BRDF(float NdotL, float NdotV, float NdotH, vec3 F, float roughnes
     float D = D_GGX(NdotH, rroughness);
     float G = G_SchlicksmithGGX(NdotL, NdotV, rroughness);
 
-    vec3 spec = D * F * G / ((4.0 * NdotL * NdotV) + 0.001);
-    return spec;
+    vec3 L = vec3(0.0);
+    if (NdotL > 0) {
+        L += D * F * G / (4.0 * NdotL * NdotV);
+    }
+
+    return L;
 }
 
 // ========================
@@ -59,7 +63,7 @@ vec3 Specular_BRDF(float NdotL, float NdotV, float NdotH, vec3 F, float roughnes
 //点光 明确知道所有可能的入射光线方向我们知道只有x个方向个入射光线会影响片段的着色，不用积分球数值解
 vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 V, vec3 N, vec3 P, vec4 materialParams) {
     PointLightUBO pointLight = globalUBO.pointLights[i];
-    
+
     float roughness = materialParams.x;
     float metallic = materialParams.y;
 
@@ -85,5 +89,5 @@ vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 V, vec3 N, vec3 P, vec4 materia
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
 
-    return (kD * albedo * diffuseBRDF + kS * specularBRDF) * radiance * NdotL;
+    return (kD * albedo * diffuseBRDF + specularBRDF) * radiance * NdotL;
 }
