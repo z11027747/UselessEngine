@@ -17,7 +17,7 @@ namespace Render
     void MaterialGlobalDescriptorLogic::Create(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Global>();
+        auto global = globalEO->GetComponent<Global>();
         auto &logicalDevice = global->logicalDevice;
         auto swapchainImageCount = global->swapchainImageCount;
 
@@ -62,19 +62,22 @@ namespace Render
                                                                        VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, globalDescriptor->bufferInfos[0]);
                                    });
 
-        global->globalSamplerRepeat = SamplerLogic::Create(context, false, 0, 6);
-        global->globalSamplerClamp = SamplerLogic::Create(context, true, 0, 6);
+        auto maxMipLevels = 10;
+        global->globalSamplerRepeat = SamplerLogic::Create(context, true, false, 0, maxMipLevels);
+        global->globalSamplerClampLinear = SamplerLogic::Create(context, true, true, 0, maxMipLevels);
+        global->globalSamplerClampNearest = SamplerLogic::Create(context, false, true, 0, maxMipLevels);
     }
 
     void MaterialGlobalDescriptorLogic::Destroy(Context *context)
     {
         auto &globalEO = context->renderGlobalEO;
-		auto global = globalEO->GetComponent<Global>();
+        auto global = globalEO->GetComponent<Global>();
 
         DescriptorSetLayoutLogic::Destroy(context, global->globalDescriptorSetLayout);
         BufferLogic::Destroy(context, global->globalBuffer);
 
-        SamplerLogic::Destroy(context, global->globalSamplerClamp);
         SamplerLogic::Destroy(context, global->globalSamplerRepeat);
+        SamplerLogic::Destroy(context, global->globalSamplerClampLinear);
+        SamplerLogic::Destroy(context, global->globalSamplerClampNearest);
     }
 }

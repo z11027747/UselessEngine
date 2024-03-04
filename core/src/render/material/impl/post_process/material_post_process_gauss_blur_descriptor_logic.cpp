@@ -45,7 +45,7 @@ namespace Render
 		descriptor->set = descriptorSet;
 
 		VkDescriptorImageInfo blitImageInfo = {
-			global->globalSamplerClamp,
+			global->globalSamplerClampLinear,
 			postProcessPass->colorImage2ds[1]->vkImageView,
 			postProcessPass->colorImage2ds[1]->layout};
 		descriptor->imageInfos.push_back(blitImageInfo);

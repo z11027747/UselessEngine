@@ -134,7 +134,7 @@ namespace Editor
 			if (info->pipelineName == Define::Pipeline::Skybox)
 			{
 				info->imageNames.resize(6, Define::Res::Img_White);
-				info->params = {};
+				info->params = {glm::vec4(0.0f)};
 			}
 			else if (info->pipelineName == Define::Pipeline::Color)
 			{
@@ -149,7 +149,7 @@ namespace Editor
 			}
 			else if (info->pipelineName == Define::Pipeline::PBR_Simplest)
 			{
-				info->imageNames = {};
+				info->imageNames.resize(6, Define::Res::Img_White);
 				info->params = {glm::vec4(1.0f), glm::vec4(1.0f)};
 			}
 			if (info->pipelineName == Define::Pipeline::Dissolve)
@@ -174,6 +174,9 @@ namespace Editor
 		ImGui::Spacing();
 		if (info->pipelineName == Define::Pipeline::Skybox)
 		{
+			auto &params0 = info->params[0];
+			ImGui::SliderFloat("LodLevel", &params0.x, 0, 10);
+
 			DrawImageByIndex(material, "+x", 0);
 			DrawImageByIndex(material, "-x", 1);
 			DrawImageByIndex(material, "+y", 2);
@@ -208,7 +211,7 @@ namespace Editor
 			ImGui::PopItemWidth();
 
 			auto &params1 = info->params[1];
-			ImGui::ColorEdit4("Albedo BaseColor", &params1.x);
+			ImGui::ColorEdit4("BaseColor", &params1.x);
 		}
 		else if (info->pipelineName == Define::Pipeline::Dissolve)
 		{

@@ -8,7 +8,7 @@
 
 namespace Render
 {
-	VkSampler SamplerLogic::Create(Context *context, bool isClamp,
+	VkSampler SamplerLogic::Create(Context *context, bool isLinear, bool isClamp,
 								   uint32_t minMipLevels, uint32_t maxMipLevels)
 	{
 		auto &globalEO = context->renderGlobalEO;
@@ -17,8 +17,16 @@ namespace Render
 
 		VkSamplerCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		createInfo.magFilter = VK_FILTER_LINEAR;
-		createInfo.minFilter = VK_FILTER_LINEAR;
+		if (isLinear)
+		{
+			createInfo.magFilter = VK_FILTER_LINEAR;
+			createInfo.minFilter = VK_FILTER_LINEAR;
+		}
+		else
+		{
+			createInfo.magFilter = VK_FILTER_NEAREST;
+			createInfo.minFilter = VK_FILTER_NEAREST;
+		}
 		if (isClamp)
 		{
 			createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;

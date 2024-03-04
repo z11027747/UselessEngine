@@ -37,6 +37,9 @@ vec3 F_Schlick(float cosTheta, vec3 F0) {
     // return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
     return F0 + (1.0 - F0) * pow((1.0 - cosTheta), 5.0);
 }
+vec3 F_Schlick_WithRoughness(float cosTheta, vec3 F0, float roughness) {
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
 
 vec3 Specular_BRDF(float NdotL, float NdotV, float NdotH, vec3 F, float roughness) {
     float rroughness = max(0.05, roughness);
@@ -44,21 +47,29 @@ vec3 Specular_BRDF(float NdotL, float NdotV, float NdotH, vec3 F, float roughnes
     float D = D_GGX(NdotH, rroughness);
     float G = G_SchlicksmithGGX(NdotL, NdotV, rroughness);
 
-    return D * F * G / (4.0 * NdotL * NdotV + 0.001);
+    return D * F * G / (4.0 * NdotL * NdotV + 0.0001);
 }
 
 // ========================
 
+vec3 CalcReflection_PBR(samplerCube cubeMap, vec3 R, float roughness) {
+    const float MAX_REFLECTION_LOD = 11.0; // todo: param/const
+    float lod = roughness * MAX_REFLECTION_LOD;
+    float lodf = floor(lod);
+    float lodc = ceil(lod);
+    vec3 a = textureLod(cubeMap, R, lodf).rgb;
+    vec3 b = textureLod(cubeMap, R, lodc).rgb;
+    return mix(a, b, lod - lodf);
+}
+
 //点光 明确知道所有可能的入射光线方向我们知道只有x个方向个入射光线会影响片段的着色，不用积分球数值解
-vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 N, vec3 P, vec4 materialParams) {
-    CameraUBO camera = globalUBO.camera;
+vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 P, vec3 N, vec3 V, vec3 L, vec4 materialParams) {
     PointLightUBO pointLight = globalUBO.pointLights[i];
 
     float roughness = materialParams.x;
     float metallic = materialParams.y;
 
-    vec3 V = normalize(camera.pos.xyz - P);
-    vec3 L = normalize(pointLight.pos.xyz - P);
+    // vec3 V = normalize(camera.pos.xyz - P);
     vec3 H = normalize(V + L);
 
     float NdotL = max(dot(N, L), 0.0);
@@ -67,8 +78,7 @@ vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 N, vec3 P, vec4 materialParams)
 
     float distance = length(pointLight.pos.xyz - P);
     float attenuation = 1.0 / (distance * distance);
-    float intensity = 5;
-    vec3 radiance = pointLight.color.rgb * intensity * attenuation;
+    vec3 radiance = pointLight.color.rgb * attenuation * 5;
 
     // 0°入射角的反射率 绝缘体大概是0.04
     vec3 F0 = mix(vec3(0.04), albedo, metallic);
@@ -82,6 +92,6 @@ vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 N, vec3 P, vec4 materialParams)
     kD *= 1.0 - metallic;
 
     // return (kD * albedo * diffuseBRDF) * radiance * NdotL;
-    // return (specularBRDF) * radiance * NdotL;
+    // return ( specularBRDF) * radiance * NdotL;
     return (kD * albedo * diffuseBRDF + specularBRDF) * radiance * NdotL;
 }

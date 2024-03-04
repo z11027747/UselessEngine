@@ -282,7 +282,7 @@ namespace Render
 		barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		barrier.subresourceRange.aspectMask = image->aspectMask;
 		barrier.subresourceRange.baseArrayLayer = 0;
-		barrier.subresourceRange.layerCount = 1;
+		barrier.subresourceRange.layerCount = image->layerCount;
 		barrier.subresourceRange.levelCount = 1;
 
 		auto mipWidth = static_cast<int32_t>(image->extent.width);
@@ -310,13 +310,13 @@ namespace Render
 			blit.srcSubresource.aspectMask = image->aspectMask;
 			blit.srcSubresource.mipLevel = i - 1;
 			blit.srcSubresource.baseArrayLayer = 0;
-			blit.srcSubresource.layerCount = 1;
+			blit.srcSubresource.layerCount = image->layerCount;
 			blit.dstOffsets[0] = {0, 0, 0};
 			blit.dstOffsets[1] = {mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1};
 			blit.dstSubresource.aspectMask = image->aspectMask;
 			blit.dstSubresource.mipLevel = i;
 			blit.dstSubresource.baseArrayLayer = 0;
-			blit.dstSubresource.layerCount = 1;
+			blit.dstSubresource.layerCount = image->layerCount;
 
 			vkCmdBlitImage(cmdBuffer,
 						   image->vkImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,

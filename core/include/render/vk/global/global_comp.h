@@ -65,6 +65,7 @@ namespace Render
 		std::shared_ptr<Buffer> globalBuffer;
 
 		VkSampler globalSamplerRepeat;
-		VkSampler globalSamplerClamp;
+		VkSampler globalSamplerClampLinear;
+		VkSampler globalSamplerClampNearest;
 	};
 }

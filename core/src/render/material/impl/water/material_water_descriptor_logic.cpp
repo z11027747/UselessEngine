@@ -51,7 +51,7 @@ namespace Render
 		auto &shadowPass = global->passMap[Define::Pass::Shadow];
 
 		VkDescriptorImageInfo imageInfo = {
-			global->globalSamplerClamp,
+			global->globalSamplerClampLinear,
 			shadowPass->depthImage2ds[0]->vkImageView,
 			shadowPass->depthImage2ds[0]->layout};
 		descriptor->imageInfos.push_back(imageInfo);

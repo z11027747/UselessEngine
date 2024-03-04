@@ -8,19 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\ZYB\\.nuget\\packages\\": {}
+    "C:\\Users\\11027\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\G\\UselessEngine\\game\\Game\\Game.csproj",
+      "projectUniqueName": "E:\\UselessEngine\\game\\Game.csproj",
       "projectName": "Game",
-      "projectPath": "D:\\G\\UselessEngine\\game\\Game\\Game.csproj",
-      "packagesPath": "C:\\Users\\ZYB\\.nuget\\packages\\",
-      "outputPath": "D:\\G\\UselessEngine\\game\\Game\\obj\\",
+      "projectPath": "E:\\UselessEngine\\game\\Game.csproj",
+      "packagesPath": "C:\\Users\\11027\\.nuget\\packages\\",
+      "outputPath": "E:\\UselessEngine\\game\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ZYB\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\11027\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -61,7 +61,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

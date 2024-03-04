@@ -91,7 +91,7 @@ namespace Render
 		for (auto i = 0; i < imageCount - 1; i++)
 		{
 			VkDescriptorImageInfo inputAttachmentInfo = {
-				global->globalSamplerClamp,
+				global->globalSamplerClampLinear,
 				deferredPass->inputImage2ds[i]->vkImageView,
 				deferredPass->inputImage2ds[i]->layout};
 			descriptor->imageInfos.push_back(inputAttachmentInfo);

@@ -77,19 +77,19 @@ namespace Render
 		auto &deferredPass = global->passMap[Define::Pass::Deferred];
 
 		VkDescriptorImageInfo gBufferPositionDepthImageInfo = {
-			global->globalSamplerClamp,
+			global->globalSamplerClampLinear,
 			deferredPass->inputImage2ds[0]->vkImageView,
 			deferredPass->inputImage2ds[0]->layout};
 		descriptor->imageInfos.push_back(gBufferPositionDepthImageInfo);
 
 		VkDescriptorImageInfo gBufferNormalImageInfo = {
-			global->globalSamplerClamp,
+			global->globalSamplerClampLinear,
 			deferredPass->inputImage2ds[1]->vkImageView,
 			deferredPass->inputImage2ds[1]->layout};
 		descriptor->imageInfos.push_back(gBufferNormalImageInfo);
 
 		VkDescriptorImageInfo gBufferDepthImageInfo = {
-			global->globalSamplerClamp,
+			global->globalSamplerClampLinear,
 			deferredPass->inputImage2ds[3]->vkImageView,
 			deferredPass->inputImage2ds[3]->layout};
 		descriptor->imageInfos.push_back(gBufferDepthImageInfo);

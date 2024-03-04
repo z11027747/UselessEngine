@@ -105,7 +105,7 @@ namespace Editor
         descriptor->set = descriptorSet;
 
         VkDescriptorImageInfo imageInfo = {
-            global->globalSamplerClamp,
+            global->globalSamplerClampLinear,
             image->vkImageView,
             image->layout};
         descriptor->imageInfos.push_back(imageInfo);

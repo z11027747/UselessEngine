@@ -23,9 +23,15 @@ namespace Render
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
+		VkDescriptorSetLayoutBinding cubeMap = {
+			1, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(materialUBO);
+		bindings.push_back(cubeMap);
 
 		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
@@ -46,12 +52,20 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
-		// buffer
 		VkDescriptorBufferInfo bufferInfo = {
 			data->buffer->vkBuffer,
 			0,
 			data->buffer->size};
 		descriptor->bufferInfos.push_back(bufferInfo);
+
+		auto skyboxEO = context->GetEO(Define::EOName::Skybox);
+		auto &skyboxData = skyboxEO->GetComponent<Material>()->data;
+
+		VkDescriptorImageInfo imageInfo = {
+			global->globalSamplerClampLinear,
+			skyboxData->images[0]->vkImageView,
+			skyboxData->images[0]->layout};
+		descriptor->imageInfos.push_back(imageInfo);
 
 		data->descriptor = descriptor;
 
@@ -61,6 +75,8 @@ namespace Render
 									   auto &bindings = graphicsPipeline->descriptorBindings;
 									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, 0,
 																	   bindings[0].descriptorType, descriptor->bufferInfos[0]);
+									   DescriptorSetLogic::WriteImage(writes, descriptor->set, 1,
+																	  bindings[1].descriptorType, descriptor->imageInfos[0]);
 								   });
 	}
 	void MaterialPBRSimplestDescriptorLogic::Destroy(Context *context,

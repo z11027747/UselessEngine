@@ -21,9 +21,15 @@ namespace Render
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
+		VkDescriptorSetLayoutBinding materialUBO = {
+			1, // binding
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
 		bindings.push_back(cubeMap);
+		bindings.push_back(materialUBO);
 
 		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
@@ -44,10 +50,16 @@ namespace Render
 		descriptor->set = descriptorSet;
 
 		VkDescriptorImageInfo imageInfo = {
-			global->globalSamplerClamp,
+			global->globalSamplerClampLinear,
 			data->images[0]->vkImageView,
 			data->images[0]->layout};
 		descriptor->imageInfos.push_back(imageInfo);
+
+		VkDescriptorBufferInfo bufferInfo = {
+			data->buffer->vkBuffer,
+			0,
+			data->buffer->size};
+		descriptor->bufferInfos.push_back(bufferInfo);
 
 		data->descriptor = descriptor;
 
@@ -57,6 +69,8 @@ namespace Render
 									   auto &bindings = graphicsPipeline->descriptorBindings;
 									   DescriptorSetLogic::WriteImage(writes, descriptor->set, 0,
 																	  bindings[0].descriptorType, descriptor->imageInfos[0]);
+									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, 1,
+																	   bindings[1].descriptorType, descriptor->bufferInfos[0]);
 								   });
 	}
 }

@@ -151,8 +151,7 @@ namespace Render
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL};
         auto image2d = ImageLogic::CreateByInfo(context, imageCreateInfo);
 
-        ImageLogic::CopyFromBuffer(context,
-                                   image2d,
+        ImageLogic::CopyFromBuffer(context, image2d,
                                    tempBuffer);
 
         ImageLogic::GenerateMipmapsAndTransitionLayout(context, image2d,
@@ -181,6 +180,8 @@ namespace Render
         auto imageCubeSizeOne = static_cast<VkDeviceSize>(imageCubeW * imageCubeH * 4);
         auto imageCubeSizeTotal = imageCubeSizeOne * 6;
 
+        auto mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(imageCubeW, imageCubeH)))) + 1;
+
         auto tempBuffer = BufferLogic::CreateTemp(context,
                                                   imageCubeSizeTotal, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                                                   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
@@ -193,11 +194,11 @@ namespace Render
             VK_FORMAT_R8G8B8A8_UNORM, {imageCubeW, imageCubeH, 1}, VK_IMAGE_ASPECT_COLOR_BIT,
             // info
             VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
             6,
             VK_IMAGE_VIEW_TYPE_CUBE,
-            1,
+            mipLevels,
             VK_SAMPLE_COUNT_1_BIT,
             // memory
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -206,13 +207,15 @@ namespace Render
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL};
         auto imageCube = ImageLogic::CreateByInfo(context, imageCreateInfo);
 
-        ImageLogic::CopyFromBuffer(context,
-                                   imageCube,
+        ImageLogic::CopyFromBuffer(context, imageCube,
                                    tempBuffer);
 
-        ImageLogic::TransitionLayout(context,
-                                     imageCube,
-                                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
+        ImageLogic::GenerateMipmapsAndTransitionLayout(context, imageCube,
+                                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+        // ImageLogic::TransitionLayout(context,
+        //                              imageCube,
+        //                              VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
 
         data->images = {imageCube};
     }
