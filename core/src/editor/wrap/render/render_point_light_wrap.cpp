@@ -19,7 +19,8 @@ namespace Editor
 			return;
 		}
 
-		ImGui::ColorEdit3("Color", &pointLight->color.x);
+		ImGui::ColorEdit3("Color", &pointLight->color.r);
+		ImGui::SliderFloat("Intensity", &pointLight->color.a, 0.0f, 10.0f);
 
 		ImGui::InputFloat("Constant", &pointLight->clq.x);
 		ImGui::InputFloat("Linear", &pointLight->clq.y);

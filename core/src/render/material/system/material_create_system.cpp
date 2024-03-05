@@ -32,7 +32,8 @@ namespace Render
         auto forwardPass = passMap[Define::Pass::Forward];
         PipelineLogic::Create(context, Define::Pipeline::Skybox, forwardPass);
         PipelineLogic::Create(context, Define::Pipeline::LightModel, forwardPass);
-        PipelineLogic::Create(context, Define::Pipeline::PBR_Simplest, forwardPass);
+        PipelineLogic::Create(context, Define::Pipeline::PBR_Simple, forwardPass);
+        PipelineLogic::Create(context, Define::Pipeline::PBR_Texture, forwardPass);
         PipelineLogic::Create(context, Define::Pipeline::Color, forwardPass);
         PipelineLogic::Create(context, Define::Pipeline::Dissolve, forwardPass);
         PipelineLogic::Create(context, Define::Pipeline::Water, forwardPass);

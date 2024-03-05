@@ -37,7 +37,8 @@ namespace Render
         {
             DrawPipeline(context, isShadow, Define::Pipeline::Skybox);
             DrawPipeline(context, isShadow, Define::Pipeline::LightModel);
-            DrawPipeline(context, isShadow, Define::Pipeline::PBR_Simplest);
+            DrawPipeline(context, isShadow, Define::Pipeline::PBR_Simple);
+            DrawPipeline(context, isShadow, Define::Pipeline::PBR_Texture);
             DrawPipeline(context, isShadow, Define::Pipeline::Dissolve);
             DrawPipeline(context, isShadow, Define::Pipeline::Color);
             DrawPipeline(context, isShadow, Define::Pipeline::Water);

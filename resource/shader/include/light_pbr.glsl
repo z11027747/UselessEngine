@@ -63,11 +63,8 @@ vec3 CalcReflection_PBR(samplerCube cubeMap, vec3 R, float roughness) {
 }
 
 //点光 明确知道所有可能的入射光线方向我们知道只有x个方向个入射光线会影响片段的着色，不用积分球数值解
-vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 P, vec3 N, vec3 V, vec3 L, vec4 materialParams) {
+vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 P, vec3 N, vec3 V, vec3 L, float roughness, float metallic) {
     PointLightUBO pointLight = globalUBO.pointLights[i];
-
-    float roughness = materialParams.x;
-    float metallic = materialParams.y;
 
     // vec3 V = normalize(camera.pos.xyz - P);
     vec3 H = normalize(V + L);
@@ -78,7 +75,7 @@ vec3 CalcPointLight_PBR(int i, vec3 albedo, vec3 P, vec3 N, vec3 V, vec3 L, vec4
 
     float distance = length(pointLight.pos.xyz - P);
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = pointLight.color.rgb * attenuation * 5;
+    vec3 radiance = pointLight.color.rgb * pointLight.color.a * attenuation;
 
     // 0°入射角的反射率 绝缘体大概是0.04
     vec3 F0 = mix(vec3(0.04), albedo, metallic);

@@ -27,12 +27,9 @@ void main() {
     DirectionLightUBO directionLight = globalUBO.directionLight;
 
     fragPositionWS = (push.model * vec4(positionOS, 1.0)).xyz;
-
     fragNormalWS = (push.model * vec4(normalOS, 0.0)).xyz;
     vec3 fragTangentWS = (push.model * vec4(tangentOS, 0.0)).xyz;
-
     float orient = sign(push.model[0][0] * push.model[1][1] * push.model[2][2]);
-
     vec3 fragBitangentWS = cross(fragTangentWS, fragNormalWS) * orient;
     fragTangentMat0 = vec3(fragTangentWS.x, fragBitangentWS.x, fragNormalWS.x);
     fragTangentMat1 = vec3(fragTangentWS.y, fragBitangentWS.y, fragNormalWS.y);

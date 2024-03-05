@@ -3,13 +3,13 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/material/impl/material_light_model_logic.h"
+#include "render/material/impl/material_pbr_logic.h"
 #include "engine_object.hpp"
 #include "context.hpp"
 
 namespace Render
 {
-	void MaterialLightModelPipelineLogic::SetVertexAttrDescriptions(Context *context,
+	void MaterialPBRTexturePipelineLogic::SetVertexAttrDescriptions(Context *context,
 																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		VkVertexInputAttributeDescription positionOSDescription = {
@@ -27,26 +27,42 @@ namespace Render
 			0, // binding
 			VK_FORMAT_R32G32B32_SFLOAT,
 			offsetof(Render::Vertex, tangentOS)};
-		VkVertexInputAttributeDescription colorDescription = {
-			3, // location
-			0, // binding
-			VK_FORMAT_R32G32B32_SFLOAT,
-			offsetof(Render::Vertex, color)};
 		VkVertexInputAttributeDescription uv0Description = {
-			4, // location
+			3, // location
 			0, // binding
 			VK_FORMAT_R32G32_SFLOAT,
 			offsetof(Render::Vertex, uv0)};
+
+		// // instancing
+		// VkVertexInputAttributeDescription instancePosDescription = {
+		// 	3, // location
+		// 	1, // binding
+		// 	VK_FORMAT_R32G32B32_SFLOAT,
+		// 	offsetof(Render::VertexInstance, pos)};
+		// VkVertexInputAttributeDescription instanceEulDescription = {
+		// 	4, // location
+		// 	1, // binding
+		// 	VK_FORMAT_R32G32B32_SFLOAT,
+		// 	offsetof(Render::VertexInstance, eul)};
+		// VkVertexInputAttributeDescription instanceScaleDescription = {
+		// 	5, // location
+		// 	1, // binding
+		// 	VK_FORMAT_R32_SFLOAT,
+		// 	offsetof(Render::VertexInstance, scale)};
 
 		auto &stageInfo = graphicsPipeline->stageInfo;
 		stageInfo.vertexInputAttributeDescriptions = {
 			positionOSDescription,
 			normalOSDescription,
 			tangentOSDescription,
-			colorDescription,
-			uv0Description};
+			uv0Description,
+			// // instancing
+			// instancePosDescription,
+			// instanceEulDescription,
+			// instanceScaleDescription
+		};
 	}
-	void MaterialLightModelPipelineLogic::SetRasterizationCreateInfo(Context *context,
+	void MaterialPBRTexturePipelineLogic::SetRasterizationCreateInfo(Context *context,
 																	 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
@@ -54,16 +70,7 @@ namespace Render
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
 		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 	}
-	void MaterialLightModelPipelineLogic::SetMultisampleCreateInfo(Context *context,
-																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
-	{
-		auto &stageInfo = graphicsPipeline->stageInfo;
-
-		auto &multisampleStateCreateInfo = stageInfo.multisampleStateCreateInfo;
-		multisampleStateCreateInfo.sampleShadingEnable = true;
-		multisampleStateCreateInfo.minSampleShading = 0.2f;
-	}
-	void MaterialLightModelPipelineLogic::SetDepthStencilCreateInfo(Context *context,
+	void MaterialPBRTexturePipelineLogic::SetDepthStencilCreateInfo(Context *context,
 																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;

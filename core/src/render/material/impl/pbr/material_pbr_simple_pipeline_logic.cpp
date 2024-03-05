@@ -3,14 +3,14 @@
 #include "render/vk/global/global_comp.h"
 #include "render/vk/pipeline/pipeline_comp.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/material/impl/material_pbr_simplest_logic.h"
+#include "render/material/impl/material_pbr_logic.h"
 #include "engine_object.hpp"
 #include "context.hpp"
 
 namespace Render
 {
-	void MaterialPBRSimplestPipelineLogic::SetVertexAttrDescriptions(Context *context,
-																	 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	void MaterialPBRSimplePipelineLogic::SetVertexAttrDescriptions(Context *context,
+																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		VkVertexInputAttributeDescription positionOSDescription = {
 			0, // location
@@ -56,16 +56,16 @@ namespace Render
 			// instanceScaleDescription
 		};
 	}
-	void MaterialPBRSimplestPipelineLogic::SetRasterizationCreateInfo(Context *context,
-																	  std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	void MaterialPBRSimplePipelineLogic::SetRasterizationCreateInfo(Context *context,
+																	std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 
 		auto &rasterizationStateCreateInfo = stageInfo.rasterizationStateCreateInfo;
 		rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 	}
-	void MaterialPBRSimplestPipelineLogic::SetDepthStencilCreateInfo(Context *context,
-																	 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	void MaterialPBRSimplePipelineLogic::SetDepthStencilCreateInfo(Context *context,
+																   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
 		auto &stageInfo = graphicsPipeline->stageInfo;
 

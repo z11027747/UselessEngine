@@ -8,37 +8,37 @@
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/material/impl/material_pbr_simplest_logic.h"
+#include "render/material/impl/material_pbr_logic.h"
 #include "define.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
 
 namespace Render
 {
-	void MaterialPBRSimplestDescriptorLogic::CreateSetLayout(Context *context,
-															 std::shared_ptr<GraphicsPipeline> graphicsPipeline)
+	void MaterialPBRSimpleDescriptorLogic::CreateSetLayout(Context *context,
+														   std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkDescriptorSetLayoutBinding materialUBO = {
+		VkDescriptorSetLayoutBinding skyboxCubeMap = {
 			0, // binding
-			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-		VkDescriptorSetLayoutBinding cubeMap = {
+		VkDescriptorSetLayoutBinding materialUBO = {
 			1, // binding
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
+		bindings.push_back(skyboxCubeMap);
 		bindings.push_back(materialUBO);
-		bindings.push_back(cubeMap);
 
 		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 
-	void MaterialPBRSimplestDescriptorLogic::AllocateAndUpdate(Context *context,
-															   std::shared_ptr<MaterialData> data)
+	void MaterialPBRSimpleDescriptorLogic::AllocateAndUpdate(Context *context,
+															 std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
 		auto global = globalEO->GetComponent<Global>();
@@ -52,12 +52,6 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
-		VkDescriptorBufferInfo bufferInfo = {
-			data->buffer->vkBuffer,
-			0,
-			data->buffer->size};
-		descriptor->bufferInfos.push_back(bufferInfo);
-
 		auto skyboxEO = context->GetEO(Define::EOName::Skybox);
 		auto &skyboxData = skyboxEO->GetComponent<Material>()->data;
 
@@ -67,20 +61,22 @@ namespace Render
 			skyboxData->images[0]->layout};
 		descriptor->imageInfos.push_back(imageInfo);
 
+		VkDescriptorBufferInfo bufferInfo = {
+			data->buffer->vkBuffer,
+			0,
+			data->buffer->size};
+		descriptor->bufferInfos.push_back(bufferInfo);
+
 		data->descriptor = descriptor;
 
 		DescriptorSetLogic::Update(context,
 								   [=](std::vector<VkWriteDescriptorSet> &writes)
 								   {
 									   auto &bindings = graphicsPipeline->descriptorBindings;
-									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, 0,
-																	   bindings[0].descriptorType, descriptor->bufferInfos[0]);
-									   DescriptorSetLogic::WriteImage(writes, descriptor->set, 1,
-																	  bindings[1].descriptorType, descriptor->imageInfos[0]);
+									   DescriptorSetLogic::WriteImage(writes, descriptor->set, 0,
+																	  bindings[0].descriptorType, descriptor->imageInfos[0]);
+									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, 1,
+																	   bindings[1].descriptorType, descriptor->bufferInfos[0]);
 								   });
-	}
-	void MaterialPBRSimplestDescriptorLogic::Destroy(Context *context,
-													 std::shared_ptr<MaterialData> data)
-	{
 	}
 }

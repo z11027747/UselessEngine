@@ -8,49 +8,69 @@
 #include "render/vk/image/image_logic.h"
 #include "render/vk/image/sampler_logic.h"
 #include "render/mesh/mesh_comp.h"
-#include "render/material/impl/material_light_model_logic.h"
+#include "render/material/impl/material_pbr_logic.h"
 #include "define.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
 
 namespace Render
 {
-	void MaterialLightModelDescriptorLogic::CreateSetLayout(Context *context,
+	void MaterialPBRTextureDescriptorLogic::CreateSetLayout(Context *context,
 															std::shared_ptr<GraphicsPipeline> graphicsPipeline)
 	{
-		VkDescriptorSetLayoutBinding shadowMap = {
+		VkDescriptorSetLayoutBinding albedoMap = {
 			0, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-		VkDescriptorSetLayoutBinding albedo = {
+		VkDescriptorSetLayoutBinding normalMap = {
 			1, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-		VkDescriptorSetLayoutBinding normalMap = {
+		VkDescriptorSetLayoutBinding roughnessMap = {
 			2, // binding
 			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
-		VkDescriptorSetLayoutBinding materialUBO = {
+		VkDescriptorSetLayoutBinding metallicMap = {
 			3, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+
+		VkDescriptorSetLayoutBinding BRDFLUTMap = {
+			4, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+		VkDescriptorSetLayoutBinding skyboxCubeMap = {
+			5, // binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			1,
+			VK_SHADER_STAGE_FRAGMENT_BIT};
+
+		VkDescriptorSetLayoutBinding materialUBO = {
+			6, // binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			1,
 			VK_SHADER_STAGE_FRAGMENT_BIT};
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings;
-		bindings.push_back(shadowMap);
-		bindings.push_back(albedo);
+		bindings.push_back(albedoMap);
 		bindings.push_back(normalMap);
+		bindings.push_back(roughnessMap);
+		bindings.push_back(metallicMap);
+		bindings.push_back(BRDFLUTMap);
+		bindings.push_back(skyboxCubeMap);
 		bindings.push_back(materialUBO);
 
 		graphicsPipeline->descriptorBindings = bindings;
 		graphicsPipeline->descriptorSetLayout = DescriptorSetLayoutLogic::Create(context, bindings);
 	}
 
-	constexpr int imageSize = 1 + 2; // shadow + albedo+normalMap
-	void MaterialLightModelDescriptorLogic::AllocateAndUpdate(Context *context,
+	constexpr int imageCount = 5 + 1;
+	void MaterialPBRTextureDescriptorLogic::AllocateAndUpdate(Context *context,
 															  std::shared_ptr<MaterialData> data)
 	{
 		auto &globalEO = context->renderGlobalEO;
@@ -65,30 +85,25 @@ namespace Render
 		auto descriptorSet = DescriptorSetLogic::AllocateOne(context, descriptorSetLayout);
 		descriptor->set = descriptorSet;
 
-		auto &shadowPass = global->passMap[Define::Pass::Shadow];
-		auto depthImageSampler = SamplerLogic::CreateDepth(context);
-
-		VkDescriptorImageInfo shadowImageInfo = {
-			depthImageSampler,
-			shadowPass->depthImage2ds[0]->vkImageView,
-			shadowPass->depthImage2ds[0]->layout};
-
-		descriptor->imageInfos.push_back(shadowImageInfo);
-
-		for (auto i = 0; i < imageSize - 1; i++)
+		for (auto i = 0; i < imageCount - 1; i++)
 		{
-			auto &image = data->images[i];
-			auto imageSamplerWithMipMap = SamplerLogic::Create(context, false, false,
-															   0, image->mipLevels);
-
 			VkDescriptorImageInfo imageInfo = {
-				imageSamplerWithMipMap,
+				global->globalSamplerClampLinear,
 				data->images[i]->vkImageView,
 				data->images[i]->layout};
 			descriptor->imageInfos.push_back(imageInfo);
 		}
+		{
+			auto skyboxEO = context->GetEO(Define::EOName::Skybox);
+			auto &skyboxData = skyboxEO->GetComponent<Material>()->data;
 
-		// buffer
+			VkDescriptorImageInfo imageInfo = {
+				global->globalSamplerClampLinear,
+				skyboxData->images[0]->vkImageView,
+				skyboxData->images[0]->layout};
+			descriptor->imageInfos.push_back(imageInfo);
+		}
+
 		VkDescriptorBufferInfo bufferInfo = {
 			data->buffer->vkBuffer,
 			0,
@@ -101,23 +116,14 @@ namespace Render
 								   [=](std::vector<VkWriteDescriptorSet> &writes)
 								   {
 									   auto &bindings = graphicsPipeline->descriptorBindings;
-									   for (auto imageIdx = 0; imageIdx < imageSize; imageIdx++)
+									   for (auto i = 0; i < imageCount; i++)
 									   {
-										   DescriptorSetLogic::WriteImage(writes, descriptor->set, imageIdx,
-																		  bindings[imageIdx].descriptorType, descriptor->imageInfos[imageIdx]);
+										   DescriptorSetLogic::WriteImage(writes, descriptor->set, i,
+																		  bindings[i].descriptorType, descriptor->imageInfos[i]);
 									   }
-									   auto bufferIdx = imageSize;
+									   auto bufferIdx = imageCount;
 									   DescriptorSetLogic::WriteBuffer(writes, descriptor->set, bufferIdx,
 																	   bindings[bufferIdx].descriptorType, descriptor->bufferInfos[0]);
 								   });
-	}
-	void MaterialLightModelDescriptorLogic::Destroy(Context *context,
-													std::shared_ptr<MaterialData> data)
-	{
-		auto &descriptor = data->descriptor;
-		for (auto i = 0; i < imageSize; i++)
-		{
-			SamplerLogic::Destroy(context, descriptor->imageInfos[i].sampler);
-		}
 	}
 }

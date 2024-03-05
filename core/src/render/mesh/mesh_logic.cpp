@@ -104,13 +104,13 @@ namespace Render
 
         auto hasNormal = false;
 
-        std::vector<Render::Vertex> uniqueVertices;
+        std::vector<Render::Vertex> allVertices;
 
         for (const auto &shape : shapes)
         {
             for (const auto &index : shape.mesh.indices)
             {
-                auto vi = index.vertex_index;   // v
+                auto vi = index.vertex_index;   // v(vp)
                 auto ni = index.normal_index;   // vn
                 auto ui = index.texcoord_index; // vt
 
@@ -129,34 +129,40 @@ namespace Render
                     vertex.uv0 = {attrib.texcoords[2 * ui + 0], 1.0f - attrib.texcoords[2 * ui + 1]};
                 }
 
-                uniqueVertices.push_back(vertex);
+                allVertices.push_back(vertex);
             }
         }
 
-        auto uniqueVertexSize = static_cast<uint32_t>(uniqueVertices.size());
+        auto allVertexSize = static_cast<uint32_t>(allVertices.size());
 
         // calc tangent
         if (hasNormal)
         {
-            for (auto i = 0u; i < uniqueVertexSize; i += 3)
+            for (auto i = 0u; i < allVertexSize; i += 3)
             {
-                auto &v1 = uniqueVertices[i + 0];
-                auto &v2 = uniqueVertices[i + 1];
-                auto &v3 = uniqueVertices[i + 2];
+                auto &v1 = allVertices[i + 0];
+                auto &v2 = allVertices[i + 1];
+                auto &v3 = allVertices[i + 2];
 
-                auto deltaPos1 = v2.positionOS - v1.positionOS;
-                auto deltaPos2 = v3.positionOS - v1.positionOS;
+                auto edge1 = v2.positionOS - v1.positionOS;
+                auto edge2 = v3.positionOS - v1.positionOS;
                 auto deltaUV1 = v2.uv0 - v1.uv0;
                 auto deltaUV2 = v3.uv0 - v1.uv0;
 
-                auto det = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-                if (det != 0.0f)
-                {
-                    auto tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) / det;
-                    v1.tangentOS = glm::normalize(tangent);
-                    v2.tangentOS = v1.tangentOS;
-                    v3.tangentOS = v1.tangentOS;
-                }
+                auto divide = (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+                if (divide >= 0.0f && divide < 0.000001f)
+                    divide = 0.000001f;
+                else if (divide < 0.0f && divide > -0.000001f)
+                    divide = -0.000001f;
+                float df = 1.0f / divide;
+
+                glm::vec3 tangent{
+                    df * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x),
+                    df * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y),
+                    df * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z)};
+                tangent = glm::normalize(tangent);
+
+                v1.tangentOS = v2.tangentOS = v3.tangentOS = tangent;
             }
         }
 
@@ -168,13 +174,13 @@ namespace Render
         auto isWater = (data->info->objName == "resource/obj/water/water_30x30.obj");
         if (isWater)
         {
-            for (auto i = 0u; i < uniqueVertexSize; i++)
+            for (auto i = 0u; i < allVertexSize; i++)
             {
                 indices.push_back(vertices.size());
-                vertices.push_back(uniqueVertices[i]);
+                vertices.push_back(allVertices[i]);
             }
             std::vector<Render::Vertex> originalVertices = vertices;
-            for (auto i = 0u; i < uniqueVertexSize; i += 6)
+            for (auto i = 0u; i < allVertexSize; i += 6)
             {
                 auto &v0 = originalVertices[i + 0]; // 0
                 auto &v1 = originalVertices[i + 1]; // 1
@@ -204,9 +210,9 @@ namespace Render
         }
         else
         {
-            for (auto i = 0u; i < uniqueVertexSize; i++)
+            for (auto i = 0u; i < allVertexSize; i++)
             {
-                auto &vertex = uniqueVertices[i];
+                auto &vertex = allVertices[i];
                 if (uniqueVertexIndex.count(vertex) == 0)
                 {
                     uniqueVertexIndex[vertex] = static_cast<uint16_t>(vertices.size());

@@ -76,7 +76,7 @@ namespace Render
                     ToVec4(pointLightTransform->worldPosition),
                     // pointLightCamera->view,
                     // pointLightCamera->projection,
-                    ToVec4(pointLight->color),
+                    pointLight->color,
                     ToVec4(pointLight->clq),
                 };
                 activePointLights++;

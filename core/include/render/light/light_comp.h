@@ -20,7 +20,7 @@ namespace Render
     {
         inline static std::string type{"Render::PointLight"};
 
-        glm::vec3 color;
+        glm::vec4 color;//rgb+intensity
         glm::vec3 clq{1.0f, 0.7f, 1.8f};
         bool hasShadow{true};
     };

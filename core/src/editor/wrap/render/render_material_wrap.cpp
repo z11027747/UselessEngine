@@ -12,13 +12,14 @@ namespace Editor
 {
 	static int pipelineNameIndex = -1;
 
-	static const int pipelineNameSize = 9;
+	static const int pipelineNameSize = 10;
 	static const char *pipelineNames[] =
 		{
 			Define::Pipeline::Skybox.c_str(),
 			Define::Pipeline::Shadow.c_str(),
 			Define::Pipeline::LightModel.c_str(),
-			Define::Pipeline::PBR_Simplest.c_str(),
+			Define::Pipeline::PBR_Simple.c_str(),
+			Define::Pipeline::PBR_Texture.c_str(),
 			Define::Pipeline::Deferred_LightModel.c_str(),
 			Define::Pipeline::Deferred_Volumn.c_str(),
 			Define::Pipeline::Color.c_str(),
@@ -43,28 +44,29 @@ namespace Editor
 
 	static void FindImageNameIndexsByPipelineName(std::shared_ptr<Render::Material> material)
 	{
+		auto imageSize = 0;
 		auto &info = material->info;
 		if (info->pipelineName == Define::Pipeline::Skybox)
 		{
-			imageNameIndexs.resize(6);
-			for (auto i = 0; i < 6; i++)
-			{
-				imageNameIndexs[i] = FindImageNameIndex(info->imageNames[i]);
-			}
+			imageSize = 6;
 		}
 		else if (info->pipelineName == Define::Pipeline::LightModel ||
 				 info->pipelineName == Define::Pipeline::Deferred_LightModel)
 		{
-			imageNameIndexs.resize(2);
-			for (auto i = 0; i < 2; i++)
-			{
-				imageNameIndexs[i] = FindImageNameIndex(info->imageNames[i]);
-			}
+			imageSize = 2;
+		}
+		else if (info->pipelineName == Define::Pipeline::PBR_Texture)
+		{
+			imageSize = 5;
 		}
 		else if (info->pipelineName == Define::Pipeline::Dissolve)
 		{
-			imageNameIndexs.resize(3);
-			for (auto i = 0; i < 3; i++)
+			imageSize = 3;
+		}
+		if (imageSize > 0)
+		{
+			imageNameIndexs.resize(imageSize);
+			for (auto i = 0; i < imageSize; i++)
 			{
 				imageNameIndexs[i] = FindImageNameIndex(info->imageNames[i]);
 			}
@@ -98,7 +100,7 @@ namespace Editor
 		FindImageNameIndexsByPipelineName(material);
 	}
 
-	static void DrawImageByIndex(std::shared_ptr<Render::Material> material,
+	static bool DrawImageByIndex(std::shared_ptr<Render::Material> material,
 								 const char *showName, int index)
 	{
 		if (ImGui::Combo(showName, &imageNameIndexs[index],
@@ -107,7 +109,9 @@ namespace Editor
 			auto &info = material->info;
 			info->imageNames[index] = imageNames[imageNameIndexs[index]];
 			info->hasChanged = true;
+			return true;
 		}
+		return false;
 	}
 
 	template <>
@@ -147,10 +151,17 @@ namespace Editor
 				info->imageNames = {Define::Res::Img_White, Define::Res::Img_Bump};
 				info->params = {glm::vec4(1.0f, 50.0f, 1.0f, 1.0f)};
 			}
-			else if (info->pipelineName == Define::Pipeline::PBR_Simplest)
+			else if (info->pipelineName == Define::Pipeline::PBR_Simple)
 			{
-				info->imageNames.resize(6, Define::Res::Img_White);
+				info->imageNames = {};
 				info->params = {glm::vec4(1.0f), glm::vec4(1.0f)};
+			}
+			else if (info->pipelineName == Define::Pipeline::PBR_Texture)
+			{
+				info->imageNames = {Define::Res::Img_White, Define::Res::Img_Bump,
+									Define::Res::Img_White, Define::Res::Img_White,
+									Define::Res::Img_BRDF_LUT};
+				info->params = {glm::vec4(1.0f)};
 			}
 			if (info->pipelineName == Define::Pipeline::Dissolve)
 			{
@@ -177,12 +188,22 @@ namespace Editor
 			auto &params0 = info->params[0];
 			ImGui::SliderFloat("LodLevel", &params0.x, 0, 10);
 
-			DrawImageByIndex(material, "+x", 0);
-			DrawImageByIndex(material, "-x", 1);
-			DrawImageByIndex(material, "+y", 2);
-			DrawImageByIndex(material, "-y", 3);
-			DrawImageByIndex(material, "+z", 4);
-			DrawImageByIndex(material, "-z", 5);
+			if (DrawImageByIndex(material, "+x", 0))
+			{
+				auto &imageName = info->imageNames[0];
+				auto imageDir = imageName.substr(0, imageName.find_last_of("/") + 1);
+				info->imageNames[0] = imageDir + "px.png";
+				info->imageNames[1] = imageDir + "nx.png";
+				info->imageNames[2] = imageDir + "py.png";
+				info->imageNames[3] = imageDir + "ny.png";
+				info->imageNames[4] = imageDir + "pz.png";
+				info->imageNames[5] = imageDir + "nz.png";
+			}
+			// DrawImageByIndex(material, "-x", 1);
+			// DrawImageByIndex(material, "+y", 2);
+			// DrawImageByIndex(material, "-y", 3);
+			// DrawImageByIndex(material, "+z", 4);
+			// DrawImageByIndex(material, "-z", 5);
 		}
 		else if (info->pipelineName == Define::Pipeline::Color)
 		{
@@ -202,7 +223,7 @@ namespace Editor
 			ImGui::DragFloat("SpecularIntensity", &params0.z, 0.01f);
 			ImGui::PopItemWidth();
 		}
-		else if (info->pipelineName == Define::Pipeline::PBR_Simplest)
+		else if (info->pipelineName == Define::Pipeline::PBR_Simple)
 		{
 			ImGui::PushItemWidth(150);
 			auto &params0 = info->params[0];
@@ -212,6 +233,27 @@ namespace Editor
 
 			auto &params1 = info->params[1];
 			ImGui::ColorEdit4("BaseColor", &params1.x);
+		}
+		else if (info->pipelineName == Define::Pipeline::PBR_Texture)
+		{
+			DrawImageByIndex(material, "Albedo", 0);
+			DrawImageByIndex(material, "NomralMap", 1);
+			DrawImageByIndex(material, "Roughness", 2);
+			DrawImageByIndex(material, "Metallic", 3);
+			DrawImageByIndex(material, "BRDF LUT", 4);
+
+			ImGui::PushItemWidth(150);
+			auto &params0 = info->params[0];
+
+			ImGui::PushID("Use Reflection");
+			ImGui::SliderFloat("Use Reflection", &params0.x, 0, 1);
+			ImGui::PopID();
+
+			ImGui::PushID("LodLevel");
+			ImGui::SliderFloat("LodLevel", &params0.y, 0, 10);
+			ImGui::PopID();
+
+			ImGui::PopItemWidth();
 		}
 		else if (info->pipelineName == Define::Pipeline::Dissolve)
 		{

@@ -37,7 +37,8 @@ public:
         inline static std::string Dissolve{"dissolve"};
         inline static std::string Water{"water"};
 
-        inline static std::string PBR_Simplest{"pbr_simplest"};
+        inline static std::string PBR_Simple{"pbr_simple"};
+        inline static std::string PBR_Texture{"pbr_texture"};
 
         inline static std::string Deferred_LightModel{"deferred_light_model"};
         inline static std::string Deferred_Shading{"deferred_shading"};
@@ -65,5 +66,6 @@ public:
     public:
         inline static std::string Img_White{"resource/texture/white.png"};
         inline static std::string Img_Bump{"resource/texture/bump.png"};
+        inline static std::string Img_BRDF_LUT{"resource/texture/brdf_schilk.hdr"};
     };
 };
