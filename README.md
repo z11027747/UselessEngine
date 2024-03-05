@@ -44,7 +44,7 @@ Shader (VkPipeline)
 - [x] shadow
 - [x] light_model
 - [x] deferred_light_model
-- [ ] pbr
+- [x] pbr
 - [ ] deferred_pbr
 - [x] color
 - [x] water
