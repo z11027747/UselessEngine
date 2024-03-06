@@ -72,8 +72,8 @@ void main() {
     vec3 finalColor = ambient + Lo;
 
 	// Tone mapping
-    // finalColor = Uncharted2Tonemap(finalColor * 4.5);
-    // finalColor = finalColor * (1.0 / Uncharted2Tonemap(vec3(11.2)));	
+    finalColor = Uncharted2Tonemap(finalColor * 4.5);
+    finalColor = finalColor * (1.0 / Uncharted2Tonemap(vec3(11.2)));	
     // Gamma correct
     finalColor = pow(finalColor, vec3(1.0 / 2.2));
 
