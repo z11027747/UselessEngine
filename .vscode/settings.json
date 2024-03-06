@@ -81,6 +81,7 @@
         "numeric": "cpp",
         "ranges": "cpp",
         "valarray": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "variant": "cpp"
     }
 }

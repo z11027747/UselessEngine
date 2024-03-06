@@ -40,7 +40,7 @@ void main() {
     float NdotV = max(dot(N, V), 0.0);
 
     vec3 reflection = CalcReflection_PBR(skyboxCubeMap, R, roughness);
-    vec3 F = F_Schlick_WithRoughness(NdotV, F0, roughness);
+    vec3 F = F_SchlickR(NdotV, F0, roughness);
     vec3 ambient = reflection * F;
 
     vec3 finalColor = ambient + Lo;

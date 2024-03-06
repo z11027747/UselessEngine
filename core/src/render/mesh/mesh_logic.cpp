@@ -2,11 +2,15 @@
 #include <algorithm>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include "render/mesh/mesh_comp.h"
 #include "render/mesh/mesh_logic.h"
 #include "render/vk/buffer/buffer_logic.h"
 #include "render/vk/buffer/buffer_set_logic.h"
 #include "common/res_system.h"
+#include "common/log.hpp"
 #include "engine_object.hpp"
 #include "context.hpp"
 
@@ -17,11 +21,12 @@ namespace std
     {
         size_t operator()(Render::Vertex const &vertex) const
         {
-            return hash<glm::vec3>()(vertex.positionOS) ^
-                   (hash<glm::vec3>()(vertex.normalOS) << 1) ^
-                   ((hash<glm::vec3>()(vertex.tangentOS) << 1) >> 1) ^
-                   ((hash<glm::vec3>()(vertex.color) << 2) >> 1) ^
-                   ((hash<glm::vec2>()(vertex.uv0) << 3) >> 1);
+            auto h1 = hash<glm::vec3>()(vertex.positionOS);
+            auto h2 = hash<glm::vec3>()(vertex.normalOS);
+            auto h3 = hash<glm::vec3>()(vertex.tangentOS);
+            auto h4 = hash<glm::vec3>()(vertex.color);
+            auto h5 = hash<glm::vec2>()(vertex.uv0);
+            return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3) ^ (h5 << 4);
         }
     };
 }
@@ -110,13 +115,13 @@ namespace Render
         {
             for (const auto &index : shape.mesh.indices)
             {
-                auto vi = index.vertex_index;   // v(vp)
+                auto vi = index.vertex_index;   // v
                 auto ni = index.normal_index;   // vn
                 auto ui = index.texcoord_index; // vt
 
                 Render::Vertex vertex = {};
                 vertex.positionOS = {attrib.vertices[3 * vi + 0], attrib.vertices[3 * vi + 1], attrib.vertices[3 * vi + 2]};
-                vertex.positionOS.x *= -1; // 适配unity
+                vertex.positionOS.x *= -1; // flipY
                 if (attrib.normals.size() > 0)
                 {
                     hasNormal = true;
@@ -133,36 +138,30 @@ namespace Render
             }
         }
 
-        auto allVertexSize = static_cast<uint32_t>(allVertices.size());
+        auto uniqueVertexSize = static_cast<uint32_t>(allVertices.size());
 
         // calc tangent
         if (hasNormal)
         {
-            for (auto i = 0u; i < allVertexSize; i += 3)
+            for (auto i = 0u; i < uniqueVertexSize; i += 3)
             {
                 auto &v1 = allVertices[i + 0];
                 auto &v2 = allVertices[i + 1];
                 auto &v3 = allVertices[i + 2];
 
-                auto edge1 = v2.positionOS - v1.positionOS;
-                auto edge2 = v3.positionOS - v1.positionOS;
+                auto deltaPos1 = v2.positionOS - v1.positionOS;
+                auto deltaPos2 = v3.positionOS - v1.positionOS;
                 auto deltaUV1 = v2.uv0 - v1.uv0;
                 auto deltaUV2 = v3.uv0 - v1.uv0;
 
-                auto divide = (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-                if (divide >= 0.0f && divide < 0.000001f)
-                    divide = 0.000001f;
-                else if (divide < 0.0f && divide > -0.000001f)
-                    divide = -0.000001f;
-                float df = 1.0f / divide;
-
-                glm::vec3 tangent{
-                    df * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x),
-                    df * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y),
-                    df * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z)};
-                tangent = glm::normalize(tangent);
-
-                v1.tangentOS = v2.tangentOS = v3.tangentOS = tangent;
+                auto det = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+                if (det != 0.0f)
+                {
+                    auto tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) / det;
+                    v1.tangentOS = glm::normalize(tangent);
+                    v2.tangentOS = v1.tangentOS;
+                    v3.tangentOS = v1.tangentOS;
+                }
             }
         }
 
@@ -174,13 +173,13 @@ namespace Render
         auto isWater = (data->info->objName == "resource/obj/water/water_30x30.obj");
         if (isWater)
         {
-            for (auto i = 0u; i < allVertexSize; i++)
+            for (auto i = 0u; i < uniqueVertexSize; i++)
             {
                 indices.push_back(vertices.size());
                 vertices.push_back(allVertices[i]);
             }
             std::vector<Render::Vertex> originalVertices = vertices;
-            for (auto i = 0u; i < allVertexSize; i += 6)
+            for (auto i = 0u; i < uniqueVertexSize; i += 6)
             {
                 auto &v0 = originalVertices[i + 0]; // 0
                 auto &v1 = originalVertices[i + 1]; // 1
@@ -210,7 +209,7 @@ namespace Render
         }
         else
         {
-            for (auto i = 0u; i < allVertexSize; i++)
+            for (auto i = 0u; i < uniqueVertexSize; i++)
             {
                 auto &vertex = allVertices[i];
                 if (uniqueVertexIndex.count(vertex) == 0)
@@ -226,6 +225,23 @@ namespace Render
         data->indices = std::move(indices);
     }
 
+    void MeshLogic::LoadObj_Assimp(Context *context,
+                                   std::shared_ptr<MeshData> data)
+    {
+        auto &info = data->info;
+
+        Assimp::Importer importer;
+
+        auto flags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_CalcTangentSpace;
+        const aiScautoene *scene = importer.ReadFile(info->objName, flags);
+
+        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+        {
+            Log::Error("ERROR::ASSIMP::", importer.GetErrorString());
+            return;
+        }
+    }
+
     void MeshLogic::CalcBoundingSphere(Context *context,
                                        std::shared_ptr<MeshData> data)
     {
@@ -237,19 +253,22 @@ namespace Render
         {
             auto &position = vertex.positionOS;
 
-            if (minPos.x > position.x)
-                minPos.x = position.x;
-            if (minPos.y > position.y)
-                minPos.y = position.y;
-            if (minPos.z > position.z)
-                minPos.z = position.z;
+            minPos = glm::min(minPos, position);
+            maxPos = glm::max(maxPos, position);
 
-            if (maxPos.x < position.x)
-                maxPos.x = position.x;
-            if (maxPos.y < position.y)
-                maxPos.y = position.y;
-            if (maxPos.z < position.z)
-                maxPos.z = position.z;
+            // if (minPos.x > position.x)
+            //     minPos.x = position.x;
+            // if (minPos.y > position.y)
+            //     minPos.y = position.y;
+            // if (minPos.z > position.z)
+            //     minPos.z = position.z;
+
+            // if (maxPos.x < position.x)
+            //     maxPos.x = position.x;
+            // if (maxPos.y < position.y)
+            //     maxPos.y = position.y;
+            // if (maxPos.z < position.z)
+            //     maxPos.z = position.z;
         }
 
         BoundingSphere boundingSphere = {};

@@ -17,7 +17,6 @@ layout (location = 1) out vec3 fragNormalWS;
 layout (location = 2) out vec3 fragTangentWS;
 layout (location = 3) out vec3 fragBitangentWS;
 layout (location = 4) out vec2 fragUV0;
-layout (location = 5) out vec3 fragTest;
 
 void main() {
     CameraUBO camera = globalUBO.camera;
@@ -27,7 +26,6 @@ void main() {
     fragTangentWS = mat3(push.model) * tangentOS;
     fragBitangentWS = cross(fragNormalWS, fragTangentWS);
     fragUV0 = uv0;
-    fragTest = tangentOS;
 
     gl_Position = camera.projection * camera.view * vec4(fragPositionWS, 1.0);
 }
