@@ -107,13 +107,12 @@ namespace Render
         {
             globalUBO.pointLights[i] = pointLightUBOs[i];
         }
-        globalUBO.activePointLights = activePointLights;
         for (auto i = 0; i < activeSpotLights; i++)
         {
             globalUBO.spotLights[i] = spotLightUBOs[i];
         }
-        globalUBO.activeSpotLights = activeSpotLights;
-        globalUBO.currTime = context->currTime;
+        globalUBO.lightParams = glm::vec4(activePointLights, activeSpotLights, 0.0f, 0.0f);
+        globalUBO.timeParams = glm::vec4(context->currTime, 0.0f, 0.0f, 0.0f);
 
         auto &globalBuffer = global->globalBuffer;
         BufferSetLogic::Set(context,

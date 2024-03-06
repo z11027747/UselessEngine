@@ -26,7 +26,7 @@ void main() {
     vec3 viewDir = normalize(camera.pos.xyz - positionWS);
     
     vec3 pointLightsCol = vec3(0.0);
-    int activePointLights = globalUBO.activePointLights;
+    int activePointLights = globalUBO.lightParams.x;
     for (int i = 0; i < activePointLights; i++) {
         pointLightsCol += CalcPointLight(i, baseCol, viewDir, normalWS, positionWS, 1.0, materialParams);
     }

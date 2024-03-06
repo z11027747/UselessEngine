@@ -249,10 +249,6 @@ namespace Editor
 			ImGui::SliderFloat("Use Reflection", &params0.x, 0, 1);
 			ImGui::PopID();
 
-			ImGui::PushID("LodLevel");
-			ImGui::SliderFloat("LodLevel", &params0.y, 0, 10);
-			ImGui::PopID();
-
 			ImGui::PopItemWidth();
 		}
 		else if (info->pipelineName == Define::Pipeline::Dissolve)

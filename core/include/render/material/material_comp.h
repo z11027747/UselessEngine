@@ -14,36 +14,36 @@ namespace Render
 {
 	struct CameraUBO final
 	{
-		glm::vec4 pos;
+		glm::vec4 pos; // xyz
 		glm::mat4 view;
 		glm::mat4 projection;
 	};
 
 	struct DirectionLightUBO final
 	{
-		glm::vec4 dir;
+		glm::vec4 dir; // xyz
 		glm::mat4 view;
 		glm::mat4 projection;
-		glm::vec4 ambient;
-		glm::vec4 col;
+		glm::vec4 ambient; // rgb
+		glm::vec4 col;	   // rgb
 	};
 
 	struct PointLightUBO final
 	{
-		glm::vec4 pos;
+		glm::vec4 pos; // xyz
 		// glm::mat4 view;
 		// glm::mat4 projection;
-		glm::vec4 col;
-		glm::vec4 clq;
+		glm::vec4 col; // rgb
+		glm::vec4 clq; // rgb
 	};
 
 	struct SpotLightUBO final
 	{
-		glm::vec4 dir;
-		glm::vec4 pos;
+		glm::vec4 dir; // xyz
+		glm::vec4 pos; // xyz
 		// glm::mat4 view;
 		// glm::mat4 projection;
-		glm::vec4 col;
+		glm::vec4 col; // rgb
 		glm::vec4 cutOff;
 	};
 
@@ -52,10 +52,9 @@ namespace Render
 		CameraUBO camera;
 		DirectionLightUBO directionLight;
 		PointLightUBO pointLights[256];
-		int activePointLights;
 		SpotLightUBO spotLights[4];
-		int activeSpotLights;
-		float currTime;
+		glm::ivec4 lightParams;
+		glm::vec4 timeParams;
 	};
 
 	struct MaterialUBO final

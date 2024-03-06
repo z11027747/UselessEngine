@@ -27,7 +27,8 @@ void main() {
     vec3 R = reflect(-V, N);
 
     vec3 Lo = vec3(0.0);
-    for (int i = 0; i < globalUBO.activePointLights; i++) {
+    int activePointLights = globalUBO.lightParams.x;
+    for (int i = 0; i < activePointLights; i++) {
         PointLightUBO pointLight = globalUBO.pointLights[i];
         vec3 L = normalize(pointLight.pos.xyz - P);
         Lo += CalcPointLight_PBR(i, albedo, P, N, V, L, roughness, metallic);

@@ -2,7 +2,7 @@
 	"version": "2.0.0",
 	"tasks": [
         {
-            "label": "make-vc2022",
+            "label": "make",
             "type": "process",
             "command": "${config:cmake.cmakePath}",
             "args": [
@@ -13,6 +13,18 @@
             ],
             "group": "build",
             "problemMatcher": ["$msCompile"]
+        },
+        {
+            "label": "copy-dll",
+            "type": "shell",
+            "command": "cp",
+            "args": [
+                "-r",
+                "${workspaceFolder}/lib/assimp/assimp-vc143-mt.dll",
+                "${workspaceFolder}/build/out/Debug/assimp-vc143-mt.dll",
+            ],
+            "group": "build",
+            "dependsOn": "make"
         }
 	]
 	

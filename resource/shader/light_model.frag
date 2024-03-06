@@ -37,13 +37,13 @@ void main() {
     vec3 directionLightCol = CalcDirectionLight(baseCol, viewDir, calcNormalWS, shadowAtten, materialUBO.params);
 
     vec3 pointLightsCol = vec3(0.0);
-    int activePointLights = globalUBO.activePointLights;
+    int activePointLights = globalUBO.lightParams.x;
     for (int i = 0; i < activePointLights; i++) {
         pointLightsCol += CalcPointLight(i, baseCol, viewDir, calcNormalWS, positionWS, 1.0, materialUBO.params);
     }
 
     vec3 spotLightsCol = vec3(0.0);
-    int activeSpotLights = globalUBO.activeSpotLights;
+    float activeSpotLights = globalUBO.lightParams.y;
     for (int i = 0; i < activeSpotLights; i++) {
         spotLightsCol += CalcSpotLight(i, baseCol, viewDir, calcNormalWS, positionWS, 1.0, materialUBO.params);
     }

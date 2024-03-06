@@ -1,4 +1,3 @@
-
 struct CameraUBO {
     vec4 pos; //xyz
     mat4 view;
@@ -26,12 +25,11 @@ struct SpotLightUBO {
     vec4 color; //rgb
     vec4 cutOff;
 };
-layout (set = 0, binding = 0) uniform GlobalUBO {
+layout(set = 0, binding = 0) uniform GlobalUBO {
     CameraUBO camera;
     DirectionLightUBO directionLight;
     PointLightUBO pointLights[256];
-    int activePointLights;
     SpotLightUBO spotLights[4];
-    int activeSpotLights;
-    float currTime;
+    ivec4 lightParams; //activePointLights(x) activeSpotLights(y)
+    vec4 timeParams; //currTime(x)
 } globalUBO;

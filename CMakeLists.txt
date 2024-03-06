@@ -27,9 +27,13 @@ link_directories(${PROJECT_SOURCE_DIR}/lib)
 if (MSVC)
 	target_link_libraries(${PROJ} 
 		${PROJECT_SOURCE_DIR}/lib/glfw-vc2022/glfw3.lib
-		${PROJECT_SOURCE_DIR}/lib/vulkan/vulkan-1.lib)
+		${PROJECT_SOURCE_DIR}/lib/vulkan/vulkan-1.lib
+		${PROJECT_SOURCE_DIR}/lib/assimp/assimp-vc143-mt.lib)
+
+		target_link_options(${PROJ} PRIVATE "/NODEFAULTLIB:MSVCRT")
 else()
 	target_link_libraries(${PROJ} 
 		${PROJECT_SOURCE_DIR}/lib/glfw/glfw3.lib
-		${PROJECT_SOURCE_DIR}/lib/vulkan/vulkan-1.lib)
+		${PROJECT_SOURCE_DIR}/lib/vulkan/vulkan-1.lib
+		${PROJECT_SOURCE_DIR}/lib/assimp/assimp-vc143-mt.lib)
 endif()

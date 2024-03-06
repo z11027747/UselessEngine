@@ -24,7 +24,7 @@ layout (location = 2) out vec3 fragPositionVS;
 
 vec3 GerstnerWave(float speed) {
     vec4 params_wave = materialUBO.params_wave;
-    float time = globalUBO.currTime;
+    float time = globalUBO.timeParams.x;
 
     float x = cos(params_wave.x);
     float y = sin(params_wave.x);

@@ -26,7 +26,11 @@ namespace Render
         static std::shared_ptr<MeshData> Get(Context *, std::shared_ptr<MeshInfo>);
         static std::shared_ptr<MeshData> Create(Context *, std::shared_ptr<MeshInfo>);
 
-        static void LoadObj(Context *, std::shared_ptr<MeshData>);
+        static void LoadObj_TinyObj(Context *, std::shared_ptr<MeshData>);
+        static void LoadObj_Assimp(Context *, std::shared_ptr<MeshData>);
+        static void LoadObj_VertexDeduplicated(Context *, std::shared_ptr<MeshData>,
+                                               std::vector<Render::Vertex> &);
+
         static void CalcBoundingSphere(Context *, std::shared_ptr<MeshData>);
         static void CreateBuffer(Context *, std::shared_ptr<MeshData>);
 

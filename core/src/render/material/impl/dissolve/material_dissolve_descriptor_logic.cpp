@@ -64,7 +64,7 @@ namespace Render
 		for (auto i = 0; i < imageSize; i++)
 		{
 			auto &image = data->images[i];
-			auto imageSamplerWithMipMap = SamplerLogic::Create(context, false,
+			auto imageSamplerWithMipMap = SamplerLogic::Create(context, true, false,
 															   0, image->mipLevels);
 
 			VkDescriptorImageInfo imageInfo = {

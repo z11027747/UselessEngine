@@ -15,7 +15,7 @@
                 "moduleLoad": false,
                 "trace": true
             },
-            "preLaunchTask": "make-vc2022"
+            "preLaunchTask": "make"
         }
 
     ]
