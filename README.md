@@ -45,7 +45,7 @@ Shader (VkPipeline)
 - [x] light_model
 - [x] deferred_light_model
 - [x] pbr
-- [ ] deferred_pbr
+- [ ] ~~deferred_pbr~~
 - [x] color
 - [x] water
 - [x] post_process::toon_mapping
@@ -55,7 +55,9 @@ Shader (VkPipeline)
 
 Preview (See the screenshots folder for details)
 -----
-![water](https://github.com/z11027747/UselessEngine/assets/24534845/c4e4f12a-edc7-417c-b95a-a562d8ba4cd8)
+![post-process](https://github.com/z11027747/UselessEngine/assets/24534845/fa20f7aa-3b61-44e2-afbc-2272eab18dde)
+![deferred](https://github.com/z11027747/UselessEngine/assets/24534845/efc70378-d402-407d-9a55-cc2eb860977d)
+![pbr_simple](https://github.com/z11027747/UselessEngine/assets/24534845/3c691016-9194-4b95-a7ca-8ad5273192fa)
 
 
 
